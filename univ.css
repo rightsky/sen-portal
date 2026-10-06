@@ -1,0 +1,70 @@
+/* 대학·전형탐색 */
+.uhead{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;flex-wrap:wrap;background:var(--surface);border-radius:var(--radius-lg);padding:24px 28px}
+.uhead small{font-weight:700;color:var(--ink-3)}.uhead h2{margin:2px 0 10px;font-size:26px;font-weight:900}
+.utabs{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0 16px}
+.ud{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:20px}
+.alist{display:flex;flex-direction:column;gap:8px}
+.arow{width:100%;display:grid;grid-template-columns:auto minmax(0,1fr) auto 24px;gap:14px;align-items:center;text-align:left;padding:14px 16px;border-radius:var(--radius-md);background:var(--bg);border:1px solid var(--line)}
+.arow:hover{border-color:var(--brand)}
+.arow b{display:block;font-size:15.5px}.arow>div>span{font-size:13px;color:var(--ink-2)}
+.arow__min{font-size:12px;font-weight:800;color:var(--ink-3);white-space:nowrap}
+.arow i{font-style:normal;color:var(--ink-3)}
+.kcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:20px}
+.kcard{display:flex;flex-direction:column;gap:6px;text-align:left;padding:18px 20px;border-radius:var(--radius-lg);background:var(--surface);border:1.5px solid transparent}
+.kcard:hover,.kcard.is-on{border-color:var(--brand);background:var(--bg)}
+.kcard b{font-size:17px}.kcard span{font-size:13.5px;color:var(--ink-2)}.kcard small{font-size:12.5px;color:var(--brand);font-weight:700}
+.elems{display:flex;gap:10px;flex-wrap:wrap}
+.elem{flex:1;min-width:90px;background:#EAF1FF;border-radius:12px;padding:14px;text-align:center}
+.elem b{display:block;font-size:22px;font-weight:900;color:var(--brand)}.elem span{font-size:12.5px;color:var(--ink-2);font-weight:700}
+.elem--s{background:var(--surface)}.elem--s b{color:var(--ink);font-size:16px;padding-top:4px}
+:root[data-theme="dark"] .elem{background:#1d2a4d}
+@media (max-width:1024px){.ud{grid-template-columns:1fr}}
+@media (max-width:700px){.arow{grid-template-columns:auto minmax(0,1fr) 24px}.arow__min{display:none}}
+
+/* 상세 필터 (어디가 방식) */
+.fpanel{border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;background:var(--bg)}
+.frow{display:grid;grid-template-columns:200px minmax(0,1fr);border-bottom:1px solid var(--line)}
+.frow:last-of-type{border-bottom:0}
+.frow__t{background:var(--surface);padding:18px 22px;font-weight:800;font-size:15px;display:flex;align-items:center;gap:8px}
+.frow__b{padding:14px 22px;display:flex;flex-wrap:wrap;gap:10px 28px;align-items:center}
+.cbx{display:inline-flex;align-items:center;gap:8px;font-size:15px;color:var(--ink-2);cursor:pointer;min-width:120px}
+.cbx input{appearance:none;width:22px;height:22px;border-radius:6px;border:1.5px solid var(--line);background:var(--bg);display:grid;place-items:center;margin:0;cursor:pointer;position:relative}
+.cbx input::after{content:"✓";font-size:13px;font-weight:900;color:var(--line)}
+.cbx input:checked{background:var(--brand);border-color:var(--brand)}
+.cbx input:checked::after{color:#fff}
+.cbx.is-on span{color:var(--ink);font-weight:700}
+.help{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--ink-3);color:var(--ink-3);font-size:11.5px;font-weight:800;display:inline-grid;place-items:center;line-height:1}
+.help:hover{border-color:var(--brand);color:var(--brand)}
+.rng2{width:100%;max-width:720px;padding:6px 10px 0}
+.rng2__track{position:relative;height:28px}
+.rng2__track::before{content:"";position:absolute;left:0;right:0;top:12px;height:4px;border-radius:999px;background:var(--surface-2)}
+.rng2__fill{position:absolute;top:12px;height:4px;border-radius:999px;background:var(--brand)}
+.rng2 input[type=range]{position:absolute;left:0;right:0;top:0;width:100%;height:28px;margin:0;appearance:none;background:none;pointer-events:none}
+.rng2 input[type=range]::-webkit-slider-thumb{appearance:none;width:24px;height:24px;border-radius:50%;background:#fff;border:3px solid var(--brand);pointer-events:auto;cursor:grab}
+.rng2 input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#fff;border:3px solid var(--brand);pointer-events:auto;cursor:grab}
+.rng2__lab{display:flex;justify-content:space-between;align-items:center;font-size:14px;margin-top:6px}
+.rng2__lab span{font-size:12.5px;color:var(--ink-3);font-weight:700}
+.fapply{display:flex;justify-content:center;gap:10px;padding:22px;background:var(--surface);border-top:1px solid var(--line)}
+@media (max-width:860px){.frow{grid-template-columns:1fr}.frow__t{padding:12px 18px}.cbx{min-width:0}}
+
+/* 어디가 방식 표·학과정보 */
+.utbl th,.utbl td{padding:12px 14px;font-size:14px;vertical-align:middle}
+.utbl thead th{font-size:13px;color:var(--ink-3);background:var(--surface);font-weight:800}
+.utbl tbody th{width:auto}
+.trow{cursor:pointer}.trow:hover td{background:var(--surface)}
+.kv3{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.kv3>div{background:var(--surface);border-radius:12px;padding:14px;text-align:center}
+.kv3 b{display:block;font-size:24px;font-weight:900;letter-spacing:-.02em}.kv3 span{font-size:12.5px;color:var(--ink-3);font-weight:700}
+.kv3--w>div{padding:20px}
+.mjwrap{display:grid;grid-template-columns:300px minmax(0,1fr);gap:20px;align-items:start}
+.mjside{position:sticky;top:150px;display:flex;flex-direction:column;gap:12px;background:var(--surface);border-radius:var(--radius-lg);padding:16px;max-height:calc(100vh - 170px)}
+.mjlist{display:flex;flex-direction:column;gap:6px;overflow:auto}
+.mjit{display:flex;flex-direction:column;gap:2px;text-align:left;padding:10px 14px;border-radius:12px;background:var(--bg);border:1.5px solid transparent}
+.mjit:hover,.mjit.is-on{border-color:var(--brand)}
+.mjit b{font-size:15px}.mjit span{font-size:12.5px;color:var(--ink-3)}
+.seg a.segl,.seg button{white-space:nowrap}
+@media (max-width:1024px){.mjwrap{grid-template-columns:1fr}.mjside{position:static;max-height:none}.mjlist{max-height:260px}.kv3{grid-template-columns:1fr 1fr}}
+
+#aCnt,#uCnt{white-space:nowrap}
+.utbl td{white-space:nowrap}
+.utbl td:nth-child(3),.utbl td:nth-child(6){white-space:normal;min-width:120px}

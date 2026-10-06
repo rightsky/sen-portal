@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>진로검사 | 서울 진로진학 통합플랫폼</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root{
+  --brand:#1E5EFF;--brand-deep:#1247CC;--accent-yellow:#FFC531;--accent-sky:#3FB6FF;
+  --accent-green:#2ECC8A;--accent-purple:#7B5CFF;
+  --ink:#111318;--ink-2:#4B5563;--ink-3:#9CA3AF;--line:#E5E7EB;
+  --bg:#FFFFFF;--surface:#F5F6F8;--surface-2:#EEF1F5;--footer:#1F2430;
+  --radius-xl:28px;--radius-lg:20px;--radius-md:14px;--radius-pill:999px;
+  --shadow-1:0 4px 14px rgba(17,19,24,.06);--shadow-2:0 12px 32px rgba(17,19,24,.12);
+  --container:1280px;--gutter:24px;
+  --font:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,system-ui,"Noto Sans KR",sans-serif;
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#F3F4F6;--ink-2:#C7CBD3;--ink-3:#8B919C;--line:#2A2F3A;
+    --bg:#12141A;--surface:#1A1D25;--surface-2:#222632;--footer:#0C0E13;
+    --shadow-1:0 4px 14px rgba(0,0,0,.35);--shadow-2:0 12px 32px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#F3F4F6;--ink-2:#C7CBD3;--ink-3:#8B919C;--line:#2A2F3A;
+  --bg:#12141A;--surface:#1A1D25;--surface-2:#222632;--footer:#0C0E13;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;word-break:keep-all}
+a{color:inherit;text-decoration:none}
+a:hover{color:var(--brand)}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+.container{max-width:var(--container);margin:0 auto;padding:0 var(--gutter)}
+.section{padding:64px 0}
+.section--gray{background:var(--surface)}
+.section__title{font-size:30px;font-weight:800;letter-spacing:-.02em;margin:0;line-height:1.2}
+.section__sub{margin:8px 0 0;color:var(--ink-2);font-size:16px}
+
+/* Header */
+.brandbar{background:var(--surface);border-bottom:1px solid var(--line);font-size:13px}
+.brandbar .container{display:flex;justify-content:space-between;align-items:center;height:36px}
+.brandbar__sites{display:flex;gap:18px;font-weight:600;color:var(--ink-2)}
+.brandbar__sites a.is-active{color:var(--brand)}
+.brandbar__util{display:flex;gap:16px;color:var(--ink-2)}
+.header{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--line)}
+.header .container{display:flex;align-items:center;height:72px;gap:32px}
+.logo{font-weight:900;font-size:22px;letter-spacing:-.03em;display:flex;align-items:center;gap:8px}
+.logo__mark{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--brand),var(--accent-yellow))}
+.gnb{display:flex;gap:18px;margin-left:auto;font-weight:700;font-size:15px}
+.gnb a{padding:8px 2px;position:relative;white-space:nowrap}
+.gnb a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;border-radius:3px;background:var(--brand);transform:scaleX(0);transition:transform .25s var(--ease)}
+.gnb a:hover::after,.gnb a.is-active::after{transform:scaleX(1)}
+.header__actions{display:flex;gap:8px;align-items:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:var(--radius-md);font-weight:700;font-size:15px;transition:transform .2s var(--ease),background .2s,box-shadow .2s}
+.btn--primary{background:var(--brand);color:#fff;box-shadow:0 6px 16px rgba(30,94,255,.35)}
+.btn--primary:hover{background:var(--brand-deep);transform:translateY(-1px);color:#fff}
+.btn--ghost{background:var(--surface);color:var(--ink)}
+.btn--ghost:hover{background:var(--surface-2)}
+.btn--pill{border-radius:var(--radius-pill)}
+
+/* Page hero */
+.phero{background:linear-gradient(135deg,#1E5EFF,#7B5CFF);color:#fff;padding:64px 0 72px}
+.phero__crumb{font-size:13px;font-weight:600;opacity:.85;margin:0 0 16px}
+.phero__crumb a:hover{color:#fff;text-decoration:underline}
+.phero h1{font-size:44px;font-weight:900;letter-spacing:-.03em;line-height:1.15;margin:0 0 14px}
+.phero p{font-size:18px;max-width:640px;margin:0;opacity:.95}
+
+/* Intro card */
+.intro{margin-top:24px;position:relative;z-index:2}
+.intro__card{background:var(--bg);border-radius:var(--radius-lg);box-shadow:var(--shadow-2);padding:28px 32px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center}
+.intro__card p{margin:0;color:var(--ink-2);font-size:16px}
+.intro__card strong{color:var(--ink)}
+
+/* Notice */
+.notice{background:var(--surface);border-radius:var(--radius-lg);padding:24px 28px;display:flex;gap:16px;align-items:flex-start}
+.notice__icon{width:40px;height:40px;border-radius:var(--radius-md);background:#FFF4D6;display:grid;place-items:center;font-size:18px;flex-shrink:0}
+:root[data-theme="dark"] .notice__icon{background:#3a3220}
+.notice h3{margin:0 0 6px;font-size:16px;font-weight:800}
+.notice p{margin:0;color:var(--ink-2);font-size:14.5px}
+
+/* Featured (종합검사) */
+.feature{border-radius:var(--radius-xl);background:linear-gradient(135deg,#1E5EFF,#3FB6FF);color:#fff;padding:44px 48px;display:grid;grid-template-columns:1fr auto;gap:28px;align-items:center;box-shadow:var(--shadow-2)}
+.feature__badge{display:inline-block;padding:6px 12px;border-radius:var(--radius-pill);background:var(--accent-yellow);color:#111;font-weight:800;font-size:13px;margin-bottom:14px}
+.feature h2{margin:0 0 10px;font-size:30px;font-weight:900;letter-spacing:-.02em}
+.feature p{margin:0;font-size:16px;opacity:.95;max-width:620px}
+.feature__actions{display:flex;flex-direction:column;gap:10px}
+.feature .btn--white{background:#fff;color:var(--brand)}
+.feature .btn--white:hover{transform:translateY(-1px)}
+.feature .btn--line{border:1.5px solid rgba(255,255,255,.6);color:#fff}
+.feature .btn--line:hover{background:rgba(255,255,255,.12);color:#fff}
+
+/* Test cards */
+.tests{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.test{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-lg);padding:26px;display:flex;flex-direction:column;gap:12px;transition:transform .2s var(--ease),box-shadow .2s}
+.test:hover{transform:translateY(-3px);box-shadow:var(--shadow-1)}
+.section--gray .test{border:0;box-shadow:var(--shadow-1)}
+.test__icon{width:48px;height:48px;border-radius:var(--radius-md);display:grid;place-items:center;font-size:22px;background:var(--surface)}
+.test h3{margin:0;font-size:19px;font-weight:800;letter-spacing:-.01em}
+.test p{margin:0;color:var(--ink-2);font-size:14.5px;flex:1}
+.test__meta{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:var(--radius-pill);font-size:12.5px;font-weight:700;background:var(--surface);color:var(--ink-2)}
+.chip--time{background:#EAF1FF;color:var(--brand)}
+:root[data-theme="dark"] .chip--time{background:#1d2a4d}
+.test__go{font-size:14px;font-weight:700;color:var(--brand);display:inline-flex;align-items:center;gap:4px;margin-top:2px}
+
+/* CTA band */
+.band{border-radius:var(--radius-xl);background:var(--footer);color:#fff;padding:40px 48px;display:flex;justify-content:space-between;align-items:center;gap:24px}
+.band h2{margin:0 0 6px;font-size:26px;font-weight:900;letter-spacing:-.02em}
+.band p{margin:0;opacity:.8;font-size:15px}
+
+.src{color:var(--ink-3);font-size:13px;margin:28px 0 0}
+
+/* Footer */
+.footer{background:var(--footer);color:#C7CBD3;padding:40px 0;margin-top:72px}
+.footer__top{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:20px}
+.footer__links{display:flex;gap:20px;font-weight:700;color:#fff;font-size:14px}
+.footer__family{display:flex;gap:16px;font-size:13px}
+.footer__info,.footer__copy{font-size:13px;color:#8B919C;margin-top:6px}
+.footer a:hover{color:#fff}
+
+.toast{position:fixed;left:50%;bottom:32px;transform:translate(-50%,16px);background:var(--ink);color:var(--bg);padding:12px 22px;border-radius:var(--radius-pill);font-weight:700;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:99}
+.toast.is-on{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:1100px){.gnb{display:none}}
+@media (max-width:860px){
+  .phero h1{font-size:32px}
+  .intro__card,.feature{grid-template-columns:1fr}
+  .tests{grid-template-columns:1fr 1fr}
+  .band{flex-direction:column;align-items:flex-start;padding:32px 24px}
+}
+@media (max-width:600px){.tests{grid-template-columns:1fr}.brandbar__sites a:not(.is-active){display:none}}
+</style>
+<style>.footer__rel{border-top:1px solid rgba(255,255,255,.12);margin-top:22px;padding-top:18px}.footer__rel b{display:block;font-size:13px;margin-bottom:8px;opacity:.8}.footer__rel nav{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;opacity:.8}.footer__rel a::after{content:" ↗";font-size:11px}</style>
+</head>
+<body>
+
+<div class="brandbar">
+  <div class="container">
+    <nav class="brandbar__sites" aria-label="패밀리 사이트">
+      <a class="is-active" href="main-everland-style.html">서울 진로진학 통합플랫폼</a>
+      <a href="#">서울특별시교육청</a><a href="#">서울특별시교육청교육연구정보원</a><a href="#">커리어넷</a><a href="#">대입정보포털 어디가</a>
+    </nav>
+    <div class="brandbar__util"><a href="#" data-toast="로그인 화면은 다음 단계에서 설계합니다">로그인</a><button id="btnTheme" aria-label="화면 모드 전환" style="font-size:13px;color:var(--ink-2)">🌙 다크</button></div>
+  </div>
+</div>
+
+<header class="header">
+  <div class="container">
+    <a class="logo" href="main-everland-style.html"><span class="logo__mark"></span>서울 진로진학 통합플랫폼</a>
+    <nav class="gnb" aria-label="주메뉴">
+      <a href="#" class="is-active">미래탐색</a><a href="#">학교·과목설계</a><a href="#">대학·전형탐색</a><a href="#">지원전략</a><a href="#">상담·체험</a><a href="#">나의 진로진학</a><a href="#">자료·소식</a>
+    </nav>
+    <div class="header__actions">
+      <a class="btn btn--ghost btn--pill" href="main-everland-style.html">← 메인으로</a>
+      <a class="btn btn--primary btn--pill" href="counsel.html#book">상담 예약</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- 페이지 히어로 -->
+  <section class="phero">
+    <div class="container">
+      <p class="phero__crumb"><a href="main-everland-style.html">홈</a> › 미래탐색 › 나 이해하기 › <strong>진로검사</strong></p>
+      <h1>진로검사</h1>
+      <p>진로검사는 개인의 다양한 심리적 특성을 측정하여 개인의 특성에 적합한 진로 분야를 탐색할 수 있도록 도와줍니다.</p>
+    </div>
+  </section>
+
+  <!-- 소개 카드 -->
+  <nav id="lnb" data-l1="미래탐색" data-current="진로검사"></nav>
+  <section class="intro">
+    <div class="container">
+      <div class="intro__card">
+        <p><strong>진로검사 소개</strong><br>진로검사는 개인의 능력과 흥미, 성격 등 다양한 심리적 특성을 측정하여 자신에 대한 이해를 돕고 개인의 특성에 적합한 진로 분야를 탐색할 수 있도록 도와줍니다.</p>
+        <a class="btn btn--primary btn--pill" href="#tests">검사 둘러보기</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 유의사항 -->
+  <section class="section" style="padding-top:40px;padding-bottom:40px">
+    <div class="container">
+      <div class="notice">
+        <div class="notice__icon">💡</div>
+        <div>
+          <h3>검사 결과, 이렇게 활용하세요</h3>
+          <p>진로검사는 자신을 이해하기 위한 많은 방법 중의 한 가지입니다. 초등학생 및 청소년은 진로발달과정에서 개인의 특성이 계속 변화할 가능성이 높으므로 검사 결과를 단정적으로 해석하지 않고, 참고자료로 활용하기 바랍니다. 검사 결과 해석이 필요하면 학교 진로교사 또는 서울진로진학정보센터 전문상담사 등 진로 전문가의 도움을 받을 수 있습니다.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 진로종합검사 -->
+  <section class="section" style="padding-top:0" id="tests">
+    <div class="container">
+      <div class="feature">
+        <div>
+          <span class="feature__badge">추천</span>
+          <h2>진로종합검사</h2>
+          <p>성격, 다중지능, 흥미, 직업가치관 검사 결과를 종합 분석하여 각 유형별 공통된 관심직업군을 찾아주고 그와 관련된 진로 정보를 제공해주는 검사시스템입니다.</p>
+        </div>
+        <div class="feature__actions">
+          <a class="btn btn--white btn--pill" href="#" data-toast="검사 실시 화면은 다음 단계에서 설계합니다">검사 시작하기</a>
+          <a class="btn btn--line btn--pill" href="#" data-toast="예시 결과지를 새 창으로 보여줍니다">예시보기</a>
+          <a class="btn btn--line btn--pill" href="#" data-toast="매뉴얼(PDF)을 내려받습니다">매뉴얼 다운로드</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 청소년용 심리검사 -->
+  <section class="section section--gray">
+    <div class="container">
+      <h2 class="section__title">청소년용 심리검사</h2>
+      <p class="section__sub">학년에 맞는 검사를 골라 시작하세요 · 소요 시간은 10~20분입니다</p>
+      <div class="tests" style="margin-top:28px">
+        <div class="test">
+          <div class="test__icon">🧭</div>
+          <h3>진로흥미탐색</h3>
+          <p>일과 직업의 의미, 자신과 직업정보에 대한 탐색</p>
+          <div class="test__meta"><span class="chip">초5~6학년 · 48문항</span><span class="chip chip--time">⏱ 15분</span></div>
+          <a class="test__go" href="#" data-toast="검사 실시 화면은 다음 단계에서 설계합니다">검사하기 ›</a>
+        </div>
+        <div class="test">
+          <div class="test__icon">🧮</div>
+          <h3>직업적성검사</h3>
+          <p>언어능력, 수리·논리력 등 10개 적성영역별 능력 검사</p>
+          <div class="test__meta"><span class="chip">중1~3 · 66문항</span><span class="chip">고1~3 · 88문항</span><span class="chip chip--time">⏱ 20분</span></div>
+          <a class="test__go" href="#" data-toast="검사 실시 화면은 다음 단계에서 설계합니다">검사하기 ›</a>
+        </div>
+        <div class="test">
+          <div class="test__icon">💼</div>
+          <h3>직업흥미검사 K형</h3>
+          <p>직업활동, 일상생활, 직업명 등 3가지 하위척도에 제시된 문항에 대해서 자신의 흥미를 생각하고 응답</p>
+          <div class="test__meta"><span class="chip">중1~3 · 96문항</span><span class="chip">고1~3 · 96문항</span><span class="chip chip--time">⏱ 15분</span></div>
+          <a class="test__go" href="#" data-toast="검사 실시 화면은 다음 단계에서 설계합니다">검사하기 ›</a>
+        </div>
+        <div class="test">
+          <div class="test__icon">🎨</div>
+          <h3>직업흥미검사 H형</h3>
+          <p>홀랜드 이론을 바탕으로 개발한 중·고등학생용 검사로서 일상생활과 직업생활에서 어떠한 활동에 관심과 흥미를 갖고 있는지를 측정</p>
+          <div class="test__meta"><span class="chip">중1~3 · 141문항</span><span class="chip">고1~3 · 130문항</span><span class="chip chip--time">⏱ 15~20분</span></div>
+          <a class="test__go" href="#" data-toast="검사 실시 화면은 다음 단계에서 설계합니다">검사하기 ›</a>
+        </div>
+        <div class="test">
+          <div class="test__icon">🌱</div>
+          <h3>진로성숙도검사</h3>
+          <p>계획성, 자기이해 등 8개 영역에 걸쳐 태도와 능력, 행동 분야의 진로성숙도 영역을 측정</p>
+          <div class="test__meta"><span class="chip">중1~고2 · 64문항</span><span class="chip chip--time">⏱ 20분</span></div>
+          <a class="test__go" href="#" data-toast="검사 실시 화면은 다음 단계에서 설계합니다">검사하기 ›</a>
+        </div>
+        <div class="test">
+          <div class="test__icon">⚖️</div>
+          <h3>직업가치관검사</h3>
+          <p>직업생활을 통하여 충족하고자 하는 욕구 또는 상대적으로 중요시하는 가치를 알아보는 검사</p>
+          <div class="test__meta"><span class="chip">중1~고2 · 28문항</span><span class="chip chip--time">⏱ 10분</span></div>
+          <a class="test__go" href="#" data-toast="검사 실시 화면은 다음 단계에서 설계합니다">검사하기 ›</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 대학생·일반 심리검사 -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section__title">대학생·일반 심리검사</h2>
+      <p class="section__sub">졸업생과 학부모도 이용할 수 있습니다</p>
+      <div class="tests" style="margin-top:28px">
+        <div class="test">
+          <div class="test__icon">⚖️</div>
+          <h3>직업가치관검사</h3>
+          <p>직업생활을 통하여 충족하고자 하는 욕구 또는 상대적으로 중요시하는 가치를 알아보는 검사</p>
+          <div class="test__meta"><span class="chip">대학생/일반 · 28문항</span><span class="chip chip--time">⏱ 10분</span></div>
+          <a class="test__go" href="#" data-toast="검사 실시 화면은 다음 단계에서 설계합니다">검사하기 ›</a>
+        </div>
+        <div class="test">
+          <div class="test__icon">🗺️</div>
+          <h3>진로개발준비도검사</h3>
+          <p>자신의 진로목표를 달성하기 위해 필요한 사항들에 대해 어느 정도 준비가 되어 있는지 측정</p>
+          <div class="test__meta"><span class="chip">대학생/일반 · 35문항</span><span class="chip chip--time">⏱ 25분</span></div>
+          <a class="test__go" href="#" data-toast="검사 실시 화면은 다음 단계에서 설계합니다">검사하기 ›</a>
+        </div>
+        <div class="test">
+          <div class="test__icon">🔬</div>
+          <h3>이공계전공적합도검사</h3>
+          <p>자연과학·공학계열 내의 11개 전공 교과에 대한 자신감과 직업 흥미 정도 측정</p>
+          <div class="test__meta"><span class="chip">대학생/일반 · 106문항</span><span class="chip chip--time">⏱ 30분</span></div>
+          <a class="test__go" href="#" data-toast="검사 실시 화면은 다음 단계에서 설계합니다">검사하기 ›</a>
+        </div>
+        <div class="test">
+          <div class="test__icon">📈</div>
+          <h3>주요능력효능감검사</h3>
+          <p>9가지 주요능력과 14개 직업군 각각에 대한 자신감이 표본집단 대학생들과 비교할 때 어느 수준인가를 측정</p>
+          <div class="test__meta"><span class="chip">대학생/일반 · 49문항</span><span class="chip chip--time">⏱ 20분</span></div>
+          <a class="test__go" href="#" data-toast="검사 실시 화면은 다음 단계에서 설계합니다">검사하기 ›</a>
+        </div>
+      </div>
+      <p class="src">※ 출처: 커리어넷(https://www.career.go.kr)</p>
+    </div>
+  </section>
+
+  <!-- 상담 연결 -->
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      <div class="band">
+        <div>
+          <h2>검사 결과, 함께 읽어드릴까요?</h2>
+          <p>서울진로진학정보센터 전문상담사와 1:1 상담으로 검사 결과를 해석하고 다음 단계를 계획하세요</p>
+        </div>
+        <a class="btn btn--primary btn--pill" href="counsel.html#book">서울진로진학정보센터 상담신청</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div style="display:flex;flex-wrap:wrap;gap:24px 36px;align-items:center">
+      <a class="footer__logo" href="news.html#center" style="display:inline-flex;align-items:center;background:#fff;border-radius:12px;padding:10px 16px"><img src="https://www.jinhak.or.kr/module/upload/file/selectImageView.do?atchFileId=10000002673&amp;fileSn=0" alt="서울진로진학정보센터 SEOUL CAREER GUIDANCE CENTER" style="height:44px;width:auto;display:block"></a>
+      <div style="display:flex;flex-direction:column;gap:8px;min-width:0;flex:1 1 420px">
+        <nav class="footer__links" style="display:flex;flex-wrap:wrap;gap:6px 0;font-size:14px;font-weight:700;color:#fff"><a href="#" style="padding:0 12px 0 0">서비스이용약관</a><a href="#" style="padding:0 12px;border-left:1px solid #4B5262;color:#7FA8FF">개인정보처리방침</a><a href="#" style="padding:0 12px;border-left:1px solid #4B5262">스팸방지정책</a><a href="#" style="padding:0 12px;border-left:1px solid #4B5262">이메일주소무단수집거부</a><a href="news.html#center" style="padding:0 12px;border-left:1px solid #4B5262">오시는길</a></nav>
+        <div class="footer__info" style="margin:0">서울 중구 소파로 46 (회현동1가, 서울특별시교육연구정보원) 서울진로진학정보센터 · TEL. (02)3111-362,3</div>
+        <div class="footer__copy" style="margin:0">©2012 서울진로진학정보센터 All Rights Reserved.</div>
+      </div>
+    </div>
+  </div>
+<div class="container footer__rel"><b>관련 사이트</b><nav aria-label="관련 사이트"><a href="https://www.sen.go.kr" target="_blank" rel="noopener" title="새 창">서울특별시교육청</a><a href="https://www.serii.re.kr" target="_blank" rel="noopener" title="새 창">서울특별시교육청교육연구정보원</a><a href="https://www.adiga.kr" target="_blank" rel="noopener" title="새 창">대입정보포털 어디가</a><a href="https://www.kice.re.kr" target="_blank" rel="noopener" title="새 창">한국교육과정평가원</a><a href="https://www.career.go.kr" target="_blank" rel="noopener" title="새 창">커리어넷</a><a href="https://www.work24.go.kr" target="_blank" rel="noopener" title="새 창">고용24(워크넷)</a><a href="https://www.moe.go.kr" target="_blank" rel="noopener" title="새 창">교육부</a><a href="https://www.keris.or.kr" target="_blank" rel="noopener" title="새 창">한국교육학술정보원(KERIS)</a><a href="https://www.neis.go.kr" target="_blank" rel="noopener" title="새 창">나이스 대국민서비스</a><a href="https://www.suneung.re.kr" target="_blank" rel="noopener" title="새 창">대학수학능력시험</a><a href="https://www.adiga.kr" target="_blank" rel="noopener" title="새 창">학생부종합전형 포털</a><a href="https://stas.moe.go.kr" target="_blank" rel="noopener" title="새 창">학생평가지원포털</a><a href="https://www.kcue.or.kr" target="_blank" rel="noopener" title="새 창">한국대학교육협의회</a><a href="https://www.kcce.or.kr" target="_blank" rel="noopener" title="새 창">한국전문대학교육협의회</a><a href="https://www.jinhak.or.kr" target="_blank" rel="noopener" title="새 창">서울진로진학정보센터</a></nav></div>
+</footer>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const toast=document.getElementById('toast');let toastT;
+function showToast(msg){toast.textContent=msg;toast.classList.add('is-on');clearTimeout(toastT);toastT=setTimeout(()=>toast.classList.remove('is-on'),2400);}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-toast]');if(t){e.preventDefault();showToast(t.dataset.toast);}});
+// 다크 모드 (메인과 동일한 저장키 공유)
+const btnTheme=document.getElementById('btnTheme');
+function applyTheme(t){if(t)document.documentElement.dataset.theme=t;btnTheme.textContent=(document.documentElement.dataset.theme==='dark'||(!document.documentElement.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches))?'☀️ 라이트':'🌙 다크';}
+applyTheme(localStorage.getItem('sen-theme'));
+btnTheme.addEventListener('click',()=>{const cur=document.documentElement.dataset.theme==='dark'||(!document.documentElement.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches);const next=cur?'light':'dark';localStorage.setItem('sen-theme',next);applyTheme(next);});
+</script>
+<script src="gnb.js"></script>
+<script src="sen-ai.js"></script>
+</body>
+</html>

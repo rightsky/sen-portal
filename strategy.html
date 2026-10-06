@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>지원전략 | 서울 진로진학 통합플랫폼</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root{
+  --brand:#1E5EFF;--brand-deep:#1247CC;--accent-yellow:#FFC531;--accent-sky:#3FB6FF;
+  --accent-green:#2ECC8A;--accent-purple:#7B5CFF;
+  --ink:#111318;--ink-2:#4B5563;--ink-3:#9CA3AF;--line:#E5E7EB;
+  --bg:#FFFFFF;--surface:#F5F6F8;--surface-2:#EEF1F5;--footer:#1F2430;
+  --radius-xl:28px;--radius-lg:20px;--radius-md:14px;--radius-pill:999px;
+  --shadow-1:0 4px 14px rgba(17,19,24,.06);--shadow-2:0 12px 32px rgba(17,19,24,.12);
+  --container:1280px;--gutter:24px;
+  --font:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,system-ui,"Noto Sans KR",sans-serif;
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#F3F4F6;--ink-2:#C7CBD3;--ink-3:#8B919C;--line:#2A2F3A;
+    --bg:#12141A;--surface:#1A1D25;--surface-2:#222632;--footer:#0C0E13;
+    --shadow-1:0 4px 14px rgba(0,0,0,.35);--shadow-2:0 12px 32px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#F3F4F6;--ink-2:#C7CBD3;--ink-3:#8B919C;--line:#2A2F3A;
+  --bg:#12141A;--surface:#1A1D25;--surface-2:#222632;--footer:#0C0E13;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;word-break:keep-all}
+a{color:inherit;text-decoration:none}
+a:hover{color:var(--brand)}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+.container{max-width:var(--container);margin:0 auto;padding:0 var(--gutter)}
+.section{padding:64px 0}
+.section--gray{background:var(--surface)}
+.section__title{font-size:30px;font-weight:800;letter-spacing:-.02em;margin:0;line-height:1.2}
+.section__sub{margin:8px 0 0;color:var(--ink-2);font-size:16px}
+
+/* Header */
+.brandbar{background:var(--surface);border-bottom:1px solid var(--line);font-size:13px}
+.brandbar .container{display:flex;justify-content:space-between;align-items:center;height:36px}
+.brandbar__sites{display:flex;gap:18px;font-weight:600;color:var(--ink-2)}
+.brandbar__sites a.is-active{color:var(--brand)}
+.brandbar__util{display:flex;gap:16px;color:var(--ink-2)}
+.header{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--line)}
+.header .container{display:flex;align-items:center;height:72px;gap:32px}
+.logo{font-weight:900;font-size:22px;letter-spacing:-.03em;display:flex;align-items:center;gap:8px}
+.logo__mark{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--brand),var(--accent-yellow))}
+.gnb{display:flex;gap:18px;margin-left:auto;font-weight:700;font-size:15px}
+.gnb a{padding:8px 2px;position:relative;white-space:nowrap}
+.gnb a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;border-radius:3px;background:var(--brand);transform:scaleX(0);transition:transform .25s var(--ease)}
+.gnb a:hover::after,.gnb a.is-active::after{transform:scaleX(1)}
+.header__actions{display:flex;gap:8px;align-items:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:var(--radius-md);font-weight:700;font-size:15px;transition:transform .2s var(--ease),background .2s,box-shadow .2s}
+.btn--primary{background:var(--brand);color:#fff;box-shadow:0 6px 16px rgba(30,94,255,.35)}
+.btn--primary:hover{background:var(--brand-deep);transform:translateY(-1px);color:#fff}
+.btn--ghost{background:var(--surface);color:var(--ink)}
+.btn--ghost:hover{background:var(--surface-2)}
+.btn--pill{border-radius:var(--radius-pill)}
+
+/* Page hero */
+.phero{background:linear-gradient(135deg,#1E5EFF,#7B5CFF);color:#fff;padding:64px 0 72px}
+.phero__crumb{font-size:13px;font-weight:600;opacity:.85;margin:0 0 16px}
+.phero__crumb a:hover{color:#fff;text-decoration:underline}
+.phero h1{font-size:44px;font-weight:900;letter-spacing:-.03em;line-height:1.15;margin:0 0 14px}
+.phero p{font-size:18px;max-width:640px;margin:0;opacity:.95}
+
+/* Intro card */
+.intro{margin-top:-36px;position:relative;z-index:2}
+.intro__card{background:var(--bg);border-radius:var(--radius-lg);box-shadow:var(--shadow-2);padding:28px 32px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center}
+.intro__card p{margin:0;color:var(--ink-2);font-size:16px}
+.intro__card strong{color:var(--ink)}
+
+/* Notice */
+.notice{background:var(--surface);border-radius:var(--radius-lg);padding:24px 28px;display:flex;gap:16px;align-items:flex-start}
+.notice__icon{width:40px;height:40px;border-radius:var(--radius-md);background:#FFF4D6;display:grid;place-items:center;font-size:18px;flex-shrink:0}
+:root[data-theme="dark"] .notice__icon{background:#3a3220}
+.notice h3{margin:0 0 6px;font-size:16px;font-weight:800}
+.notice p{margin:0;color:var(--ink-2);font-size:14.5px}
+
+/* Featured (종합검사) */
+.feature{border-radius:var(--radius-xl);background:linear-gradient(135deg,#1E5EFF,#3FB6FF);color:#fff;padding:44px 48px;display:grid;grid-template-columns:1fr auto;gap:28px;align-items:center;box-shadow:var(--shadow-2)}
+.feature__badge{display:inline-block;padding:6px 12px;border-radius:var(--radius-pill);background:var(--accent-yellow);color:#111;font-weight:800;font-size:13px;margin-bottom:14px}
+.feature h2{margin:0 0 10px;font-size:30px;font-weight:900;letter-spacing:-.02em}
+.feature p{margin:0;font-size:16px;opacity:.95;max-width:620px}
+.feature__actions{display:flex;flex-direction:column;gap:10px}
+.feature .btn--white{background:#fff;color:var(--brand)}
+.feature .btn--white:hover{transform:translateY(-1px)}
+.feature .btn--line{border:1.5px solid rgba(255,255,255,.6);color:#fff}
+.feature .btn--line:hover{background:rgba(255,255,255,.12);color:#fff}
+
+/* Test cards */
+.tests{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.test{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-lg);padding:26px;display:flex;flex-direction:column;gap:12px;transition:transform .2s var(--ease),box-shadow .2s}
+.test:hover{transform:translateY(-3px);box-shadow:var(--shadow-1)}
+.section--gray .test{border:0;box-shadow:var(--shadow-1)}
+.test__icon{width:48px;height:48px;border-radius:var(--radius-md);display:grid;place-items:center;font-size:22px;background:var(--surface)}
+.test h3{margin:0;font-size:19px;font-weight:800;letter-spacing:-.01em}
+.test p{margin:0;color:var(--ink-2);font-size:14.5px;flex:1}
+.test__meta{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:var(--radius-pill);font-size:12.5px;font-weight:700;background:var(--surface);color:var(--ink-2)}
+.chip--time{background:#EAF1FF;color:var(--brand)}
+:root[data-theme="dark"] .chip--time{background:#1d2a4d}
+.test__go{font-size:14px;font-weight:700;color:var(--brand);display:inline-flex;align-items:center;gap:4px;margin-top:2px}
+
+/* CTA band */
+.band{border-radius:var(--radius-xl);background:var(--footer);color:#fff;padding:40px 48px;display:flex;justify-content:space-between;align-items:center;gap:24px}
+.band h2{margin:0 0 6px;font-size:26px;font-weight:900;letter-spacing:-.02em}
+.band p{margin:0;opacity:.8;font-size:15px}
+
+.src{color:var(--ink-3);font-size:13px;margin:28px 0 0}
+
+/* Footer */
+.footer{background:var(--footer);color:#C7CBD3;padding:40px 0;margin-top:72px}
+.footer__top{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:20px}
+.footer__links{display:flex;gap:20px;font-weight:700;color:#fff;font-size:14px}
+.footer__family{display:flex;gap:16px;font-size:13px}
+.footer__info,.footer__copy{font-size:13px;color:#8B919C;margin-top:6px}
+.footer a:hover{color:#fff}
+
+.toast{position:fixed;left:50%;bottom:32px;transform:translate(-50%,16px);background:var(--ink);color:var(--bg);padding:12px 22px;border-radius:var(--radius-pill);font-weight:700;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:99}
+.toast.is-on{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:1100px){.gnb{display:none}}
+@media (max-width:860px){
+  .phero h1{font-size:32px}
+  .intro__card,.feature{grid-template-columns:1fr}
+  .tests{grid-template-columns:1fr 1fr}
+  .band{flex-direction:column;align-items:flex-start;padding:32px 24px}
+}
+@media (max-width:600px){.tests{grid-template-columns:1fr}.brandbar__sites a:not(.is-active){display:none}}
+
+/* ===== 나의 진로특성 ===== */
+.profile{margin-top:24px;position:relative;z-index:2}
+.profile__card{background:var(--bg);border-radius:var(--radius-lg);box-shadow:var(--shadow-2);padding:26px 32px;display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center}
+.avatar{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--brand),var(--accent-purple));color:#fff;display:grid;place-items:center;font-size:22px;font-weight:900}
+.profile__name{font-size:20px;font-weight:800;margin:0}
+.profile__meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.profile__stats{display:flex;gap:28px}
+.stat{text-align:center}
+.stat b{display:block;font-size:24px;font-weight:900;letter-spacing:-.02em}
+.stat span{font-size:13px;color:var(--ink-3);font-weight:600}
+.code{border-radius:var(--radius-xl);background:linear-gradient(135deg,#1E5EFF,#7B5CFF);color:#fff;padding:40px 44px;display:grid;grid-template-columns:auto 1fr;gap:36px;align-items:center;box-shadow:var(--shadow-2)}
+.code__letters{display:flex;gap:10px}
+.code__letters span{width:88px;height:104px;border-radius:20px;background:rgba(255,255,255,.16);display:grid;place-items:center;font-size:52px;font-weight:900}
+.code__letters span:first-child{background:#fff;color:var(--brand)}
+.code__eyebrow{display:inline-block;padding:6px 12px;border-radius:var(--radius-pill);background:var(--accent-yellow);color:#111;font-weight:800;font-size:13px;margin-bottom:12px}
+.code h2{margin:0 0 8px;font-size:30px;font-weight:900;letter-spacing:-.02em}
+.code p{margin:0;opacity:.95;max-width:620px}
+.traits{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:20px;margin-top:28px}
+.panel-c{background:var(--bg);border-radius:var(--radius-lg);box-shadow:var(--shadow-1);padding:26px;display:flex;flex-direction:column;gap:16px}
+.panel-c__head{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.panel-c h3{margin:0;font-size:18px;font-weight:800}
+.panel-c small{color:var(--ink-3);font-size:12.5px;font-weight:600}
+.bar{display:grid;grid-template-columns:72px 1fr 36px;gap:10px;align-items:center;font-size:14px;font-weight:700}
+.bar__track{height:10px;border-radius:999px;background:var(--surface-2);overflow:hidden}
+.bar__fill{height:100%;border-radius:999px;background:var(--ink-3);width:0;transition:width 1s var(--ease)}
+.bar.is-top .bar__fill{background:var(--brand)}
+.bar__val{text-align:right;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.rank{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none}
+.rank li{display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:var(--radius-md);background:var(--surface)}
+.rank em{font-style:normal;width:26px;height:26px;border-radius:50%;background:var(--brand);color:#fff;font-size:13px;font-weight:800;display:grid;place-items:center;flex-shrink:0}
+.rank li:nth-child(n+2) em{background:var(--ink-3)}
+.rank b{display:block;font-size:15px}
+.rank span{font-size:13px;color:var(--ink-2)}
+.tabs{display:flex;gap:8px;margin:24px 0}
+.tab{padding:10px 18px;border-radius:var(--radius-pill);background:var(--surface);font-weight:700;font-size:15px;color:var(--ink-2)}
+.tab.is-on{background:var(--ink);color:var(--bg)}
+.recs{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.rec{border:1px solid var(--line);border-radius:var(--radius-lg);padding:24px;display:flex;flex-direction:column;gap:12px;background:var(--bg);transition:transform .2s var(--ease),box-shadow .2s}
+.rec:hover{transform:translateY(-3px);box-shadow:var(--shadow-1)}
+.rec__top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.rec h3{margin:0;font-size:19px;font-weight:800}
+.rec__why{font-size:12.5px;font-weight:700;color:var(--brand)}
+.rec p{margin:0;color:var(--ink-2);font-size:14.5px;flex:1}
+.save{width:36px;height:36px;border-radius:50%;background:var(--surface);display:grid;place-items:center;font-size:16px;flex-shrink:0}
+.save.is-on{background:#FFE8EC}
+.kv{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0}
+.kv div{background:var(--surface);border-radius:12px;padding:10px;text-align:center}
+.kv dt{font-size:12px;color:var(--ink-3);font-weight:600}
+.kv dd{margin:2px 0 0;font-size:14px;font-weight:800}
+.hist{width:100%;border-collapse:collapse;font-size:15px}
+.hist th{text-align:left;font-size:13px;color:var(--ink-3);font-weight:700;padding:12px 16px;border-bottom:1px solid var(--line)}
+.hist td{padding:16px;border-bottom:1px solid var(--line)}
+.hist td:last-child{text-align:right}
+.status-done{color:var(--accent-green);font-weight:800}
+.status-todo{color:var(--ink-3);font-weight:700}
+.link{font-weight:700;color:var(--brand);font-size:14px}
+.two{display:grid;grid-template-columns:1.6fr 1fr;gap:20px;margin-top:28px}
+.empty{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.empty p{margin:0;color:var(--ink-2);font-size:14.5px}
+@media (max-width:860px){
+  .profile__card,.code,.traits,.two{grid-template-columns:1fr}
+  .recs{grid-template-columns:1fr 1fr}
+  .code__letters span{width:68px;height:80px;font-size:38px}
+}
+@media (max-width:600px){.recs{grid-template-columns:1fr}.profile__stats{gap:16px}}
+</style>
+<link rel="stylesheet" href="explore.css">
+<link rel="stylesheet" href="school.css">
+<link rel="stylesheet" href="news.css">
+<link rel="stylesheet" href="univ.css">
+<link rel="stylesheet" href="strategy.css">
+<style>.footer__rel{border-top:1px solid rgba(255,255,255,.12);margin-top:22px;padding-top:18px}.footer__rel b{display:block;font-size:13px;margin-bottom:8px;opacity:.8}.footer__rel nav{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;opacity:.8}.footer__rel a::after{content:" ↗";font-size:11px}</style>
+</head>
+<body>
+
+<div class="brandbar">
+  <div class="container">
+    <nav class="brandbar__sites" aria-label="패밀리 사이트">
+      <a class="is-active" href="main-everland-style.html">서울 진로진학 통합플랫폼</a>
+      <a href="#">서울특별시교육청</a><a href="#">서울특별시교육청교육연구정보원</a><a href="#">커리어넷</a><a href="#">대입정보포털 어디가</a>
+    </nav>
+    <div class="brandbar__util"><a href="#" data-toast="로그인 화면은 다음 단계에서 설계합니다">로그인</a><button id="btnTheme" aria-label="화면 모드 전환" style="font-size:13px;color:var(--ink-2)">🌙 다크</button></div>
+  </div>
+</div>
+
+<header class="header">
+  <div class="container">
+    <a class="logo" href="main-everland-style.html"><span class="logo__mark"></span>서울 진로진학 통합플랫폼</a>
+    <nav class="gnb" aria-label="주메뉴">
+      <a href="#">미래탐색</a><a href="#" >학교·과목설계</a><a href="#" >대학·전형탐색</a><a href="#" class="is-active">지원전략</a><a href="#">상담·체험</a><a href="#">나의 진로진학</a><a href="#" >자료·소식</a>
+    </nav>
+    <div class="header__actions">
+      <a class="btn btn--ghost btn--pill" href="main-everland-style.html">← 메인으로</a>
+      <a class="btn btn--primary btn--pill" href="counsel.html#book">상담 예약</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="phero"><div class="container">
+    <p class="phero__crumb"><a href="main-everland-style.html">홈</a> › 지원전략 › <span id="crumbL2"></span> › <strong id="crumbL3">내신·모의고사</strong></p>
+    <h1 id="h1"></h1><p id="hdesc"></p>
+  </div></section>
+  <nav id="lnb" data-l1="지원전략" data-current="내신·모의고사"></nav>
+  <section class="ptabs"><div class="container"><nav class="ptabs__in" id="ptabs" aria-label="하위 메뉴"></nav></div></section>
+  <section class="section" style="padding-top:28px"><div class="container">
+    <div id="gateBox"></div>
+    <div class="pane" id="pane-grades"><div class="rbar" style="margin-top:0"><div class="seg" id="gSeg" style="background:var(--surface);min-width:260px"><button data-gt="grades">내신 (5등급제)</button><button data-gt="mock">모의고사</button></div><span class="hint" style="margin:0">입력은 간단하게 · 세부 성적은 상담에서</span></div><div id="gSave" style="margin-top:16px"></div><div id="gBody" style="margin-top:16px"></div></div>
+    <div class="pane" id="pane-record"><div id="recBody"></div></div>
+    <div class="pane" id="pane-analysis"><div id="anBody"></div></div>
+    <div class="pane" id="pane-convert"><div id="cvBody"></div></div>
+    <div class="pane" id="pane-result"><div id="rsBody"></div></div>
+    <div class="pane" id="pane-possible"><div id="psBody"></div></div>
+    <div class="pane" id="pane-cmp"><div id="cmBody"></div></div>
+    <div class="pane" id="pane-plan"><div id="plBody"></div></div>
+    <div class="pane" id="pane-check"><div class="rbar" style="margin-top:0"><div><h2 class="section__title" style="font-size:24px">선생님과 함께 살펴볼 점</h2><p class="section__sub">지원계획을 보고 질문거리를 정리한 것입니다. 판단은 상담에서 함께 해요 <a class="link" href="#plan">계획 고치기 ›</a></p></div></div><div id="ckBody"></div></div>
+    <div class="pane" id="pane-interview"><div id="ivBody"></div></div>
+    <div class="pane" id="pane-aiint"><div class="rbar" style="margin-top:0"><div><h2 class="section__title" style="font-size:24px">AI 면접 연습</h2><p class="section__sub">혼자 말해 보는 연습입니다. 점수를 매기지 않고, 끝나면 스스로 점검해요. 실제 피드백은 선생님과의 모의 면접에서 받습니다</p></div><div class="fchips" id="aiTypes"></div></div><div id="aiBody" style="margin-top:16px"></div><div id="aiLog"></div></div>
+    <div class="pane" id="pane-exam"><div class="rbar" style="margin-top:0"><div><h2 class="section__title" style="font-size:24px">대학별고사 자료</h2><p class="section__sub">논술·면접·실기 기출과 안내 자료입니다. 대학은 선행학습 영향평가 보고서로 기출을 공개합니다</p></div><div class="fchips" id="exTabs"></div></div><ul class="rows" id="exList" style="margin-top:16px"></ul><p class="hint">※ 자료 목록은 예시입니다</p></div>
+  </div></section>
+</main>
+<footer class="footer">
+  <div class="container">
+    <div style="display:flex;flex-wrap:wrap;gap:24px 36px;align-items:center">
+      <a class="footer__logo" href="news.html#center" style="display:inline-flex;align-items:center;background:#fff;border-radius:12px;padding:10px 16px"><img src="https://www.jinhak.or.kr/module/upload/file/selectImageView.do?atchFileId=10000002673&amp;fileSn=0" alt="서울진로진학정보센터 SEOUL CAREER GUIDANCE CENTER" style="height:44px;width:auto;display:block"></a>
+      <div style="display:flex;flex-direction:column;gap:8px;min-width:0;flex:1 1 420px">
+        <nav class="footer__links" style="display:flex;flex-wrap:wrap;gap:6px 0;font-size:14px;font-weight:700;color:#fff"><a href="#" style="padding:0 12px 0 0">서비스이용약관</a><a href="#" style="padding:0 12px;border-left:1px solid #4B5262;color:#7FA8FF">개인정보처리방침</a><a href="#" style="padding:0 12px;border-left:1px solid #4B5262">스팸방지정책</a><a href="#" style="padding:0 12px;border-left:1px solid #4B5262">이메일주소무단수집거부</a><a href="news.html#center" style="padding:0 12px;border-left:1px solid #4B5262">오시는길</a></nav>
+        <div class="footer__info" style="margin:0">서울 중구 소파로 46 (회현동1가, 서울특별시교육연구정보원) 서울진로진학정보센터 · TEL. (02)3111-362,3</div>
+        <div class="footer__copy" style="margin:0">©2012 서울진로진학정보센터 All Rights Reserved.</div>
+      </div>
+    </div>
+  </div>
+<div class="container footer__rel"><b>관련 사이트</b><nav aria-label="관련 사이트"><a href="https://www.sen.go.kr" target="_blank" rel="noopener" title="새 창">서울특별시교육청</a><a href="https://www.serii.re.kr" target="_blank" rel="noopener" title="새 창">서울특별시교육청교육연구정보원</a><a href="https://www.adiga.kr" target="_blank" rel="noopener" title="새 창">대입정보포털 어디가</a><a href="https://www.kice.re.kr" target="_blank" rel="noopener" title="새 창">한국교육과정평가원</a><a href="https://www.career.go.kr" target="_blank" rel="noopener" title="새 창">커리어넷</a><a href="https://www.work24.go.kr" target="_blank" rel="noopener" title="새 창">고용24(워크넷)</a><a href="https://www.moe.go.kr" target="_blank" rel="noopener" title="새 창">교육부</a><a href="https://www.keris.or.kr" target="_blank" rel="noopener" title="새 창">한국교육학술정보원(KERIS)</a><a href="https://www.neis.go.kr" target="_blank" rel="noopener" title="새 창">나이스 대국민서비스</a><a href="https://www.suneung.re.kr" target="_blank" rel="noopener" title="새 창">대학수학능력시험</a><a href="https://www.adiga.kr" target="_blank" rel="noopener" title="새 창">학생부종합전형 포털</a><a href="https://stas.moe.go.kr" target="_blank" rel="noopener" title="새 창">학생평가지원포털</a><a href="https://www.kcue.or.kr" target="_blank" rel="noopener" title="새 창">한국대학교육협의회</a><a href="https://www.kcce.or.kr" target="_blank" rel="noopener" title="새 창">한국전문대학교육협의회</a><a href="https://www.jinhak.or.kr" target="_blank" rel="noopener" title="새 창">서울진로진학정보센터</a></nav></div>
+</footer>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const toast=document.getElementById('toast');let toastT;
+function showToast(msg){toast.textContent=msg;toast.classList.add('is-on');clearTimeout(toastT);toastT=setTimeout(()=>toast.classList.remove('is-on'),2400);}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-toast]');if(t){e.preventDefault();showToast(t.dataset.toast);}});
+// 다크 모드 (메인과 동일한 저장키 공유)
+const btnTheme=document.getElementById('btnTheme');
+function applyTheme(t){if(t)document.documentElement.dataset.theme=t;btnTheme.textContent=(document.documentElement.dataset.theme==='dark'||(!document.documentElement.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches))?'☀️ 라이트':'🌙 다크';}
+applyTheme(localStorage.getItem('sen-theme'));
+btnTheme.addEventListener('click',()=>{const cur=document.documentElement.dataset.theme==='dark'||(!document.documentElement.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches);const next=cur?'light':'dark';localStorage.setItem('sen-theme',next);applyTheme(next);});
+</script>
+<script src="explore-data.js"></script>
+<script src="auth.js"></script>
+<script src="univ-data.js"></script>
+<script src="strategy.js"></script>
+<script src="gnb.js"></script>
+<script src="sen-ai.js"></script>
+</body>
+</html>

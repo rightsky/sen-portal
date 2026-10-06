@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>교사 상담 준비 어시스턴트 | 서울 진로진학 통합플랫폼</title>
+<!-- 기본 기기: 교사 태블릿 (가로 1024) · 폰은 목록 → 상세 이동형 축약판 -->
+<!-- 기능명세: AI-CNS-01 우리 반 현황 · AI-CNS-02 프로파일/규칙 R1~R7 · AI-CNS-03 AI 브리프 · AI-CNS-04 확정/공유 · AI-CNS-05 평가 모드 · PT-SH 연계 -->
+<style>
+:root{--brand:#1E5EFF;--teacher:#E07B00;--teal:#1F7D76;--ink:#17191D;--ink-2:#44474D;--ink-3:#767A82;--line:#E3E5E9;--surface:#F4F5F7;--surface-2:#E9EBEF;--bg:#fff;--radius:14px}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:'Pretendard','Noto Sans KR',-apple-system,sans-serif;color:var(--ink);background:var(--surface);font-size:15px;line-height:1.55}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:var(--brand)}a:hover{color:#0E3FBF}
+.topbar{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid var(--line);padding:10px 18px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.topbar b{font-size:16px}
+.src{display:inline-block;font-size:11.5px;font-weight:800;padding:2px 8px;border-radius:999px}
+.src--syn{background:#E2F2F0;color:var(--teal)}.src--rule{background:var(--surface-2);color:var(--ink-2)}.src--ai{background:#EAF1FF;color:var(--brand)}.src--gray{background:var(--surface-2);color:var(--ink-3)}
+.topbar .note{font-size:12.5px;color:var(--ink-3)}
+.topbar .sp{margin-left:auto;display:flex;gap:8px;align-items:center}
+.selx{font:inherit;font-size:13.5px;font-weight:700;padding:7px 10px;border-radius:10px;border:1.5px solid var(--line);background:#fff}
+#evalBtn{border:1.5px solid var(--ink-3);border-radius:999px;padding:7px 14px;font-size:13.5px;font-weight:700}
+#evalBtn[aria-pressed="true"]{background:#5B6273;color:#fff;border-color:#5B6273}
+.wrap{display:grid;grid-template-columns:minmax(300px,1fr) 2fr;gap:16px;padding:16px;max-width:1400px;margin:0 auto}
+.col-l{display:flex;flex-direction:column;gap:12px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+.ckpis{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ckpi{background:var(--surface);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column}
+.ckpi span{font-size:12px;font-weight:700;color:var(--ink-3)}.ckpi b{font-size:19px}.ckpi small{font-size:11.5px;color:var(--ink-3)}
+.dists{display:flex;flex-direction:column;gap:12px;margin-top:12px}
+.dists h4{margin:0 0 6px;font-size:12.5px;color:var(--ink-3)}
+.dist-r{display:grid;grid-template-columns:120px 1fr 24px;gap:8px;align-items:center;font-size:12.5px;margin-bottom:4px}
+.dist-t{height:10px;border-radius:999px;background:var(--surface-2);overflow:hidden}
+.dist-t i{display:block;height:100%}
+.dist-t .d0{background:#2A6BF3}.dist-t .d1{background:#1F7D76}.dist-t .d2{background:#E07B00}.dist-t .d3{background:#5B6273}
+.fchips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.fchip{padding:7px 12px;border-radius:999px;background:var(--surface);font-size:12.5px;font-weight:700;border:1.5px solid transparent;min-height:34px}
+.fchip.is-on{background:var(--teacher);color:#fff}
+.lhead{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;color:var(--ink-3);font-weight:700}
+.list{display:flex;flex-direction:column;gap:6px;margin-top:8px;max-height:56vh;overflow:auto}
+.srow{flex-shrink:0;display:flex;gap:10px;align-items:center;text-align:left;padding:10px 12px;border-radius:12px;border:1.5px solid var(--line);background:#fff;min-height:48px}
+.srow:hover{border-color:var(--teacher)}
+.srow.is-sel{border-color:var(--teacher);background:#FDF3E7}
+.srow__no{width:26px;height:26px;border-radius:50%;background:var(--surface-2);display:grid;place-items:center;font-size:12px;font-weight:800;flex-shrink:0}
+.srow__m{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.srow__m b{font-size:14.5px}.srow__m small{font-size:12px;color:var(--ink-3)}
+.srow__tags{display:flex;gap:4px;flex-wrap:wrap}
+.srow__tags i{font-style:normal;font-size:10.5px;font-weight:800;padding:1px 6px;border-radius:999px;background:#FDF3E7;color:#9A5500}
+.st{font-size:11px;font-weight:800;padding:3px 8px;border-radius:999px;white-space:nowrap;flex-shrink:0}
+.st--draft{background:var(--surface-2);color:var(--ink-3)}.st--rev{background:#FFF1D6;color:#9A6200}.st--ok2{background:#E7F3E9;color:#1E7A35}.st--share{background:#EAF1FF;color:var(--brand)}.st--dim{background:var(--surface);color:#B4B8C0}
+.col-r{display:flex;flex-direction:column;gap:0}
+.dhead{background:#fff;border:1px solid var(--line);border-radius:var(--radius) var(--radius) 0 0;padding:16px 18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.dhead b{font-size:18px}.dhead>span{font-size:13px;color:var(--ink-3)}
+.ptag{font-style:normal;font-size:11px;font-weight:800;padding:2px 8px;border-radius:999px;background:#FDF3E7;color:#9A5500}
+.dtabs{display:flex;gap:0;background:#fff;border:1px solid var(--line);border-top:0;padding:0 12px}
+.dtab{padding:12px 16px;font-weight:800;font-size:14.5px;color:var(--ink-3);border-bottom:3px solid transparent;min-height:44px}
+.dtab.is-on{color:var(--teacher);border-color:var(--teacher)}
+.detail{background:#fff;border:1px solid var(--line);border-top:0;border-radius:0 0 var(--radius) var(--radius);padding:20px}
+.reason{margin:0 0 14px;font-size:12.5px;color:var(--ink-3);background:var(--surface);border-radius:8px;padding:8px 12px}
+.blk-h{margin:22px 0 10px;font-size:16px;font-weight:800;display:flex;gap:8px;align-items:center}
+.blk-h:first-of-type{margin-top:0}
+.blk-tg{font:inherit;font-weight:800;display:flex;gap:8px;align-items:center;padding:0}
+.tl{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tl-s{background:var(--surface);border-radius:10px;padding:10px 14px;display:flex;flex-direction:column}
+.tl-s small{font-size:11.5px;color:var(--ink-3);font-weight:700}.tl-s b{font-size:14.5px}
+.tl-s em{font-style:normal;font-size:11px;font-weight:800;color:#9A5500}
+.tl-a{color:var(--ink-3)}
+.ctable-w{overflow-x:auto}
+.ctbl{border-collapse:collapse;width:100%;font-size:13.5px}
+.ctbl th,.ctbl td{border:1px solid var(--line);padding:8px 10px;text-align:center}
+.ctbl thead th{background:var(--surface);font-size:12.5px}
+.ctbl tbody th{background:var(--surface);text-align:left}
+.tcards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tcard{border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:6px}
+.tcard__h{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.tcard__h b{font-size:14px}
+.tcard p{margin:0;font-size:13.5px;color:var(--ink-2)}
+.tcard small{font-size:11px;color:var(--ink-3)}
+.mini{padding:7px 12px;border-radius:999px;background:var(--surface);font-size:12.5px;font-weight:700;min-height:34px}
+.mini:hover{background:var(--surface-2)}
+.mini.is-on{background:var(--teacher);color:#fff}
+.mini-kv{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:4px 12px;margin:6px 0 0}
+.mini-kv div{display:flex;justify-content:space-between;font-size:12.5px;border-bottom:1px dashed var(--line);padding:3px 0}
+.mini-kv dt{color:var(--ink-3)}.mini-kv dd{margin:0;font-weight:700}
+.hint2{font-size:12.5px;color:var(--ink-3)}
+.rules{display:flex;flex-direction:column;gap:6px}
+.rrow{display:flex;gap:10px;align-items:center;background:var(--surface);border-radius:10px;padding:10px 12px;font-size:13.5px;flex-wrap:wrap}
+.rrow b{color:#9A5500}
+.rrow span{flex:1;min-width:200px}
+.ok-line{background:#E7F3E9;color:#1E7A35;border-radius:10px;padding:10px 14px;font-size:13.5px;font-weight:700;margin:0}
+.raw-h{margin:16px 0 8px;font-size:13.5px;color:var(--ink-3)}
+.rec-item{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:6px;font-size:13.5px}
+.rec-item b{display:block;font-size:12.5px;color:var(--ink-3);margin-bottom:2px}
+.rec-item p{margin:0}
+.rec-item.is-hl{outline:2px solid var(--teacher)}
+mark{background:#FFE9A8;outline:1.5px solid #E0B200;border-radius:3px;padding:0 2px}
+.ai-label{background:#EAF1FF;color:#1E4FD6;border-radius:10px;padding:10px 14px;font-size:13px;font-weight:700;margin-bottom:6px}
+.gen-line{font-size:12px;color:var(--ink-3);margin:0 0 12px}
+.bcard{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px}
+.bcard.is-rej{opacity:.55}
+.bcard__top{display:flex;gap:8px;align-items:center;margin-bottom:6px}
+.bk{font-size:11.5px;font-weight:800;padding:2px 9px;border-radius:999px}
+.bk--0{background:#E7F3E9;color:#1E7A35}.bk--1{background:#EAF1FF;color:var(--brand)}.bk--2{background:#FDF3E7;color:#9A5500}
+.bcard__t{margin:0 0 8px;font-size:15px;font-weight:600}
+.bcard__orig{margin:0 0 8px;font-size:12.5px;color:var(--ink-3);background:var(--surface);border-radius:8px;padding:6px 10px}
+.bcard__ev{display:flex;flex-direction:column;gap:4px;border-top:1px dashed var(--line);padding-top:8px;margin-bottom:10px}
+.ev{font-size:12.5px;color:var(--ink-2);text-align:left;padding:0}
+.ev--q{color:var(--brand);text-decoration:underline;cursor:pointer}
+.bcard__act{display:flex;gap:6px}
+.memo{width:100%;font:inherit;font-size:14px;padding:10px;border:1.5px solid var(--line);border-radius:10px}
+.btn-p{background:var(--teacher);color:#fff;font-weight:800;padding:12px 22px;border-radius:999px;min-height:44px}
+.btn-p[disabled]{opacity:.5;cursor:default}
+.btn-o{border:1.5px solid var(--ink-3);border-radius:999px;padding:11px 20px;font-weight:700;min-height:44px}
+.btn-o[disabled]{opacity:.5;cursor:default}
+.flow2{display:flex;gap:6px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
+.flow2 i{font-style:normal;color:var(--ink-3)}
+.share-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.preview-box{border:1.5px dashed var(--line);border-radius:12px;padding:16px;font-size:14px}
+.preview-box b{display:block;margin-top:10px;font-size:13px}
+.preview-box p{margin:4px 0}
+.preview-box small{display:block;margin-top:10px;font-size:11.5px;color:var(--ink-3)}
+.empty2{text-align:center;padding:40px 0;color:var(--ink-3)}
+.empty2 b{display:block;font-size:17px;color:var(--ink)}
+.eval .ctbl td{font-variant-numeric:tabular-nums}
+#toast2{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(8px);background:#17191D;color:#fff;font-size:13.5px;font-weight:700;padding:11px 18px;border-radius:999px;opacity:0;visibility:hidden;transition:all .25s;z-index:99;max-width:90vw}
+#toast2.is-on{opacity:1;visibility:visible;transform:translateX(-50%)}
+@media (prefers-reduced-motion:reduce){#toast2{transition:none}}
+@media (max-width:900px){.wrap{grid-template-columns:1fr}.list{max-height:38vh}.tcards,.share-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a href="main-everland-style.html" style="font-weight:800;text-decoration:none;white-space:nowrap">← 통합플랫폼</a>
+  <b>교사 상담 준비 어시스턴트</b>
+  <span style="font-size:13px;color:var(--ink-2)">3학년 3반 · 담임 (가상)</span>
+  <span class="src src--syn">합성데이터</span>
+  <span class="note">실제 학생 아님 · 2015 개정 교육과정 형식의 합성 사례 · 기본 기기: 교사 태블릿</span>
+  <span class="sp">
+    <span class="note" id="roleNote"></span>
+    <select class="selx" id="roleSel" aria-label="역할(시연)"><option>담임</option><option>과목교사</option><option>진학부장</option><option>교육청</option></select>
+    <button id="evalBtn" aria-pressed="false" style="display:none">평가 모드</button>
+  </span>
+</div>
+<div class="wrap">
+  <aside class="col-l">
+    <div class="panel">
+      <div class="ckpis" id="kpis"></div>
+      <div class="dists" id="dists"></div>
+    </div>
+    <div class="panel">
+      <div class="lhead"><span>학생 <em id="cnt" style="font-style:normal;color:var(--teacher)"></em></span><select class="selx" id="sortSel" aria-label="정렬"><option value="priority">우선점수순</option><option value="no">번호순</option></select></div>
+      <div class="fchips" id="fchips"></div>
+      <div class="list" id="list"></div>
+    </div>
+  </aside>
+  <main class="col-r">
+    <div class="dhead" id="dhead"></div>
+    <div class="dtabs" id="dtabs" role="tablist"></div>
+    <div class="detail" id="detail"></div>
+  </main>
+</div>
+<script src="cns-data.js"></script>
+<script src="cns.js"></script>
+</body>
+</html>
