@@ -5,7 +5,9 @@ const KEY='sen-school-v1';let SV=JSON.parse(localStorage.getItem(KEY)||'{"saved"
 let ans=[];
 function renderTypes(){
   $('typeGrid').innerHTML=TYPES.map(t=>`<article class="xcard" data-type="${t.id}" tabindex="0"><div><span class="xcard__cat">${t.round} 선발</span><h3>${t.name}</h3></div><p>${t.desc}</p><div class="ria">${t.tags.map(x=>`<span>${x}</span>`).join('')}</div></article>`).join('');
-  $('typeTable').innerHTML=`<div class="ctable-w"><table class="ctable"><thead><tr><th>유형</th><th>선발 시기</th><th>선발 방식</th><th>이런 학생에게 어울려요</th></tr></thead><tbody>${TYPES.map(t=>`<tr><th style="color:var(--ink);font-size:15px">${t.name}</th><td>${t.round}</td><td>${t.sel}</td><td>${t.fit}</td></tr>`).join('')}</tbody></table></div>`;
+  $('typeTable').innerHTML=`<div class="ctable-w"><table class="ctable"><thead><tr><th>유형</th><th>선발 시기</th><th>선발 방식</th><th>이런 학생에게 어울려요</th></tr></thead><tbody>${TYPES.map(t=>`<tr><th style="color:var(--ink);font-size:15px">${t.name}</th><td>${t.round}</td><td>${t.sel}</td><td>${t.fit}</td></tr>`).join('')}</tbody></table></div>
+  <div class="ud" style="margin-top:24px"><div class="panel-c" style="border:1px solid var(--line);box-shadow:none"><h3>고교 선택의 첫 기준은 '내신 확보 가능성'</h3><p style="margin:0;color:var(--ink-2);font-size:14.5px">명성이나 입결이 아니라, 우리 아이가 이 학교에서 필요한 과목을 선택하고 끝까지 성취할 수 있는가가 기준이에요.</p><ul class="reading"><li><b>비교는 이 네 가지로</b>교육과정표 · 개설 과목 · 공동교육과정 유무 · 통학과 생활 리듬</li><li><b>아이 성향도 함께</b>경쟁 스트레스를 어느 정도 감당하는지, 미리 배운 내용을 스스로 소화했는지</li></ul></div>
+  <div class="panel-c" style="background:var(--surface);box-shadow:none"><h3>학교 선택 뒤에는 주전형 구도를</h3><ul class="reading"><li><b>내신 확보가 쉬운 학교</b>교과 전형 주력 + 학종 보조가 기본 구도예요</li><li><b>경쟁이 치열한 학교</b>심화된 학교생활 기록 기반 학종이나 정시 주력을 고려해요</li><li><b>어느 쪽이든</b>수능 최저를 못 맞추면 교과 전형은 의미가 없으니 기본 학력은 항상 함께 가요</li></ul><p class="hint" style="margin:0">진로진학 도서의 원칙을 재구성한 안내예요 · 유형별 유불리는 상담에서 아이 상황으로 함께 봅니다</p></div></div>`;
   renderQuiz();
 }
 function renderQuiz(){

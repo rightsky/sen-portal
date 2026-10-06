@@ -1,9 +1,9 @@
 (function(){
 const {RES,GRADES,NOW_PICK,VIDEOS,EVENTS,TEACHER,PLAYLIST}=ND;const A=SEN_AUTH;const $=id=>document.getElementById(id);
 const K='sen-lib-v1';let S=JSON.parse(localStorage.getItem(K)||'{"scrap":[],"applied":[]}');const save=()=>localStorage.setItem(K,JSON.stringify(S));
-const GROUP={mid:'res',hs12:'res',hs3:'res',video:'media',briefing:'media',teacher:'media'};
-const L3={mid:'중학생 자료',hs12:'고1·2 자료',hs3:'고3·졸업생 자료',video:'진로 영상',briefing:'진학 설명회',teacher:'교사 추천 자료'};
-const L2={res:'맞춤 자료실',media:'영상·설명회 자료'};
+const GROUP={mid:'res',hs12:'res',hs3:'res',video:'media',briefing:'media',teacher:'media',guides:'guide',parents:'guide',ethics:'guide'};
+const L3={mid:'중학생 자료',hs12:'고1·2 자료',hs3:'고3·졸업생 자료',video:'진로 영상',briefing:'진학 설명회',teacher:'교사 추천 자료',guides:'탐구·활동 작성 틀',parents:'학부모 가이드',ethics:'기록 윤리 안내'};
+const L2={res:'맞춤 자료실',media:'영상·설명회 자료',guide:'작성 틀·안내'};
 const ICON={'자료집':'📘','안내서':'📗','가이드북':'📙','동영상':'🎬','워크시트':'📝'};
 const needLogin=msg=>{if(A.logged())return false;showToast(msg);A.open();return true;};
 /* ── 맞춤 자료실 ── */
@@ -45,14 +45,33 @@ let tMine=false;
 function renderTeacher(){$('tMine').classList.toggle('is-on',tMine);
   const L=TEACHER.filter(t=>!tMine||t.mine);
   $('tList').innerHTML=(tMine&&!A.logged())?A.gate('🏫','우리 학교 선생님 추천은 로그인 후 볼 수 있어요','학생 정보에 등록된 학교 선생님이 추천한 자료를 모아 보여드립니다.'):L.map(t=>`<article class="tc"><div class="fb__who"><span class="avatar" style="width:44px;height:44px;font-size:16px">${t.t[0]}</span><div><b>${t.t} 선생님</b><small>${t.sch} · ${t.sub}${t.mine&&A.logged()?' · 우리 학교':''}</small></div><span class="tb tb--2" style="margin-left:auto">${t.for} 추천</span></div><p class="tc__note">“${t.note}”</p><button class="tc__res" data-res="${t.rid}">📎 ${t.title}<span>›</span></button></article>`).join('');}
+/* ── 작성 틀·안내 ── */
+const RGF=[['mot','동기','왜 이 주제였나요? (수업·책·경험에서 시작)'],['q','질문','답할 수 있는 크기로 좁힌 질문 한 개'],['mth','방법','무엇을 어떻게 조사·실험·비교했나요?'],['ev','근거','찾은 자료와 결과. 출처를 함께'],['lim','한계','이 방법으로 알 수 없는 것, 다음 질문']];
+function renderGuides(){const d=JSON.parse(localStorage.getItem('sen-report-v1')||'{}');
+  $('guidesBody').innerHTML=`<div class="rbar" style="margin-top:0"><div><h2 class="section__title" style="font-size:24px">탐구보고서 작성 틀</h2><p class="section__sub">동기 → 질문 → 방법 → 근거 → 한계. 분량이 짧아도 이 다섯 단계가 있으면 검증 가능한 글이 돼요</p></div><button class="btn btn--ghost btn--pill" data-dl="탐구보고서 작성 틀" data-ext="HWP">틀 내려받기</button></div>
+  <div class="ud" style="margin-top:18px"><div class="panel-c" style="border:1px solid var(--line);box-shadow:none"><h3>온라인으로 작성하기</h3>${RGF.map(f=>`<label class="fld">${f[1]}<textarea class="memo" data-rg="${f[0]}" placeholder="${f[2]}" style="min-height:64px">${d[f[0]]||''}</textarea></label>`).join('')}<div style="display:flex;gap:8px"><button class="btn btn--primary btn--pill" id="rgSave">임시 저장</button><button class="btn btn--ghost btn--pill" data-toast="작성한 내용을 파일로 내려받습니다">파일로 내보내기</button></div><p class="hint" style="margin:0">이 기기에만 저장돼요. 완성본은 수업 담당 선생님과 공유하세요 — 생기부는 선생님이 관찰한 것을 적는 문서라, 탐구 과정을 적극적으로 공유하는 게 중요해요.</p></div>
+  <div><div class="panel-c" style="background:var(--surface);box-shadow:none"><h3>단계별 팁</h3><ul class="reading"><li><b>질문 좁히기</b>관찰 대상·비교 기준·자료 범위를 좁히면 답할 수 있는 질문이 돼요</li><li><b>근거 ≠ 결론</b>결과가 예상과 달라도 좋아요. 왜 다른지가 다음 질문이 돼요</li><li><b>한계 쓰기</b>한계를 정직하게 쓰면 오히려 사고 과정이 잘 보여요</li></ul></div>
+  <div class="panel-c" style="margin-top:16px;border:1px solid var(--line);box-shadow:none"><h3>함께 쓰면 좋은 도구</h3><ul class="reading"><li><b>활동 성장 노트</b>계기·질문·과정·변화·다음 5문장 기록 <a class="link" href="my.html#notes">바로가기 ›</a></li><li><b>60초 설명 연습</b>탐구를 내 말로 설명하는 연습 <a class="link" href="strategy.html#interview">바로가기 ›</a></li></ul></div></div></div>`;}
+function renderParents(){const d=JSON.parse(localStorage.getItem('sen-parent-v1')||'{}');
+  const QC=[['성적 왜 이렇게 떨어졌어?','이번 시험에서 제일 아쉬운 과목은 뭐고, 다음에 뭘 바꿔볼 생각이야?'],['이 활동 생기부에 도움 돼?','그 활동 하면서 제일 궁금했던 게 뭐였어?'],['진로 아직도 못 정했어?','요즘 어떤 문제를 보면 더 알고 싶어져?'],['그 책 다 읽었어?','그 책에서 생각이 바뀐 부분이 있었어?'],['동아리에서 뭐 했어?','동아리에서 네 역할은 뭐였고, 어려웠던 건 어떻게 풀었어?'],['이 과목 왜 골랐어?','그 과목 수업에서 요즘 무슨 질문이 생겼어?']];
+  $('parentsBody').innerHTML=`<div class="rbar" style="margin-top:0"><div><h2 class="section__title" style="font-size:24px">학부모 질문 카드</h2><p class="section__sub">부모는 기록을 평가하는 사람이 아니라, 아이가 자기 경험을 설명하도록 묻는 사람이에요</p></div></div>
+  <div class="preview" style="margin-top:18px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">${QC.map(q=>`<div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:13px;color:#C43B3B;text-decoration:line-through">${q[0]}</span><b>💬 ${q[1]}</b></div>`).join('')}</div>
+  <div class="ud" style="margin-top:24px"><div class="panel-c" style="border:1px solid var(--line);box-shadow:none"><div class="panel-c__head"><h3>월간 정리 문장</h3><small>한 달에 세 칸</small></div><p style="margin:0;color:var(--ink-2);font-size:14.5px">이번 달 아이를 관찰한 것을 세 문장으로만 남겨요.</p><label class="fld">이번 달 아이가 관심을 보인 것<input class="gsel" style="width:100%;text-align:left" data-pm="a" value="${d.a||''}" placeholder="예: 통계 그래프 만드는 일"></label><label class="fld">아이가 어려워한 것<input class="gsel" style="width:100%;text-align:left" data-pm="b" value="${d.b||''}" placeholder="예: 수학 시험 시간 부족"></label><label class="fld">내가 도운 방법 (혐다·고친다가 아니라)<input class="gsel" style="width:100%;text-align:left" data-pm="c" value="${d.c||''}" placeholder="예: 설명을 끝까지 들었다"></label><button class="btn btn--primary btn--pill" id="pmSave" style="align-self:flex-start">저장</button></div>
+  <div><div class="panel-c" style="background:var(--surface);box-shadow:none"><h3>보호자가 볼 수 있는 것</h3><ul class="reading"><li><b>아이가 허락한 항목만</b>검사 결과·관심 목록·계획 등, 활동 노트는 아이가 공유 표시한 것만 열람할 수 있어요</li><li><b>함께 정하는 것</b>수시 카드의 등록 의사와 위험 감수 수준은 가족이 같은 사실을 놓고 합의해요</li><li><b>연결하기</b><a class="link" href="my.html#parent">나의 진로진학 → 학부모 연결</a>에서 아이가 연결을 시작해요</li></ul></div>
+  <div class="panel-c" style="margin-top:16px;border:1px solid var(--line);box-shadow:none"><h3>이번 학기 질문 3개</h3><p style="margin:0;color:var(--ink-2);font-size:14.5px">자녀 학년 기준의 질문 3개는 <a class="link" href="my.html#roadmap">학년별 로드맵(학부모용)</a>에서 보여드려요.</p></div></div></div>`;}
+function renderEthics(){
+  $('ethicsBody').innerHTML=`<div class="rbar" style="margin-top:0"><div><h2 class="section__title" style="font-size:24px">기록 윤리 안내</h2><p class="section__sub">대필·과장·표절은 전략이 아니라 신뢰의 문제예요</p></div></div>
+  <div class="ud" style="margin-top:18px"><div class="panel-c" style="border:1px solid var(--line);box-shadow:none"><h3>하지 말아야 할 것</h3><ul class="reading"><li><b>대필·대리 작성</b>타인이 써 준 탐구·자료는 면접에서 바로 드러나고, 적발 시 불이익이 커요</li><li><b>과장·허위</b>하지 않은 활동을 부풀리면 기록 전체의 신뢰가 무너져요</li><li><b>표절</b>자료를 쓰면 출처를 남기고, 인용과 내 생각을 구분해요</li><li><b>공동 작업 무임승차</b>역할과 기여를 기록해 내 몶을 설명할 수 있게 해요</li></ul></div>
+  <div class="panel-c" style="border:1px solid var(--line);box-shadow:none"><h3>AI 도구 사용</h3><ul class="reading"><li><b>학교 규정 먼저</b>과제·수행평가의 AI 사용 허용 범위는 학교와 교과 선생님 지침을 먼저 확인해요</li><li><b>보조 도구로</b>아이디어 탐색·자료 찾기에 쓰되, 글은 내가 쓰고 사용 사실을 밝혀요</li><li><b>이 플랫폼의 AI</b>정보 안내만 하고 판정하지 않으며, 내 글을 대신 써주지 않아요</li></ul></div></div>
+  <div class="panel-c" style="margin-top:20px;background:var(--surface);box-shadow:none"><h3>대입 반영 기준은 공식 문서로만 확인하세요</h3><p style="margin:0;color:var(--ink-2);font-size:14.5px">학교폭력 조치사항의 전형 반영, 학생부 미반영 항목 같은 기준은 해마다 바뀔 수 있어요. 이 화면은 요약하지 않고 원문 링크만 안내해요.</p><div class="lchips" style="margin-top:10px"><a href="https://www.kcue.or.kr" target="_blank" rel="noopener">대교협 · 2028학년도 대입전형 기본사항 ↗</a><a href="https://www.moe.go.kr" target="_blank" rel="noopener">교육부 · 학생부 기재요령 ↗</a><a href="https://www.adiga.kr" target="_blank" rel="noopener">어디가 · 대학별 모집요강 ↗</a></div></div>`;}
 /* ── 탭 ── */
 let tab='mid';
 function rerender(){const g=GROUP[tab];
   $('ptabs').innerHTML=Object.keys(L3).filter(k=>GROUP[k]===g).map(k=>`<a class="ptab${k===tab?' is-on':''}" href="#${k}">${L3[k]}</a>`).join('');
   document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('is-on',p.id==='pane-'+(g==='res'?'res':tab)));
   $('crumbL2').textContent=L2[g];$('crumbL3').textContent=L3[tab];$('h1').textContent=L2[g];
-  $('hdesc').textContent=g==='res'?'학년과 시기에 맞춘 진로·진학 자료를 찾아보고 내려받으세요. 스크랩한 자료는 나의 진로진학에 모입니다.':'진로 영상과 진학 설명회, 선생님이 추천한 자료를 한곳에서 봅니다.';
-  if(g==='res')renderRes(tab);else({video:renderVideo,briefing:renderBrief,teacher:renderTeacher})[tab]();}
+  $('hdesc').textContent=g==='res'?'학년과 시기에 맞춘 진로·진학 자료를 찾아보고 내려받으세요. 스크랩한 자료는 나의 진로진학에 모입니다.':g==='guide'?'탐구보고서 틀, 학부모 질문 카드, 기록 윤리까지 — 직접 쓰고 묻는 데 필요한 틀과 안내를 모았습니다.':'진로 영상과 진학 설명회, 선생님이 추천한 자료를 한곳에서 봅니다.';
+  if(g==='res')renderRes(tab);else if(g==='guide')({guides:renderGuides,parents:renderParents,ethics:renderEthics})[tab]();else({video:renderVideo,briefing:renderBrief,teacher:renderTeacher})[tab]();}
 function setTab(){tab=(location.hash||'#mid').slice(1);if(!L3[tab])tab=A.logged()?'hs12':'mid';
   document.querySelectorAll('#lnb a').forEach(a=>a.classList.toggle('is-cur',a.getAttribute('href')==='library.html#'+tab));document.title=L3[tab]+' | 서울 진로진학 통합플랫폼';rerender();}
 if(!location.hash&&A.logged())history.replaceState(null,'','#hs12');
@@ -74,6 +93,8 @@ document.addEventListener('click',e=>{
   if(b=c('[data-notify]')){if(needLogin('접수 알림은 로그인 후 받을 수 있어요'))return;showToast('접수가 시작되면 알림을 보내드려요');return;}
   if(b=c('[data-tab-go]')){location.hash='#'+b.dataset.tabGo;return;}
   if(c('#tMine')){tMine=!tMine;renderTeacher();return;}
+  if(c('#rgSave')){const d={};document.querySelectorAll('[data-rg]').forEach(t=>d[t.dataset.rg]=t.value.trim());localStorage.setItem('sen-report-v1',JSON.stringify(d));showToast('탐구보고서 초안을 임시 저장했어요');return;}
+  if(c('#pmSave')){const d={};document.querySelectorAll('[data-pm]').forEach(t=>d[t.dataset.pm]=t.value.trim());localStorage.setItem('sen-parent-v1',JSON.stringify(d));showToast('월간 정리 문장을 저장했어요');return;}
 });
 $('resQ').addEventListener('input',e=>{f.q=e.target.value.trim();renderRes(tab);});
 $('resSort').addEventListener('change',e=>{f.sort=e.target.value;renderRes(tab);});

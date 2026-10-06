@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><meta name="design_doc_mode" content="canvas"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.min.css"><style>body{margin:0;background:#f0eee9;font-family:Pretendard,-apple-system,'Noto Sans KR',sans-serif}a{color:#2a6bf3}a:hover{color:#1b4fd8}.dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 20px}.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none}.dv-tname{font:600 13px/1.2 Pretendard,sans-serif;color:#1a1a1a}.dv-opts{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}.dv-opt{flex:none;display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px}.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none}.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 Pretendard,sans-serif;color:rgba(0,0,0,.55)}.dv-card{max-width:100%;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden}.dv-opt:target .dv-oid{background:#2a78d6;color:#fff}.dv-next{margin:22px 0 0;font:12px/1.5 Pretendard,sans-serif;color:rgba(0,0,0,.5)}</style></helmet>
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">통합 메인 홈 (비로그인 · 데스크톱) — 서울진로진학정보센터 + 쎈진학 통합 · IA 기준서 5.1 적용 · 와이어프레임 4안</span></div>
+<div style="max-width:980px;margin:0 0 24px;padding:14px 18px;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:8px;font-size:12px;line-height:1.7;color:#444">
+<strong style="font-size:12px;color:#1a1a1a">전제</strong> — GNB는 기획안 권고 L1 7개(미래탐색 · 학교·과목설계 · 대학·전형탐색 · 지원전략 · 상담·체험 · 나의 진로진학 · 자료·소식). 홈 최상단은 사이트 소개 배너 대신 <strong>과업 진입 + 다음 행동</strong>. 두 원천의 결합: 진로진학센터의 상담·체험·자료 + 쎈진학의 성적분석·지원가능성은 각각 E·D 메뉴로 흡수. 네 안은 히어로의 지배 요소(과업 카드 / 자연어 검색 / 여정 레일 / 역할 분기)만 다르고 하부 블록(일정·자료·참여)은 공통.
+</div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="1a"><div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>과업 진입형 — 고민 5개가 메뉴를 대신한다 (기준서 5.1 직역)</div>
+<div class="dv-card" style="width:1080px;font-size:13px;color:#333">
+<div style="display:flex;align-items:center;gap:24px;padding:14px 28px;border-bottom:1px solid #ddd">
+<div style="font-weight:700;font-size:15px;color:#1a1a1a">◼ 서울 진로진학 통합플랫폼</div>
+<nav style="display:flex;gap:18px;font-size:12.5px;color:#555;flex:1">
+<span>미래탐색</span><span>학교·과목설계</span><span>대학·전형탐색</span><span>지원전략</span><span>상담·체험</span><span style="color:#aaa">│</span><span>나의 진로진학</span><span>자료·소식</span>
+</nav>
+<div style="display:flex;gap:10px;font-size:12px;color:#777"><span>🔍 통합검색</span><span style="border:1px solid #bbb;border-radius:14px;padding:3px 12px">로그인</span></div>
+</div>
+<div style="padding:36px 28px 28px;text-align:center;background:#fafafa">
+<div style="font-size:26px;font-weight:700;color:#1a1a1a;margin-bottom:22px">무엇을 준비하고 있나요?</div>
+<div style="display:flex;gap:12px;justify-content:center">
+<div style="flex:1;max-width:196px;border:1px solid #ccc;border-radius:10px;background:#fff;padding:18px 14px;text-align:left"><div style="width:34px;height:34px;border:1px dashed #aaa;border-radius:8px;margin-bottom:10px"></div><div style="font-weight:600;color:#1a1a1a">진로를 찾고 싶어요</div><div style="font-size:11.5px;color:#888;margin-top:4px">→ 미래탐색</div></div>
+<div style="flex:1;max-width:196px;border:1px solid #ccc;border-radius:10px;background:#fff;padding:18px 14px;text-align:left"><div style="width:34px;height:34px;border:1px dashed #aaa;border-radius:8px;margin-bottom:10px"></div><div style="font-weight:600;color:#1a1a1a">고교·과목을 고민하고 있어요</div><div style="font-size:11.5px;color:#888;margin-top:4px">→ 학교·과목설계</div></div>
+<div style="flex:1;max-width:196px;border:1px solid #ccc;border-radius:10px;background:#fff;padding:18px 14px;text-align:left"><div style="width:34px;height:34px;border:1px dashed #aaa;border-radius:8px;margin-bottom:10px"></div><div style="font-weight:600;color:#1a1a1a">대학·학과를 찾고 있어요</div><div style="font-size:11.5px;color:#888;margin-top:4px">→ 대학·전형탐색</div></div>
+<div style="flex:1;max-width:196px;border:1px solid #ccc;border-radius:10px;background:#fff;padding:18px 14px;text-align:left"><div style="width:34px;height:34px;border:1px dashed #aaa;border-radius:8px;margin-bottom:10px"></div><div style="font-weight:600;color:#1a1a1a">지원 전략이 궁금해요</div><div style="font-size:11.5px;color:#888;margin-top:4px">→ 지원전략</div></div>
+<div style="flex:1;max-width:196px;border:1px solid #ccc;border-radius:10px;background:#fff;padding:18px 14px;text-align:left"><div style="width:34px;height:34px;border:1px dashed #aaa;border-radius:8px;margin-bottom:10px"></div><div style="font-weight:600;color:#1a1a1a">상담받고 싶어요</div><div style="font-size:11.5px;color:#888;margin-top:4px">→ 상담·체험</div></div>
+</div>
+<div style="max-width:640px;margin:22px auto 0;border:1.5px solid #999;border-radius:24px;padding:11px 20px;text-align:left;color:#999;font-size:13px;background:#fff">🔍 예: "생명과학에 관심이 있는데 어떤 학과와 과목이 있나요?"</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;padding:24px 28px">
+<div style="border:1px solid #ddd;border-radius:10px;padding:16px"><div style="font-weight:600;color:#1a1a1a;margin-bottom:10px">이번 주 주요 일정 <span style="float:right;color:#aaa;font-weight:400">›</span></div><div style="font-size:12px;color:#666;line-height:2">▸ 수시 원서접수 마감 D-3<br>▸ 고입 전형 설명회 10.8<br>▸ 과목선택 수요조사 시작</div></div>
+<div style="border:1px solid #ddd;border-radius:10px;padding:16px"><div style="font-weight:600;color:#1a1a1a;margin-bottom:10px">학년별 추천자료 <span style="float:right;color:#aaa;font-weight:400">›</span></div><div style="display:flex;gap:6px;margin-bottom:10px"><span style="border:1px solid #999;border-radius:12px;padding:2px 10px;font-size:11px;background:#eee">중학생</span><span style="border:1px solid #ccc;border-radius:12px;padding:2px 10px;font-size:11px;color:#888">고1·2</span><span style="border:1px solid #ccc;border-radius:12px;padding:2px 10px;font-size:11px;color:#888">고3·졸업생</span></div><div style="font-size:12px;color:#666;line-height:2">▸ 고교 유형 한눈에 보기<br>▸ 진로검사 활용 가이드</div></div>
+<div style="border:1px solid #ddd;border-radius:10px;padding:16px"><div style="font-weight:600;color:#1a1a1a;margin-bottom:10px">진로체험·상담 <span style="float:right;color:#aaa;font-weight:400">›</span></div><div style="font-size:12px;color:#666;line-height:2">▸ 10월 진학설명회 신청 중<br>▸ 1:1 전문상담 예약<br>▸ 진로체험 프로그램</div></div>
+</div>
+<div style="padding:14px 28px;border-top:1px solid #ddd;font-size:11px;color:#999">진로진학센터 안내 · 이용약관 · 개인정보처리방침 · 웹접근성 · 문의</div>
+</div></div>
+
+<div class="dv-opt" id="1b"><div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>검색 퍼스트 — 자연어 질문이 시작점, 과업은 추천 질문 칩으로</div>
+<div class="dv-card" style="width:1080px;font-size:13px;color:#333">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 28px;border-bottom:1px solid #ddd">
+<div style="font-weight:700;font-size:15px;color:#1a1a1a">◼ 서울 진로진학 통합플랫폼</div>
+<div style="display:flex;gap:18px;font-size:12.5px;color:#555"><span>미래탐색</span><span>학교·과목설계</span><span>대학·전형탐색</span><span>지원전략</span><span>상담·체험</span><span>자료·소식</span><span style="border:1px solid #bbb;border-radius:14px;padding:3px 12px;font-size:12px;color:#777">로그인</span></div>
+</div>
+<div style="padding:58px 28px 44px;text-align:center">
+<div style="font-size:28px;font-weight:700;color:#1a1a1a">무엇이든 물어보세요</div>
+<div style="font-size:13px;color:#888;margin-top:8px">직업·학과·과목·고교·대학·전형·자료를 한 번에 찾습니다</div>
+<div style="max-width:720px;margin:24px auto 0;border:2px solid #666;border-radius:14px;padding:18px 22px;text-align:left;display:flex;justify-content:space-between;align-items:center;background:#fff"><span style="color:#999">생명과학에 관심이 있는데 어떤 학과와 과목이 있나요?</span><span style="width:38px;height:38px;border:1px solid #999;border-radius:10px;display:inline-block;text-align:center;line-height:38px">🔍</span></div>
+<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px;font-size:12px">
+<span style="border:1px solid #ccc;border-radius:16px;padding:6px 14px;color:#555">진로를 찾고 싶어요</span>
+<span style="border:1px solid #ccc;border-radius:16px;padding:6px 14px;color:#555">고교·과목을 고민하고 있어요</span>
+<span style="border:1px solid #ccc;border-radius:16px;padding:6px 14px;color:#555">대학·학과를 찾고 있어요</span>
+<span style="border:1px solid #ccc;border-radius:16px;padding:6px 14px;color:#555">지원 전략이 궁금해요</span>
+<span style="border:1px solid #ccc;border-radius:16px;padding:6px 14px;color:#555">상담받고 싶어요</span>
+</div>
+<div style="font-size:11px;color:#aaa;margin-top:14px">답변에는 근거 출처·학년도·기준일이 표시됩니다</div>
+</div>
+<div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;padding:0 28px 24px">
+<div style="border:1px solid #ddd;border-radius:10px;padding:16px"><div style="font-weight:600;color:#1a1a1a;margin-bottom:10px">이번 주 주요 일정</div><div style="display:flex;gap:10px"><div style="flex:1;border:1px dashed #bbb;border-radius:8px;padding:10px;font-size:12px;color:#666">수시 원서접수 마감<br><b style="color:#1a1a1a">D-3</b></div><div style="flex:1;border:1px dashed #bbb;border-radius:8px;padding:10px;font-size:12px;color:#666">고입 설명회<br><b style="color:#1a1a1a">10.8</b></div><div style="flex:1;border:1px dashed #bbb;border-radius:8px;padding:10px;font-size:12px;color:#666">과목선택 수요조사<br><b style="color:#1a1a1a">시작</b></div></div></div>
+<div style="border:1px solid #ddd;border-radius:10px;padding:16px"><div style="font-weight:600;color:#1a1a1a;margin-bottom:10px">진로체험·상담</div><div style="font-size:12px;color:#666;line-height:2">▸ 진학설명회 신청 중<br>▸ 1:1 전문상담 예약</div></div>
+</div>
+<div style="padding:14px 28px;border-top:1px solid #ddd;font-size:11px;color:#999">진로진학센터 안내 · 이용약관 · 개인정보처리방침 · 웹접근성 · 문의</div>
+</div></div>
+
+<div class="dv-opt" id="1c"><div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>여정 레일형 — 진로진학 Journey 8단계가 홈의 뼈대</div>
+<div class="dv-card" style="width:1080px;font-size:13px;color:#333">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 28px;border-bottom:1px solid #ddd">
+<div style="font-weight:700;font-size:15px;color:#1a1a1a">◼ 서울 진로진학 통합플랫폼</div>
+<div style="display:flex;gap:16px;font-size:12px;color:#777"><span>🔍 통합검색</span><span style="border:1px solid #bbb;border-radius:14px;padding:3px 12px">로그인</span></div>
+</div>
+<div style="padding:30px 28px 10px">
+<div style="font-size:22px;font-weight:700;color:#1a1a1a">나의 진로진학, 지금 어디쯤인가요?</div>
+<div style="font-size:12.5px;color:#888;margin-top:6px">단계를 누르면 지금 할 수 있는 일로 바로 이동합니다 · 상담은 어느 단계에서든 신청할 수 있어요</div>
+</div>
+<div style="display:flex;gap:6px;padding:18px 28px;align-items:stretch">
+<div style="flex:1;border:1.5px solid #666;border-radius:10px;padding:12px 10px;background:#f3f3f3"><div style="font-size:10px;color:#888;font-family:ui-monospace,monospace">01</div><div style="font-weight:600;font-size:12.5px;color:#1a1a1a;margin-top:4px">방향 찾기</div><div style="font-size:11px;color:#777;margin-top:4px">진로검사·자기이해</div></div>
+<div style="flex:1;border:1px solid #ccc;border-radius:10px;padding:12px 10px"><div style="font-size:10px;color:#aaa;font-family:ui-monospace,monospace">02</div><div style="font-weight:600;font-size:12.5px;color:#444;margin-top:4px">가능성 탐색</div><div style="font-size:11px;color:#999;margin-top:4px">직업·학과 탐색</div></div>
+<div style="flex:1;border:1px solid #ccc;border-radius:10px;padding:12px 10px"><div style="font-size:10px;color:#aaa;font-family:ui-monospace,monospace">03</div><div style="font-weight:600;font-size:12.5px;color:#444;margin-top:4px">고교 선택</div><div style="font-size:11px;color:#999;margin-top:4px">학교 비교·고입</div></div>
+<div style="flex:1;border:1px solid #ccc;border-radius:10px;padding:12px 10px"><div style="font-size:10px;color:#aaa;font-family:ui-monospace,monospace">04</div><div style="font-weight:600;font-size:12.5px;color:#444;margin-top:4px">과목·학업설계</div><div style="font-size:11px;color:#999;margin-top:4px">3개년 이수계획</div></div>
+<div style="flex:1;border:1px solid #ccc;border-radius:10px;padding:12px 10px"><div style="font-size:10px;color:#aaa;font-family:ui-monospace,monospace">05</div><div style="font-weight:600;font-size:12.5px;color:#444;margin-top:4px">성장 확인</div><div style="font-size:11px;color:#999;margin-top:4px">성적·활동 점검</div></div>
+<div style="flex:1;border:1px solid #ccc;border-radius:10px;padding:12px 10px"><div style="font-size:10px;color:#aaa;font-family:ui-monospace,monospace">06</div><div style="font-weight:600;font-size:12.5px;color:#444;margin-top:4px">대학·전형 탐색</div><div style="font-size:11px;color:#999;margin-top:4px">검색·비교·저장</div></div>
+<div style="flex:1;border:1px solid #ccc;border-radius:10px;padding:12px 10px"><div style="font-size:10px;color:#aaa;font-family:ui-monospace,monospace">07</div><div style="font-weight:600;font-size:12.5px;color:#444;margin-top:4px">지원전략</div><div style="font-size:11px;color:#999;margin-top:4px">환산·참고분석</div></div>
+<div style="flex:1;border:1px solid #ccc;border-radius:10px;padding:12px 10px"><div style="font-size:10px;color:#aaa;font-family:ui-monospace,monospace">08</div><div style="font-weight:600;font-size:12.5px;color:#444;margin-top:4px">실행·결과</div><div style="font-size:11px;color:#999;margin-top:4px">일정·결과·재설계</div></div>
+</div>
+<div style="display:grid;grid-template-columns:1.4fr 1fr;gap:16px;padding:8px 28px 24px">
+<div style="border:1px solid #ddd;border-radius:10px;padding:16px;background:#fafafa"><div style="font-size:11px;color:#888;font-family:ui-monospace,monospace;margin-bottom:6px">선택한 단계 · 01 방향 찾기</div><div style="font-weight:600;color:#1a1a1a;margin-bottom:8px">지금 할 수 있는 일</div><div style="display:flex;gap:8px;font-size:12px"><span style="border:1px solid #999;border-radius:8px;padding:8px 12px;background:#fff">진로검사 하러 가기</span><span style="border:1px solid #ccc;border-radius:8px;padding:8px 12px;background:#fff;color:#666">나의 진로특성 보기</span><span style="border:1px solid #ccc;border-radius:8px;padding:8px 12px;background:#fff;color:#666">직업 탐색 시작</span></div><div style="font-size:11.5px;color:#888;margin-top:12px">도움이 필요하면 → <u>1:1 상담 예약</u></div></div>
+<div style="display:flex;flex-direction:column;gap:10px"><div style="border:1px solid #ddd;border-radius:10px;padding:12px 16px;font-size:12px;color:#666"><b style="color:#1a1a1a;font-size:12.5px">이번 주 일정</b><br>수시 마감 D-3 · 고입 설명회 10.8</div><div style="border:1px solid #ddd;border-radius:10px;padding:12px 16px;font-size:12px;color:#666"><b style="color:#1a1a1a;font-size:12.5px">학년별 추천자료</b><br>중학생 │ 고1·2 │ 고3·졸업생</div></div>
+</div>
+<div style="padding:14px 28px;border-top:1px solid #ddd;font-size:11px;color:#999">GNB 7 메뉴는 상단에 유지(생략 표기) · Footer: 센터안내 · 약관 · 웹접근성</div>
+</div></div>
+
+<div class="dv-opt" id="1d"><div class="dv-olabel"><a class="dv-oid" href="#1d">1d</a>역할 분기형 — 학생·학부모·교사 3분기 히어로 (SEN 이원화 규칙)</div>
+<div class="dv-card" style="width:1080px;font-size:13px;color:#333">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 28px;border-bottom:1px solid #ddd">
+<div style="font-weight:700;font-size:15px;color:#1a1a1a">◼ 서울 진로진학 통합플랫폼</div>
+<div style="display:flex;gap:18px;font-size:12.5px;color:#555"><span>미래탐색</span><span>학교·과목설계</span><span>대학·전형탐색</span><span>지원전략</span><span>상담·체험</span><span>자료·소식</span><span style="border:1px solid #bbb;border-radius:14px;padding:3px 12px;font-size:12px;color:#777">로그인</span></div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;padding:26px 28px">
+<div style="border:1.5px solid #666;border-radius:12px;padding:20px;background:#fafafa"><div style="width:40px;height:40px;border:1px dashed #aaa;border-radius:50%;margin-bottom:12px"></div><div style="font-weight:700;font-size:16px;color:#1a1a1a">학생</div><div style="font-size:12px;color:#777;margin:6px 0 14px;line-height:1.6">내 진로 찾기 · 과목 설계<br>성적 분석 · 빠른 모바일 상담</div><div style="font-size:12px;line-height:2.1;color:#555">→ 진로를 찾고 싶어요<br>→ 고교·과목을 고민하고 있어요<br>→ 지원 전략이 궁금해요</div></div>
+<div style="border:1px solid #ccc;border-radius:12px;padding:20px"><div style="width:40px;height:40px;border:1px dashed #aaa;border-radius:50%;margin-bottom:12px"></div><div style="font-weight:700;font-size:16px;color:#1a1a1a">학부모</div><div style="font-size:12px;color:#777;margin:6px 0 14px;line-height:1.6">자녀 진학 가이드<br>심층 상담 신청 · 용어 이해</div><div style="font-size:12px;line-height:2.1;color:#555">→ 자녀의 현재 단계 이해하기<br>→ 입시 용어·제도 알아보기<br>→ 심층 상담(방문·화상) 신청</div></div>
+<div style="border:1px solid #ccc;border-radius:12px;padding:20px"><div style="width:40px;height:40px;border:1px dashed #aaa;border-radius:50%;margin-bottom:12px"></div><div style="font-weight:700;font-size:16px;color:#1a1a1a">교사·상담교사</div><div style="font-size:12px;color:#777;margin:6px 0 14px;line-height:1.6">로그인 후 지도공간으로 전환<br>Student 360 · 상담관리</div><div style="font-size:12px;line-height:2.1;color:#555">→ 교사용 지도공간 로그인<br>→ 상담교사 예약 Queue<br>→ 교사용 진학자료</div></div>
+</div>
+<div style="margin:0 28px;border:1.5px solid #999;border-radius:24px;padding:11px 20px;color:#999;font-size:13px">🔍 예: "생명과학에 관심이 있는데 어떤 학과와 과목이 있나요?"</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;padding:20px 28px 24px">
+<div style="border:1px solid #ddd;border-radius:10px;padding:14px 16px;font-size:12px;color:#666"><b style="color:#1a1a1a;font-size:12.5px">이번 주 주요 일정</b><br>수시 마감 D-3 · 고입 설명회 10.8</div>
+<div style="border:1px solid #ddd;border-radius:10px;padding:14px 16px;font-size:12px;color:#666"><b style="color:#1a1a1a;font-size:12.5px">학년별 추천자료</b><br>중학생 │ 고1·2 │ 고3·졸업생</div>
+<div style="border:1px solid #ddd;border-radius:10px;padding:14px 16px;font-size:12px;color:#666"><b style="color:#1a1a1a;font-size:12.5px">진로체험·상담</b><br>설명회 신청 중 · 1:1 상담 예약</div>
+</div>
+<div style="padding:14px 28px;border-top:1px solid #ddd;font-size:11px;color:#999">진로진학센터 안내 · 이용약관 · 개인정보처리방침 · 웹접근성 · 문의</div>
+</div></div>
+
+</div>
+<p class="dv-next">다음 지시 예: "<a class="dv-oid" href="#1a">1a</a> 구조에 <a class="dv-oid" href="#1c">1c</a>의 여정 레일을 결합" · "<a class="dv-oid" href="#1b">1b</a>를 하이파이(진학사 블루 톤)로" · "학생 로그인 홈도 와이어프레임으로"</p>
+</section>
+</x-dc>
+</body>
+</html>

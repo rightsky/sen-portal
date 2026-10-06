@@ -50,9 +50,18 @@ function renderMySchool(){
   <h3 class="ms__sub">우리 학교에 없는 과목, 이렇게 들을 수 있어요</h3>
   <div class="ms__alt"><div class="ms__altc"><b>🤝 공동교육과정</b><p>가까운 학교들이 함께 과목을 열어 방과 후·주말에 듣습니다</p><div class="lchips">${NOT_OFFERED.slice(0,3).map(n=>`<span>${n}</span>`).join('')}</div><button class="btn btn--ghost btn--pill" data-toast="공동교육과정 수강 신청은 학교 담당 선생님 확인 후 진행됩니다">수강 신청 안내</button></div><div class="ms__altc"><b>💻 서울온라인학교</b><p>온라인 실시간 수업으로 듣고 학교 성적으로 인정받습니다</p><div class="lchips">${NOT_OFFERED.slice(3).map(n=>`<span>${n}</span>`).join('')}</div><button class="btn btn--ghost btn--pill" data-toast="서울온라인학교 수강 신청 화면으로 이동합니다">수강 신청 안내</button></div></div>`;
 }
+/* ── 대학별 권장과목 겹쳐보기 (2028학년도 · 2022 개정 교육과정 기준) ── */
+let ovCat='공학·자연';
+const OV={'공학·자연':{unis:['한국대','한강대','서울미래대','서울과기대','서울여대'],rows:[['미적분Ⅰ',[2,2,2,2,2]],['미적분Ⅱ',[2,2,1,2,1]],['기하',[2,1,1,2,1]],['확률과 통계',[2,2,2,1,2]],['물리학',[1,2,1,2,0]],['화학',[1,1,1,1,1]],['역학과 에너지',[0,1,0,2,0]],['정보',[1,0,1,2,1]]]},'인문·사회':{unis:['한국대','한강대','서울미래대','서울여대','서울교대'],rows:[['확률과 통계',[2,2,1,1,2]],['세계사',[1,1,1,1,1]],['사회와 문화',[2,2,2,1,2]],['정치',[1,2,0,1,1]],['법과 사회',[1,1,0,1,0]],['경제',[2,2,1,1,1]],['윤리와 사상',[1,0,1,0,2]]]},'의약·생명':{unis:['한국대','한강대','서울미래대','서울과기대','서울여대'],rows:[['미적분Ⅰ',[2,2,2,2,2]],['확률과 통계',[2,2,1,2,2]],['화학',[2,2,2,2,2]],['생명과학',[2,2,2,2,2]],['세포와 물질대사',[1,2,1,1,1]],['물리학',[1,1,0,1,0]]]}};
+function renderOverlap(){const D2=OV[ovCat];
+  const common=D2.rows.filter(r=>r[1].every(v=>v===2)).map(r=>r[0]);
+  $('ovBody').innerHTML=`<div class="rbar" style="margin-top:0"><div><h3 style="margin:0;font-size:20px">여러 대학의 권장과목을 한 표에서</h3><p class="section__sub" style="font-size:14px">한 대학 기준을 전국 기준으로 오해하지 말고, 공통분모와 예외를 함께 보세요 · 2028학년도 · 2022 개정 교육과정 기준</p></div><div class="fchips">${Object.keys(OV).map(c2=>`<button class="fchip${ovCat===c2?' is-on':''}" data-ovc="${c2}">${c2}</button>`).join('')}</div></div>
+  <div class="ctable-w" style="margin-top:16px"><table class="ctable"><thead><tr><th>과목</th>${D2.unis.map(u=>`<th>${u}</th>`).join('')}</tr></thead><tbody>${D2.rows.map(r=>{const allCore=r[1].every(v=>v===2);return `<tr${allCore?' style="background:color-mix(in srgb,var(--brand) 7%,transparent)"':''}><th><b>${r[0]}</b>${allCore?' <span class="tb tb--1" style="font-size:11px">공통</span>':''}</th>${r[1].map(v=>`<td>${v===2?'<b style="color:var(--brand)">핵심 권장</b>':v===1?'<span style="color:var(--ink-2)">권장</span>':'<span style="color:var(--ink-3)">–</span>'}</td>`).join('')}</tr>`;}).join('')}</tbody></table></div>
+  <div class="ud" style="margin-top:20px"><div class="panel-c" style="border:1px solid var(--line);box-shadow:none"><h3>이렇게 읽어요</h3><ul class="reading"><li><b>공통분모 먼저</b>${common.length?common.join(', ')+'은(는) 모든 대학이 핵심으로 권장해요. 여기서부터 채워요':'모든 대학 공통 핵심 과목은 없어요. 권장 빈도가 높은 과목부터 보세요'}</li><li><b>예외는 따로</b>특정 대학만 권장하는 과목은 그 대학 지원 여부가 정해진 뒤 채워도 늦지 않아요</li><li><b>순서는 기초 → 위계 → 감당 가능성</b>어려운 과목을 많이 고르는 경쟁이 아니라, 필요한 과목을 적절한 순서로 끝까지 배우는 선택이 좋은 선택이에요</li></ul></div>
+  <div class="panel-c" style="background:var(--surface);box-shadow:none"><h3>다음 단계</h3><p style="margin:0;color:var(--ink-2);font-size:14.5px">공통 과목을 내 계획에 담고, 우리 학교 개설 여부를 확인해요.</p><div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn btn--primary btn--pill" href="study-plan.html#sim">과목 계획에 담기 →</a><a class="btn btn--ghost btn--pill" href="#myschool">우리 학교 개설과목</a></div><p class="hint" style="margin:0">위 표는 예시 데이터예요 · 확정값은 대학별 전공 안내서·시행계획 기준</p></div></div>`;}
 /* ── 탭 ── */
-let tab='subjects';const L3={subjects:'선택과목 알아보기',bymajor:'진로·전공별 관련 과목',myschool:'우리 학교 개설과목'};
-function rerender(){({subjects:renderSubjects,bymajor:renderByMajor,myschool:renderMySchool})[tab]();}
+let tab='subjects';const L3={subjects:'선택과목 알아보기',bymajor:'진로·전공별 관련 과목',myschool:'우리 학교 개설과목',overlap:'대학별 권장과목 겹쳐보기'};
+function rerender(){({subjects:renderSubjects,bymajor:renderByMajor,myschool:renderMySchool,overlap:renderOverlap})[tab]();}
 function setTab(){tab=(location.hash||'#subjects').slice(1);if(!L3[tab])tab='subjects';
   document.querySelectorAll('.ptab').forEach(t=>t.classList.toggle('is-on',t.dataset.tab===tab));
   document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('is-on',p.id==='pane-'+tab));
@@ -68,6 +77,7 @@ document.addEventListener('click',e=>{
   const g=e.target.closest('[data-g]');if(g){f.g=g.dataset.g;renderSubjects();return;}
   const t=e.target.closest('[data-t]');if(t){if(tab!=='subjects')location.hash='#subjects';f.t.has(t.dataset.t)?f.t.delete(t.dataset.t):f.t.add(t.dataset.t);renderSubjects();return;}
   const mc=e.target.closest('[data-mc]');if(mc){mCat=mc.dataset.mc;renderByMajor();return;}
+  const ovc=e.target.closest('[data-ovc]');if(ovc){ovCat=ovc.dataset.ovc;renderOverlap();return;}
   const m=e.target.closest('[data-m]');if(m){mSel=m.dataset.m;renderByMajor();return;}
   const sm=e.target.closest('[data-sem]');if(sm){semTab=sm.dataset.sem;renderMySchool();return;}
   if(e.target.closest('#mRoadBtn')){if(!A.logged()){showToast('시뮬레이션은 로그인 후 이용할 수 있어요');A.open();return;}const p=P();p.major=mSel;p.sem=JSON.parse(e.target.closest('#mRoadBtn').dataset.tpl);saveP(p);location.href='study-plan.html#sim';}

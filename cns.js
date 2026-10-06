@@ -5,7 +5,7 @@ const K='sen-cns-v1';let P=JSON.parse(localStorage.getItem(K)||'{"dec":{},"share
 const DETAIL=Object.fromEntries(D.상세.map(d=>[d.id,d]));
 const CLS3=D.학생.filter(s=>s.반===3).sort((a,b)=>a.번호-b.번호);
 let role='담임',evalMode=false,selId=CLS3.slice().sort((a,b)=>b.우선점수-a.우선점수)[0].id,tab='프로파일',sort='priority',filter='';
-const T=['프로파일','상담 브리프','공유'];
+const T=['프로파일','사전 입력서','상담 브리프','공유'];
 const stBadge=st=>({'초안':['초안','st--draft'],'검토 중':['검토 중','st--rev'],'확정':['확정','st--ok2'],'학생 공유':['학생 공유','st--share']}[st]||[st,'st--draft']);
 const briefState=id=>{const d=DETAIL[id];if(!d||!d.브리프)return null;const ov=P.dec[id]||{};const n=d.브리프.항목.length,done=Object.keys(ov).length;
   if(P.share[id])return '학생 공유';if(d.브리프.상태==='학생 공유'&&P.share[id]!==false)return '학생 공유';
@@ -46,6 +46,11 @@ function profile(d,s){
     ['진로개발역량검사',`${t.개발역량.유형} · 설계 ${t.개발역량.설계} · 준비 ${t.개발역량.준비}`,`<dl class="mini-kv">${['자기이해','직업이해','진로탐색','진로계획','낙관성','지속성','호기심','유연성','도전성','의사소통'].map(k=>`<div><dt>${k}</dt><dd>${t.개발역량[k]}</dd></div>`).join('')}</dl>`],
     ['진로실행력검사',`종합 T ${t.실행력.종합} · 탄력성 반영 T ${t.실행력.탄력성반영} · ${t.실행력.증폭유형}`,`<dl class="mini-kv">${['계획수립력','행동실천력','실천지속력','진로탄력성'].map(k=>`<div><dt>${k}</dt><dd>T ${t.실행력[k]}</dd></div>`).join('')}<div><dt>동일응답비율</dt><dd>${t.실행력.동일응답비율}%</dd></div></dl>`]];
   const rules=d.규칙결과.length?d.규칙결과.map(r=>`<div class="rrow"><b>${r.코드}</b><span>${r.설명}</span><button class="mini" data-rule="${r.코드}">관련 검사 보기</button></div>`).join(''):'<p class="ok-line">검사 결과끼리 크게 어긋나는 곳이 없습니다</p>';
+  const allTxt=[...d.창체,...d.세특,...d.행특].map(x=>x.내용||x).join(' ');
+  const C3=[['학업역량',['질문','탐구','분석','개념','발표','검증']],['진로역량',['진로','관심','전공','분야','희망']],['공동체역량',['협력','모둠','역할','조정','배려','소통','갈등']]].map(([n2,kws])=>[n2,kws.filter(k=>allTxt.includes(k)).length,kws.length]);
+  const hope=(s.희망[2]||'').slice(0,2);
+  const rep=hope?d.세특.filter(x=>((x.내용||'')+(x.학년과목||'')).includes(hope)).length:0;
+  const comp3=`<div class="rules" style="margin-top:8px">${C3.map(([n2,hit,tot])=>`<div class="rrow"><b>${n2}</b><span>근거 키워드 ${hit}/${tot}개 확인 · ${hit>=3?'기록 흐름이 보임':hit>=1?'근거 적음 — 상담에서 확인':'근거 부족 — 상담에서 확인'}</span></div>`).join('')}${rep>=4?`<div class="rrow" style="border-color:#C43B3B"><b style="color:#C43B3B">⚠ 키워드 반복</b><span>'${hope}' 관련 키워드가 세특 ${rep}과목에 반복됩니다. 모든 과목에 전공 키워드가 붙으면 연결성이 아니라 인위성으로 읽힐 수 있어요 (참고용 · 판단은 교사 확정)</span></div>`:''}<p class="hint2" style="margin:6px 0 0">세 역량 점검·반복 키워드 찾기는 단순 키워드 규칙이에요. 합성 데이터 200명에서 검증 중이며, 결과는 교사 확정 뒤에만 출처와 함께 공유됩니다.</p></div>`;
   const rec=(arr,cls)=>arr.map((c,i)=>`<div class="rec-item" data-rec="${cls}:${i}">${c.학년?`<b>${c.학년}학년 ${c.영역}${c.희망분야?' · 희망 '+c.희망분야:''}</b>`:c.학년과목?`<b>${c.학년과목}</b>`:`<b>${(i+1)}학년 행동특성</b>`}<p>${c.내용||c}</p></div>`).join('');
   return `<p class="reason">열람 사유: 담임 진로 상담 준비 (자동 기록)</p>
   <h3 class="blk-h">진로 경로 타임라인 <span class="src src--syn">생기부</span></h3><div class="tl">${tl}</div>
@@ -53,8 +58,25 @@ function profile(d,s){
   <h3 class="blk-h">진로검사 6종 요약 <span class="src src--syn">커리어넷 형식 검사</span></h3>
   <div class="tcards">${cards.map((c,i)=>`<div class="tcard"><div class="tcard__h"><b>${c[0]}</b><button class="mini" data-exp="${i}" aria-expanded="false">펼치기</button></div><p>${c[1]}</p><div class="tcard__d" id="td${i}" hidden>${c[2]}</div><small>커리어넷 형식 · 합성 척도 · 검사일 ${t.검사일}</small></div>`).join('')}</div>
   <h3 class="blk-h">정합성 체크 <span class="src src--rule">규칙</span></h3><div class="rules">${rules}</div>
+  <h3 class="blk-h">세 역량 점검표 · 반복 키워드 <span class="src src--rule">규칙</span></h3>${comp3}
   <h3 class="blk-h"><button class="blk-tg" data-tg="rawBlk" aria-expanded="false">생기부 원문 (펼치기) <span class="src src--syn">생기부</span></button></h3>
   <div id="rawBlk" hidden><h4 class="raw-h">창의적 체험활동</h4><div id="rawC">${rec(d.창체,'c')}</div><h4 class="raw-h">3학년 세부능력·특기사항</h4><div id="rawS">${rec(d.세특,'s')}</div><h4 class="raw-h">행동특성 및 종합의견</h4><div id="rawH">${rec(d.행특,'h')}</div></div>`;
+}
+/* C2b · 사전 입력서 (마스터 플랜 한 장) */
+function masterPlan(d,s){
+  const g=y=>{const o=d.학년별등급[y],v=G.map(k=>o[k]).filter(x=>x!=null);return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):'–';};
+  return `<p class="reason">학생이 상담 예약 시 미리 채운 사전 입력서입니다 · 내신·모의·최저·생기부 자가진단·카드를 한 장에 <span class="src src--syn">학생 작성</span></p>
+  <div class="ctable-w"><table class="ctbl"><tbody>
+  <tr><th style="width:160px">내신 흐름</th><td>1학년 ${g('1학년')} → 2학년 ${g('2학년')} → 3학년 ${g('3학년')}</td></tr>
+  <tr><th>모의고사</th><td>최근 3회 평균·편차는 학생 MY '정시 안정도'에서 동의 시 공유됩니다</td></tr>
+  <tr><th>수능최저 자가평가</th><td>"2합 5는 가능, 3합 7은 빠뛯해요" (학생 작성)</td></tr>
+  <tr><th>생기부 자가진단</th><td>세 문장 점검 — 수업 속 질문 ○ · 내 역할 ○ · 생각의 변화 △ (학생 작성)</td></tr>
+  <tr><th>핵심 탐구 활동</th><td>${d.세특[0]?((d.세특[0].내용||'').slice(0,70)+'…'):'–'}</td></tr>
+  <tr><th>희망 수시 카드</th><td>${s.희망[2]||'–'} 계열 중심 4~6장 구상 · 탈락 원인 분산 여부 점검 요청</td></tr>
+  <tr><th>상담에서 묻고 싶은 것</th><td>"최저 없는 카드를 하나 더 넣는 게 좋을까요?"</td></tr></tbody></table></div>
+  <h3 class="blk-h">전형 유형별 평가 비중 참고 <span class="src src--rule">참고</span></h3>
+  <div class="ctable-w"><table class="ctbl"><thead><tr><th></th><th>서류형</th><th>면접형</th></tr></thead><tbody><tr><th>학업역량</th><td><b>상대적으로 높음</b></td><td>보통</td></tr><tr><th>진로역량</th><td>보통</td><td><b>상대적으로 높음</b></td></tr><tr><th>공동체역량</th><td>보통</td><td>보통</td></tr></tbody></table></div>
+  <p class="hint2">경향 참고용입니다. 대학별 공개 평가 기준(학종 안내서)으로 확인한 뒤에만 상담 근거로 쓰세요. 사전 입력서는 학생이 수정할 수 있고, 상담 후 후속 과제와 함께 다시 공유됩니다.</p>`;
 }
 /* C3 */
 function brief(d,s){
@@ -107,7 +129,7 @@ function renderDetail(){
   const tabs=role==='과목교사'?['프로파일']:T;
   $('dhead').innerHTML=`<b>${s.번호}번 ${s.이름}</b><span>${s.계열} · 3학년 희망: ${s.희망[2]||'–'} · 우선점수 ${s.우선점수}</span>${s.우선사유.map(t=>`<i class="ptag">${t}</i>`).join('')}`;
   $('dtabs').innerHTML=tabs.map(t2=>`<button class="dtab${t2===tab?' is-on':''}" data-dt="${t2}" aria-selected="${t2===tab}">${t2}</button>`).join('');
-  $('detail').innerHTML=tab==='프로파일'?profile(d,s):tab==='상담 브리프'?brief(d,s):sharePane(d,s);
+  $('detail').innerHTML=tab==='프로파일'?profile(d,s):tab==='사전 입력서'?masterPlan(d,s):tab==='상담 브리프'?brief(d,s):sharePane(d,s);
 }
 function renderAll(){renderList();renderDetail();
   $('evalBtn').style.display=role==='교육청'?'':'none';
