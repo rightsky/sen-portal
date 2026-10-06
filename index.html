@@ -1,0 +1,787 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>서울 진로진학 통합플랫폼 | 메인</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+/* ===== 1. Design Tokens (Everland-style benchmark) ===== */
+:root{
+  --brand:#1E5EFF;          /* 주 강조색: 핑크 계열 CTA·포인트 */
+  --brand-deep:#1247CC;     /* hover / pressed */
+  --accent-yellow:#FFC531;  /* 배지·이벤트 태그 */
+  --accent-sky:#3FB6FF;     /* 정보·링크 보조 */
+  --accent-green:#2ECC8A;   /* 운영중·정상 상태 */
+  --accent-purple:#7B5CFF;  /* 프로모션 그라디언트 보조 */
+  --ink:#111318;            /* 본문 텍스트 */
+  --ink-2:#4B5563;          /* 보조 텍스트 */
+  --ink-3:#9CA3AF;          /* 캡션·비활성 */
+  --line:#E5E7EB;
+  --bg:#FFFFFF;
+  --surface:#F5F6F8;        /* 섹션 배경(회색) */
+  --surface-2:#EEF1F5;
+  --footer:#1F2430;
+  --radius-xl:28px;         /* 히어로·대형 배너 */
+  --radius-lg:20px;         /* 카드 */
+  --radius-md:14px;         /* 버튼·입력 */
+  --radius-pill:999px;      /* 칩·아이콘 버튼 */
+  --shadow-1:0 4px 14px rgba(17,19,24,.06);
+  --shadow-2:0 12px 32px rgba(17,19,24,.12);
+  --container:1280px;
+  --gutter:24px;
+  --font:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,system-ui,"Noto Sans KR",sans-serif;
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#F3F4F6;--ink-2:#C7CBD3;--ink-3:#8B919C;--line:#2A2F3A;
+    --bg:#12141A;--surface:#1A1D25;--surface-2:#222632;--footer:#0C0E13;
+    --shadow-1:0 4px 14px rgba(0,0,0,.35);--shadow-2:0 12px 32px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#F3F4F6;--ink-2:#C7CBD3;--ink-3:#8B919C;--line:#2A2F3A;
+  --bg:#12141A;--surface:#1A1D25;--surface-2:#222632;--footer:#0C0E13;
+}
+
+/* ===== 2. Base ===== */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;word-break:keep-all}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+.container{max-width:var(--container);margin:0 auto;padding:0 var(--gutter)}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.section{padding:72px 0}
+.section--gray{background:var(--surface)}
+.section--blue{background:#EAF1FF}
+:root[data-theme="dark"] .section--blue{background:#17203a}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .section--blue{background:#17203a}}
+.section__head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:28px}
+.section__title{font-size:32px;font-weight:800;letter-spacing:-.02em;margin:0;line-height:1.2}
+.section__sub{margin:6px 0 0;color:var(--ink-2);font-size:16px}
+.section__more{font-weight:700;color:var(--ink-2);display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.section__more:hover{color:var(--brand)}
+
+/* ===== 3. Header ===== */
+.brandbar{background:var(--surface);border-bottom:1px solid var(--line);font-size:13px}
+.brandbar .container{display:flex;justify-content:space-between;align-items:center;height:36px}
+.brandbar__sites{display:flex;gap:18px;font-weight:600;color:var(--ink-2)}
+.brandbar__sites a.is-active{color:var(--brand)}
+.brandbar__util{display:flex;gap:16px;color:var(--ink-2)}
+.header{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:saturate(180%) blur(12px);border-bottom:1px solid var(--line)}
+.header .container{display:flex;align-items:center;height:72px;gap:32px}
+.logo{font-weight:900;font-size:22px;letter-spacing:-.03em;display:flex;align-items:center;gap:8px}
+.logo__mark{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--brand),var(--accent-yellow))}
+.gnb{display:flex;gap:18px;margin-left:auto;font-weight:700;font-size:15px}
+.gnb a{padding:8px 2px;position:relative;white-space:nowrap}
+.gnb a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;border-radius:3px;background:var(--brand);transform:scaleX(0);transition:transform .25s var(--ease)}
+.gnb a:hover::after,.gnb a.is-active::after{transform:scaleX(1)}
+.header__actions{display:flex;gap:8px;align-items:center}
+.icon-btn{width:40px;height:40px;border-radius:var(--radius-pill);display:grid;place-items:center;background:var(--surface);color:var(--ink-2);transition:background .2s}
+.icon-btn:hover{background:var(--surface-2);color:var(--ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:var(--radius-md);font-weight:700;font-size:15px;transition:transform .2s var(--ease),background .2s,box-shadow .2s}
+.btn--primary{background:var(--brand);color:#fff;box-shadow:0 6px 16px rgba(30,94,255,.35)}
+.btn--primary:hover{background:var(--brand-deep);transform:translateY(-1px)}
+.btn--ghost{background:var(--surface);color:var(--ink)}
+.btn--ghost:hover{background:var(--surface-2)}
+.btn--pill{border-radius:var(--radius-pill)}
+.hamburger{display:none}
+
+/* ===== 4. Hero (full-bleed carousel) ===== */
+.hero{padding:20px 0 0}
+.hero__slider{position:relative;border-radius:var(--radius-xl);overflow:hidden;aspect-ratio:21/9;min-height:360px;background:var(--surface-2);box-shadow:var(--shadow-2)}
+.hero__slide{position:absolute;inset:0;opacity:0;transition:opacity .8s var(--ease);background-size:cover;background-position:center}
+.hero__slide.is-active{opacity:1}
+.hero__slide::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.55) 0%,rgba(0,0,0,.15) 55%,transparent 100%)}
+.hero__copy{position:absolute;left:56px;bottom:56px;color:#fff;max-width:560px}
+.hero__eyebrow{display:inline-block;padding:6px 12px;border-radius:var(--radius-pill);background:var(--accent-yellow);color:#111;font-weight:800;font-size:13px;margin-bottom:14px}
+.hero__title{font-size:48px;font-weight:900;line-height:1.15;letter-spacing:-.03em;margin:0 0 12px;text-shadow:0 2px 12px rgba(0,0,0,.25)}
+.hero__desc{font-size:18px;opacity:.95;margin:0 0 22px}
+.hero__nav{position:absolute;right:28px;bottom:28px;display:flex;align-items:center;gap:10px}
+.hero__dots{display:flex;gap:8px;padding:8px 12px;border-radius:var(--radius-pill);background:rgba(0,0,0,.35);backdrop-filter:blur(6px)}
+.hero__dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.5);transition:width .3s,background .3s}
+.hero__dot.is-active{width:24px;border-radius:4px;background:#fff}
+.hero__ctrl{width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.35);color:#fff;display:grid;place-items:center;backdrop-filter:blur(6px)}
+
+/* ===== 5. Status strip (오늘의 운영 정보) ===== */
+.status{margin-top:-36px;position:relative;z-index:2}
+.status__card{background:var(--bg);border-radius:var(--radius-lg);box-shadow:var(--shadow-2);padding:22px 28px;display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.status__item{display:flex;gap:14px;align-items:center;padding:0 8px;border-right:1px solid var(--line)}
+.status__item:last-child{border-right:0}
+.status__icon{width:44px;height:44px;border-radius:var(--radius-md);display:grid;place-items:center;background:var(--surface);font-size:20px}
+.status__label{font-size:13px;color:var(--ink-3);font-weight:600}
+.status__value{font-size:18px;font-weight:800;letter-spacing:-.01em}
+.status__value .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent-green);margin-right:6px;vertical-align:middle}
+
+/* ===== 6. Quick menu (원형 아이콘) ===== */
+.quick{display:grid;grid-template-columns:repeat(8,1fr);gap:12px}
+.quick__item{display:flex;flex-direction:column;align-items:center;gap:12px;padding:18px 8px;border-radius:var(--radius-lg);transition:background .2s,transform .2s var(--ease)}
+.quick__item:hover{background:var(--surface);transform:translateY(-3px)}
+.quick__icon{width:64px;height:64px;border-radius:var(--radius-pill);display:grid;place-items:center;font-size:28px;background:linear-gradient(145deg,var(--surface),var(--surface-2));box-shadow:inset 0 0 0 1px var(--line)}
+.quick__label{font-size:14px;font-weight:700;text-align:center}
+
+/* ===== 7. Card rail (가로 스크롤 카드) ===== */
+.rail{display:flex;gap:20px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 4px 16px;margin:0 -4px;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.card{flex:0 0 300px;scroll-snap-align:start;background:var(--bg);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-1);transition:transform .25s var(--ease),box-shadow .25s}
+.card:hover{transform:translateY(-6px);box-shadow:var(--shadow-2)}
+.card__media{aspect-ratio:4/3;background:var(--surface-2) center/cover no-repeat;position:relative}
+.card__badge{position:absolute;top:12px;left:12px;padding:5px 10px;border-radius:var(--radius-pill);font-size:12px;font-weight:800;background:var(--brand);color:#fff}
+.card__badge--yellow{background:var(--accent-yellow);color:#111}
+.card__body{padding:18px 18px 20px}
+.card__title{font-size:18px;font-weight:800;margin:0 0 6px;letter-spacing:-.01em}
+.card__desc{font-size:14px;color:var(--ink-2);margin:0 0 12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:12px;font-weight:700;padding:4px 10px;border-radius:var(--radius-pill);background:var(--surface);color:var(--ink-2)}
+
+/* ===== 8. Promo banners (2단 그라디언트) ===== */
+.promo{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.promo__item{position:relative;border-radius:var(--radius-xl);padding:40px;min-height:260px;color:#fff;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;transition:transform .25s var(--ease)}
+.promo__item:hover{transform:scale(1.01)}
+.promo__item--pink{background:linear-gradient(135deg,var(--brand) 0%,var(--accent-purple) 100%)}
+.promo__item--sky{background:linear-gradient(135deg,var(--accent-sky) 0%,#2563EB 100%)}
+.promo__item--sunset{background:linear-gradient(135deg,var(--accent-yellow) 0%,#FF7A3D 100%)}
+.promo__tag{font-size:13px;font-weight:800;opacity:.9;margin-bottom:8px}
+.promo__title{font-size:28px;font-weight:900;margin:0 0 8px;letter-spacing:-.02em;line-height:1.2}
+.promo__desc{margin:0 0 18px;opacity:.92}
+.promo__item .btn{align-self:flex-start;background:#fff;color:var(--ink)}
+.promo__deco{position:absolute;right:-40px;top:-40px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.14)}
+
+/* ===== 9. Notice tabs ===== */
+.tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:18px}
+.tab{padding:12px 16px;font-weight:700;color:var(--ink-3);border-bottom:3px solid transparent;margin-bottom:-1px}
+.tab.is-active{color:var(--ink);border-color:var(--brand)}
+.notice-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:0 40px}
+.notice-list li{display:flex;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid var(--line);min-width:0}
+.notice-list a{flex:1;min-width:0;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.notice-list time{color:var(--ink-3);font-size:14px;white-space:nowrap}
+
+/* ===== 10. Media / SNS ===== */
+.media{display:grid;grid-template-columns:2fr 1fr;gap:20px}
+.media__video{border-radius:var(--radius-xl);overflow:hidden;aspect-ratio:16/9;background:#000 center/cover}
+.media__sns{display:grid;grid-template-rows:repeat(3,1fr);gap:12px}
+.sns-item{display:flex;align-items:center;gap:14px;padding:16px;border-radius:var(--radius-lg);background:var(--bg);box-shadow:var(--shadow-1)}
+.sns-item__thumb{width:56px;height:56px;border-radius:var(--radius-md);background:var(--surface-2) center/cover}
+.sns-item__title{font-weight:700;font-size:15px;margin:0}
+.sns-item__meta{font-size:13px;color:var(--ink-3)}
+
+/* ===== 11. App / CTA band ===== */
+.band2{display:grid;grid-template-columns:1.5fr 1fr;gap:16px}
+.band.band--ai{background:linear-gradient(120deg,#1E5EFF,#7B5CFF);color:#fff;transition:transform .2s var(--ease),box-shadow .2s;flex-wrap:wrap}
+.band.band--ai:hover{transform:translateY(-3px);box-shadow:var(--shadow-2);color:#fff}
+.band__tag{display:inline-block;font-size:12px;font-weight:800;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.22);margin-bottom:8px}
+@media (max-width:1024px){.band2{grid-template-columns:1fr}}
+.band{border-radius:var(--radius-xl);padding:36px 40px;display:flex;align-items:center;justify-content:space-between;gap:24px;background:linear-gradient(120deg,#111318,#2A2F3A);color:#fff}
+.band__title{font-size:28px;font-weight:900;margin:0 0 6px;letter-spacing:-.02em}
+.band__desc{margin:0;opacity:.8}
+
+/* ===== 12. Footer ===== */
+.footer{background:var(--footer);color:#C7CBD3;padding:56px 0 40px;font-size:14px}
+.footer__top{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:28px}
+.header .btn{white-space:nowrap}
+.footer__links{display:flex;gap:20px;font-weight:700;color:#fff;flex-wrap:wrap}
+.footer__family{display:flex;gap:10px;flex-wrap:wrap}
+.footer__family a{padding:8px 14px;border-radius:var(--radius-pill);background:rgba(255,255,255,.08)}
+.footer__info{opacity:.75;line-height:1.8}
+.footer__copy{margin-top:20px;opacity:.5;font-size:12px}
+
+/* ===== 12.5 Interactive: overlay / mega / modal / toast ===== */
+.overlay{position:fixed;inset:0;background:rgba(17,19,24,.55);backdrop-filter:blur(4px);z-index:100;display:none;align-items:flex-start;justify-content:center;padding:7vh 24px;overflow:auto}
+.overlay.is-open{display:flex}
+.panel{background:var(--bg);border-radius:var(--radius-xl);max-width:920px;width:100%;max-height:85vh;overflow:auto;padding:36px;box-shadow:var(--shadow-2);position:relative}
+.panel__close{position:absolute;top:18px;right:18px;width:40px;height:40px;border-radius:50%;background:var(--surface);font-size:18px}
+.panel__title{font-size:24px;font-weight:800;margin:0 0 18px;letter-spacing:-.02em}
+.search-box{display:flex;gap:10px;align-items:center;border:2px solid var(--brand);border-radius:var(--radius-pill);padding:6px 8px 6px 22px}
+.search-box input{flex:1;border:0;outline:0;background:none;font:inherit;font-size:17px;color:var(--ink)}
+.search-hint{font-size:13px;color:var(--ink-3);margin:10px 4px 0}
+.search-chips{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 8px}
+.search-chips .chip{cursor:pointer;padding:8px 14px;font-size:13px}
+.search-chips .chip:hover{background:var(--brand);color:#fff}
+.result{display:flex;align-items:center;gap:14px;padding:14px 4px;border-bottom:1px solid var(--line)}
+.result__kind{flex:0 0 auto;font-size:12px;font-weight:800;padding:4px 10px;border-radius:var(--radius-pill);background:var(--surface-2);color:var(--ink-2)}
+.result__body{flex:1;min-width:0}
+.result__title{font-weight:700;margin:0}
+.result__desc{font-size:13px;color:var(--ink-2);margin:2px 0 0}
+.result .btn{padding:8px 14px;font-size:13px}
+.mega{display:grid;grid-template-columns:repeat(4,1fr);gap:26px 22px}
+.mega__l1{font-size:16px;font-weight:800;margin:0 0 10px;padding-bottom:8px;border-bottom:2px solid var(--brand)}
+.mega__l2{list-style:none;margin:0 0 10px;padding:0;font-size:13.5px;color:var(--ink-2)}
+.mega__l2h{margin:10px 0 4px;font-size:12.5px;font-weight:800;color:var(--ink-3)}
+.mega{grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}
+.mega__l2 li{padding:5px 0}
+.mega__l2 a:hover{color:var(--brand)}
+.steps{display:flex;gap:8px;margin-bottom:20px}
+.step{flex:1;text-align:center;font-size:13px;font-weight:700;color:var(--ink-3);padding:9px;border-radius:var(--radius-md);background:var(--surface)}
+.step.is-on{background:var(--brand);color:#fff}
+.pick-grid{display:flex;gap:10px;flex-wrap:wrap}
+.pick{padding:12px 18px;border-radius:var(--radius-md);background:var(--surface);font-weight:700;font-size:14px;cursor:pointer;border:2px solid transparent;min-height:44px}
+.pick:hover{background:var(--surface-2)}
+.pick.is-sel{border-color:var(--brand);background:var(--bg);color:var(--brand)}
+.pick[disabled]{opacity:.35;cursor:not-allowed;text-decoration:line-through}
+.modal-foot{display:flex;justify-content:space-between;align-items:center;margin-top:24px}
+.modal-note{font-size:13px;color:var(--ink-3)}
+.toast{position:fixed;left:50%;bottom:36px;transform:translate(-50%,16px);background:var(--ink);color:var(--bg);padding:13px 22px;border-radius:var(--radius-pill);font-weight:700;font-size:14px;z-index:200;opacity:0;pointer-events:none;transition:opacity .25s var(--ease),transform .25s var(--ease)}
+.toast.is-show{opacity:1;transform:translate(-50%,0)}
+.rail-wrap{position:relative}
+.rail-arrow{position:absolute;top:38%;z-index:3;width:44px;height:44px;border-radius:50%;background:var(--bg);box-shadow:var(--shadow-2);font-size:18px;display:grid;place-items:center}
+.rail-arrow:hover{background:var(--surface)}
+.rail-arrow--prev{left:-18px}.rail-arrow--next{right:-18px}
+@media (max-width:768px){.mega{grid-template-columns:1fr 1fr}.panel{padding:24px}.rail-arrow{display:none}}
+
+/* ===== 12.6 도구 모음 + 메뉴 상세 ===== */
+.tools-tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:22px}
+.tools{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.tool{display:flex;flex-direction:column;gap:6px;padding:20px;border-radius:var(--radius-lg);background:var(--bg);box-shadow:var(--shadow-1);cursor:pointer;transition:transform .25s var(--ease),box-shadow .25s;border:0;text-align:left;font:inherit;color:var(--ink)}
+.tool:hover{transform:translateY(-4px);box-shadow:var(--shadow-2)}
+.tool__src{font-size:11px;font-weight:800;color:var(--brand);letter-spacing:.02em}
+.tool__name{font-size:17px;font-weight:800;margin:0}
+.tool__desc{font-size:13px;color:var(--ink-2);margin:0}
+.md-def{color:var(--ink-2);margin:-12px 0 20px;font-size:14.5px}
+.md-label{font-size:12px;font-weight:800;color:var(--ink-3);margin:0 0 8px;letter-spacing:.04em}
+.md-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+.md-l2{background:var(--surface);border-radius:var(--radius-lg);padding:16px 18px}
+.md-l2 h4{margin:0 0 8px;font-size:15px;font-weight:800}
+.md-l2 a{display:block;padding:5px 0;font-size:13.5px;color:var(--ink-2)}
+.md-l2 a:hover{color:var(--brand)}
+.md-ai{background:#EAF1FF;border:1px solid #C6D8FF;border-radius:var(--radius-lg);padding:14px 18px;margin-bottom:16px;font-size:13.5px;line-height:1.6;color:#1c2a4a}
+.md-ai b{color:var(--brand)}
+.md-from{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
+.md-next{display:flex;gap:10px;flex-wrap:wrap}
+:root[data-theme="dark"] .md-ai{background:#1b2436;border-color:#2c3c5e;color:#c8d6f2}
+@media (max-width:768px){.tools{grid-template-columns:1fr}.md-grid{grid-template-columns:1fr}}
+
+/* ===== 12.7 일정·소식 ===== */
+.news-head{text-align:center;margin-bottom:6px}
+.news-head .section__sub{margin:8px 0 0}
+.news-tabs{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:20px 0 28px}
+.npill{padding:10px 24px;border-radius:999px;border:1px solid var(--line);background:var(--bg);font-weight:700;font-size:14px;color:var(--ink-2);transition:background .2s,color .2s}
+.npill:hover{border-color:var(--brand);color:var(--brand)}
+.npill.is-active{background:var(--brand);color:#fff;border-color:var(--brand)}
+.news-card{flex:0 0 300px;scroll-snap-align:start;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);padding:22px;display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow-1);transition:transform .25s var(--ease),box-shadow .25s;min-height:230px}
+.news-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-2)}
+.news-cat{color:var(--brand);font-size:12.5px;font-weight:800}
+.news-title{font-size:17px;font-weight:800;line-height:1.35;margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.news-ex{font-size:13px;color:var(--ink-2);line-height:1.6;margin:0;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.news-date{margin-top:auto;font-size:13px;color:var(--ink-3)}
+
+/* ===== 12.9 나의 요약 스트립 + 등장 애니메이션 ===== */
+.me{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:14px}
+.me__c{display:flex;flex-direction:column;gap:4px;padding:22px 24px;border-radius:var(--radius-lg);background:var(--surface);border:1px solid var(--line);transition:transform .2s var(--ease),box-shadow .2s}
+.me__c:hover{transform:translateY(-3px);box-shadow:var(--shadow-1)}
+.me__c small{font-size:12.5px;font-weight:800;color:var(--ink-3)}.me__c b{font-size:20px;font-weight:900;letter-spacing:-.02em}.me__c span{font-size:13.5px;color:var(--ink-2)}
+.me__c--main{background:var(--brand);color:#fff;border:0}.me__c--main small,.me__c--main span{color:rgba(255,255,255,.85)}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.reveal.is-in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+@media (max-width:1024px){.me{grid-template-columns:1fr 1fr}}
+@media (max-width:600px){.me{grid-template-columns:1fr}}
+
+/* ===== v1.2 : 역할 카드 · 2028 KPI · 원천/잠금 배지 ===== */
+.roles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.role{display:flex;flex-direction:column;gap:4px;padding:22px 24px;border-radius:var(--radius-lg);background:var(--bg);border:1.5px solid var(--line);border-top:5px solid var(--rc);transition:transform .2s var(--ease),box-shadow .2s}
+.role:hover{transform:translateY(-3px);box-shadow:var(--shadow-1);color:inherit}
+.role--teacher{border-color:#16386f;border-top-color:var(--rc)}
+.role__ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:var(--rc);background:color-mix(in srgb,var(--rc) 12%,transparent);margin-bottom:6px}
+.role__who{font-size:13px;font-weight:800;color:var(--rc)}.role b{font-size:20px;font-weight:900;letter-spacing:-.02em}.role>span:last-child{font-size:14px;color:var(--ink-2)}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.kpi{color:inherit}
+a.kpi:hover{transform:translateY(-3px);box-shadow:var(--shadow-1);color:inherit}
+.kpi{transition:transform .2s var(--ease),box-shadow .2s;display:flex;flex-direction:column;gap:4px;padding:22px;border-radius:var(--radius-lg);background:var(--surface);border:1px solid var(--line)}
+.kpi__l{font-size:13.5px;font-weight:700;color:var(--ink-2)}.kpi__v{font-size:30px;font-weight:900;letter-spacing:-.03em;font-variant-numeric:tabular-nums}.kpi__d{font-size:14px;color:var(--ink);font-weight:600}
+.srcb{align-self:flex-start;display:inline-block;margin-top:6px;font-size:11.5px;font-weight:800;padding:3px 8px;border-radius:6px;background:var(--bg);border:1px solid var(--line);color:var(--ink-2);white-space:nowrap}
+.srcb--c{background:#E7F8F0;border-color:#BFE9D4;color:#0B6E45}.srcb--s{background:#EAF1FF;border-color:#C9D9FF;color:#1849C6}.srcb--n{background:#F1EEFF;border-color:#D9D0FF;color:#4B32B8}
+.tool .srcb{margin-top:0}
+.tool__top{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.tool__dest{font-size:12px;color:var(--ink-3);font-weight:700;margin-top:auto}
+.lockb{display:inline-block;font-size:11.5px;font-weight:800;padding:3px 8px;border-radius:6px;background:var(--surface-2);color:var(--ink-2);white-space:nowrap;margin-left:6px;vertical-align:middle}
+.lockb::before{content:"잠금 · "}
+.tool.is-lock{background:var(--surface);box-shadow:none;border:1.5px dashed var(--line)}
+.gsteps,.aisrc{display:flex;gap:6px;flex-wrap:wrap;margin:-6px 0 16px}
+.gsteps i,.aisrc i{font-style:normal;font-size:12.5px;font-weight:800;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.22);color:#fff}
+.footer__rel{border-top:1px solid rgba(255,255,255,.12);margin-top:22px;padding-top:18px}
+.footer__rel b{display:block;font-size:13px;margin-bottom:8px;opacity:.8}
+.footer__rel nav{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;opacity:.8}
+.footer__rel a::after{content:" ↗";font-size:11px}
+@media (max-width:1024px){.kpis{grid-template-columns:1fr 1fr}}
+@media (max-width:768px){.roles,.kpis{grid-template-columns:1fr}}
+
+/* ===== 13. Responsive ===== */
+@media (max-width:1100px){.gnb{display:none}}
+@media (max-width:1024px){
+  .status__card{grid-template-columns:repeat(2,1fr)}
+  .status__item{border-right:0}
+  .quick{grid-template-columns:repeat(4,1fr)}
+  .media{grid-template-columns:1fr}
+  .hero__title{font-size:36px}
+}
+@media (max-width:768px){
+  .section{padding:48px 0}
+  .section__title{font-size:24px}
+  .brandbar{display:none}
+  .gnb,.header__actions .btn{display:none}
+  .hamburger{display:grid}
+  .hero{padding:12px 0 0}
+  .hero__slider{aspect-ratio:4/5;border-radius:var(--radius-lg);min-height:0}
+  .hero__copy{left:20px;right:20px;bottom:24px}
+  .hero__title{font-size:28px}
+  .hero__desc{font-size:15px}
+  .hero__nav{right:14px;bottom:14px}
+  .status{margin-top:16px}
+  .status__card{grid-template-columns:1fr 1fr;padding:16px}
+  .quick{grid-template-columns:repeat(4,1fr);gap:4px}
+  .quick__icon{width:52px;height:52px;font-size:22px}
+  .card{flex-basis:240px}
+  .promo{grid-template-columns:1fr}
+  .promo__item{padding:28px;min-height:200px}
+  .notice-list{grid-template-columns:1fr}
+  .band{flex-direction:column;align-items:flex-start;padding:32px 24px}
+}
+</style>
+</head>
+<body>
+
+<!-- 브랜드 스위처 바 (패밀리 사이트) -->
+<div class="brandbar">
+  <div class="container">
+    <nav class="brandbar__sites" aria-label="패밀리 사이트">
+      <a class="is-active" href="#">서울 진로진학 통합플랫폼</a>
+      <a href="#">서울특별시교육청</a><a href="#">서울특별시교육청교육연구정보원</a><a href="#">커리어넷</a><a href="#">대입정보포털 어디가</a>
+    </nav>
+    <div class="brandbar__util"><a href="#" data-toast="로그인 화면은 다음 단계에서 설계합니다">로그인</a><a href="#" data-toast="통합계정 회원가입 (디지털원패스 · 교육디지털원패스 · 네이버 · 카카오) · 1차 오픈 범위">회원가입</a><button id="btnTheme" aria-label="화면 모드 전환" style="font-size:13px;color:var(--ink-2)">🌙 다크</button></div>
+  </div>
+</div>
+
+<!-- 헤더 -->
+<header class="header">
+  <div class="container">
+    <a class="logo" href="#"><span class="logo__mark"></span>서울 진로진학 통합플랫폼</a>
+    <nav class="gnb" aria-label="주메뉴">
+      <a href="#">미래탐색</a><a href="#">학교·과목설계</a><a href="#">대학·전형탐색</a><a href="#">지원전략</a><a href="#">상담·체험</a><a href="#">나의 진로진학</a><a href="#">자료·소식</a>
+    </nav>
+    <div class="header__actions">
+      <button class="icon-btn" id="btnSearch" aria-label="검색">🔍</button>
+      <button class="btn btn--ghost btn--pill" id="btnBook">상담 예약</button>
+      <button class="icon-btn" id="btnMega" aria-label="전체메뉴" style="display:grid">☰</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- 히어로 -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero__slider" id="hero">
+        <div class="hero__slide is-active" style="background-image:linear-gradient(135deg,#1E5EFF,#7B5CFF)">
+          <div class="hero__copy">
+            <span class="hero__eyebrow">무엇을 준비하고 있나요?</span>
+            <h1 class="hero__title">진로부터 대입까지,<br>하나의 여정으로</h1>
+            <p class="hero__desc">진로검사·학과 탐색·과목 설계·지원전략·상담을 한 곳에서 이어갑니다</p>
+            <a class="btn btn--primary btn--pill" href="my.html#stage">나의 진로진학 시작하기</a>
+          </div>
+        </div>
+        <div class="hero__slide" style="background-image:linear-gradient(135deg,#3FB6FF,#2563EB)">
+          <div class="hero__copy">
+            <span class="hero__eyebrow">2028학년도 대입</span>
+            <h2 class="hero__title">성적 분석과<br>지원가능대학 조회</h2>
+            <p class="hero__desc">내신 5등급제·통합형 수능 첫 세대. 교과군 평균 등급만 간단히 입력하면 성적 흐름을 보여주고, 지원 가능 범위는 상담에서 선생님과 함께 봅니다</p>
+            <a class="btn btn--primary btn--pill" href="strategy.html#grades">성적 입력하러 가기</a>
+          </div>
+        </div>
+        <div class="hero__slide" style="background-image:linear-gradient(135deg,#2ECC8A,#149E72)">
+          <div class="hero__copy">
+            <span class="hero__eyebrow">상담·체험</span>
+            <h2 class="hero__title">불확실할 땐<br>언제든 상담으로</h2>
+            <p class="hero__desc">방문·화상·온라인 게시판 중 편한 방법으로 교사·전문상담과 연결됩니다</p>
+            <a class="btn btn--primary btn--pill" href="counsel.html#type">상담 유형 고르기</a>
+          </div>
+        </div>
+        <div class="hero__nav">
+          <button class="hero__ctrl" id="heroPause" aria-label="자동 넘김 일시정지" aria-pressed="false">⏸</button>
+          <button class="hero__ctrl" data-dir="-1" aria-label="이전">‹</button>
+          <div class="hero__dots" id="dots"></div>
+          <button class="hero__ctrl" data-dir="1" aria-label="다음">›</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 오늘의 정보 스트립 -->
+  <section class="status">
+    <div class="container">
+      <div class="status__card">
+        <div class="status__item"><div class="status__icon">🕙</div><div><div class="status__label">1:1 상담 예약</div><div class="status__value"><span class="dot"></span>오늘 예약 가능</div></div></div>
+        <div class="status__item"><div class="status__icon">☀️</div><div><div class="status__label">가장 가까운 2028 대입 일정</div><div class="status__value" id="ddayNext">2028 수시 원서접수</div></div></div>
+        <div class="status__item"><div class="status__icon">👥</div><div><div class="status__label">접수 중인 설명회·체험</div><div class="status__value">중학교 설명회 접수 중</div></div></div>
+        <div class="status__item"><div class="status__icon">📣</div><div><div class="status__label">새 공지</div><div class="status__value">이번 주 5건</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 역할 카드 3분기 (로그인 전) -->
+  <section class="section" id="roleCards" style="padding:40px 0 0">
+    <div class="container">
+      <div class="roles">
+        <a class="role" href="my.html#stage" style="--rc:#2A6BF3"><span class="role__ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></span><span class="role__who">학생</span><b>내 진로 찾기</b><span>빠른 모바일 상담 · 관심 저장 · 나의 단계</span></a>
+        <a class="role" href="news.html#guide" style="--rc:#2FA39B"><span class="role__ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><circle cx="17" cy="10" r="2.5"/><path d="M2.5 21c0-3.5 3-5.5 6.5-5.5s6.5 2 6.5 5.5M15 15.5c3 0 6.5 1.5 6.5 5"/></svg></span><span class="role__who">학부모</span><b>자녀 진학 가이드</b><span>학년별 할 일 · 심층 상담 신청</span></a>
+        <a class="role role--teacher" href="#" data-toast="교사공간은 다음 단계(03 교사공간 첫 화면)에서 만듭니다 · 전환 기간에는 기존 교사용 쎈진학으로 연결됩니다" style="--rc:#E07B00"><span class="role__ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></span><span class="role__who">교사·상담교사</span><b>교사공간</b><span>공유 자료 · 상담 요청 · 2028 브리핑</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 로그인 후: 나의 진로진학 요약 -->
+  <section class="section" id="meStrip" style="display:none;padding:40px 0 0">
+    <div class="container">
+      <div class="me">
+        <a class="me__c me__c--main" href="my.html#stage"><small>나의 현재 단계</small><b>고2 · 진로 구체화</b><span>할 일 6/7 완료 · 다음은 고3 지원 전략</span></a>
+        <a class="me__c" href="my.html#month"><small>이번 달 할 일</small><b>4개</b><span>상담 1 · 마감 1 · 후속 과제 2</span></a>
+        <a class="me__c" href="my.html#jobs"><small>관심 저장</small><b>직업 3 · 학과 3</b><span>대학·전형은 저장 후 비교</span></a>
+        <a class="me__c" href="counsel.html#result"><small>최근 상담</small><b>9.30 센터 상담</b><span>후속 과제 2개 남음</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 일정·소식 (새로운 소식 스타일) -->
+  <section class="section">
+    <div class="container">
+      <div class="news-head"><h2 class="section__title"><a href="news.html#notice">일정·소식</a></h2><p class="section__sub">쎈(SEN)진학 나침판과 서울진로진학정보센터의 새 소식입니다</p></div>
+      <div class="news-tabs" id="newsTabs"></div>
+      <div class="rail-wrap">
+        <button class="rail-arrow rail-arrow--prev" data-newsrail="-1" aria-label="이전 소식">‹</button>
+        <div class="rail" id="newsRail"></div>
+        <button class="rail-arrow rail-arrow--next" data-newsrail="1" aria-label="다음 소식">›</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2028 대입 한눈에 · 원천: 대교협 2028 시행계획 -->
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      <div class="section__head"><div><h2 class="section__title">2028 대입 한눈에</h2><p class="section__sub">2028학년도 대학입학전형시행계획 주요 수치입니다. 대학별 반영 방식은 최종 모집요강을 확인하세요</p></div><a class="section__more" href="univ.html#changes">학년도별 변화 더 보기 →</a></div>
+      <div class="kpis">
+        <a class="kpi" href="univ.html#changes"><span class="kpi__l">전체 모집인원</span><b class="kpi__v">348,789명</b><span class="kpi__d">2027 대비 + 3,072명</span><span class="srcb">대교협 · 2026.4.29 기준</span></a>
+        <a class="kpi" href="univ.html#changes"><span class="kpi__l">수시 · 정시 비율</span><b class="kpi__v">80.8% · 19.2%</b><span class="kpi__d">수시 + 0.5%p</span><span class="srcb">대교협 · 2026.4.29 기준</span></a>
+        <a class="kpi" href="univ.html#changes"><span class="kpi__l">학생부종합 (수시)</span><b class="kpi__v">84,704명</b><span class="kpi__d">+ 2,773명 · 가장 큰 증가</span><span class="srcb">대교협 · 2026.4.29 기준</span></a>
+        <a class="kpi" href="univ.html#changes"><span class="kpi__l">지역의사선발</span><b class="kpi__v">610명</b><span class="kpi__d">+ 122명</span><span class="srcb">대교협 · 2026.4.29 기준</span></a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- 퀵메뉴 -->
+  <section class="section section--gray">
+    <div class="container">
+      <div class="quick">
+        <a class="quick__item" href="jinro-test.html"><span class="quick__icon">🧭</span><span class="quick__label">진로검사</span></a>
+        <a class="quick__item" href="jinro-major.html#find"><span class="quick__icon">🎓</span><span class="quick__label">학과 찾기</span></a>
+        <a class="quick__item" href="school-explore.html#schools"><span class="quick__icon">🏫</span><span class="quick__label">고교 비교</span></a>
+        <a class="quick__item" href="study-plan.html#sim"><span class="quick__icon">📚</span><span class="quick__label">과목 선택</span></a>
+        <a class="quick__item" href="univ.html#find"><span class="quick__icon">🔍</span><span class="quick__label">대학·전형 검색</span></a>
+        <a class="quick__item" href="strategy.html#analysis"><span class="quick__icon">📊</span><span class="quick__label">성적 분석</span></a>
+        <a class="quick__item" href="counsel.html#book"><span class="quick__icon">💬</span><span class="quick__label">상담 예약</span></a>
+        <a class="quick__item" href="#"><span class="quick__icon">⋯</span><span class="quick__label">전체 메뉴</span></a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- 추천 카드 레일 -->
+  <section class="section">
+    <div class="container">
+      <div class="section__head">
+        <div><h2 class="section__title">무엇을 준비하고 있나요?</h2><p class="section__sub">메뉴가 아니라 지금의 고민에서 바로 시작하세요</p></div>
+        <a class="section__more" href="my.html#next">나의 다음 추천 행동 →</a>
+      </div>
+      <div class="rail-wrap">
+        <button class="rail-arrow rail-arrow--prev" data-rail="-1" aria-label="이전 카드">‹</button>
+        <div class="rail" id="rail"></div>
+        <button class="rail-arrow rail-arrow--next" data-rail="1" aria-label="다음 카드">›</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 진로진학 도구 모음 -->
+  <section class="section section--blue">
+    <div class="container">
+      <div class="section__head">
+        <div><h2 class="section__title">진로진학 도구 모음</h2><p class="section__sub">쎈(SEN)진학 나침판과 서울진로진학정보센터의 기능을 한곳에 모았습니다</p></div>
+      </div>
+      <div class="tools-tabs" id="toolTabs"></div>
+      <div class="tools" id="toolGrid"></div>
+    </div>
+  </section>
+
+  <!-- 영상 · SNS -->
+  <section class="section">
+    <div class="container">
+      <div class="section__head"><h2 class="section__title">영상·설명회 자료</h2><div style="display:flex;gap:18px;flex-wrap:wrap"><a class="section__more" href="library.html#briefing">진학 설명회 →</a><a class="section__more" href="library.html#video">진로 영상 전체 →</a></div></div>
+      <div class="media">
+        <div class="media__video"><iframe src="https://www.youtube.com/embed/videoseries?list=PLCd3Q3zX5L8AnEpYHloAMSeJUdpaWvpqv" title="쎈진학TV (서울교육 쌤TV)" style="width:100%;height:100%;border:0" allowfullscreen loading="lazy"></iframe></div>
+        <div class="media__sns" id="sns"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 프로모션 배너 -->
+  <section class="section">
+    <div class="container">
+      <div class="promo">
+        <a class="promo__item promo__item--pink" href="news.html#guide"><span class="promo__tag">학부모 가이드</span><h3 class="promo__title">자녀의 진로진학, 함께 준비해요</h3><p class="promo__desc">중1부터 고3 원서까지, 학년별로 지금 할 일 하나</p><span class="gsteps"><i>중1</i><i>중2</i><i>중3</i><i>고1</i><i>고2</i><i>고3</i><i>원서</i></span><span class="btn btn--pill">학년별 가이드 보기</span></a>
+        <a class="promo__item promo__item--sky" href="#" data-senai><span class="promo__tag">AI 진로진학 안내</span><h3 class="promo__title">궁금한 것을 쉽게 물어보세요</h3><p class="promo__desc">답변마다 근거와 기준일을 보여드려요 · AI 계산 · 출처 보기</p><span class="aisrc"><i>대교협 2028 시행계획</i><i>대학 모집요강</i><i>센터 자료집</i></span><span class="btn btn--pill">질문하러 가기</span></a>
+      </div>
+    </div>
+  </section>
+
+  
+
+  
+  <!-- CTA 밴드 -->
+  <section class="section">
+    <div class="container">
+      <div class="band2">
+        <div class="band">
+          <div><h2 class="band__title">지금 나의 단계를 확인해 보세요</h2><p class="band__desc">로그인하면 학년과 관심분야에 맞는 다음 행동을 알려드립니다</p></div>
+          <a class="btn btn--primary btn--pill" href="#" data-loginopen>로그인하고 시작하기</a>
+        </div>
+        <a class="band band--ai" href="#" data-senai>
+          <div><span class="band__tag">AI PoC</span><h2 class="band__title" style="font-size:24px">AI 진로진학 안내</h2><p class="band__desc">진로 질문 · 대입 질문 · 내 정보로 질문하기 · 선생님 상담 준비</p></div>
+          <span class="btn btn--pill" style="background:#fff;color:#1E5EFF;white-space:nowrap">자세히 보기 →</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div style="display:flex;flex-wrap:wrap;gap:24px 36px;align-items:center">
+      <a class="footer__logo" href="news.html#center" style="display:inline-flex;align-items:center;background:#fff;border-radius:12px;padding:10px 16px"><img src="https://www.jinhak.or.kr/module/upload/file/selectImageView.do?atchFileId=10000002673&amp;fileSn=0" alt="서울진로진학정보센터 SEOUL CAREER GUIDANCE CENTER" style="height:44px;width:auto;display:block"></a>
+      <div style="display:flex;flex-direction:column;gap:8px;min-width:0;flex:1 1 420px">
+        <nav class="footer__links" style="display:flex;flex-wrap:wrap;gap:6px 0;font-size:14px;font-weight:700;color:#fff"><a href="#" style="padding:0 12px 0 0">서비스이용약관</a><a href="#" style="padding:0 12px;border-left:1px solid #4B5262;color:#7FA8FF">개인정보처리방침</a><a href="#" style="padding:0 12px;border-left:1px solid #4B5262">스팸방지정책</a><a href="#" style="padding:0 12px;border-left:1px solid #4B5262">이메일주소무단수집거부</a><a href="news.html#center" style="padding:0 12px;border-left:1px solid #4B5262">오시는길</a></nav>
+        <div class="footer__info" style="margin:0">서울 중구 소파로 46 (회현동1가, 서울특별시교육연구정보원) 서울진로진학정보센터 · TEL. (02)3111-362,3</div>
+        <div class="footer__copy" style="margin:0">©2012 서울진로진학정보센터 All Rights Reserved.</div>
+      </div>
+    </div>
+  </div>
+<div class="container footer__rel"><b>관련 사이트</b><nav aria-label="관련 사이트"><a href="https://www.sen.go.kr" target="_blank" rel="noopener" title="새 창">서울특별시교육청</a><a href="https://www.serii.re.kr" target="_blank" rel="noopener" title="새 창">서울특별시교육청교육연구정보원</a><a href="https://www.adiga.kr" target="_blank" rel="noopener" title="새 창">대입정보포털 어디가</a><a href="https://www.kice.re.kr" target="_blank" rel="noopener" title="새 창">한국교육과정평가원</a><a href="https://www.career.go.kr" target="_blank" rel="noopener" title="새 창">커리어넷</a><a href="https://www.work24.go.kr" target="_blank" rel="noopener" title="새 창">고용24(워크넷)</a><a href="https://www.moe.go.kr" target="_blank" rel="noopener" title="새 창">교육부</a><a href="https://www.keris.or.kr" target="_blank" rel="noopener" title="새 창">한국교육학술정보원(KERIS)</a><a href="https://www.neis.go.kr" target="_blank" rel="noopener" title="새 창">나이스 대국민서비스</a><a href="https://www.suneung.re.kr" target="_blank" rel="noopener" title="새 창">대학수학능력시험</a><a href="https://www.adiga.kr" target="_blank" rel="noopener" title="새 창">학생부종합전형 포털</a><a href="https://stas.moe.go.kr" target="_blank" rel="noopener" title="새 창">학생평가지원포털</a><a href="https://www.kcue.or.kr" target="_blank" rel="noopener" title="새 창">한국대학교육협의회</a><a href="https://www.kcce.or.kr" target="_blank" rel="noopener" title="새 창">한국전문대학교육협의회</a><a href="https://www.jinhak.or.kr" target="_blank" rel="noopener" title="새 창">서울진로진학정보센터</a></nav></div>
+</footer>
+
+<!-- 통합검색 오버레이 -->
+<div class="overlay" id="ovSearch" role="dialog" aria-modal="true" aria-label="통합검색">
+  <div class="panel">
+    <button class="panel__close" data-close aria-label="닫기">✕</button>
+    <h2 class="panel__title">통합검색</h2>
+    <div class="search-box"><input id="searchInput" type="search" placeholder="예: 생명과학에 관심이 있는데 어떤 학과와 과목이 있나요?" aria-label="검색어 입력"><button class="btn btn--primary btn--pill" id="btnDoSearch">검색</button></div>
+    <p class="search-hint">직업·학과·과목·고교·대학·전형·자료를 한 번에 찾습니다 · 답변에는 근거 출처와 기준일이 표시됩니다</p>
+    <div class="search-chips" id="searchChips"></div>
+    <div id="searchResults"></div>
+  </div>
+</div>
+
+<!-- 전체 메뉴 오버레이 -->
+<div class="overlay" id="ovMega" role="dialog" aria-modal="true" aria-label="전체 메뉴">
+  <div class="panel">
+    <button class="panel__close" data-close aria-label="닫기">✕</button>
+    <h2 class="panel__title">전체 메뉴</h2>
+    <div class="mega" id="megaGrid"></div>
+  </div>
+</div>
+
+<!-- 메뉴 상세 오버레이 -->
+<div class="overlay" id="ovMenu" role="dialog" aria-modal="true" aria-label="메뉴 상세">
+  <div class="panel">
+    <button class="panel__close" data-close aria-label="닫기">✕</button>
+    <h2 class="panel__title" id="mdTitle"></h2>
+    <p class="md-def" id="mdDef"></p>
+    <div class="md-grid" id="mdGrid"></div>
+    <p class="md-label">다음 행동</p>
+    <div class="md-next" id="mdNext"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* ===== 콘텐츠 데이터: 이 객체만 교체하면 페이지가 완성됨 ===== */
+const CONTENT = {
+  cards: [
+    {href:"univ.html#changes",title:"2028 대입, 뭐가 바뀌나요?", desc:"고교학점제 · 내신 5등급제 · 통합형 수능, 세 가지 변화를 쉽게 정리했어요", badge:"NEW", tags:["대학·전형탐색"]},
+    {href:"jinro-trait.html",title:"진로를 찾고 싶어요", desc:"진로검사로 나를 이해하고 어울리는 직업·학과를 탐색합니다", badge:"NEW", tags:["미래탐색","진로검사"]},
+    {href:"subject-explore.html#bymajor",title:"고교·과목을 고민하고 있어요", desc:"고교 비교부터 3개년 학업설계까지, 선택을 계획으로 바꿉니다", badge:"인기", badgeClass:"card__badge--yellow", tags:["학교·과목설계"]},
+    {href:"univ.html#find",title:"대학·학과를 찾고 있어요", desc:"조건 검색과 비교로 관심 대학·전형을 저장해 두세요", tags:["대학·전형탐색"]},
+    {href:"strategy.html#grades",title:"지원 전략이 궁금해요", desc:"참고 범위를 보여주고, 판단은 선생님 상담과 함께 합니다", tags:["지원전략","성적분석"]},
+    {href:"counsel.html#type",title:"상담받고 싶어요", desc:"학교 교사·전문 상담교사와 1:1 상담을 예약하고 후속 과제를 받습니다", tags:["상담·체험"]}
+  ],
+  sns: [
+    {title:"쎈진학TV (서울교육 쌤TV)", meta:"유튜브 채널", href:"library.html#video"},
+    {title:"2026 대입 고3 학년초 진학 설명회 다시보기", meta:"설명회 동영상", href:"library.html#briefing"},
+    {title:"서울진로진학정보센터 안내 동영상", meta:"센터 안내", href:"news.html#center"}
+  ]
+};
+
+/* 카드 레일 */
+document.getElementById('rail').innerHTML = CONTENT.cards.map(c=>`
+  <a class="card" href="${c.href||'#'}">
+    <div class="card__media">${c.badge?`<span class="card__badge ${c.badgeClass||''}">${c.badge}</span>`:''}</div>
+    <div class="card__body"><h3 class="card__title">${c.title}</h3><p class="card__desc">${c.desc}</p>
+    <div class="chips">${(c.tags||[]).map(t=>`<span class="chip">#${t}</span>`).join('')}</div></div>
+  </a>`).join('');
+
+/* 일정·소식 */
+const NEWS=[
+ {c:'진학 새소식',t:'쎈(SEN)진학 나침판 매뉴얼 & FAQ',x:'쎈(SEN)진학 나침판 이용 방법과 자주 묻는 질문을 모았습니다.',d:'2026.09.26'},
+ {c:'진학 새소식',t:'[진학칼럼] 2027 수도권 전문대 유망학과 분석⑥ 인공지능',x:'2027학년도 수도권 전문대 유망학과를 분야별로 살펴보는 진학칼럼입니다.',d:'2026.09.19'},
+ {c:'진학 새소식',t:'[진학칼럼] 2027 수도권 전문대 유망학과 분석⑤ 레저·생활스포츠',x:'2027학년도 수도권 전문대 유망학과를 분야별로 살펴보는 진학칼럼입니다.',d:'2026.09.12'},
+ {c:'매거진·보도자료',t:'2028학년도 대학입학전형시행계획 발표',x:'전체 348,789명 · 수시 80.8% · 대교협 2026.4.29 기준',d:'2026.05.01'},
+ {c:'매거진·보도자료',t:'2027학년도 대학입학전형시행계획 발표',x:'2027학년도 대학입학전형시행계획이 발표되었습니다. 전형별 주요 내용을 확인하세요.',d:'2025.05.08'},
+ {c:'매거진·보도자료',t:'2028학년도 대입, 이렇게 준비하세요',x:'2028학년도 대입 준비 방향을 안내하는 보도자료입니다.',d:'2025.04.20'},
+ {c:'매거진·보도자료',t:'2026학년도 대학수학능력시험 시행기본계획',x:'2026학년도 수능 시행기본계획 보도자료입니다.',d:'2025.03.27'},
+ {c:'센터 공지사항',t:'2022 개정 교육과정 선택과목 안내서 탑재',x:'2025학년도 입학생을 위한 2022 개정 교육과정 선택과목 안내서 파일을 탑재합니다.',d:'2025.04.30'},
+ {c:'센터 공지사항',t:'2026 대입 고3 학년초 진학 설명회 동영상 탑재',x:'(교사용), (학생·학부모용) 진학 설명회 동영상 강의 파일을 탑재합니다.',d:'2025.02.14'},
+ {c:'센터 공지사항',t:'고3 학년초 진학지도 자료집 「대입전형의 이해와 대비」',x:'고3 학년 초 진학지도 자료집 파일을 탑재합니다. 발간도서에서도 볼 수 있습니다.',d:'2025.02.07'},
+ {c:'센터 공지사항',t:'초6(예비중1) 특별진로상담주간 상담신청 안내',x:'상담신청서를 작성해 상담교사 이메일로 보내 주세요. 신청 방법은 게시글에 있습니다.',d:'2025.02.04'}
+];
+const newsTabsEl=document.getElementById('newsTabs'), newsRail=document.getElementById('newsRail');
+const newsCats=['전체',...new Set(NEWS.map(n=>n.c))];
+function renderNews(cat){
+ newsTabsEl.innerHTML=newsCats.map(c=>`<button class="npill ${c===cat?'is-active':''}" data-c="${c}">${c}</button>`).join('');
+ newsRail.innerHTML=NEWS.filter(n=>cat==='전체'||n.c===cat).map(n=>`<a class="news-card" href="news.html#notice"><span class="news-cat">${n.c}</span><h3 class="news-title">${n.t}</h3><p class="news-ex">${n.x}</p><time class="news-date">${n.d}</time></a>`).join('');
+}
+renderNews('전체');
+newsTabsEl.addEventListener('click',e=>{const b=e.target.closest('.npill'); if(b) renderNews(b.dataset.c);});
+document.querySelectorAll('[data-newsrail]').forEach(b=>b.addEventListener('click',()=>newsRail.scrollBy({left:320*+b.dataset.newsrail,behavior:'smooth'})));
+
+/* SNS */
+document.getElementById('sns').innerHTML=CONTENT.sns.map(s=>`
+  <a class="sns-item" href="${s.href||'#'}"><span class="sns-item__thumb"></span><div><p class="sns-item__title">${s.title}</p><span class="sns-item__meta">${s.meta}</span></div></a>`).join('');
+
+/* 히어로 캐러셀 */
+const slides=[...document.querySelectorAll('.hero__slide')], dots=document.getElementById('dots');
+let cur=0, timer;
+dots.innerHTML=slides.map((_,i)=>`<span class="hero__dot ${i===0?'is-active':''}"></span>`).join('');
+function go(i){cur=(i+slides.length)%slides.length; slides.forEach((s,k)=>s.classList.toggle('is-active',k===cur)); [...dots.children].forEach((d,k)=>d.classList.toggle('is-active',k===cur));}
+let paused=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function auto(){clearInterval(timer); if(!paused) timer=setInterval(()=>go(cur+1),5000);}
+document.querySelectorAll('.hero__ctrl[data-dir]').forEach(b=>b.addEventListener('click',()=>{go(cur+ +b.dataset.dir); auto();}));
+const hp=document.getElementById('heroPause');
+function syncHp(){hp.textContent=paused?'▶':'⏸';hp.setAttribute('aria-label',paused?'자동 넘김 재생':'자동 넘김 일시정지');hp.setAttribute('aria-pressed',String(paused));}
+hp.addEventListener('click',()=>{paused=!paused;syncHp();auto();});
+syncHp();auto();
+
+/* ===== 토스트 ===== */
+const toast=document.getElementById('toast'); let toastT;
+function showToast(msg){toast.textContent=msg;toast.classList.add('is-show');clearTimeout(toastT);toastT=setTimeout(()=>toast.classList.remove('is-show'),2400);}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-toast]'); if(t){e.preventDefault(); showToast(t.dataset.toast);}});
+
+/* ===== 오버레이 공통 ===== */
+function openOv(id){document.getElementById(id).classList.add('is-open');document.body.style.overflow='hidden';}
+function closeOv(){document.querySelectorAll('.overlay.is-open').forEach(o=>o.classList.remove('is-open'));document.body.style.overflow='';}
+document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o||e.target.closest('[data-close]')) closeOv();}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape') closeOv();});
+
+/* ===== 통합검색 ===== */
+const DB=[
+ {k:'학과',t:'생명과학과',d:'관련 직업 42개 · 개설 대학 61곳 · 권장 과목: 생명과학Ⅰ·Ⅱ, 화학Ⅰ'},
+ {k:'학과',t:'간호학과',d:'관련 직업: 간호사·보건교사 · 개설 대학 83곳'},
+ {k:'과목',t:'생명과학Ⅰ (일반선택)',d:'관련 학과: 생명과학과·간호학과·수의예과 · 우리 학교 개설 여부 확인'},
+ {k:'직업',t:'바이오의약품 연구원',d:'관련 학과: 생명공학과·제약학과 · 필요 역량·진로경로 보기'},
+ {k:'대학',t:'서울OO대학교 생명과학부',d:'수시 학생부교과·종합 · 2028학년도 모집요강 2026.09.15 게시'},
+ {k:'전형',t:'학생부종합(지역균형)',d:'서류 100% · 반영 과목·평가 기준·전년도 입시결과 보기'},
+ {k:'고교',t:'과학중점 고등학교 찾기',d:'서울 지역 과학중점 과정 운영교 비교 · 교육과정 확인'},
+ {k:'자료',t:'과목 선택 전 꼭 확인할 3가지',d:'교사 추천 자료 · 고1 대상 · 2026.09 업데이트'}
+];
+const chipsEl=document.getElementById('searchChips'), resEl=document.getElementById('searchResults'), inp=document.getElementById('searchInput');
+chipsEl.innerHTML=['진로를 찾고 싶어요','고교·과목 고민','대학·학과 찾기','지원 전략','상담받고 싶어요'].map(c=>`<span class="chip" data-q="${c}">${c}</span>`).join('');
+function renderResults(q){
+ const rows=DB.filter(r=>!q||r.t.includes(q)||r.d.includes(q)||r.k.includes(q));
+ resEl.innerHTML=(rows.length?rows:DB).map(r=>`<div class="result"><span class="result__kind">${r.k}</span><div class="result__body"><p class="result__title">${r.t}</p><p class="result__desc">${r.d}</p></div><button class="btn btn--ghost btn--pill" data-toast="관심목록에 저장했어요 · 나의 진로진학 > 목표·관심">☆ 저장</button></div>`).join('')
+ +`<p class="search-hint" style="margin-top:14px">기준 데이터: 2028학년도 모집요강 · 2026.09.28 확인 · 결과가 막막하면 <a href="#" id="searchToBook" style="color:var(--brand);font-weight:700">교사에게 상담받기 →</a></p>`;
+}
+function openSearch(q){openOv('ovSearch'); if(q!==undefined) inp.value=q; renderResults(inp.value.trim()); inp.focus();}
+document.getElementById('btnSearch').addEventListener('click',()=>openSearch());
+document.getElementById('btnDoSearch').addEventListener('click',()=>renderResults(inp.value.trim()));
+inp.addEventListener('input',()=>renderResults(inp.value.trim()));
+inp.addEventListener('keydown',e=>{if(e.key==='Enter')renderResults(inp.value.trim());});
+chipsEl.addEventListener('click',e=>{const c=e.target.closest('.chip'); if(c) openSearch(c.dataset.q);});
+resEl.addEventListener('click',e=>{if(e.target.id==='searchToBook'){e.preventDefault();closeOv();openBook();}});
+
+const PAGES={'진로검사':'jinro-test.html','심리·스트레스·학습자유형 검사':'jinro-test.html#tests','대학별 평가요소':'strategy.html#record','합불사례':'strategy.html#result','진학지도 자료집·발간도서':'library.html','나의 진로특성':'jinro-trait.html','검사·관심 변화보기':'jinro-change.html','직업 찾기':'jinro-job.html#find','나에게 맞는 직업':'jinro-job.html#match','직업 비교·관심저장':'jinro-job.html#compare','학과 찾기':'jinro-major.html#find','직업-학과 연결보기':'jinro-major.html#link','학과 비교·관심저장':'jinro-major.html#compare','고교 유형 알아보기':'school-explore.html#types','학교 찾기·비교':'school-explore.html#schools','고입 전형·일정':'school-explore.html#admission','선택과목 알아보기':'subject-explore.html#subjects','진로·전공별 관련 과목':'subject-explore.html#bymajor','우리 학교 개설과목':'subject-explore.html#myschool','과목 선택 시뮬레이션':'study-plan.html#sim','학년별 이수계획':'study-plan.html#plan','계획 점검·교사와 상담':'study-plan.html#check','중학생 자료':'library.html#mid','고1·2 자료':'library.html#hs12','고3·졸업생 자료':'library.html#hs3','진로 영상':'library.html#video','진학 설명회':'library.html#briefing','교사 추천 자료':'library.html#teacher','입시 주요 일정':'news.html#schedule','정책·전형 변화':'news.html#policy','공지사항':'news.html#notice','서비스 이용안내':'news.html#guide','진로진학센터 안내':'news.html#center','FAQ':'news.html#faq','조건으로 대학 찾기':'univ.html#find','대학·학과 상세':'univ.html#majorinfo','대학·학과 비교':'univ.html#compare','수시 전형':'univ.html#susi','정시 전형':'univ.html#jeongsi','나에게 맞는 전형 탐색':'univ.html#fit','대입제도·용어':'univ.html#terms','학년도별 변화':'univ.html#changes','모집요강·전형자료':'univ.html#docs','내신·모의고사':'strategy.html#grades','학생부 관련 정보':'strategy.html#record','성적·기록 분석':'strategy.html#analysis','대학별 성적 환산':'strategy.html#convert','입시결과 비교':'strategy.html#result','지원가능성 참고분석':'strategy.html#possible','관심 전형 비교':'strategy.html#cmp','나의 지원계획':'strategy.html#plan','지원전략 점검':'strategy.html#check','면접 준비':'strategy.html#interview','AI 면접 연습':'strategy.html#aiint','대학별고사 자료':'strategy.html#exam','진로 질문':'counsel.html#career','대입 질문':'counsel.html#admission','내 정보로 질문하기':'counsel.html#mine','상담 유형 선택':'counsel.html#type','상담 예약·사전질문':'counsel.html#book','상담결과·후속과제':'counsel.html#result','진로체험':'counsel.html#exp','진학설명회':'counsel.html#brief','신청·예약':'counsel.html#apply','현재 단계':'my.html#stage','이번 달 할 일':'my.html#month','다음 추천 행동':'my.html#next','관심 직업·학과':'my.html#jobs','관심 고교':'my.html#schools','관심 대학·전형':'my.html#unis','진로검사·활동':'my.html#tests','학업설계':'my.html#plan','성적·상담·지원기록':'my.html#records','나의 진로진학 일정':'my.html#cal','마감 알림':'my.html#deadline','상담 일정':'my.html#counsel','학부모 연결':'my.html#parent','교사 공유':'my.html#teacher','개인정보·AI 설정':'my.html#privacy'};
+/* ===== IA: L1 7 × L2 25 × L3 79 (검토본 v0.3 부록 D 확정) · 1차 오픈 2027.5 기준 잠금 표시 ===== */
+const OPEN_AT={}; /* 잠금 해제: 전 메뉴 오픈 상태 */
+const IA={
+'미래탐색':{def:'나를 이해하고, 어울리는 직업과 학과를 찾아보는 공간입니다',l2:[{n:'나 이해하기',l3:['진로검사','심리·스트레스·학습자유형 검사','나의 진로특성','검사·관심 변화보기']},{n:'직업 탐색',l3:['직업 찾기','나에게 맞는 직업','직업 비교·관심저장']},{n:'전공·학과 탐색',l3:['학과 찾기','직업-학과 연결보기','학과 비교·관심저장']}],ai:'<b>AI 진로분석</b>: 검사·관심·활동을 설명하고 가능한 탐색방향을 제안합니다',from:['진로종합검사 (센터)','진로심리·스트레스·학습자 유형 검사 (센터)','직업정보·진로자료실 (센터·커리어넷)','진로체험망 꼿길 (센터)','진로검사 (쎈진학)'],next:[['관심 직업·학과 저장','save'],['직업-학과 연결보기','search'],['진로상담 신청','book']]},
+'학교·과목설계':{def:'고교 선택부터 3년 치 과목 계획까지, 선택을 계획으로 바꿉니다',l2:[{n:'고교 탐색',l3:['고교 유형 알아보기','학교 찾기·비교','고입 전형·일정']},{n:'과목 탐색',l3:['선택과목 알아보기','진로·전공별 관련 과목','우리 학교 개설과목']},{n:'나의 학업설계',l3:['과목 선택 시뮬레이션','학년별 이수계획','계획 점검·교사와 상담']}],ai:'<b>AI 학업설계</b>: 목표에 따른 과목 후보와 이유, 대안경로, 누락·충돌 점검을 제시하고 교사 상담으로 연결합니다',from:['고교정보: 일반고·자사고·특성화고·특목고 (센터)','고입정보·고등학교 입학 안내 (센터)','선택과목 추천·안내 2015/2022 (쎈진학)','계열별 학과 안내·개설학과 검색 (쎈진학)','학교알리미 연계'],next:[['학교 비교 후 관심고교 저장','save'],['과목 선택 시뮬레이션','search'],['계획 점검·교사와 상담','book']]},
+'대학·전형탐색':{def:'대학·학과·전형 정보를 찾아보는 공간입니다',l2:[{n:'대학·학과 찾기',l3:['조건으로 대학 찾기','대학·학과 상세','대학·학과 비교']},{n:'전형 찾기',l3:['수시 전형','정시 전형','나에게 맞는 전형 탐색']},{n:'대입 이해하기',l3:['대입제도·용어','학년도별 변화','모집요강·전형자료']}],ai:'<b>RAG 대입상담</b>: 질문에 답하고 근거 출처·학년도·기준일을 표시하며 관련 화면으로 바로 연결합니다',from:['대학별 검색·대학 제공자료 (쎈진학)','대학/학과정보·대학별 전공 안내 (센터)','수시/정시 모집요강·대입전형 시행계획 (센터)','대입 기본사항·입시 용어 FAQ (쎈진학)','대입정보포털 어디가 연계'],next:[['관심 대학·전형 저장','save'],['대학·학과 비교','search'],['내 성적으로 환산 (지원전략)','menu:지원전략']]},
+'지원전략':{def:'내 성적과 기록으로 판단을 돕는 도구입니다. 선생님 상담과 함께 활용하세요',l2:[{n:'나의 성적·기록',l3:['내신·모의고사','학생부 관련 정보','대학별 평가요소','성적·기록 분석']},{n:'대학별 분석',l3:['대학별 성적 환산','입시결과 비교','합불사례','지원가능성 참고분석']},{n:'지원계획',l3:['관심 전형 비교','나의 지원계획','지원전략 점검']},{n:'면접·대학별고사',l3:['면접 준비','AI 면접 연습','대학별고사 자료']}],ai:'<b>AI 학생부 분석</b> · <b>AI 지원가능성</b> · <b>AI 면접</b>: 합격 여부를 단정하지 않고 구간·가정·데이터 연도·불확실성을 함께 보여줍니다 (출처 보기 제공)',from:['성적 입력·성적 분석 리포트 (쎈진학)','지원가능대학 조회 (쎈진학)','대학별 평가요소·나의 학종 준비도 (쎈진학)','수시/정시 합불사례 (쎈진학)','논술·구술/면접 자료 (센터)'],next:[['지원가능성 참고분석','search'],['관심 전형 비교','save'],['교사상담 후 전략 확정','book']]},
+'상담·체험':{def:'고민될 때 언제든, 어느 화면에서든 한 번에 상담으로 연결됩니다',l2:[{n:'AI 진로진학 안내',l3:['진로 질문','대입 질문','내 정보로 질문하기']},{n:'1:1 상담',l3:['상담 유형 선택','상담 예약·사전질문','상담결과·후속과제']},{n:'체험·설명회',l3:['진로체험','진학설명회','신청·예약']}],ai:'<b>AI 상담요약</b>: AI 대화와 분석 결과를 전문상담 전 사전자료로 변환합니다',from:['1:1 상담신청 (쎈진학)','온라인(게시판) 상담 (센터)','방문·화상 상담 (센터)','진학설명회·교원연수 (센터)','진로체험망 꼿길 (센터)'],next:[['상담 예약하기','book'],['진학설명회 신청','save'],['AI에게 먼저 물어보기','search']]},
+'나의 진로진학':{def:'중학생부터 졸업까지, 내가 저장하고 계획하고 기록한 것이 쌓이는 공간입니다',l2:[{n:'나의 대시보드',l3:['현재 단계','이번 달 할 일','다음 추천 행동']},{n:'나의 목표·관심',l3:['관심 직업·학과','관심 고교','관심 대학·전형']},{n:'나의 계획·기록',l3:['진로검사·활동','학업설계','성적·상담·지원기록']},{n:'일정·알림',l3:['나의 진로진학 일정','마감 알림','상담 일정']},{n:'공유·권한',l3:['학부모 연결','교사 공유','개인정보·AI 설정']}],ai:'<b>개인정보·AI 설정</b>: AI 대화 저장 여부, 개인데이터 사용범위, 학부모·교사 공유, 삭제를 직접 통제합니다. 잠긴 항목은 “자녀 동의 필요”로 이유를 안내합니다',from:['관심대학 학과관리 (쎈진학)','MY쎈진학 성적·검사·상담 기록 (쎈진학)','중복 즐겨찾기 통합 (신규)','학부모 연결·교사 공유 (신규)'],next:[['현재 단계 확인','search'],['이번 달 할 일 보기','save'],['상담 일정 잡기','book']]},
+'자료·소식':{def:'학년과 시기에 맞춘 자료, 일정, 이용안내입니다',l2:[{n:'맞춤 자료실',l3:['중학생 자료','고1·2 자료','고3·졸업생 자료','진학지도 자료집·발간도서']},{n:'영상·설명회 자료',l3:['진로 영상','진학 설명회','교사 추천 자료']},{n:'일정·소식',l3:['입시 주요 일정','정책·전형 변화','공지사항']},{n:'이용안내',l3:['서비스 이용안내','진로진학센터 안내','FAQ']}],ai:'<b>맞춤 추천</b>: 학년을 선택하면 중학생 / 고1·2 / 고3·졸업생 자료를 우선 보여줍니다',from:['고3 학년초·수시·정시 자료 (센터)','고1·2 대입 자료·선택과목 안내서 (센터)','학생부 종합전형 가이드북 (센터)','쎈진학TV·진학 새소식 (쎈진학)','매거진/보도자료 (센터)'],next:[['학년별 자료 보기','search'],['입시 주요 일정','save'],['FAQ 보기','search']]}
+};
+const mdTitle=document.getElementById('mdTitle'),mdDef=document.getElementById('mdDef'),mdGrid=document.getElementById('mdGrid'),mdNext=document.getElementById('mdNext');
+function openMenu(name){
+ const m=IA[name]; if(!m){showToast(name+' 화면은 다음 단계에서 설계합니다');return;}
+ mdTitle.innerHTML=name+(PAGES[m.l2[0].l3[0]]?` <a class="btn btn--ghost btn--pill" style="font-size:13px;padding:8px 14px;vertical-align:middle;margin-left:8px;white-space:nowrap" href="${PAGES[m.l2[0].l3[0]]}">첫 화면으로 →</a>`:''); mdDef.textContent=m.def;
+ mdGrid.innerHTML=m.l2.map(s=>`<div class="md-l2"><h4>${s.n}</h4>${s.l3.map(x=>PAGES[x]?`<a href="${PAGES[x]}">${x}</a>`:`<a href="#" data-toast="'${x}' (${name} > ${s.n}) · 상세 화면은 다음 단계에서 설계합니다">${x}</a>`).join('')}</div>`).join('');
+ mdNext.innerHTML=m.next.map(([t,act])=>`<button class="btn ${act==='book'?'btn--primary':'btn--ghost'} btn--pill" data-act="${act}" data-t="${t}">${t}</button>`).join('');
+ closeOv(); openOv('ovMenu');
+}
+mdNext.addEventListener('click',e=>{const b=e.target.closest('[data-act]'); if(!b)return; const a=b.dataset.act;
+ if(a==='book'){closeOv();openBook();} else if(a.startsWith('menu:')){openMenu(a.slice(5));} else if(a==='search'){closeOv();openSearch(b.dataset.t);} else showToast('관심목록에 담았어요 · 나의 진로진학 > 목표·관심');});
+/* 전체 메뉴: L1 → L2 (클릭 시 메뉴 상세) */
+document.getElementById('megaGrid').innerHTML=Object.entries(IA).map(([l1,m])=>`<div><h3 class="mega__l1"><a href="${PAGES[m.l2[0].l3[0]]||'#'}">${l1}</a>${OPEN_AT[l1]?`<span class="lockb">${OPEN_AT[l1]}</span>`:''}</h3>${m.l2.map(s=>`<p class="mega__l2h">${s.n}</p><ul class="mega__l2">${s.l3.map(x=>`<li><a href="${PAGES[x]||'#'}"${PAGES[x]?'':` data-toast="'${x}' 화면은 다음 단계에서 설계합니다"`}>${x}</a></li>`).join('')}</ul>`).join('')}</div>`).join('');
+document.getElementById('megaGrid').addEventListener('click',e=>{const a=e.target.closest('[data-menu]'); if(a){e.preventDefault(); openMenu(a.dataset.menu);}});
+document.getElementById('btnMega').addEventListener('click',()=>openOv('ovMega'));
+document.querySelectorAll('.gnb a').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();openMenu(a.textContent.trim());}));
+/* 도구 모음 (실제 기능 → 새 메뉴 매핑) */
+const TOOLS={
+ 'MY쎈진학':[['성적 입력','내신·모의고사 성적을 단계별로 입력','지원전략','쎈진학','strategy.html#grades'],['성적 분석 리포트','교과·영역별 변화와 강·약점 분석','지원전략','쎈진학','strategy.html#analysis'],['지원가능대학 조회','내 성적 기준 지원 가능 범위 참고분석','지원전략','쎈진학','strategy.html#possible'],['관심대학 학과관리','저장한 대학·학과를 한곳에서 관리','나의 진로진학','쎈진학','my.html#unis'],['진로검사','검사 결과를 직업·학과 탐색으로 연결','미래탐색','쎈진학','jinro-trait.html'],['1:1 상담신청','교사·전문상담을 예약하고 후속과제 받기','book','쎈진학']],
+ '진로검사 (센터)':[['진로종합검사','흥미·적성·가치관을 종합 진단','미래탐색','센터','jinro-test.html'],['진로심리검사','커리어넷 연계 심리검사','미래탐색','센터','jinro-test.html#tests'],['스트레스 검사','학업 스트레스 점검','미래탐색','센터'],['학습자 유형 검사','나에게 맞는 학습 방법 찾기','미래탐색','센터']],
+ '과목·학종':[['대학별 평가요소','대학이 학생부에서 보는 항목 정리','지원전략','쎈진학','strategy.html#record'],['생기부 자가진단','3대 역량 · 7항목 스스로 점검','지원전략','통합 신규','strategy.html#record'],['합불사례','수시·정시 합격·불합격 사례','지원전략','쎈진학','strategy.html#result'],['진학지도 자료집','수시·정시·고3 학년초·선택과목 안내서','자료·소식','센터','library.html'],['선택과목 추천 (2022 개정)','관심 학과별 선택과목 추천','학교·과목설계','쎈진학','subject-explore.html#bymajor'],['계열별 학과 안내','계열→학과→과목 연결보기','학교·과목설계','쎈진학','jinro-major.html#link'],['개설학과 검색','대학별 개설학과 찾기','학교·과목설계','쎈진학','jinro-major.html#find'],['대학별 평가요소','학종 중심 대학별 평가 기준','지원전략','쎈진학'],['나의 학종 준비도','역량별 나의 준비 체크','지원전략','쎈진학'],['수시/정시 합불사례','실제 합격·불합격 사례 검색','지원전략','쎈진학']]
+};
+const toolTabs=document.getElementById('toolTabs'),toolGrid=document.getElementById('toolGrid');
+function renderTools(tab){
+ toolTabs.innerHTML=Object.keys(TOOLS).map(k=>`<button class="tab ${k===tab?'is-active':''}" data-k="${k}">${k}</button>`).join('');
+ toolGrid.innerHTML=TOOLS[tab].map(([n,d,dest,src,href])=>{const lk=OPEN_AT[dest];return `<button class="tool${lk?' is-lock':''}" data-dest="${dest}"${href?` data-href="${href}"`:''}${lk?` data-lock="${lk}"`:''}><span class="tool__top"><span class="srcb srcb--${src==='센터'?'c':src==='쎈진학'?'s':'n'}">${src}</span>${lk?`<span class="lockb">${lk}</span>`:''}</span><h3 class="tool__name">${n}</h3><p class="tool__desc">${d}</p><span class="tool__dest">${dest}</span></button>`;}).join('');
+}
+renderTools('MY쎈진학');
+toolTabs.addEventListener('click',e=>{const b=e.target.closest('.tab'); if(b) renderTools(b.dataset.k);});
+toolGrid.addEventListener('click',e=>{const t=e.target.closest('.tool'); if(!t)return; if(t.dataset.lock){showToast(`${t.dataset.lock} 예정 기능이에요 · 지금은 미리보기로 열립니다`);setTimeout(()=>{if(t.dataset.href)location.href=t.dataset.href;},900);return;}if(t.dataset.href){location.href=t.dataset.href;return;} const d=t.dataset.dest; if(d==='book') openBook(); else openMenu(d);});
+
+/* ===== 상담 예약: 상담·체험 > 상담 예약·사전질문(4단계)으로 통일 ===== */
+function openBook(){location.href='counsel.html#book';}
+document.getElementById('btnBook').addEventListener('click',openBook);
+
+/* ===== 카드 레일 화살표 + 카드/퀵메뉴 연결 ===== */
+document.querySelectorAll('[data-rail]').forEach(b=>b.addEventListener('click',()=>document.getElementById('rail').scrollBy({left:320*+b.dataset.rail,behavior:'smooth'})));
+document.querySelectorAll('#rail .card').forEach(c=>c.addEventListener('click',e=>{if(c.getAttribute('href')!=='#')return;e.preventDefault(); const t=c.querySelector('.card__title').textContent; if(t.includes('상담')) openBook(); else openSearch(t);}));
+document.querySelectorAll('.quick__item').forEach(q=>q.addEventListener('click',e=>{if(q.getAttribute('href')!=='#')return;e.preventDefault(); const l=q.querySelector('.quick__label').textContent; if(l==='전체 메뉴') openOv('ovMega'); else if(l==='상담 예약') openBook(); else openSearch(l);}));
+document.querySelectorAll('.status__item').forEach((s,i)=>{s.style.cursor='pointer'; s.addEventListener('click',()=>{ if(i===0) openBook(); else location.href=['','news.html#schedule','library.html#briefing','news.html#notice'][i];});});
+
+/* ===== 섹션 등장 애니메이션 ===== */
+document.querySelectorAll('main > section:not(.hero):not(.status)').forEach(s=>s.classList.add('reveal'));
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('is-in');io.unobserve(e.target);}}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(s=>io.observe(s));
+
+/* ===== 히어로·밴드 CTA, 다크모드 ===== */
+document.querySelectorAll('.hero__copy .btn').forEach(b=>b.addEventListener('click',e=>{if(b.getAttribute('href')&&b.getAttribute('href')!=='#')return;e.preventDefault();}));
+const themeBtn=document.getElementById('btnTheme');
+themeBtn.addEventListener('click',()=>{const r=document.documentElement; const dark=r.getAttribute('data-theme')!=='dark'; r.setAttribute('data-theme',dark?'dark':'light'); themeBtn.textContent=dark?'☀️ 라이트':'🌙 다크';});
+</script>
+<script>
+/* 퀵 스트립 D-day : 2028 전형일정(부록 B)에서 오늘 이후 가장 가까운 공식 일정 1개 */
+(function(){const S=[['2027-09-20','2028 수시 원서접수'],['2027-12-21','수시 합격자 발표'],['2028-01-03','정시 원서접수'],['2028-02-10','정시 합격자 발표'],['2028-02-22','추가모집']];const t=new Date();t.setHours(0,0,0,0);const n=S.find(s=>new Date(s[0])>=t);const el=document.getElementById('ddayNext');if(n&&el){const d=Math.round((new Date(n[0]+'T00:00')-t)/864e5);el.textContent=n[1]+' D-'+d;el.title=n[0].replace(/-/g,'.')+' · 대교협 2028 시행계획';}})();
+</script>
+<script src="auth.js"></script>
+<script src="gnb.js"></script>
+<script src="sen-ai.js"></script>
+<script>
+/* 로그인 상태에 따른 메인 개인화 */
+(function(){const A=window.SEN_AUTH;if(!A)return;const band=document.querySelector('.band'),strip=document.getElementById('meStrip');
+function apply(){const on=A.logged();if(band){band.querySelector('.band__title').textContent=on?'김서울 님, 지금은 고2 · 진로 구체화 단계예요':'지금 나의 단계를 확인해 보세요';band.querySelector('.band__desc').textContent=on?'이번 달 할 일 4개 · 다음 추천 행동: 관심 전형 저장해 비교하기':'로그인하면 학년과 관심분야에 맞는 다음 행동을 알려드립니다';const b=band.querySelector('.btn');b.style.whiteSpace='nowrap';b.textContent=on?'나의 진로진학으로 →':'로그인하고 시작하기';b.setAttribute('href',on?'my.html#stage':'#');if(!on)b.setAttribute('data-loginopen','');else b.removeAttribute('data-loginopen');}
+if(strip){strip.style.display=on?'':'none';}const rc=document.getElementById('roleCards');if(rc)rc.style.display=on?'none':'';}
+apply();document.addEventListener('sen-auth',apply);})();
+</script>
+</body>
+</html>
