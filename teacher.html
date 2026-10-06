@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>교사공간 | 서울 진로진학 통합플랫폼</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root{
+  --brand:#1E5EFF;--brand-deep:#1247CC;
+  --t-strong:#E07B00;--t-soft:#FBF0E1;--t-text:#B06200;--navy:#16386f;
+  --ok:#0F8A6C;--warn:#E8452C;--assign:#B06200;--gray:#5B6273;
+  --ink:#111318;--ink-2:#4B5563;--ink-3:#9CA3AF;--line:#E5E7EB;
+  --bg:#FFFFFF;--surface:#F5F6F8;--surface-2:#EEF1F5;--footer:#1F2430;
+  --radius-lg:20px;--radius-md:14px;--radius-pill:999px;
+  --shadow-1:0 4px 14px rgba(17,19,24,.06);--shadow-2:0 12px 32px rgba(17,19,24,.12);
+  --container:1280px;--gutter:24px;
+  --font:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,system-ui,"Noto Sans KR",sans-serif;
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--surface);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;word-break:keep-all}
+a{color:inherit;text-decoration:none}a:hover{color:var(--brand)}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+.container{max-width:var(--container);margin:0 auto;padding:0 var(--gutter)}
+.brandbar{background:var(--bg);border-bottom:1px solid var(--line);font-size:13px}
+.brandbar .container{display:flex;justify-content:space-between;align-items:center;height:36px}
+.brandbar__sites{display:flex;gap:18px;font-weight:600;color:var(--ink-2)}
+.brandbar__sites a.is-active{color:var(--brand)}
+.header{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.header .container{display:flex;align-items:center;height:72px;gap:32px}
+.logo{font-weight:900;font-size:22px;letter-spacing:-.03em;display:flex;align-items:center;gap:8px}
+.logo__mark{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--brand),#FFC531)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:var(--radius-md);font-weight:700;font-size:15px;transition:transform .2s var(--ease),background .2s}
+.btn--primary{background:var(--brand);color:#fff}.btn--primary:hover{background:var(--brand-deep);color:#fff;transform:translateY(-1px)}
+.btn--ghost{background:var(--surface);color:var(--ink)}.btn--ghost:hover{background:var(--surface-2)}
+.btn--pill{border-radius:var(--radius-pill)}
+.btn--line{border:1.5px solid var(--line);background:var(--bg)}.btn--line:hover{border-color:var(--ink-3)}
+.btn--navy{background:var(--navy);color:#fff}.btn--navy:hover{background:#0f2b57;color:#fff;transform:translateY(-1px)}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--radius-pill);font-size:12.5px;font-weight:800}
+.badge--ok{background:#E2F4EE;color:var(--ok)}.badge--warn{background:#FDE8E4;color:var(--warn)}
+.badge--wait{background:#F7ECD9;color:var(--assign)}.badge--gray{background:var(--surface-2);color:var(--gray)}
+.badge--teach{background:var(--t-soft);color:var(--t-text)}
+.badge--src{background:var(--surface-2);color:var(--gray);font-weight:700}
+.lock{color:var(--gray);font-weight:700;font-size:12.5px}
+/* 역할 띠 */
+.roleband{background:linear-gradient(90deg,#B9650A,var(--t-strong));color:#fff;padding:26px 0}
+.roleband h1{margin:0;font-size:28px;font-weight:900;letter-spacing:-.02em;display:flex;align-items:center;gap:12px}
+.roleband h1 .badge{background:rgba(255,255,255,.2);color:#fff}
+.roleband p{margin:6px 0 0;font-size:15px;opacity:.95}
+/* Z1 */
+.tband{background:var(--bg);border-bottom:1px solid var(--line)}
+.tband .container{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;padding-top:14px;padding-bottom:14px;font-size:14px}
+.tband b{font-size:15px}
+.tband .sep{color:var(--line)}
+/* 교사 GNB */
+.tgnb{background:var(--bg);border-bottom:1px solid var(--line)}
+.tgnb .container{display:flex;gap:4px;overflow-x:auto}
+.tgnb a{padding:14px 16px;font-weight:700;font-size:15px;white-space:nowrap;border-bottom:3px solid transparent;color:var(--ink-2)}
+.tgnb a.is-on{color:var(--t-text);border-color:var(--t-strong)}
+.tgnb a.is-lock{color:var(--ink-3)}
+/* 레이아웃 */
+.grid{display:grid;grid-template-columns:1fr 2fr;gap:20px;margin-top:24px}
+.card{background:var(--bg);border-radius:var(--radius-lg);box-shadow:var(--shadow-1);padding:24px}
+.card h2{margin:0 0 4px;font-size:19px;font-weight:800;letter-spacing:-.01em}
+.card .sub{margin:0 0 16px;color:var(--ink-2);font-size:13.5px}
+/* Z2 */
+.todo{border:1px solid var(--line);border-radius:var(--radius-md);margin-bottom:10px;overflow:hidden}
+.todo summary{list-style:none;display:flex;align-items:center;gap:10px;padding:13px 16px;cursor:pointer;font-weight:700;font-size:15px}
+.todo summary::-webkit-details-marker{display:none}
+.todo summary .n{margin-left:auto;min-width:26px;height:26px;border-radius:999px;background:var(--t-soft);color:var(--t-text);display:grid;place-items:center;font-size:13.5px;font-weight:800;padding:0 8px}
+.todo summary .n.zero{background:#E2F4EE;color:var(--ok)}
+.todo[open] summary{border-bottom:1px solid var(--line);background:var(--surface)}
+.todo .row{padding:12px 16px;border-bottom:1px solid var(--line);font-size:14px}
+.todo .row:last-child{border-bottom:0}
+.todo .row b{display:block;font-size:14.5px}
+.todo .row span{color:var(--ink-2);font-size:13.5px}
+.todo .acts{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.todo .acts button{padding:7px 14px;border-radius:var(--radius-pill);font-size:13px;font-weight:700;background:var(--t-soft);color:var(--t-text)}
+.todo .acts button.ghost{background:var(--surface);color:var(--ink-2)}
+.todo--lock summary{color:var(--ink-3);cursor:default}
+.todo .note{padding:10px 16px;background:var(--surface);color:var(--ink-3);font-size:12.5px}
+/* Z3 */
+.sys{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.sys article{border:1.5px solid var(--line);border-radius:var(--radius-md);padding:20px;display:flex;flex-direction:column;gap:10px}
+.sys article.is-navy{border-color:var(--navy)}
+.sys .ico{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:20px;background:var(--surface)}
+.sys article.is-navy .ico{background:#E8EDF6;color:var(--navy)}
+.sys h3{margin:0;font-size:16.5px;font-weight:800}
+.sys p{margin:0;font-size:13.5px;color:var(--ink-2);flex:1}
+.sys .btn{padding:10px 16px;font-size:14px}
+.sys .off{opacity:.55}
+.caption{margin:12px 0 0;font-size:12.5px;color:var(--ink-3)}
+/* Z4 */
+.share{display:grid;grid-template-columns:1fr 2fr;gap:0;border:1px solid var(--line);border-radius:var(--radius-md);overflow:hidden;min-height:300px}
+.share__list{border-right:1px solid var(--line);background:var(--surface)}
+.share__list button{display:block;width:100%;text-align:left;padding:13px 16px;border-bottom:1px solid var(--line);font-size:14px}
+.share__list button b{display:block;font-size:14.5px}
+.share__list button span{color:var(--ink-2);font-size:12.5px}
+.share__list button.is-on{background:var(--bg);box-shadow:inset 3px 0 0 var(--t-strong)}
+.share__detail{padding:20px 24px}
+.share__notice{background:var(--t-soft);color:var(--t-text);font-size:12.5px;font-weight:700;border-radius:10px;padding:8px 12px;margin-bottom:14px}
+.share__detail h3{margin:0 0 2px;font-size:17px;font-weight:800}
+.share__detail .meta{color:var(--ink-2);font-size:13px;margin-bottom:14px}
+.kv2{display:grid;gap:8px;margin:0}
+.kv2 div{display:grid;grid-template-columns:120px 1fr;gap:12px;padding:10px 12px;background:var(--surface);border-radius:10px;font-size:14px}
+.kv2 dt{color:var(--ink-3);font-weight:700;font-size:13px}
+.kv2 dd{margin:0}
+/* Z5 */
+.res{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.res article{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);padding:18px;display:flex;flex-direction:column;gap:8px;transition:transform .2s var(--ease),box-shadow .2s}
+.res article:hover{transform:translateY(-2px);box-shadow:var(--shadow-1)}
+.res h3{margin:0;font-size:15.5px;font-weight:800}
+.res p{margin:0;font-size:13px;color:var(--ink-2);flex:1}
+.res a{font-size:13.5px;font-weight:700;color:var(--t-text)}
+/* Z6 */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.kpi{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);padding:18px}
+.kpi b{display:block;font-size:24px;font-weight:900;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.kpi span{font-size:13px;color:var(--ink-2);font-weight:600}
+.kpi .d{font-size:13px;color:var(--ink-3);font-weight:700;margin-left:6px}
+.btable{width:100%;border-collapse:collapse;font-size:14px;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);overflow:hidden}
+.btable th{text-align:left;font-size:12.5px;color:var(--ink-3);font-weight:700;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--surface)}
+.btable td{padding:10px 14px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+.btable tr:last-child td{border-bottom:0}
+.sched{display:flex;gap:14px;flex-wrap:wrap}
+.sched div{flex:1 1 180px;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-md);padding:14px 16px;font-size:14px}
+.sched b{display:block;font-size:15px}
+.sched span{color:var(--ink-2);font-size:13px}
+/* Z7 */
+.audit{width:100%;border-collapse:collapse;font-size:13.5px}
+.audit td{padding:9px 4px;border-bottom:1px solid var(--line);color:var(--ink-2)}
+.audit td:first-child{color:var(--ink-3);white-space:nowrap}
+.rules{margin:0;padding-left:18px;font-size:13.5px;color:var(--ink-2)}
+.rules li{margin-bottom:6px}
+/* 게이트 */
+.gate{max-width:560px;margin:48px auto;background:var(--bg);border-radius:var(--radius-lg);box-shadow:var(--shadow-2);padding:40px;text-align:center}
+.gate h2{margin:0 0 8px;font-size:24px;font-weight:900}
+.gate p{color:var(--ink-2);margin:0 0 24px;font-size:15px}
+.gate ol{text-align:left;margin:0 auto 24px;padding-left:0;list-style:none;display:grid;gap:10px}
+.gate ol li{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border-radius:var(--radius-md);padding:14px 16px;font-size:14.5px}
+.gate ol em{font-style:normal;width:26px;height:26px;border-radius:50%;background:var(--t-strong);color:#fff;font-size:13px;font-weight:800;display:grid;place-items:center;flex-shrink:0}
+.gate .btn{width:100%}
+.gate .tel{margin-top:16px;font-size:13px;color:var(--ink-3)}
+/* 상태 전환(설계 검토용) */
+.statebar{background:#111318;color:#C7CBD3;font-size:13px}
+.statebar .container{display:flex;gap:6px;align-items:center;padding-top:8px;padding-bottom:8px;flex-wrap:wrap}
+.statebar b{color:#fff;margin-right:6px;font-size:12.5px}
+.statebar button{padding:5px 12px;border-radius:var(--radius-pill);background:#2A2F3A;font-size:12.5px;font-weight:700}
+.statebar button.is-on{background:var(--t-strong);color:#fff}
+.footer{background:var(--footer);color:#C7CBD3;padding:36px 0;margin-top:64px;font-size:13px}
+.footer a:hover{color:#fff}
+.toast{position:fixed;left:50%;bottom:32px;transform:translate(-50%,16px);background:var(--ink);color:#fff;padding:12px 22px;border-radius:var(--radius-pill);font-weight:700;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:99}
+.toast.is-on{opacity:1;transform:translate(-50%,0)}
+.section{padding:40px 0 0}
+.section h2.t{margin:0 0 4px;font-size:21px;font-weight:800;letter-spacing:-.01em;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.section p.s{margin:0 0 16px;color:var(--ink-2);font-size:14px}
+@media (max-width:1000px){.grid,.sys,.share{grid-template-columns:1fr}.share__list{border-right:0;border-bottom:1px solid var(--line)}.res,.kpis{grid-template-columns:1fr 1fr}}
+@media (max-width:620px){.res,.kpis{grid-template-columns:1fr}.brandbar__sites a:not(.is-active){display:none}.roleband h1{font-size:22px}}
+</style>
+</head>
+<body>
+
+<div class="statebar"><div class="container" id="stateBar" role="group" aria-label="상태 전환 (설계 검토용)"><b>상태 7종 (설계 검토용)</b></div></div>
+
+<div class="brandbar">
+  <div class="container">
+    <nav class="brandbar__sites" aria-label="패밀리 사이트">
+      <a class="is-active" href="main-everland-style.html">서울 진로진학 통합플랫폼</a>
+      <a href="#">서울특별시교육청</a><a href="#">서울특별시교육청교육연구정보원</a>
+    </nav>
+    <div class="brandbar__util"><a href="#" data-toast="통합계정 로그아웃">로그아웃</a></div>
+  </div>
+</div>
+
+<header class="header">
+  <div class="container">
+    <a class="logo" href="main-everland-style.html"><span class="logo__mark"></span>서울 진로진학 통합플랫폼</a>
+    <div style="margin-left:auto;display:flex;gap:8px">
+      <a class="btn btn--ghost btn--pill" href="main-everland-style.html">← 메인으로</a>
+    </div>
+  </div>
+</header>
+
+<div class="roleband"><div class="container">
+  <h1>교사공간 <span class="badge">교사·상담교사</span></h1>
+  <p>공유 자료 · 상담 요청 · 2028 브리핑 — 교사가 공공 플랫폼 안에서 하는 일은 여기에서, 학생 식별·판정·적재는 전문시스템에서</p>
+</div></div>
+
+<div class="tband" id="z1" hidden><div class="container" id="z1Body"></div></div>
+
+<nav class="tgnb" id="tgnb" hidden aria-label="교사 메뉴"><div class="container">
+  <a href="#" class="is-on">교사공간 홈</a>
+  <a href="#" class="is-lock" data-toast="반 관리는 9월 오픈 (전문시스템 연동)">반 관리 🔒<span class="lock"> 9월</span></a>
+  <a href="#" class="is-lock" data-toast="판정 승인(HITL)은 9월 오픈">판정 승인(HITL) 🔒<span class="lock"> 9월</span></a>
+  <a href="#" class="is-lock" data-toast="배정 답변은 9월 오픈">배정 답변 🔒<span class="lock"> 9월</span></a>
+  <a href="counsel.html">진로진학 상담</a>
+  <a href="#" data-toast="상담 이력은 확정된 상담부터 쌓입니다">상담 이력</a>
+  <a href="library.html">자료실</a>
+</div></nav>
+
+<main class="container" id="main"></main>
+
+<footer class="footer"><div class="container">
+  서울 중구 소파로 46 서울진로진학정보센터 · 아이디·사용 문의 02-3111-362,363 · 프로그램 오류 070-4774-6556 (운영 10:00~17:00)<br>©2012 서울진로진학정보센터 All Rights Reserved.
+</div></footer>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const toast=document.getElementById('toast');let toastT;
+function showToast(m){toast.textContent=m;toast.classList.add('is-on');clearTimeout(toastT);toastT=setTimeout(()=>toast.classList.remove('is-on'),2400);}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-toast]');if(t){e.preventDefault();showToast(t.dataset.toast);}});
+
+/* ===== 상태 7종 ===== */
+const STATES=[
+ {k:'guest',label:'미인증'},
+ {k:'pending',label:'승인 대기'},
+ {k:'homeroom',label:'담임'},
+ {k:'subject',label:'과목교사'},
+ {k:'head',label:'진학부장'},
+ {k:'counselor',label:'정보원 상담교사'},
+ {k:'expired',label:'위촉 만료'}
+];
+let state=localStorage.getItem('sen-teacher-state')||'homeroom';
+
+/* ===== 데이터 (합성, 실제 학생 아님) ===== */
+const TODO=[
+ {k:'req',label:'상담 요청 대기',n:3,open:true,rows:[
+  ['학생 강지우','수시 지원 전략 · 희망 9.8(월) 15:00 · 사전질문 "최저 3합 7 가능할까요"'],
+  ['학부모(김서연 모)','학업 설계 · 희망 9.9(화) 16:30 · 심층(방문) · 동석: 자녀 동의 대기'],
+  ['학생 오서윤','진로·과목 선택 · 희망 9.10(수) 14:00']],
+  acts:['일정 확정','다른 시간 제안'],note:'확정 시 학생에게 알림 · 상담 이력에 기록'},
+ {k:'share',label:'학생 공유 승인 알림',n:2,rows:[
+  ['김서연','진로검사 결과 · 과목 설계 공유 승인 · 9.5'],
+  ['윤태양','진로 경로(자연 계열 미정) 공유 승인 · 9.4']],
+  acts:['열람 (사유 자동 기록)'],note:'열람은 감사로그와 학생 「내 정보를 본 기록」에 남습니다'},
+ {k:'event',label:'설명회·연수 신청 마감',n:1,rows:[
+  ['2028 대입 변화 교사 연수(원격)','마감 9.11(목) · 15차시']],
+  acts:['신청'],note:''},
+ {k:'hitl',label:'판정 승인 대기 (HITL)',lock:'9월 오픈 · 전문시스템'},
+ {k:'assign',label:'배정 답변 대기 (게시판 상담)',lock:'9월 오픈 · 전문시스템'}
+];
+const SHARES=[
+ {who:'김서연',cls:'3-2',what:'진로검사 결과 · 과목 설계',when:'9.5 공유',badge:'학생 승인',kind:'설계',
+  detail:{'진로검사':'직업가치관검사 상위: 사회봉사 · 자율성 (2026.8 실시)','희망 경로':'사회과학 → 심리학과 · 사회학과 비교 중','과목 설계':'3-1 사회·문화 / 3-2 심화 국어 선택 · 확률과 통계 유지','사전 메모':'상담 시 "지원 대학 수준이 맞는지" 질문 예정'}},
+ {who:'윤태양',cls:'3-2',what:'진로 경로(자연 계열 미정)',when:'9.4 공유',badge:'학생 승인',kind:'진로',
+  detail:{'희망 경로':'자연 계열 미정 · 화학/생명 사이에서 탐색 중','진로검사':'흥미검사 RIA형 (2026.5 실시)','최근 활동':'활동 성장 노트 2건 작성 (탐구 1 · 독서 1)'}},
+ {who:'강지우',cls:'3-2',what:'과목 설계 · 상담 한정 공유',when:'9.3 공유 · 상담 종결 30일 후 만료',badge:'상담 한정',kind:'설계',
+  detail:{'공유 범위':'이번 상담 1건 한정 (수시 지원 전략)','과목 설계':'미적분 · 물리학Ⅱ 선택','사전 질문':'"최저 3합 7 가능할까요" — 전문시스템 사전정보에 병합됨'}}
+];
+const RES=[
+ {t:'2028 진학지도 자료집',p:'대교협 주요사항 + 서울 주요대 변동 정리 · 교사 인증 열람분 전문(全文)',a:'내려받기',href:'library.html'},
+ {t:'생기부 읽기 도우미 (교사용)',p:'가명처리 요약 · 3역량 관점 읽기 · 반복 경고 점검 — AI 초안, 확정은 교사가',a:'열기 ›',href:'sen-ai-poc.html'},
+ {t:'원격연수 · 설명회',p:'2028 대입 변화 15차시 · 진학지도 실무 과정 · 수료증 발급',a:'신청하기',href:'#'},
+ {t:'진학지도 Q&A 게시판',p:'교사 간 사례 공유 · 센터 답변 · 같은 학교 담당자와 공동 열람',a:'바로가기',href:'#'}
+];
+const AUDIT=[
+ ['9.5 14:21','나','김서연 진로검사 결과 열람','사유: 상담 준비'],
+ ['9.5 14:20','나','김서연 과목 설계 열람','사유: 상담 준비'],
+ ['9.4 09:12','김서연(학생)','과목 설계 → 담임 공유 승인',''],
+ ['9.4 08:55','윤태양(학생)','진로 경로 → 담임 공유 승인',''],
+ ['9.3 16:40','강지우(학생)','상담 한정 공유 3항목 승인','상담 #4102']
+];
+
+/* ===== Z1 ===== */
+function renderZ1(){
+ const z1=document.getElementById('z1'),body=document.getElementById('z1Body'),gnb=document.getElementById('tgnb');
+ if(state==='guest'||state==='pending'){z1.hidden=true;gnb.hidden=true;return;}
+ z1.hidden=false;gnb.hidden=false;
+ const role={homeroom:'담임교사',subject:'과목교사(사회)',head:'진학부장',counselor:'정보원 상담교사(위촉)',expired:'정보원 상담교사(위촉)'}[state];
+ const scope={homeroom:'서울○○고 3학년 2반',subject:'서울○○고 사회·문화 수강생',head:'서울○○고 3학년 전체(전체보기 승인)',counselor:'서울진로진학정보센터 배정',expired:'—'}[state];
+ let badges=`<span class="badge badge--ok">GPKI ✓</span><span class="badge badge--ok">관리자 승인 ✓</span><span class="badge badge--gray">2FA 학생 식별 화면 진입 시</span><span class="badge badge--gray">세션 29:40</span>`;
+ if(state==='counselor')badges+=`<span class="badge badge--wait">위촉 2027.2.28까지</span>`;
+ if(state==='expired')badges=`<span class="badge badge--warn">권한이 회수되었습니다 · 재위촉 후 이용</span>`;
+ body.innerHTML=`<b>박선우 선생님</b><span class="sep">|</span><span>${scope}</span><span class="sep">|</span><span class="badge badge--teach">${role}</span>${badges}`;
+}
+
+/* ===== 본문 ===== */
+function h(s){return s.replace(/</g,'&lt;');}
+function renderMain(){
+ const m=document.getElementById('main');
+ if(state==='guest'){m.innerHTML=`
+  <div class="gate">
+   <h2>교사 신분 확인이 필요합니다</h2>
+   <p>교사공간은 재직 확인과 학교 승인을 거친 교원만 이용할 수 있습니다.</p>
+   <ol>
+    <li><em>1</em><div><b>재직 확인</b> — GPKI/EPKI 인증서 또는 나이스 교원 계정</div></li>
+    <li><em>2</em><div><b>권한 승인</b> — 학교 담당자(관리자)가 역할·담당 범위 승인</div></li>
+    <li><em>3</em><div><b>2차 인증</b> — 학생 식별 화면 진입 시 Step-up 2FA · 세션 30분</div></li>
+   </ol>
+   <button class="btn btn--primary" data-toast="GPKI 인증 화면은 다음 단계에서 설계합니다">GPKI로 신분 확인</button>
+   <p class="tel">공개 자료실은 인증 없이 이용할 수 있습니다 · <a href="library.html" style="color:var(--brand)">자료실 바로가기</a><br>아이디·사용 문의 02-3111-362,363</p>
+  </div>`;return;}
+ if(state==='pending'){m.innerHTML=`
+  <div class="gate">
+   <h2>승인 대기 중</h2>
+   <p>학교 담당자(관리자) 승인 후 이용할 수 있습니다.</p>
+   <div class="badge badge--wait" style="margin-bottom:20px">신청 9.2 · 담당자 확인 중</div>
+   <p class="tel">공개 자료실만 열려 있습니다 · <a href="library.html" style="color:var(--brand)">자료실 바로가기</a><br>문의 02-3111-362,363 (운영 10:00~17:00)</p>
+  </div>`;return;}
+ if(state==='expired'){m.innerHTML=`
+  <div class="gate">
+   <h2>위촉 기간이 만료되었습니다</h2>
+   <p>정보원 상담교사 권한이 자동 회수되었습니다. 재위촉 후 이용할 수 있습니다.</p>
+   <div class="badge badge--warn" style="margin-bottom:20px">위촉 만료 2027.2.28 · 권한 회수</div>
+   <p class="tel">공개 자료실만 열려 있습니다 · <a href="library.html" style="color:var(--brand)">자료실 바로가기</a><br>재위촉 문의 02-3111-362,363</p>
+  </div>`;return;}
+
+ /* 역할별 필터 */
+ const isSubj=state==='subject',isHead=state==='head',isCoun=state==='counselor';
+ let todo=TODO;
+ if(isSubj)todo=TODO.filter(t=>['req','event','hitl','assign'].includes(t.k));
+ let shares=SHARES;
+ if(isSubj)shares=SHARES.filter(s=>s.kind==='설계');
+
+ /* Z2 */
+ const z2=todo.map(t=>{
+  if(t.lock)return`<details class="todo todo--lock"><summary>🔒 ${t.label}<span class="n zero" style="background:var(--surface-2);color:var(--gray)">${t.lock}</span></summary></details>`;
+  const rows=t.rows.map(r=>`<div class="row"><b>${h(r[0])}</b><span>${h(r[1])}</span><div class="acts">${t.acts.map((a,i)=>`<button class="${i?'ghost':''}" data-done="${a==='일정 확정'?'상담 일정을 확정했어요 · 학생에게 알림':a==='신청'?'신청 완료':a.startsWith('열람')?'열람 기록이 남았습니다 · 학생에게도 표시됩니다':'제안 슬롯 2개를 보냈어요'}">${a}</button>`).join('')}</div></div>`).join('');
+  return`<details class="todo"${t.open?' open':''}><summary>${t.label}<span class="n${t.n?'':' zero'}">${t.n||'0'}</span></summary>${rows}${t.note?`<div class="note">${t.note}</div>`:''}</details>`;
+ }).join('');
+
+ /* Z3 */
+ const sysCard2=isCoun
+  ?`<article><div class="ico">🗓️</div><h3>정보원 상담시스템</h3><p>배정 상담 · 방문·화상 상담 운영 (정보원 상담교사)</p><button class="btn btn--line" data-toast="정보원 상담시스템으로 이동 (SSO)">열기 ›</button></article>`
+  :`<article class="off"><div class="ico">🗓️</div><h3>정보원 상담시스템</h3><p>배정 상담 · 방문·화상 상담 운영 — 정보원 상담교사 역할에만 열립니다</p><button class="btn btn--line" disabled style="cursor:default">정보원 상담교사 전용</button></article>`;
+ const z3=`<div class="sys">
+  <article class="is-navy"><div class="ico">🖥️</div><h3>SEN 진학프로그램 <small style="font-weight:700;color:var(--navy)">전문시스템</small></h3><p>수시·정시 진학지도 · 판정 승인(HITL) · 데이터 적재 · AI 서비스</p><button class="btn btn--navy" data-toast="전문시스템으로 이동 (SSO) · 진입이 감사로그에 기록됩니다">SEN 진학프로그램 열기 ›</button></article>
+  ${sysCard2}
+  <article><div class="ico">💾</div><h3>기존 교사용 쎈진학 <small style="font-weight:700;color:var(--ink-3)">전환 기간</small></h3><p>2027학년도까지 사용한 설치형 프로그램 · 새 창</p><a class="btn btn--line" href="v21.html" target="_blank" rel="noopener">바로가기 ↗</a></article>
+ </div>
+ <p class="caption">전문시스템에서는 학생 식별 정보가 표시됩니다 · 진입과 열람은 감사로그에 기록됩니다.</p>`;
+
+ /* Z4 */
+ const headNote=isHead?`<div class="share__notice">진학부장 전체보기 — 담당 반 밖 학생 열람 시 사유 입력이 필수입니다</div>`:'';
+ const list=shares.map((s,i)=>`<button class="${i===0?'is-on':''}" data-share="${i}"><b>${s.who} <small style="color:var(--ink-3)">${s.cls}</small> <span class="badge ${s.badge==='학생 승인'?'badge--ok':'badge--wait'}" style="font-size:11px">${s.badge}</span></b><span>${s.what} · ${s.when}</span></button>`).join('');
+ const z4=`<div class="card">
+  <h2>우리 반 · 담당 학생 공유 자료</h2>
+  <p class="sub">${isSubj?'담당 과목 수강생 · 과목 설계·학업 설계 공유분만':'학생 본인이 승인한 항목만 표시됩니다 · 성적 원문·학생부 원문·판정 결과는 여기에 없습니다'}</p>
+  ${headNote}
+  <div class="share"><div class="share__list">${list}</div><div class="share__detail" id="shareDetail"></div></div>
+ </div>`;
+
+ /* Z5 */
+ const z5=RES.map(r=>`<article><h3>${r.t}</h3><p>${r.p}</p><a href="${r.href}">${r.a}</a></article>`).join('');
+
+ /* Z6 */
+ const headKpi=isHead?`<div class="kpi"><span>우리 학교 3학년 (진학부장)</span><b>312명</b><span class="d">상담 신청 41 · 공유 승인 188</span></div>`:'';
+ const z6=`
+ <div class="kpis">
+  <div class="kpi"><span>2028 전체 모집인원</span><b>348,789명</b><span class="d">+3,072</span></div>
+  <div class="kpi"><span>수시 · 정시</span><b>80.8% · 19.2%</b><span class="d">수시 비중 유지</span></div>
+  <div class="kpi"><span>학생부종합</span><b>+2,773명</b><span class="d">증가</span></div>
+  <div class="kpi"><span>수도권 교과 · 종합</span><b>−333 · +1,724</b><span class="d">교과 축소</span></div>
+  ${headKpi}
+ </div>
+ <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:14px;margin-top:14px" class="z6grid">
+  <table class="btable"><caption style="text-align:left;font-size:13px;font-weight:800;padding:0 0 8px">서울 주요대 지역균형 모집인원 변동 <span class="badge badge--src">대교협 · 2026.4.29 기준</span></caption>
+   <tr><th>증가</th><th>인원</th><th>감소</th><th>인원</th></tr>
+   <tr><td>인천대</td><td>+315</td><td>한양대</td><td>−129</td></tr>
+   <tr><td>단국대</td><td>+268</td><td>한양대(ERICA)</td><td>−129</td></tr>
+   <tr><td>홍익대</td><td>+113</td><td>서울과기대</td><td>−47</td></tr>
+   <tr><td>서울시립대</td><td>+105</td><td colspan="2" style="color:var(--ink-3)">논술: 부산대 미실시 · 한양대(ERICA) 203 · 한성대 99 · 대전대 7 신설</td></tr>
+   <tr><td>서강대</td><td>+92</td><td colspan="2"></td></tr>
+  </table>
+  <div><div class="sched" style="flex-direction:column">
+   <div><b>수시 원서접수</b><span>2027.9.20(월) ~ 9.23(목) · <strong id="dday1"></strong></span></div>
+   <div><b>수시 합격자 발표</b><span>2027.12.21(화)</span></div>
+   <div><b>정시 원서접수</b><span>2028.1.3(월) ~ 1.6(목)</span></div>
+  </div></div>
+ </div>
+ <p class="caption">제도 설명은 교육부 확정안 기준 · 대학별 반영 방식은 최종 모집요강을 확인하세요</p>`;
+
+ /* Z7 */
+ const z7=`<div style="display:grid;grid-template-columns:1.4fr 1fr;gap:20px" class="z7grid">
+  <div class="card"><h2>공유 감사로그 <small style="font-weight:700;color:var(--ink-3)">최근 5건</small></h2><p class="sub">학생의 「내 정보를 본 기록」과 같은 원천을 읽습니다</p>
+   <table class="audit">${AUDIT.map(a=>`<tr><td>${a[0]}</td><td><b>${a[1]}</b></td><td>${a[2]}</td><td>${a[3]}</td></tr>`).join('')}</table></div>
+  <div class="card"><h2>권한 원칙</h2><p class="sub"></p>
+   <ul class="rules">
+    <li>담당 학년·반 학생만 · 전체보기는 관리자 설정 + 사유 기록</li>
+    <li>UI·DB·API 3중 RBAC · 학년도 전환 시 일괄 재승인</li>
+    <li>위촉 만료 시 권한 자동 회수</li>
+    <li>학생 성적 원문·판정 결과·적재 파일은 교사공간에 표시하지 않음</li>
+   </ul>
+   <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font-size:13px;color:var(--ink-2)">아이디·사용 문의 02-3111-362,363 · 프로그램 오류 070-4774-6556<br>운영 10:00~17:00 · <a href="#" style="color:var(--brand)" data-toast="Q&A 게시판은 다음 단계에서 설계합니다">Q&A 게시판</a></div>
+  </div>
+ </div>`;
+
+ m.innerHTML=`
+ <div class="grid">
+  <div class="card"><h2>오늘 할 일</h2><p class="sub">건수 0이면 완료 · 잠긴 항목은 오픈 시점을 표시합니다</p>${z2}</div>
+  <div style="display:flex;flex-direction:column;gap:20px">
+   <div class="card"><h2>전문시스템 진입</h2><p class="sub">학생 식별·판정·적재가 필요한 업무는 전문시스템에서</p>${z3}</div>
+   ${z4}
+  </div>
+ </div>
+ <section class="section"><h2 class="t">교사 전용 자료 · 연수</h2><p class="s">교사 인증 열람분 · 전문(全文)은 이 공간에서만 — 서가는 자료실과 공용입니다</p><div class="res">${z5}</div></section>
+ <section class="section"><h2 class="t">2028 대입 교사 브리핑 <span class="badge badge--src">대교협 · 2026.4.29 기준</span></h2><p class="s">학급 지도 전에 한 번 읽는 요약</p>${z6}</section>
+ <section class="section">${z7}</section>
+ <style>@media (max-width:1000px){.z6grid,.z7grid{grid-template-columns:1fr !important}}</style>`;
+
+ /* Z4 상세 */
+ function showShare(i){
+  const s=shares[i];const d=document.getElementById('shareDetail');
+  d.innerHTML=`<div class="share__notice">열람이 기록됩니다 — 사유 "상담 준비" 자동 기록 · 학생의 「내 정보를 본 기록」에 표시</div>
+   <h3>${s.who} <small style="color:var(--ink-3);font-weight:700">${s.cls}</small></h3>
+   <div class="meta">${s.what} · ${s.when} · <span class="badge ${s.badge==='학생 승인'?'badge--ok':'badge--wait'}">${s.badge}</span></div>
+   <dl class="kv2">${Object.entries(s.detail).map(([k,v])=>`<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
+   <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+    <a class="btn btn--line" href="cns.html#student" style="padding:9px 16px;font-size:13.5px">상담 브리프 보기</a>
+    <button class="btn btn--line" style="padding:9px 16px;font-size:13.5px" data-toast="성적·판정은 전문시스템에서 열립니다 (2FA)">전문시스템에서 열기 ›</button>
+   </div>`;
+ }
+ document.querySelectorAll('[data-share]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-share]').forEach(x=>x.classList.remove('is-on'));b.classList.add('is-on');showShare(+b.dataset.share);}));
+ if(shares.length)showShare(0);
+ document.querySelectorAll('[data-done]').forEach(b=>b.addEventListener('click',()=>showToast(b.dataset.done)));
+ const dd=document.getElementById('dday1');
+ if(dd){const diff=Math.ceil((new Date('2027-09-20')-new Date())/864e5);dd.textContent='D-'+diff;}
+}
+
+/* ===== 상태 바 ===== */
+const bar=document.getElementById('stateBar');
+STATES.forEach(s=>{
+ const b=document.createElement('button');b.textContent=s.label;b.dataset.k=s.k;
+ b.addEventListener('click',()=>{state=s.k;localStorage.setItem('sen-teacher-state',state);renderAll();});
+ bar.appendChild(b);
+});
+function renderAll(){
+ bar.querySelectorAll('button').forEach(b=>b.classList.toggle('is-on',b.dataset.k===state));
+ renderZ1();renderMain();
+}
+renderAll();
+</script>
+</body>
+</html>

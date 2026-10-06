@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>학부모 서비스 | 서울 진로진학 통합플랫폼</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root{
+  --brand:#1E5EFF;--brand-deep:#1247CC;
+  --p-strong:#2FA39B;--p-soft:#E5F4F3;--p-text:#1E7B74;
+  --ok:#0F8A6C;--warn:#E8452C;--wait:#B06200;--gray:#5B6273;
+  --ink:#111318;--ink-2:#4B5563;--ink-3:#9CA3AF;--line:#E5E7EB;
+  --bg:#FFFFFF;--surface:#F5F6F8;--surface-2:#EEF1F5;--footer:#1F2430;
+  --radius-lg:20px;--radius-md:14px;--radius-pill:999px;
+  --shadow-1:0 4px 14px rgba(17,19,24,.06);--shadow-2:0 12px 32px rgba(17,19,24,.12);
+  --container:1100px;--gutter:24px;
+  --font:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,system-ui,"Noto Sans KR",sans-serif;
+  --ease:cubic-bezier(.2,.8,.2,1);
+  --fs:17px;
+}
+*{box-sizing:border-box}
+html{font-size:var(--fs)}
+body{margin:0;background:var(--surface);color:var(--ink);font-family:var(--font);font-size:1rem;line-height:1.65;-webkit-font-smoothing:antialiased;word-break:keep-all}
+a{color:inherit;text-decoration:none}a:hover{color:var(--brand)}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+.container{max-width:var(--container);margin:0 auto;padding:0 var(--gutter)}
+.brandbar{background:var(--bg);border-bottom:1px solid var(--line);font-size:.78rem}
+.brandbar .container{display:flex;justify-content:space-between;align-items:center;height:36px}
+.brandbar__sites{display:flex;gap:18px;font-weight:600;color:var(--ink-2)}
+.brandbar__sites a.is-active{color:var(--brand)}
+.header{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.header .container{display:flex;align-items:center;height:72px;gap:20px}
+.logo{font-weight:900;font-size:1.25rem;letter-spacing:-.03em;display:flex;align-items:center;gap:8px}
+.logo__mark{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--brand),#FFC531)}
+.fontctl{display:flex;gap:4px;margin-left:auto}
+.fontctl button{padding:7px 12px;border-radius:var(--radius-pill);background:var(--surface);font-weight:800;font-size:13px;color:var(--ink-2)}
+.fontctl button.is-on{background:var(--p-strong);color:#fff}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 22px;border-radius:var(--radius-md);font-weight:700;font-size:.9rem;transition:transform .2s var(--ease),background .2s}
+.btn--primary{background:var(--p-strong);color:#fff}.btn--primary:hover{background:#25857E;color:#fff;transform:translateY(-1px)}
+.btn--ghost{background:var(--surface);color:var(--ink)}.btn--ghost:hover{background:var(--surface-2)}
+.btn--pill{border-radius:var(--radius-pill)}
+.btn--line{border:1.5px solid var(--line);background:var(--bg)}.btn--line:hover{border-color:var(--ink-3)}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--radius-pill);font-size:.72rem;font-weight:800}
+.badge--ok{background:#E2F4EE;color:var(--ok)}.badge--warn{background:#FDE8E4;color:var(--warn)}
+.badge--wait{background:#F7ECD9;color:var(--wait)}.badge--gray{background:var(--surface-2);color:var(--gray)}
+.badge--p{background:var(--p-soft);color:var(--p-text)}
+.badge--src{background:var(--surface-2);color:var(--gray);font-weight:700}
+.roleband{background:linear-gradient(90deg,#1E7B74,var(--p-strong));color:#fff;padding:26px 0}
+.roleband h1{margin:0;font-size:1.6rem;font-weight:900;letter-spacing:-.02em;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.roleband h1 .badge{background:rgba(255,255,255,.2);color:#fff}
+.roleband p{margin:6px 0 0;font-size:.88rem;opacity:.95}
+.card{background:var(--bg);border-radius:var(--radius-lg);box-shadow:var(--shadow-1);padding:26px 28px}
+.card h2{margin:0 0 4px;font-size:1.12rem;font-weight:800;letter-spacing:-.01em;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.card .sub{margin:0 0 16px;color:var(--ink-2);font-size:.82rem}
+.section{margin-top:22px}
+/* Z1 */
+.kidchips{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.kidchips button{padding:8px 16px;border-radius:var(--radius-pill);background:var(--surface);font-weight:700;font-size:.85rem;color:var(--ink-2)}
+.kidchips button.is-on{background:var(--p-strong);color:#fff}
+.stageline{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.stageline .big{font-size:1.3rem;font-weight:900;letter-spacing:-.02em}
+.nextbox{background:var(--p-soft);border-radius:var(--radius-md);padding:14px 18px;margin-top:14px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.nextbox b{color:var(--p-text)}
+/* Z2 */
+.items{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.item{border:1px solid var(--line);border-radius:var(--radius-md);padding:16px 18px;display:flex;flex-direction:column;gap:6px}
+.item h3{margin:0;font-size:.92rem;font-weight:800;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.item p{margin:0;font-size:.82rem;color:var(--ink-2);flex:1}
+.item.is-lock{background:var(--surface);border-style:dashed}
+.item.is-lock h3{color:var(--ink-3)}
+.item .act{margin-top:6px}
+.item .act button{padding:7px 14px;border-radius:var(--radius-pill);font-size:.76rem;font-weight:700;background:var(--p-soft);color:var(--p-text)}
+/* Z3 가이드 */
+.guide{border:1px solid var(--line);border-radius:var(--radius-md);overflow:hidden}
+.guide__head{background:var(--p-soft);padding:14px 20px;font-weight:800;color:var(--p-text);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.guide__body{padding:18px 20px;display:grid;gap:16px}
+.guide__body h4{margin:0 0 6px;font-size:.85rem;font-weight:800;color:var(--ink-3)}
+.guide__body ul{margin:0;padding-left:20px;font-size:.92rem}
+.guide__body li{margin-bottom:6px}
+.gradechips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.gradechips button{padding:6px 13px;border-radius:var(--radius-pill);background:var(--surface);font-weight:700;font-size:.78rem;color:var(--ink-2)}
+.gradechips button.is-on{background:var(--ink);color:var(--bg)}
+/* Z4 */
+.crow{border:1px solid var(--line);border-radius:var(--radius-md);padding:14px 18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;font-size:.88rem;margin-bottom:10px}
+.crow b{font-size:.92rem}
+.crow .sp{flex:1}
+/* Z5 */
+.brief{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.bcard{border:1px solid var(--line);border-radius:var(--radius-md);padding:18px}
+.bcard b{display:block;font-size:1.25rem;font-weight:900;letter-spacing:-.02em}
+.bcard span{font-size:.8rem;color:var(--ink-2);font-weight:600}
+.bcard p{margin:8px 0 0;font-size:.8rem;color:var(--ink-2)}
+/* Z6 */
+.cols{display:grid;grid-template-columns:1.2fr 1fr;gap:22px}
+.list3{display:grid;gap:10px}
+.list3 a{border:1px solid var(--line);border-radius:var(--radius-md);padding:14px 18px;font-weight:700;font-size:.9rem;display:flex;justify-content:space-between;align-items:center}
+.list3 a:hover{border-color:var(--p-strong);color:var(--p-text)}
+.audit{width:100%;border-collapse:collapse;font-size:.8rem}
+.audit td{padding:9px 4px;border-bottom:1px solid var(--line);color:var(--ink-2)}
+.audit td:first-child{color:var(--ink-3);white-space:nowrap}
+/* 게이트 (연결 전) */
+.gate{max-width:620px;margin:40px auto 0;background:var(--bg);border-radius:var(--radius-lg);box-shadow:var(--shadow-2);padding:40px;text-align:center}
+.gate h2{margin:0 0 8px;font-size:1.4rem;font-weight:900}
+.gate p{color:var(--ink-2);margin:0 0 22px;font-size:.9rem}
+.code-in{display:flex;gap:10px;justify-content:center;margin-bottom:12px;flex-wrap:wrap}
+.code-in input{width:220px;padding:14px 18px;border:1.5px solid var(--line);border-radius:var(--radius-md);font:inherit;font-weight:800;letter-spacing:.2em;text-align:center;text-transform:uppercase}
+.code-in input:focus{outline:2px solid var(--p-strong);border-color:transparent}
+.gate .alt{font-size:.8rem;color:var(--ink-3);margin-top:8px}
+.openlist{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:26px;text-align:left}
+.openlist a{background:var(--surface);border-radius:var(--radius-md);padding:14px 16px;font-weight:700;font-size:.85rem}
+.openlist a:hover{background:var(--p-soft);color:var(--p-text)}
+.statebar{background:#111318;color:#C7CBD3;font-size:13px}
+.statebar .container{display:flex;gap:6px;align-items:center;padding-top:8px;padding-bottom:8px;flex-wrap:wrap}
+.statebar b{color:#fff;margin-right:6px;font-size:12.5px}
+.statebar button{padding:5px 12px;border-radius:var(--radius-pill);background:#2A2F3A;font-size:12.5px;font-weight:700}
+.statebar button.is-on{background:var(--p-strong);color:#fff}
+.footer{background:var(--footer);color:#C7CBD3;padding:36px 0;margin-top:64px;font-size:.78rem}
+.footer a:hover{color:#fff}
+.toast{position:fixed;left:50%;bottom:32px;transform:translate(-50%,16px);background:var(--ink);color:#fff;padding:12px 22px;border-radius:var(--radius-pill);font-weight:700;font-size:14px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:99}
+.toast.is-on{opacity:1;transform:translate(-50%,0)}
+@media (max-width:860px){.items,.brief,.cols,.openlist{grid-template-columns:1fr}.brandbar__sites a:not(.is-active){display:none}.roleband h1{font-size:1.3rem}}
+@media print{.statebar,.brandbar,.header,.footer,.fontctl{display:none}}
+</style>
+</head>
+<body>
+
+<div class="statebar"><div class="container" id="stateBar" role="group" aria-label="상태 전환 (설계 검토용)"><b>상태 (설계 검토용)</b></div></div>
+
+<div class="brandbar">
+  <div class="container">
+    <nav class="brandbar__sites" aria-label="패밀리 사이트">
+      <a class="is-active" href="main-everland-style.html">서울 진로진학 통합플랫폼</a>
+      <a href="#">서울특별시교육청</a><a href="#">서울특별시교육청교육연구정보원</a>
+    </nav>
+    <div class="brandbar__util"><a href="#" data-toast="통합계정 로그아웃">로그아웃</a></div>
+  </div>
+</div>
+
+<header class="header">
+  <div class="container">
+    <a class="logo" href="main-everland-style.html"><span class="logo__mark"></span>서울 진로진학 통합플랫폼</a>
+    <div class="fontctl" role="group" aria-label="글자 크기">
+      <button data-fs="17">가</button><button data-fs="20">가+</button><button data-fs="24">가++</button>
+    </div>
+    <a class="btn btn--ghost btn--pill" href="main-everland-style.html">← 메인으로</a>
+  </div>
+</header>
+
+<div class="roleband"><div class="container">
+  <h1>학부모 서비스 <span class="badge">학부모</span></h1>
+  <p>자녀 진학 가이드 · 심층 상담 신청 — 자녀가 동의한 범위에서 읽고, 대화의 질문을 받고, 상담을 신청합니다</p>
+</div></div>
+
+<main class="container" id="main"></main>
+
+<footer class="footer"><div class="container">
+  서울 중구 소파로 46 서울진로진학정보센터 · 문의 02-3111-362,363 (운영 10:00~17:00)<br>©2012 서울진로진학정보센터 All Rights Reserved.
+</div></footer>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const toast=document.getElementById('toast');let toastT;
+function showToast(m){toast.textContent=m;toast.classList.add('is-on');clearTimeout(toastT);toastT=setTimeout(()=>toast.classList.remove('is-on'),2600);}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-toast]');if(t){e.preventDefault();showToast(t.dataset.toast);}});
+
+/* 글자 크기 (설정 기억) */
+const FS_KEY='sen-parent-fs';
+function applyFs(v){document.documentElement.style.setProperty('--fs',v+'px');document.querySelectorAll('[data-fs]').forEach(b=>b.classList.toggle('is-on',b.dataset.fs===String(v)));}
+let fs=+(localStorage.getItem(FS_KEY)||17);applyFs(fs);
+document.querySelectorAll('[data-fs]').forEach(b=>b.addEventListener('click',()=>{fs=+b.dataset.fs;localStorage.setItem(FS_KEY,fs);applyFs(fs);}));
+
+/* ===== 상태 ===== */
+const STATES=[
+ {k:'before',label:'연결 전'},
+ {k:'waiting',label:'연결 대기'},
+ {k:'basic',label:'연결됨 · 기본 동의'},
+ {k:'extra',label:'연결됨 · 추가 동의'},
+ {k:'adult',label:'자녀 만 18세 이상'},
+ {k:'multi',label:'자녀 다수'},
+ {k:'unlinked',label:'연결 해제됨'}
+];
+let state=localStorage.getItem('sen-parent-state')||'basic';
+let kid=0;
+
+/* ===== 데이터 (합성) ===== */
+const KIDS=[
+ {name:'김규리',grade:'고3',cls:'서울○○고 3-2',stage:'지원 전략',next:'수시 원서접수 2027.9.20(월) 시작',gen2028:false},
+ {name:'김규민',grade:'고1',cls:'서울○○고 1-5',stage:'기초 설계',next:'2학기 선택과목 수요조사 10.15(금) 마감',gen2028:true}
+];
+/* 잠금 3종: stage(단계 잠금·오픈 시점) / consent(동의 잠금·요청 버튼) / policy(정책 잠금·버튼 없음) */
+const ITEMS=[
+ {c:'S1',t:'진로검사 결과',base:true,body:'직업가치관검사 상위: 사회봉사 · 자율성 (2026.8) — 해석 가이드 먼저 읽기'},
+ {c:'S3',t:'진로 경로',base:true,body:'희망 계열: 사회과학 · 심리학과/사회학과 비교 중'},
+ {c:'S2',t:'과목 설계',lock:'consent',body:'자녀가 동의하면 선택과목·권장과목 충족을 볼 수 있어요'},
+ {c:'S5',t:'이전 상담 이력',lock:'consent',body:'자녀가 동의하면 상담 요약(원문 제외)을 볼 수 있어요'},
+ {c:'S4',t:'성적·지원가능대학',lock:'stage',when:'7월 오픈',body:'2차 오픈(2027.7) 후 자녀가 켜면 참고 범위로 표시됩니다'},
+ {c:'S8',t:'확정 안내 (선생님 의견)',lock:'stage',when:'9월 오픈',body:'선생님이 확정(HITL 승인)한 안내만 표시됩니다'}
+];
+const GUIDE={
+ '고3':{stage:'지원 전략',core:['수시 6장은 공식이 아니라 자녀의 근거로 고릅니다.','합격선은 한 숫자가 아니라 3개년 분포로 봅니다.'],
+  q:['여섯 장 중 네가 가장 가고 싶은 곳은 어디고, 왜?','선생님과 확인한 것 중 아직 마음에 걸리는 건?','원서 전까지 한 가지만 바꾼다면 뭘 바꾸고 싶어?'],
+  no:['다른 집 아이의 지원 대학과 비교하지 않기','"안정으로 낮춰" 같은 결론을 먼저 말하지 않기']},
+ '고2':{stage:'구체화',core:['계열 선택은 과목 이수 계획과 함께 봐야 합니다.','활동은 개수가 아니라 연결이 중요합니다.'],
+  q:['지금 과목 중에 제일 너답다고 느끼는 건?','관심 학과에서 뭘 배우는지 찾아봤어?','이번 학기 활동 중 하나만 깊게 간다면?'],
+  no:['전공을 지금 확정하라고 요구하지 않기','성적 하나로 계열을 바꾸자고 하지 않기']},
+ '고1':{stage:'기초 설계',core:['내신 5등급제 · 통합형 수능 첫 세대 — 비교 기준이 다릅니다.','선택과목 설계가 1학년 겨울의 가장 큰 결정입니다.'],
+  q:['어떤 수업 시간이 제일 빨리 가?','내년에 꼭 들어보고 싶은 과목 있어?','진로검사 결과에서 의외였던 건 뭐야?'],
+  no:['옛 9등급제 기준으로 등급을 해석하지 않기','1학년 성적으로 가능/불가능을 단정하지 않기']}
+};
+const AUDIT=[
+ ['9.5 20:11','나','규리 진로검사 결과 열람 — 자녀에게 알림 전송'],
+ ['9.3 21:40','나','규리 진로 경로 열람 — 자녀에게 알림 전송'],
+ ['8.30 19:02','나','학부모 가이드(고3) 인쇄']
+];
+
+function h(s){return String(s).replace(/</g,'&lt;');}
+
+function renderMain(){
+ const m=document.getElementById('main');
+ /* ---- 연결 전/대기/해제 ---- */
+ if(state==='before'||state==='waiting'||state==='unlinked'){
+  const head=state==='waiting'
+   ?`<h2>자녀 승인을 기다리고 있어요</h2><p>자녀 화면에 연결 요청 알림을 보냈습니다.<br>24시간 내 승인이 없으면 코드를 재발급해 주세요.</p><div class="badge badge--wait" style="margin-bottom:18px">요청 보냄 9.6 20:30 · 자녀 응답 대기</div><div><button class="btn btn--line" data-toast="초대코드를 재발급했어요 · 유효 24시간">코드 재발급</button></div>`
+   :state==='unlinked'
+   ?`<h2>자녀가 연결을 해제했어요</h2><p>자녀가 직접 연결을 해제했습니다. 다시 보려면 자녀에게 새 초대코드를 받아 연결해 주세요.</p>${gateForm()}`
+   :`<h2>자녀와 연결하면 더 많이 볼 수 있어요</h2><p>자녀가 발급한 초대코드(24시간 · 1회용)를 입력하세요.<br>연결 여부와 열람 범위는 자녀가 결정합니다.</p>${gateForm()}`;
+  m.innerHTML=`<div class="gate">${head}
+   <div class="openlist">
+    <a href="#" onclick="return false" data-toast="학부모 가이드는 아래 상태를 '연결됨'으로 바꾸면 자녀 단계 1장으로 보입니다">학부모 가이드 (학년별)</a>
+    <a href="#g-brief">2028 대입 학부모 브리핑</a>
+    <a href="news.html">학부모 설명회 (진학TV)</a>
+    <a href="news.html">FAQ · 입시 용어</a>
+   </div>
+   <p class="alt" style="margin-top:18px">연결 없이도 위 콘텐츠는 모두 열려 있습니다</p>
+  </div>
+  <section class="section card" id="g-brief">${briefHtml()}</section>`;
+  bindGate();return;
+ }
+
+ /* ---- 연결 후 ---- */
+ const kids=state==='multi'?KIDS:[KIDS[0]];
+ if(kid>=kids.length)kid=0;
+ const K=kids[kid];
+ const isAdult=state==='adult';
+ const extraOn=state==='extra';
+
+ const chips=state==='multi'?`<div class="kidchips">${kids.map((k,i)=>`<button class="${i===kid?'is-on':''}" data-kid="${i}">${k.name} · ${k.grade}</button>`).join('')}</div>`:'';
+
+ /* Z2 항목 */
+ const items=ITEMS.map(it=>{
+  let open=!it.lock&&it.base&&!isAdult;
+  if(extraOn&&(it.c==='S2'||it.c==='S5'))open=true;
+  if(open)return`<div class="item"><h3>${it.t} <span class="badge badge--ok">열람 가능</span></h3><p>${it.body}</p><div class="act"><button data-toast="열람했어요 — 자녀에게 '학부모(모)가 ${it.t}을(를) 열람했어요' 알림이 갑니다">요약 보기</button></div></div>`;
+  if(it.lock==='stage')return`<div class="item is-lock"><h3>🔒 ${it.t} <span class="badge badge--gray">${it.when}</span></h3><p>${it.body}</p></div>`;
+  /* consent 잠금 (성인 자녀는 기본 항목도 여기로) */
+  const reason=isAdult?'성인 자녀는 본인 동의가 우선이에요':'자녀 동의 필요';
+  return`<div class="item is-lock"><h3>🔒 ${it.t} <span class="badge badge--wait">${reason}</span></h3><p>${it.body}</p><div class="act"><button data-toast="자녀에게 동의 요청을 보냈어요 · 자녀 응답 대기 (30일 내 재요청 불가)">동의 요청 보내기</button></div></div>`;
+ }).join('');
+ const adultNote=isAdult?`<div style="background:var(--surface);border-radius:var(--radius-md);padding:12px 16px;font-size:.82rem;color:var(--ink-2);margin-bottom:14px">성인 자녀는 모든 항목이 잠금에서 시작합니다 — 자녀 본인의 동의가 우선이에요</div>`:'';
+
+ const G=GUIDE[K.grade]||GUIDE['고3'];
+
+ m.innerHTML=`
+ <section class="section card">
+  ${chips}
+  <div class="stageline"><span class="big">${K.name} · ${K.grade}</span><span class="badge badge--p">${K.stage} 단계</span><span style="font-size:.82rem;color:var(--ink-2)">${K.cls}</span>${K.gen2028?'<span class="badge badge--gray">내신 5등급제 · 통합형 수능 첫 세대</span> <a href="univ.html" style="font-size:.8rem;font-weight:700;color:var(--brand)">무엇이 달라지나 ›</a>':''}</div>
+  <div class="nextbox">📅 <div><b>다음 결정 시기</b> — ${K.next}</div></div>
+ </section>
+
+ <section class="section card">
+  <h2>자녀 정보 열람 <small style="font-weight:700;color:var(--ink-3);font-size:.76rem">동의 항목만</small></h2>
+  <p class="sub">잠긴 항목은 숨기지 않고 이유를 보여드립니다 · 확률 숫자·원문·AI 원본 판정은 표시하지 않습니다 · 열람은 자녀에게 알림이 갑니다</p>
+  ${adultNote}
+  <div class="items">${items}</div>
+ </section>
+
+ <section class="section card">
+  <h2>학부모 가이드 : 지금 단계에서</h2>
+  <p class="sub">자녀 단계 1장만 — 전체 가이드는 자료·소식 › 학부모 가이드에서</p>
+  <div class="guide">
+   <div class="guide__head"><span>${K.grade} · ${G.stage} — 학년별로 지금 할 일 하나</span><span style="display:flex;gap:8px"><button class="btn btn--line" style="padding:7px 14px;font-size:.76rem" onclick="window.print()">인쇄 · PDF 저장</button></span></div>
+   <div class="guide__body">
+    <div><h4>이 시기 핵심</h4><ul>${G.core.map(c=>`<li>${c}</li>`).join('')}</ul></div>
+    <div><h4>자녀와 나눌 질문 3</h4><ul>${G.q.map(c=>`<li>"${c}"</li>`).join('')}</ul></div>
+    <div><h4>하지 않을 일 2</h4><ul>${G.no.map(c=>`<li>${c}</li>`).join('')}</ul></div>
+   </div>
+  </div>
+ </section>
+
+ <section class="section card">
+  <h2>상담</h2>
+  <p class="sub">동석은 자녀·선생님 동의 시 확정 · 방문·화상 한도는 학기당 1회(자녀 단위 합산) · 잔여 1회</p>
+  <div class="crow"><b>자녀 상담 동석</b><span>9.8(월) 15:00 · 수시 지원 전략 · 담임 선생님</span><span class="badge badge--wait">자녀 동의 대기</span><span class="sp"></span><button class="btn btn--line" style="padding:8px 16px;font-size:.78rem" data-toast="동석 요청을 취소했어요">요청 취소</button></div>
+  <div class="crow"><b>심층 상담 (학부모 단독)</b><span>신청 내역 없음</span><span class="sp"></span><button class="btn btn--primary" data-toast="심층 상담 신청 — 유형·일시 선택 화면은 상담 예약 흐름(06 명세)을 따릅니다">심층 상담 신청 (방문·화상)</button></div>
+  <p style="margin:6px 0 0;font-size:.76rem;color:var(--ink-3)">확정되면 알림으로 안내해 드려요 · 상담 결과는 선생님이 확정한 요약본만 표시됩니다</p>
+ </section>
+
+ <section class="section card">${briefHtml()}</section>
+
+ <section class="section cols">
+  <div class="card">
+   <h2>학부모 콘텐츠</h2><p class="sub"></p>
+   <div class="list3">
+    <a href="univ.html">대입 용어 첫걸음 <span>›</span></a>
+    <a href="news.html">학부모 설명회 (진학TV) <span>›</span></a>
+    <a href="news.html">FAQ · 입시 용어 <span>›</span></a>
+   </div>
+  </div>
+  <div class="card">
+   <h2>내 열람 이력</h2><p class="sub">내 모든 열람은 자녀 「내 정보를 본 기록」에도 남습니다</p>
+   <table class="audit">${AUDIT.map(a=>`<tr><td>${a[0]}</td><td><b>${a[1]}</b></td><td>${a[2]}</td></tr>`).join('')}</table>
+   <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--line)"><button class="btn btn--line" style="padding:8px 16px;font-size:.78rem" data-toast="연결을 해제하면 자녀에게 알림이 갑니다 — 확인 1회 후 해제됩니다">연결 해제</button></div>
+  </div>
+ </section>`;
+
+ document.querySelectorAll('[data-kid]').forEach(b=>b.addEventListener('click',()=>{kid=+b.dataset.kid;renderMain();}));
+}
+
+function gateForm(){
+ return`<div class="code-in"><input id="invCode" maxlength="7" placeholder="7K3M-Q9" aria-label="초대코드"><button class="btn btn--primary" id="btnLink">초대코드로 자녀 연결</button></div>
+ <p class="alt">자녀가 MY › 공유·권한에서 발급 (24시간 · 1회용 · QR 병행)</p>
+ <p class="alt">나이스 보호자 확인으로도 연결할 수 있어요 · <a href="#" style="color:var(--brand)" data-toast="나이스 보호자 확인 흐름은 다음 단계에서 설계합니다">나이스로 연결 ›</a></p>`;
+}
+function bindGate(){
+ const b=document.getElementById('btnLink');
+ if(b)b.addEventListener('click',()=>{
+  const v=(document.getElementById('invCode').value||'').trim();
+  if(!v){showToast('초대코드를 입력하세요');return;}
+  state='waiting';localStorage.setItem('sen-parent-state',state);renderAll();
+  showToast('연결 요청을 보냈어요 · 자녀 승인 대기');
+ });
+}
+function briefHtml(){
+ return`<h2>2028 대입 학부모 브리핑 <span class="badge badge--src">대교협 · 2026.4.29 기준</span></h2>
+ <p class="sub">교사·학생 화면과 같은 데이터를 낮은 밀도로 — 숫자보다 의미를 먼저</p>
+ <div class="brief">
+  <div class="bcard"><span>전체 모집인원</span><b>348,789명</b><p>작년보다 +3,072명. 모집 규모는 줄지 않았어요.</p></div>
+  <div class="bcard"><span>수시 · 정시</span><b>80.8% · 19.2%</b><p>10명 중 8명은 수시로 선발 — 학교생활 기록이 그만큼 중요해요.</p></div>
+  <div class="bcard"><span>학생부종합</span><b>+2,773명</b><p>종합전형이 늘었어요. 활동의 연결이 평가의 중심입니다.</p></div>
+ </div>
+ <p style="margin:12px 0 0;font-size:.76rem;color:var(--ink-3)">제도 설명은 교육부 확정안 기준 · 대학별 반영 방식은 최종 모집요강을 확인하세요</p>`;
+}
+
+/* ===== 상태 바 ===== */
+const bar=document.getElementById('stateBar');
+STATES.forEach(s=>{
+ const b=document.createElement('button');b.textContent=s.label;b.dataset.k=s.k;
+ b.addEventListener('click',()=>{state=s.k;localStorage.setItem('sen-parent-state',state);kid=0;renderAll();});
+ bar.appendChild(b);
+});
+function renderAll(){
+ bar.querySelectorAll('button').forEach(b=>b.classList.toggle('is-on',b.dataset.k===state));
+ renderMain();
+}
+renderAll();
+</script>
+</body>
+</html>
