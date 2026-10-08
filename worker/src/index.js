@@ -105,6 +105,8 @@ export default {
         "content-type": "application/json",
         "x-api-key": env.ANTHROPIC_API_KEY,
         "anthropic-version": "2023-06-01",
+        // 워크스페이스에 묶이지 않은 키를 쓸 때만 필요 (Cloudflare 변수 ANTHROPIC_WORKSPACE_ID)
+        ...(env.ANTHROPIC_WORKSPACE_ID ? { "anthropic-workspace-id": env.ANTHROPIC_WORKSPACE_ID } : {}),
       },
       body: JSON.stringify({
         model: env.MODEL || "claude-haiku-5-5",

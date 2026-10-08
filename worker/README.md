@@ -57,6 +57,8 @@ window.SEN_AI_ENDPOINT = "https://sen-ai-proxy.<계정>.workers.dev";
 
 값을 바꾼 뒤 `npx wrangler deploy` 를 다시 실행한다.
 
+키를 만들 때 **범위(워크스페이스)를 지정한 키**를 쓰는 것이 가장 간단하다. 워크스페이스에 묶이지 않은 키를 쓰면 Claude API가 "anthropic-workspace-id header" 오류를 돌려주는데, 이때는 Console의 워크스페이스 ID를 `ANTHROPIC_WORKSPACE_ID` 변수(Text)로 추가한다.
+
 ## 5. 보안·운영 메모
 
 - 키는 Worker Secret에만 있다. `sen-ai-config.js`, `wrangler.toml`에는 절대 적지 않는다.
