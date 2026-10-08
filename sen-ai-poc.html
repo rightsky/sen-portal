@@ -260,6 +260,7 @@ th{color:var(--ink-3);font-weight:600;font-size:13px}
 </div>
 <div class="toast" id="toast" role="status"></div>
 
+<script src="sen-ai-config.js"></script>
 <script>
 /* ========= 기본 지식 5편 (학습 내용 요약, md) ========= */
 const SEED = [
@@ -482,12 +483,45 @@ $('#kbSearch').addEventListener('click',()=>{const q=$('#kbQuery').value.trim();
 $('#kbQuery').addEventListener('keydown',e=>{if(e.key==='Enter')$('#kbSearch').click();});
 
 /* ========= AI 연결 ========= */
-/* 이 환경의 내장 AI: window.claude.complete (키·SDK 불필요). 미리보기/공유 화면에서 자동 제공됨 */
-let sample=null;
-if(window.claude&&claude.complete){sample=async(input,opts={})=>{const msgs=typeof input==='string'?[{role:'user',content:input}]:input.map(t=>({role:t.role,content:t.content}));const text=await claude.complete({messages:msgs});if(opts.onText)opts.onText({text});return{text};};}
+/* 연결 순서
+   1) Claude 미리보기 환경의 내장 AI (window.claude.complete)
+   2) SEN AI 중계 서버 (Cloudflare Worker) : sen-ai-config.js 의 SEN_AI_ENDPOINT, 또는 주소창 ?ai=Worker주소 (이 브라우저에 기억)
+   둘 다 없으면 검색·비식별만 동작한다. API 키는 페이지에 두지 않는다. */
+let sample=null,aiMode='';
+const toMsgs=input=>typeof input==='string'?[{role:'user',content:input}]:input.map(t=>({role:t.role,content:t.content}));
+if(window.claude&&claude.complete){aiMode='builtin';sample=async(input,opts={})=>{const text=await claude.complete({messages:toMsgs(input)});if(opts.onText)opts.onText({text});return{text};};}
+function aiEndpoint(){
+  const q=new URLSearchParams(location.search).get('ai');
+  if(q!==null){try{q?localStorage.setItem('sen-ai-endpoint',q):localStorage.removeItem('sen-ai-endpoint');}catch(e){}}
+  let saved='';try{saved=localStorage.getItem('sen-ai-endpoint')||'';}catch(e){}
+  return (saved||window.SEN_AI_ENDPOINT||'').replace(/\/+$/,'');
+}
+function workerSample(base){
+  return async(input,opts={})=>{
+    let res;
+    try{res=await fetch(base+'/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:toMsgs(input)}),signal:opts.signal});}
+    catch(e){throw{code:e.name==='AbortError'?'cancelled':'network'};}
+    if(!res.ok){let code='http_'+res.status;try{code=(await res.json()).error||code;}catch(e){}throw{code};}
+    const rd=res.body.getReader(),dec=new TextDecoder();let buf='',text='';
+    try{
+      for(;;){const{value,done}=await rd.read();if(done)break;buf+=dec.decode(value,{stream:true});
+        let i;while((i=buf.indexOf('\n'))>=0){const line=buf.slice(0,i).trim();buf=buf.slice(i+1);
+          if(!line.startsWith('data:'))continue;let ev;try{ev=JSON.parse(line.slice(5));}catch(e){continue;}
+          if(ev.type==='content_block_delta'&&ev.delta&&ev.delta.type==='text_delta'){text+=ev.delta.text;if(opts.onText)opts.onText({text});}
+          else if(ev.type==='error'){throw{code:(ev.error&&ev.error.type)==='overloaded_error'?'rate_limited':'upstream',text};}}}
+    }catch(e){if(e&&e.code)throw e;throw{code:e.name==='AbortError'?'cancelled':'network',text};}
+    return{text};
+  };
+}
 (async()=>{
-  const s=$('#aiState');if(sample){s.textContent='AI 연결됨 · 호출 시 1회 동의';s.className='badge ok';}else{s.textContent='AI 미연결 · 검색·비식별만 동작';s.className='badge warn';}})();
-function errCopy(e){return({not_granted:'AI 사용이 허용되지 않았어요. 검색 결과와 비식별 기능은 계속 쓸 수 있어요.',rate_limited:'요청이 많아요. 잠시 뒤 다시 시도하세요.',cancelled:'중지했어요.'})[e.code]||('AI 호출에 실패했어요 ('+(e.code||'오류')+')');}
+  const s=$('#aiState');
+  if(!sample){const base=aiEndpoint();
+    if(base){try{const r=await fetch(base+'/health');if(r.ok){aiMode='worker';sample=workerSample(base);}}catch(e){}}}
+  if(aiMode==='builtin'){s.textContent='AI 연결됨 · 호출 시 1회 동의';s.className='badge ok';}
+  else if(aiMode==='worker'){s.textContent='AI 연결됨 · SEN AI 서버';s.className='badge ok';}
+  else{s.textContent='AI 미연결 · 검색·비식별만 동작';s.className='badge warn';}
+})();
+function errCopy(e){return({not_granted:'AI 사용이 허용되지 않았어요. 검색 결과와 비식별 기능은 계속 쓸 수 있어요.',rate_limited:'요청이 많아요. 잠시 뒤 다시 시도하세요.',cancelled:'중지했어요.',too_long:'질문과 근거가 너무 길어요. 질문을 줄이거나 대화를 새로 시작하세요.',network:'AI 서버에 연결하지 못했어요. 인터넷 연결을 확인하세요.',origin_not_allowed:'이 주소에서는 AI 서버를 쓸 수 없어요.',server_not_configured:'AI 서버 설정이 끝나지 않았어요. 관리자에게 알려 주세요.'})[e.code]||('AI 호출에 실패했어요 ('+(e.code||'오류')+')');}
 
 /* ========= ② RAG ========= */
 const ragHist=[];let ragCtl=null;

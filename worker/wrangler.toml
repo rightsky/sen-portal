@@ -1,0 +1,14 @@
+name = "sen-ai-proxy"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+
+[vars]
+# 이 주소에서 온 요청만 받는다. 쉼표로 여러 개. 로컬 테스트용 주소는 시연 전에 지워도 된다.
+ALLOWED_ORIGINS = "https://rightsky.github.io,http://localhost:8000,http://127.0.0.1:8000"
+# 비용이 낮은 모델로 시작. 답변 품질을 더 원하면 claude-sonnet-5-5 로 바꾼다.
+MODEL = "claude-haiku-5-5"
+MAX_OUTPUT_TOKENS = "1200"
+MAX_INPUT_CHARS = "24000"
+RATE_PER_MINUTE = "8"
+
+# API 키는 여기 적지 않는다. 터미널에서:  npx wrangler secret put ANTHROPIC_API_KEY
