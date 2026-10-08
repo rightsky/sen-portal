@@ -117,7 +117,13 @@ export default {
 
     if (!upstream.ok) {
       const code = upstream.status === 429 ? "rate_limited" : upstream.status === 401 ? "server_not_configured" : "upstream_" + upstream.status;
-      return json(upstream.status === 429 ? 429 : 502, { error: code }, origin);
+      // 원인 파악용: Claude API가 돌려준 오류 종류와 문구 (키 값은 들어 있지 않다)
+      let detail = "";
+      try {
+        const e = (await upstream.json()).error || {};
+        detail = [e.type, e.message].filter(Boolean).join(" : ").slice(0, 300);
+      } catch {}
+      return json(upstream.status === 429 ? 429 : 502, { error: code, detail }, origin);
     }
 
     return new Response(upstream.body, {
