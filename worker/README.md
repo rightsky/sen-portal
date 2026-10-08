@@ -59,6 +59,10 @@ window.SEN_AI_ENDPOINT = "https://sen-ai-proxy.<계정>.workers.dev";
 
 키를 만들 때 **범위(워크스페이스)를 지정한 키**를 쓰는 것이 가장 간단하다. 워크스페이스에 묶이지 않은 키를 쓰면 Claude API가 "anthropic-workspace-id header" 오류를 돌려주는데, 이때는 Console의 워크스페이스 ID를 `ANTHROPIC_WORKSPACE_ID` 변수(Text)로 추가한다.
 
+## 4-1. 실행 위치 (중요)
+
+한국에서 접속하면 Worker가 홍콩 데이터센터에서 실행되는 경우가 있는데, Claude API는 홍콩발 요청을 `403 forbidden : Request not allowed`로 거부한다. 대시보드 → sen-ai-proxy → Settings → Runtime → **Placement**를 **Service**로 바꾸고 `api.anthropic.com`을 넣어 두면 Claude API 가까운 곳에서 실행되어 해결된다. (2026.10.8 적용 완료)
+
 ## 5. 보안·운영 메모
 
 - 키는 Worker Secret에만 있다. `sen-ai-config.js`, `wrangler.toml`에는 절대 적지 않는다.
