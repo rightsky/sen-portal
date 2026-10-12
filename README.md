@@ -19,7 +19,7 @@
 | library.html / news.html | 자료·소식 (작성 틀·학부모 가이드·기록 윤리) |
 | jinro-*.html | 미래탐색 (검사·직업·학과·변화) |
 | cns.html | 교사 상담 준비 콘솔 (3역량 점검·사전 입력서) |
-| sen-ai-poc.html | AI PoC (RAG 챗·생기부 어시스턴트) · AI 연결은 `worker/README.md` |
+| sen-ai-poc.html | AI PoC (RAG 챗·생기부 어시스턴트) · AI 연결은 `worker/README.md` · 지식베이스는 한글(hwp·hwpx)·워드·PDF를 브라우저에서 md로 변환해 등록 (`doc2md.js`, 라이브러리는 `vendor/`) |
 
 ## 데이터·원칙
 - 모든 수치·입결·전형 데이터는 예시/합성 데이터입니다.
