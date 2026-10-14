@@ -139,6 +139,55 @@ function bindHitl(){
  document.querySelectorAll('[data-deliver]').forEach(c=>c.addEventListener('change',()=>renderAll()));
  document.querySelectorAll('[data-hhand]').forEach(b=>b.addEventListener('click',()=>twoFA('담임 인계 요청').then(()=>{hlog('인계 요청 · 3학년 2반 → 후임 담임 매핑 대기 · 전임 14일 읽기 전용');showToast('인계 요청을 보냈어요 · 학교관리자 확인 후 후임 매핑 · 감사로그 기록');renderAll();})));}
 
+/* ═══════════ B. 비교·분석 : 열람 목적 → 슬롯 A·B·배경 → 비교표 → HITL 근거 칩 · 워터마크 ═══════════ */
+const CK='sen-compare-v1';
+let CS=Object.assign({purpose:null,a:'s:강지우',b:'u:국민대',bg:'dist',target:''},lsGet(CK,{}));
+const csSave=()=>lsSet(CK,CS);
+const PURPOSE={prep:'상담 준비',ev:'판정 근거',cls:'학급 지도'};
+/* 학생 (우리 반 7명 · CLASS 보강) · 등급대는 bn(막대용)으로만 쓰고 숫자는 화면에 내지 않음 */
+const STU_X={강지우:{bn:2.3,min:'충족 가능성 보통 (2합 5)',act:3},김서연:{bn:3.2,min:'해당 없음 (최저 없는 전형 위주)',act:2},박서준:{bn:2.1,min:'충족 가능성 낮음 (2합 5) · 점검',act:2},윤태양:{bn:4.1,min:'점검 필요 (지원계획 미작성)',act:1},이하은:{bn:1.4,min:'충족 가능성 높음 (3합 6)',act:4},정우진:{bn:3.3,min:'점검 필요 (적재 오류)',act:1},최민준:{bn:2.2,min:'충족 가능성 높음 (2합 4)',act:3}};
+const UNIS=[
+ {k:'한국대',t:'한국대 · 학생부종합',band:'1~2등급대',bn:1.8,min:'최저 없음',act:2,actT:'전공 연계 활동 2건 이상 권장',req:'권장과목 : 미적분 · 확률과 통계',judge:'김하늘 적정 (겸직 제한 건)'},
+ {k:'국민대',t:'국민대 · 학생부종합(학교생활우수자)',band:'2등급대 중앙',bn:2.3,min:'최저 없음',act:3,actT:'전공 연계 활동 3건 안팎',req:'권장과목 : 사회·문화 · 확률과 통계',judge:'강지우 AI 초안 「적정」'},
+ {k:'한강대',t:'한강대 · 학생부교과',band:'전년 70%컷 1.9',bn:1.9,min:'2합 5',act:0,actT:'비교과 미반영',req:'권장과목 : 미적분',judge:'박서준 AI 초안 「소신」'},
+ {k:'서울미래대',t:'서울미래대 · 논술',band:'논술 상위 15% 수준',bn:2.5,min:'3합 6',act:2,actT:'논술 모의 2회 이상',req:'해당 없음',judge:'이하은 AI 초안 「안정」'},
+ {k:'서울과기대',t:'서울과기대 · 정시(수능위주)',band:'환산점 v2.1 기준',bn:2.4,min:'해당 없음 (수능 100%)',act:0,actT:'비교과 미반영',req:'해당 없음',judge:'정우진 AI 초안 「보류」'}];
+const BGS={dist:{t:'3개년 합격자 분포 (합성 · 순도 0.6)',band:'2등급대 중앙',bn:2.2,min:'전형별 상이',act:2.6,actT:'평균 2.6건',req:'평균 4/5',judge:'해당 없음'},
+ cut:{t:'전년 70%컷 (합성)',band:'1.9~2.4 등급대',bn:2.1,min:'전형별 상이',act:2.2,actT:'평균 2.2건',req:'평균 4/5',judge:'해당 없음'},
+ cls:{t:'우리 반 평균 (등급대)',band:'2등급대 후반',bn:2.6,min:'미달 우려 2명 · 점검 2명',act:2.3,actT:'평균 2.3건',req:'평균 4/5',judge:'대기 4 · 확정 1'}};
+function slotObj(v){if(!v)return null;const [k,n]=v.split(':');
+ if(k==='s'){const c=CLASS.find(x=>x.n===n),x=STU_X[n];if(!c)return null;return {label:`학생 ${n}`,band:c.band,bn:x.bn,min:x.min,act:x.act,actT:`${x.act}건`,req:c.plan,judge:c.judge};}
+ const u=UNIS.find(x=>x.k===n);if(!u)return null;return Object.assign({label:u.t},u);}
+function slotSel(name,val){return `<select class="xsel" data-cslot="${name}" aria-label="슬롯 ${name.toUpperCase()}"><optgroup label="학생 (우리 반)">${CLASS.map(c=>`<option value="s:${c.n}"${val==='s:'+c.n?' selected':''}>${c.n} · ${c.band}</option>`).join('')}</optgroup><optgroup label="대학 · 전형 (가상)">${UNIS.map(u=>`<option value="u:${u.k}"${val==='u:'+u.k?' selected':''}>${u.t}</option>`).join('')}</optgroup></select>`;}
+const bar=(v,max,inv)=>{const w=Math.max(4,Math.min(100,(inv?(max-v)/max:v/max)*100));return `<span style="display:block;height:10px;background:var(--surface-2);border-radius:999px;overflow:hidden;margin-top:4px"><i style="display:block;height:10px;width:${w}%;border-radius:999px;background:var(--t-strong)"></i></span>`;};
+window.compareHtml=function(){
+ if(state==='counselor')return gate('비교·분석은 학교 교사 역할에서만','상담교사 역할은 배정 건만 열람해요. 헤더에서 교사 역할로 전환하세요.');
+ const ro=state==='subject';const A=slotObj(CS.a),B=slotObj(CS.b),G=BGS[CS.bg]||BGS.dist;
+ const head=`<section class="section"><h2 class="t">비교·분석 <span class="badge badge--teach">${ro?'과목교사 · 읽기 전용':state==='head'?'진학부장 · 학년':state==='schooladmin'?'학교관리자':'담임 반 한정'}</span></h2><p class="s">학생·대학·전형을 슬롯 A·B에 놓고 배경(분포·컷·반 평균)과 나란히 봐요 · 확률 숫자는 없고, 결과는 판정 승인의 근거 칩으로만 보내요</p>
+ <div class="share__notice">열람 목적은 감사로그와 학생의 「내 정보를 본 기록」에 남아요 · 화면에는 워터마크가 들어가요</div>
+ <h3 style="margin:16px 0 8px;font-size:15px">① 열람 목적 <small style="color:var(--ink-3)">먼저 골라야 결과가 열려요</small></h3>
+ <div class="xseg" role="radiogroup" aria-label="열람 목적">${Object.entries(PURPOSE).map(([k,v])=>`<button type="button" role="radio" aria-checked="${CS.purpose===k}" class="${CS.purpose===k?'is-on':''}" data-cpurpose="${k}">${v}</button>`).join('')}</div>`;
+ const slots=`<h3 style="margin:20px 0 8px;font-size:15px">② 슬롯 조립</h3><div class="xgrid--3 xgrid"><div class="card" style="padding:16px 18px"><b>슬롯 A</b>${slotSel('a',CS.a)}</div><div class="card" style="padding:16px 18px"><b>슬롯 B</b>${slotSel('b',CS.b)}</div><div class="card" style="padding:16px 18px"><b>배경</b><select class="xsel" data-cbg aria-label="배경">${Object.entries(BGS).map(([k,v])=>`<option value="${k}"${CS.bg===k?' selected':''}>${v.t}</option>`).join('')}</select></div></div>`;
+ if(!CS.purpose)return head+slots+`<div class="gate" style="margin:28px auto"><h2>열람 목적을 고르면 결과가 열려요</h2><p>상담 준비 · 판정 근거 · 학급 지도 중 하나 · 선택과 동시에 감사로그에 기록돼요</p></div></section>`;
+ if(!A||!B)return head+slots+'<p class="caption">슬롯 A·B를 고르세요</p></section>';
+ const rows=[['내신 등급대',x=>x.band+bar(x.bn,5,true)],['수능 최저 충족 가능성',x=>x.min],['전공 연계 활동 수',x=>x.actT+bar(x.act,5)],['권장과목 충족',x=>x.req],['판정 상태',x=>x.judge]];
+ const tbl=`<div class="xscroll"><table class="btable"><tr><th>항목</th><th>A · ${A.label}</th><th>B · ${B.label}</th><th>배경 · ${G.t}</th></tr>${rows.map(([n,f])=>`<tr><td style="font-weight:700;color:var(--ink-2)">${n}</td><td>${f(A)}</td><td>${f(B)}</td><td style="color:var(--ink-2)">${f(G)}</td></tr>`).join('')}</table></div>`;
+ const todo=HITL.filter(h=>!HS[h.id]&&!h.mine);
+ const send=ro?'<p class="caption">과목교사 역할은 읽기 전용이라 근거 칩을 보낼 수 없어요</p>':`<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px"><select class="xsel" style="width:auto;min-width:220px" data-ctarget aria-label="근거를 보낼 판정 대기 건">${todo.length?todo.map(h=>`<option value="${h.id}"${CS.target===h.id?' selected':''}>${h.stu} · ${h.uni}</option>`).join(''):'<option value="">대기 건 없음</option>'}</select><button class="btn btn--primary xb" data-csend${todo.length?'':' disabled'}>HITL 근거 칩으로 보내기</button></div>`;
+ const wm=`${teacherName()} · 2027.09.05 · 열람 목적: ${PURPOSE[CS.purpose]} · 재배포 금지`;
+ return head+slots+`<h3 style="margin:20px 0 8px;font-size:15px">③ 결과 <span class="badge badge--gray">합성 · 실제 학생 아님</span></h3>
+ <div class="cmp-res" data-wm="${esc(wm)}">${tbl}</div>
+ <p class="caption">막대는 등급대·활동 수를 상대적으로 보여줄 뿐, 합격 가능성 숫자가 아니에요 · 원문·개인 판정은 전문시스템</p>
+ ${send}
+ <p class="caption">화면 캡처·재배포 금지 · 열람 기록은 감사로그와 학생 「내 정보를 본 기록」에 남아요</p></section>`;};
+function bindCompare(){
+ document.querySelectorAll('[data-cpurpose]').forEach(b=>b.addEventListener('click',()=>{CS.purpose=b.dataset.cpurpose;csSave();hlog(`비교·분석 열람 · 목적 ${PURPOSE[CS.purpose]}`);showToast('열람 목적 기록 · 감사로그');renderAll();}));
+ document.querySelectorAll('[data-cslot]').forEach(s=>s.addEventListener('change',()=>{CS[s.dataset.cslot]=s.value;csSave();renderAll();}));
+ document.querySelectorAll('[data-cbg]').forEach(s=>s.addEventListener('change',()=>{CS.bg=s.value;csSave();renderAll();}));
+ document.querySelectorAll('[data-ctarget]').forEach(s=>s.addEventListener('change',()=>{CS.target=s.value;csSave();}));
+ document.querySelectorAll('[data-csend]').forEach(b=>b.addEventListener('click',()=>{const sel=document.querySelector('[data-ctarget]');const id=sel&&sel.value;if(!id)return;const A=slotObj(CS.a),B=slotObj(CS.b),G=BGS[CS.bg];
+  const chip=`${A.label} vs ${B.label} · 내신 ${A.band} / ${B.band} · 배경 ${G.t}`;const ev=Array.isArray(HS[id+'_ev'])?HS[id+'_ev']:[];if(!ev.includes(chip))ev.push(chip);HS[id+'_ev']=ev;hsSave();hlog(`비교·분석 근거 칩 → ${hById(id).stu} 판정 대기 건`);showToast('HITL 근거 칩으로 보냈어요 · 판정 승인 H0·H2 카드에 표시');}));}
+
 /* ═══════════ 공통 바인딩 ═══════════ */
-window.bindExt=function(){bindHitl();if(window.bindCompare)bindCompare();if(window.bindStats)bindStats();if(window.bindMode)bindMode();};
+window.bindExt=function(){bindHitl();bindCompare();if(typeof bindStats==='function')bindStats();if(typeof bindMode==='function')bindMode();};
 })();
