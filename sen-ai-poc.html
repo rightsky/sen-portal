@@ -179,11 +179,6 @@ th{color:var(--ink-3);font-weight:600;font-size:13px}
       <h3>등록된 문서</h3>
       <div id="kbList" class="muted">아직 없습니다. 문서를 올리거나 기본 지식 6편을 불러오세요.</div>
     </div>
-    <div class="card">
-      <h3>검색 테스트 (AI 없이 색인만)</h3>
-      <div class="row"><input type="text" id="kbQuery" placeholder="예: 2028 수시 비율, 내신 5등급제, 공동체역량" aria-label="검색어" style="flex:1;min-width:200px"><button class="btn ghost" id="kbSearch">검색</button></div>
-      <div id="kbResult" class="muted" style="margin-top:10px"></div>
-    </div>
   </section>
 
   <!-- ② RAG -->
@@ -592,8 +587,6 @@ function renderConv(){
 }
 $('#loadSeed').addEventListener('click',()=>ingest(SEED.map(s=>new File([s.text],s.name,{type:'text/markdown'}))));
 $('#clearKb').addEventListener('click',()=>{KB={docs:[],chunks:[],updated:null};store('sen-kb',KB);renderKb();toast('지식DB를 비웠어요');});
-$('#kbSearch').addEventListener('click',()=>{const q=$('#kbQuery').value.trim();if(!q)return;const r=search(q,5);$('#kbResult').innerHTML=r.length?r.map(x=>`<div class="card soft" style="margin:8px 0"><b>${esc(x.c.doc)} › ${esc(x.c.sec||'본문')}</b> <span class="badge">점수 ${x.s.toFixed(2)}</span><div style="margin-top:6px;font-size:14px">${esc(x.c.text.slice(0,260))}${x.c.text.length>260?'…':''}</div></div>`).join(''):'일치하는 청크가 없습니다. 지식DB를 먼저 채우세요.';});
-$('#kbQuery').addEventListener('keydown',e=>{if(e.key==='Enter')$('#kbSearch').click();});
 
 /* ========= AI 연결 ========= */
 /* 연결 순서
