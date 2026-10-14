@@ -11,6 +11,8 @@ const MENU={
 '자료·소식':[['맞춤 자료실',['중학생 자료','고1·2 자료','고3·졸업생 자료','진학지도 자료집·발간도서']],['영상·설명회 자료',['진로 영상','진학 설명회','교사 추천 자료']],['일정·소식',['입시 주요 일정','정책·전형 변화','공지사항']],['이용안내',['서비스 이용안내','진로진학센터 안내','FAQ']]]
 };
 window.SEN_PAGES=PAGES;
+/* 대분류별 AI 적용 시점 안내 (ISP v1.10 : '27 1단계 파일럿 · '28 2단계 · '29 3단계) */
+const AINOTE={'학교·과목설계':'<b>AI 학업설계</b><span class="gnb-drop__tag">2028 교사 시범</span><span class="gnb-drop__tag">2029 정식</span><br>지금은 학점 기준선·누락·위계 점검을 규칙으로 계산해 보여드려요'};
 /* 폰 하단 탭바 5 (홈·검색·MY·상담·전체) · 768px 이하 */
 (function(){const isMain=/main-everland-style\.html$|\/$/.test(location.pathname);const ic=p=>'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+p+'</svg>';
 const T=[['home','홈',ic('<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>'),'main-everland-style.html'],['search','검색',ic('<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>'),'main-everland-style.html?open=search'],['my','MY',ic('<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>'),'my.html#stage'],['counsel','상담',ic('<path d="M21 12a8 8 0 0 1-11.6 7.1L4 21l1.9-5.4A8 8 0 1 1 21 12z"/>'),'counsel.html#type'],['all','전체',ic('<path d="M4 6h16M4 12h16M4 18h16"/>'),'main-everland-style.html?open=mega']];
@@ -28,6 +30,10 @@ const css=`
 .gnb-drop__in{max-width:var(--container);margin:0 auto;padding:28px var(--gutter) 32px;display:grid;grid-template-columns:220px 1fr;gap:32px}
 .gnb-drop__l1{font-size:22px;font-weight:900;letter-spacing:-.02em;margin:0;color:var(--brand)}
 .gnb-drop__cols{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:20px 28px}
+.gnb-drop__ai{margin:14px 0 0;padding:12px 14px;border-radius:12px;background:var(--surface,#F4F6FA);font-size:13px;line-height:1.6;color:var(--ink-2)}
+.gnb-drop__ai b{color:var(--ink);margin-right:4px}
+.gnb-drop__tag{display:inline-block;margin:0 4px 2px 0;padding:1px 8px;border-radius:999px;background:#FDF3E7;color:#9A5500;font-size:11.5px;font-weight:800}
+@media (max-width:860px){.gnb-drop__in{grid-template-columns:1fr}}
 .gnb-drop h4{margin:0 0 10px;font-size:15px;font-weight:800;padding-bottom:8px;border-bottom:1px solid var(--line)}
 .gnb-drop ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
 .gnb-drop li a{display:block;padding:6px 0;font-size:14.5px;color:var(--ink-2);font-weight:500}
@@ -53,7 +59,7 @@ if(header&&gnb){
   header.appendChild(drop);
   let cur=null,t;
   const show=a=>{const l1=a.textContent.trim(),m=MENU[l1];if(!m)return;clearTimeout(t);
-    if(cur!==l1){cur=l1;drop.innerHTML=`<div class="gnb-drop__in"><p class="gnb-drop__l1">${l1}</p><div class="gnb-drop__cols">${m.map(([l2,l3])=>`<div><h4>${l2}</h4><ul>${l3.map(x=>`<li>${link(x,l1,l2)}</li>`).join('')}</ul></div>`).join('')}</div></div>`;}
+    if(cur!==l1){cur=l1;drop.innerHTML=`<div class="gnb-drop__in"><div><p class="gnb-drop__l1">${l1}</p>${AINOTE[l1]?`<p class="gnb-drop__ai">${AINOTE[l1]}</p>`:''}</div><div class="gnb-drop__cols">${m.map(([l2,l3])=>`<div><h4>${l2}</h4><ul>${l3.map(x=>`<li>${link(x,l1,l2)}</li>`).join('')}</ul></div>`).join('')}</div></div>`;}
     gnb.querySelectorAll('a').forEach(x=>x.classList.toggle('is-hover',x===a));drop.classList.add('is-on');};
   const hide=()=>{t=setTimeout(()=>{drop.classList.remove('is-on');gnb.querySelectorAll('a').forEach(x=>x.classList.remove('is-hover'));},120);};
   gnb.querySelectorAll('a').forEach(a=>{a.addEventListener('mouseenter',()=>show(a));a.addEventListener('focus',()=>show(a));});
