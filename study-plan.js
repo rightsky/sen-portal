@@ -1,5 +1,5 @@
 (function(){
-const {SUBJECTS,RULES,PRE,NOT_OFFERED,SEMS,SEM_LABEL,CAT_REC,subj}=SC;const {MAJORS,major}=EX;const A=SEN_AUTH;const $=id=>document.getElementById(id);
+const {SUBJECTS,RULES,ALT,PRE,NOT_OFFERED,SEMS,SEM_LABEL,CAT_REC,subj}=SC;const {MAJORS,major}=EX;const A=SEN_AUTH;const $=id=>document.getElementById(id);
 const PKEY='sen-plan-v1';
 let p=JSON.parse(localStorage.getItem(PKEY)||'null')||{major:'m2',sem:{'2-1':[],'2-2':[],'3-1':[],'3-2':[]},wish:[],submit:0,memo:''};
 const save=()=>localStorage.setItem(PKEY,JSON.stringify(p));
@@ -29,7 +29,7 @@ function checks(){const out=[],m=major(p.major),core=m.subjects.filter(subj),A_=
   else if(st.kme>RULES.KME_MAX-8)out.push(['info',`국어·수학·영어 합계 ${st.kme}학점 (상한 ${RULES.KME_MAX})`,'학교 지정 과목이 더해지면 상한에 가까워질 수 있어요']);
   if(st.short.length)out.push(['info',`교과(군) 필수 이수 학점에 아직 못 미치는 교과 ${st.short.length}개`,st.short.map(x=>`${x.g} ${x.have}/${x.need}`).join(' · ')+' · 체육·예술 등은 학교 지정 과목으로 채워지는 경우가 많아요. 학교 편제표와 비교해 보세요']);
   out.push(['info',`계획에 담긴 교과 학점 ${st.total}학점 (졸업 기준 교과 ${RULES.SUBJ}학점)`,`1학년 공통 ${st.g1} + 2·3학년 선택 ${st.sel} · 학교 지정 과목은 빠진 숫자예요`]);
-  const no=A_.filter(x=>NOT_OFFERED.includes(x));if(no.length)out.push(['info',`우리 학교에 없는 과목 ${no.length}개`,`${no.join(', ')} → 공동교육과정·서울온라인학교로 들을 수 있어요. 신청 방법은 선생님께 문의하세요`]);
+  const no=A_.filter(x=>NOT_OFFERED.includes(x));if(no.length)out.push(['info',`우리 학교에 없는 과목 ${no.length}개`,`${no.join(', ')} → 공동교육과정(거점학교·공유캠퍼스)·서울온라인학교(주문형·개방형)로 들을 수 있어요 · ${ALT.year}학년도 1·2학년은 ${ALT.limit['1·2학년']} · 석차등급 없이 성취도만 기록 · 신청은 선생님께 문의하세요`]);
   const adv=A_.filter(x=>['진로','융합'].includes(subj(x).type)).length;out.push(['info',`진로·융합선택 ${adv}과목, 일반선택 ${A_.length-adv}과목`,'진로와 얼마나 이어지는 구성인지 상담에서 함께 봐요']);
   if(!out.some(c=>c[0]==='q'))out.unshift(['ok','특별히 걸리는 점은 없어 보여요','그래도 최종 확인은 선생님과 함께 하세요']);
   return out;}

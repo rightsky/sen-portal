@@ -1,5 +1,5 @@
 (function(){
-const {SUBJECTS,GRADE_LABEL,PRE,NOT_OFFERED,OPEN,SEMS,SEM_LABEL,CAT_REC,subj}=SC;const {MAJORS,MAJOR_CATS,major}=EX;const A=SEN_AUTH;const $=id=>document.getElementById(id);
+const {SUBJECTS,GRADE_LABEL,ALT,PRE,NOT_OFFERED,OPEN,SEMS,SEM_LABEL,CAT_REC,subj}=SC;const {MAJORS,MAJOR_CATS,major}=EX;const A=SEN_AUTH;const $=id=>document.getElementById(id);
 const PKEY='sen-plan-v1';const P=()=>JSON.parse(localStorage.getItem(PKEY)||'null')||{major:'m2',sem:{'2-1':[],'2-2':[],'3-1':[],'3-2':[]},wish:[],submit:0,memo:''};
 const saveP=p=>localStorage.setItem(PKEY,JSON.stringify(p));
 const GROUPS=['전체','국어','수학','영어','사회','과학','체육','예술','정보','교양'];const TYPES=['공통','일반','진로','융합'];
@@ -23,7 +23,7 @@ function openSubj(n){const s=subj(n);if(!s)return;const pre=PRE[n],next=Object.k
   ${pre?`<div class="dsec"><h3>먼저 들으면 좋은 과목</h3><div class="lchips"><a href="#" data-sj="${pre}">${pre}</a></div></div>`:''}
   ${next.length?`<div class="dsec"><h3>이어서 들을 수 있는 과목</h3><div class="lchips">${next.map(x=>`<a href="#" data-sj="${x}">${x}</a>`).join('')}</div></div>`:''}
   ${ms.length?`<div class="dsec"><h3>이 과목이 도움이 되는 학과</h3><div class="lchips">${ms.map(m=>`<a href="jinro-major.html?open=${m.id}#find">${m.name}</a>`).join('')}</div></div>`:''}
-  <div class="dsec"><h3>우리 학교 개설 여부</h3><p>${A.logged()?(NOT_OFFERED.includes(n)?'서울한빛고에는 개설되지 않았어요. 공동교육과정이나 서울온라인학교로 들을 수 있습니다.':'서울한빛고에서 들을 수 있어요'):'<a class="link" href="#" data-loginopen>로그인하면 우리 학교 개설 여부를 확인할 수 있어요 ›</a>'}</p></div>
+  <div class="dsec"><h3>우리 학교 개설 여부</h3><p>${A.logged()?(NOT_OFFERED.includes(n)?`서울한빛고에는 개설되지 않았어요. 공동교육과정(거점학교·공유캠퍼스)이나 서울온라인학교(주문형·개방형)로 들을 수 있어요. ${ALT.year}학년도 기준 1·2학년은 ${ALT.limit['1·2학년']} · 석차등급은 「ㆍ」로 기록돼요. <a class="link" href="#myschool">듣는 방법 보기 ›</a>`:'서울한빛고에서 들을 수 있어요'):'<a class="link" href="#" data-loginopen>로그인하면 우리 학교 개설 여부를 확인할 수 있어요 ›</a>'}</p></div>
   <p class="dsrc">※ 2022 개정 교육과정 보통 교과 기준 (서교연 2026 진학지도 자료집 p.36~37·55) · 수능 출제 과목은 2028학년도 예고안</p>`);}
 /* ── 진로·전공별 관련 과목 ── */
 let mSel='m2',mCat='전체';
@@ -48,7 +48,10 @@ function renderMySchool(){
   <div class="tabs" style="margin:22px 0 16px">${SEMS.map(k=>`<button class="tab${semTab===k?' is-on':''}" data-sem="${k}">${SEM_LABEL[k]}</button>`).join('')}</div>
   <div class="ms__grid">${OPEN[semTab].map(n=>{const s=subj(n);return `<button class="sj" data-sj="${n}">${badge(s.type)}<b>${n}</b><small>${s.group} · ${s.credit}학점</small></button>`;}).join('')}</div>
   <h3 class="ms__sub">우리 학교에 없는 과목, 이렇게 들을 수 있어요</h3>
-  <div class="ms__alt"><div class="ms__altc"><b>🤝 공동교육과정</b><p>가까운 학교들이 함께 과목을 열어 방과 후·주말에 듣습니다</p><div class="lchips">${NOT_OFFERED.slice(0,3).map(n=>`<span>${n}</span>`).join('')}</div><button class="btn btn--ghost btn--pill" data-toast="공동교육과정 수강 신청은 학교 담당 선생님 확인 후 진행됩니다">수강 신청 안내</button></div><div class="ms__altc"><b>💻 서울온라인학교</b><p>온라인 실시간 수업으로 듣고 학교 성적으로 인정받습니다</p><div class="lchips">${NOT_OFFERED.slice(3).map(n=>`<span>${n}</span>`).join('')}</div><button class="btn btn--ghost btn--pill" data-toast="서울온라인학교 수강 신청 화면으로 이동합니다">수강 신청 안내</button></div></div>`;
+  <p class="section__sub" style="margin:-6px 0 12px">미개설 ${NOT_OFFERED.length}과목: <b>${NOT_OFFERED.join(', ')}</b> · 어느 길로 들을 수 있는지는 학기마다 개설 과목이 달라서 학교 담당 선생님과 확인해요</p>
+  <div class="ms__alt">${ALT.types.map(t=>`<div class="ms__altc"><b>${t.cat==='공동교육과정'?'🤝':'💻'} ${t.cat} · ${t.name}</b><p>${t.when} · ${t.how}</p><p><small><b>누가</b> ${t.who}<br><b>신청</b> ${t.apply}<br><b>참고</b> ${t.tip}</small></p></div>`).join('')}</div>
+  <div class="cks" style="margin-top:16px"><div class="ck ck--info"><i>i</i><div><b>학기당 신청 제한 (${ALT.year}학년도 기준)</b><span>1·2학년: ${ALT.limit['1·2학년']} · 3학년: ${ALT.limit['3학년']} · ${ALT.limit.note}</span></div></div><div class="ck ck--info"><i>i</i><div><b>성적은 이렇게 기록돼요</b><span>${ALT.grading}</span></div></div></div>
+  <p class="dsrc">${ALT.links.map(([n,u])=>`<a class="link" href="${u}" target="_blank" rel="noopener">${n} ↗</a>`).join(' · ')} · 출처: 서교연 2026 진학지도 자료집 p.42~44 · 신청 제한은 학년도마다 공문으로 바뀌니 최신 안내를 확인하세요</p>`;
 }
 /* ── 대학별 권장과목 겹쳐보기 (2028학년도 · 2022 개정 교육과정 기준) ── */
 let ovCat='공학·자연';
