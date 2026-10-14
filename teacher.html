@@ -193,7 +193,7 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
   <a href="#" class="is-on" data-view="home">교사공간 홈</a>
   <a href="#" data-view="class">반 관리</a>
   <a href="#" data-view="hitl">판정 승인(HITL) <span class="n" id="hitlN" style="display:inline-grid;place-items:center;min-width:20px;height:20px;border-radius:999px;background:var(--warn);color:#fff;font-size:11.5px;padding:0 6px"></span></a>
-  <a href="#" class="is-lock" data-toast="배정 답변은 9월 오픈">배정 답변 🔒<span class="lock"> 9월</span></a>
+  <a href="#" data-view="assign">배정 답변 <span class="n" id="asgN" style="display:inline-grid;place-items:center;min-width:20px;height:20px;border-radius:999px;background:var(--assign);color:#fff;font-size:11.5px;padding:0 6px"></span></a>
   <a href="counsel.html">진로진학 상담</a>
   <a href="#" data-toast="상담 이력은 확정된 상담부터 쌓입니다">상담 이력</a>
   <a href="library.html">자료실</a>
@@ -241,7 +241,7 @@ const TODO=[
   ['2028 대입 변화 교사 연수(원격)','마감 9.11(목) · 15차시']],
   acts:['신청'],note:''},
  {k:'hitl',label:'판정 승인 대기 (HITL)',get n(){return pendingHitl();},get rows(){return HITL.filter(h=>!HS[h.id]&&!h.mine).map(h=>[`${h.stu} · ${h.uni}`,`AI 초안 「${h.draft}」 · 근거 ${h.ev.length} · 9.5 생성`]);},acts:['검토'],note:'AI 초안은 교사 승인 후에만 확정·전달 · 승인권은 담임 반 한정 · 검토는 「판정 승인(HITL)」 탭에서'},
- {k:'assign',label:'배정 답변 대기 (게시판 상담)',lock:'9월 오픈 · 전문시스템'}
+ {k:'assign',label:'배정 답변 대기 (게시판·센터 상담)',get lock(){return state==='counselor'?null:'정보원 상담교사 역할 전용';},get n(){return pendingAsg();},get rows(){return ASG.filter(a=>!AS[a.id]||AS[a.id]==='acc').map(a=>[`${a.stu} · ${a.kind}`,`${a.topic} · ${a.when} · ${AS[a.id]==='acc'?'수락 · 답변 작성 중':'배정 대기'}`]);},acts:['답변'],note:'배정 건은 정보원 상담교사 역할에서만 열람·답변 · 배정 수락 시 2단계 인증 · 「배정 답변」 탭에서'}
 ];
 const SHARES=[
  {who:'김서연',cls:'3-2',what:'진로검사 결과 · 과목 설계',when:'9.5 공유',badge:'학생 승인',kind:'설계',
@@ -344,11 +344,38 @@ function hitlHtml(){const done=HITL.filter(h=>HS[h.id]),todo=HITL.filter(h=>!HS[
  <h3 style="margin:16px 0 8px;font-size:15px">H0 · 미승인 대기 큐 <small style="color:var(--ink-3)">${todo.length}건</small></h3><div style="display:grid;gap:10px">${todo.length?todo.map(card).join(''):'<p class="caption">대기 건이 없어요</p>'}</div>
  <h3 style="margin:20px 0 8px;font-size:15px">H3 · 확정·전달 <small style="color:var(--ink-3)">${done.length}건</small></h3><div style="display:grid;gap:10px">${done.length?done.map(card).join(''):'<p class="caption">아직 확정한 건이 없어요</p>'}</div>
  <p class="caption">H4 후속·인계: 전달된 판정은 상담 원장에 기록되고, 담임 교체 시 전임 교사는 14일간 읽기 전용</p></section>`;}
+/* ── 통합 적용 4단계: 상담교사 워크스페이스(배정 요청함·답변) ── */
+const AK='sen-assign-v1';let AS=(()=>{try{return JSON.parse(localStorage.getItem(AK)||'null')||{};}catch(e){return {};}})();const asSave=()=>localStorage.setItem(AK,JSON.stringify(AS));
+const ASG=[
+ {id:'a1',stu:'학생 A (고2 · 서울한빛고)',kind:'게시판 상담',topic:'통계학과 vs 컴퓨터공학과 · 과목 선택',when:'10.12 접수 · 답변 기한 10.15',share:['진로검사 결과','관심 학과 3','과목 계획'],consent:'제3자 제공 ✓ · 기록 연계 ✓ · 보호자 ✓',q:'통계학과와 컴퓨터공학과 중 어디가 저와 더 맞을지, 2학년 2학기 과목은 미적분Ⅰ·확률과 통계를 넣는 게 맞는지 궁금해요.'},
+ {id:'a2',stu:'학생 B (고3 · 서울남고)',kind:'화상 상담 40분',topic:'수시 지원 전략 · 수능 최저',when:'10.14 19:00 · 보호자 동반',share:['관심 전형 4','입력 성적(등급대)','지원계획 카드'],consent:'제3자 제공 ✓ · 기록 연계 ✓ · 보호자 동반',q:'수시 6장 중 교과 2 · 종합 3 · 논술 1 구성이 적절한지, 최저 충족이 가능한지 봐주세요.'},
+ {id:'a3',stu:'학생 C (고1 · 서울고)',kind:'게시판 상담',topic:'진로 미정 · 검사 결과 해석',when:'10.13 접수 · 답변 기한 10.16',share:['진로검사 결과'],consent:'제3자 제공 ✓ · 기록 연계 ✓ · 보호자 동의 대기',q:'흥미검사가 IA로 나왔는데 무슨 뜻인지, 어떤 계열을 봐야 하는지 모르겠어요.'},
+ {id:'a4',stu:'학생 D (고2 · 서울한빛고) · 학부모 대리 신청',kind:'센터 방문 50분',topic:'학과 선택 · 과목 변경',when:'10.15 14:00 · 자녀 동의 대기',share:['(자녀 동의 후 확정)'],consent:'학부모 동의 ✓ · 자녀 동의 대기',q:'(학부모) 아이가 과목을 바꾸고 싶어 하는데 절차와 영향이 궁금합니다.',hold:true}];
+function pendingAsg(){return ASG.filter(a=>!AS[a.id]||AS[a.id]==='acc').length;}
+let asgUntil=0;function asgConfirm(){if(Date.now()<asgUntil)return Promise.resolve(true);return (authMode()==='B'&&window.SEN_AUTH?SEN_AUTH.stepUp('배정 건 열람·수락'):confirmAdmin('배정 건 열람')).then(r=>{asgUntil=Date.now()+6e5;return r;});}
+function assignHtml(){
+ const card=a=>{const st=AS[a.id];const ans=AS[a.id+'_t']||'';
+  const head=`<div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start"><div><b style="font-size:15px">${a.stu}</b> <span class="badge badge--gray">${a.kind}</span><div style="margin-top:6px;font-size:13px;color:var(--ink-3)">${a.topic} · ${a.when}</div></div>${a.hold?'<span class="badge badge--wait">자녀 동의 전 · 열람 불가</span>':st==='acc'?'<span class="badge badge--ok">수락 · 답변 작성 중</span>':st==='done'?'<span class="badge badge--ok">답변 완료 · 학생에게 전달</span>':st==='rej'?'<span class="badge badge--gray">반려 · 재배정</span>':`<div style="display:flex;gap:6px"><button class="btn btn--primary" style="padding:7px 12px;font-size:12.5px" data-asg="acc" data-id="${a.id}">수락</button><button class="btn btn--line" style="padding:7px 12px;font-size:12.5px" data-asg="rej" data-id="${a.id}">반려(재배정)</button></div>`}</div>`;
+  const body=a.hold?`<p class="caption" style="margin-top:8px">학부모 대리 신청 건은 자녀 동의가 끝나야 사전자료와 질문이 열려요</p>`:(st==='acc'||st==='done')?`<div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">${a.share.map(x=>`<span class="badge badge--gray">사전자료 · ${x}</span>`).join('')}<span class="badge badge--ok">동의 · ${a.consent}</span></div><blockquote style="margin:10px 0;padding:10px 14px;border-left:3px solid var(--line);color:var(--ink-2);font-size:13.5px">${a.q}</blockquote>${st==='done'?`<div style="background:var(--surface);border-radius:12px;padding:12px 14px;font-size:13.5px"><b>내 답변</b><p style="margin:6px 0 0;white-space:pre-wrap">${ans}</p></div>`:`<textarea data-asgt="${a.id}" style="width:100%;min-height:96px;font:inherit;font-size:13.5px;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink)" placeholder="학생 화면에는 [상담 선생님 답변]으로 표시돼요 · 확률 숫자·단정적 합불 표현은 쓰지 않아요">${ans}</textarea><div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap"><button class="btn btn--primary" style="padding:7px 12px;font-size:12.5px" data-asg="done" data-id="${a.id}">답변 전달</button><button class="btn btn--line" style="padding:7px 12px;font-size:12.5px" data-toast="AI 안내 초안을 불러왔어요 · 반드시 검토·수정 후 전달 (학생에게 AI 표시 없음)" data-asgai="${a.id}">AI 안내 초안 불러오기</button></div>`}`:`<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">${a.share.map(x=>`<span class="badge badge--gray">사전자료 · ${x}</span>`).join('')}<span class="badge badge--gray">동의 · ${a.consent}</span></div><p class="caption" style="margin-top:6px">사전자료 원문과 질문은 수락(2단계 인증) 후에 열려요</p>`;
+  return `<div class="card" style="padding:18px 20px">${head}${body}</div>`;};
+ const todo=ASG.filter(a=>AS[a.id]!=='done'&&AS[a.id]!=='rej'),done=ASG.filter(a=>AS[a.id]==='done'||AS[a.id]==='rej');
+ return `<section class="section"><h2 class="t">배정 답변 <span class="badge badge--wait">${pendingAsg()}건</span> <span class="badge badge--teach">정보원 상담교사</span></h2><p class="s">정보원이 배정한 게시판·센터 상담 건만 보여요 · 배정 수락 시 2단계 인증(10분 유지) · 열람은 자동 감사로그 · 위촉 기간(~2027.3.31) 종료 시 자동 회수</p>
+ <div class="share__notice">학생 화면에는 [상담 선생님 답변]으로만 표시돼요 · 답변·요약은 학생 상담 원장에 기록되고, 학교 선생님 공유는 학생이 정해요</div>
+ <div class="kpis" style="grid-template-columns:repeat(4,1fr);margin:14px 0"><div class="kpi"><span>배정 대기</span><b>${ASG.filter(a=>!AS[a.id]&&!a.hold).length}건</b><span class="d">수락·반려 필요</span></div><div class="kpi"><span>답변 작성 중</span><b>${ASG.filter(a=>AS[a.id]==='acc').length}건</b><span class="d">게시판 기한 3일</span></div><div class="kpi"><span>이번 주 센터 상담</span><b>${ASG.filter(a=>/방문|화상/.test(a.kind)).length}건</b><span class="d">방문 1 · 화상 1</span></div><div class="kpi"><span>전달 완료</span><b>${ASG.filter(a=>AS[a.id]==='done').length}건</b><span class="d">이번 달</span></div></div>
+ <h3 style="margin:16px 0 8px;font-size:15px">배정 요청함 <small style="color:var(--ink-3)">${todo.length}건</small></h3><div style="display:grid;gap:10px">${todo.length?todo.map(card).join(''):'<p class="caption">배정 건이 없어요</p>'}</div>
+ <h3 style="margin:20px 0 8px;font-size:15px">처리 완료 <small style="color:var(--ink-3)">${done.length}건</small></h3><div style="display:grid;gap:10px">${done.length?done.map(card).join(''):'<p class="caption">아직 처리한 건이 없어요</p>'}</div>
+ <p class="caption">인계: 위촉 종료·재배정 시 작성 중 답변은 정보원 운영 담당자가 다른 상담교사에게 재배정 · 전임자는 14일간 읽기 전용</p></section>`;}
 let tfaUntil=0;function hitlConfirm(){if(Date.now()<tfaUntil)return Promise.resolve(true);return (authMode()==='B'&&window.SEN_AUTH?SEN_AUTH.stepUp('판정 승인(HITL)'):confirmAdmin('판정 승인')).then(r=>{tfaUntil=Date.now()+6e5;return r;});}
 
 function bindExtra(){
  document.querySelectorAll('[data-view]').forEach(a=>{if(a.dataset.bound)return;a.dataset.bound='1';a.addEventListener('click',e=>{e.preventDefault();view=a.dataset.view;localStorage.setItem('sen-teacher-view',view);renderAll();window.scrollTo({top:0});});});
  document.querySelectorAll('[data-hitl]').forEach(b=>b.addEventListener('click',()=>{const id=b.dataset.id,k=b.dataset.hitl;hitlConfirm().then(()=>{HS[id]=k;hsSave();showToast({ok:'승인했어요 · 확정본 생성 · 전달은 H3에서',edit:'수정 후 승인 · 수정 이력과 함께 확정',no:'반려 · 초안 폐기 · 사유 기록',more:'근거 보강 요청 · AI 재생성 큐로'}[k]);renderAll();});}));
+ document.querySelectorAll('[data-asg]').forEach(b=>b.addEventListener('click',()=>{const id=b.dataset.id,k=b.dataset.asg;
+  if(k==='done'){const t=document.querySelector(`[data-asgt="${id}"]`);if(!t||!t.value.trim()){showToast('답변을 입력해 주세요');return;}AS[id]='done';AS[id+'_t']=t.value.trim();asSave();showToast('답변을 전달했어요 · [상담 선생님 답변]으로 표시 · 상담 원장 기록');renderAll();return;}
+  if(k==='rej'){AS[id]='rej';asSave();showToast('반려 · 정보원 운영 담당자가 재배정해요 (사유 기록)');renderAll();return;}
+  asgConfirm().then(()=>{AS[id]='acc';asSave();showToast('배정을 수락했어요 · 사전자료·질문이 열렸어요 (열람 기록)');renderAll();});}));
+ document.querySelectorAll('[data-asgai]').forEach(b=>b.addEventListener('click',()=>{const t=document.querySelector(`[data-asgt="${b.dataset.asgai}"]`);if(t&&!t.value.trim())t.value='안녕하세요. 보내주신 검사 결과와 관심 학과를 함께 봤어요.\n\n1) 두 학과 모두 수학 기반이 중요해요. 통계학과는 확률과 통계·미적분, 컴퓨터공학과는 미적분·정보 과목이 권장과목으로 자주 제시됩니다.\n2) 2학년 2학기에 미적분Ⅰ·확률과 통계를 넣는 선택은 두 학과 모두에 열려 있는 구성이에요.\n3) 다음 상담 전까지: 학업설계 시뮬레이션에서 권장과목 충족을 확인하고, 두 학과 전공 체험 중 하나에 참여해 보세요.\n\n(초안 · 상담교사 검토 후 전달)';}));
+ document.querySelectorAll('[data-done]').forEach(b=>{if(b.dataset.bound)return;b.dataset.bound='1';if(b.textContent==='답변')b.addEventListener('click',()=>{view='assign';localStorage.setItem('sen-teacher-view',view);renderAll();});});
  document.querySelectorAll('[data-deliver]').forEach(c=>c.addEventListener('change',()=>{HS[c.dataset.deliver+'_d']=c.checked;hsSave();showToast(c.checked?'학생에게 전달 · [선생님 의견]으로 표시 · 상담 원장 기록':'전달을 취소했어요');}));
  document.querySelectorAll('[data-done]').forEach(b=>{if(b.dataset.bound)return;b.dataset.bound='1';if(b.textContent==='검토')b.addEventListener('click',()=>{view='hitl';localStorage.setItem('sen-teacher-view',view);renderAll();});});}
 /* ===== Z1 ===== */
@@ -398,8 +425,10 @@ function renderMain(){
 
  /* 탭(view) 라우팅: 반 관리·HITL은 담임·진학부장(과목교사는 반 관리만 제한) */
  document.querySelectorAll('#tgnb [data-view]').forEach(a=>a.classList.toggle('is-on',a.dataset.view===view));
- const hn=document.getElementById('hitlN');if(hn){hn.textContent=pendingHitl();hn.style.display=pendingHitl()?'':'none';}
+ const hn=document.getElementById('hitlN');if(hn){const n=(state==='subject'||state==='counselor')?0:pendingHitl();hn.textContent=n;hn.style.display=n?'':'none';}
+ const an=document.getElementById('asgN');if(an){const n=state==='counselor'?pendingAsg():0;an.textContent=n;an.style.display=n?'':'none';}
  if(view==='class'){m.innerHTML=state==='counselor'?'<div class="gate"><h2>반 관리는 학교 교사 역할에서만</h2><p>상담교사 역할은 배정 건만 열람해요. 헤더에서 교사 역할로 전환하세요.</p></div>':classHtml();bindExtra();return;}
+ if(view==='assign'){m.innerHTML=state==='counselor'?assignHtml():'<div class="gate"><h2>배정 답변은 정보원 상담교사 역할에서만</h2><p>정보원이 위촉·배정한 상담 건은 상담교사 역할로 전환해야 열람·답변할 수 있어요. 학교 교사 역할에서는 배정 건이 보이지 않아요'+(state==='expired'?' · 위촉 기간이 끝나 역할이 회수됐어요':'')+'.</p></div>';bindExtra();return;}
  if(view==='hitl'){m.innerHTML=(state==='subject'||state==='counselor')?'<div class="gate"><h2>판정 승인권은 담임 반 한정</h2><p>과목교사·상담교사 역할에는 승인권이 없어요. 담임 또는 진학부장(2차 검토)만 승인할 수 있어요.</p></div>':hitlHtml();bindExtra();return;}
  /* 역할별 필터 */
  const isSubj=state==='subject',isHead=state==='head'||state==='schooladmin',isCoun=state==='counselor',isAdm=state==='schooladmin';
