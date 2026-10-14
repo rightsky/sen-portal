@@ -5,6 +5,7 @@ let p=JSON.parse(localStorage.getItem(PKEY)||'null')||{major:'m2',sem:{'2-1':[],
 const save=()=>localStorage.setItem(PKEY,JSON.stringify(p));
 const TYPES=['공통','일반','진로','융합'];const badge=t=>`<span class="tb tb--${TYPES.indexOf(t)}">${t}</span>`;
 const G1=SUBJECTS.filter(s=>s.type==='공통');
+const cr_=names=>names.reduce((a,n)=>a+(subj(n)?subj(n).credit:0),0),cr=cr_;
 const GROUPS=['전체','국어','수학','영어','사회','과학','정보','예술','교양'];
 let active='2-1',pg='전체',pq='',recOnly=false;
 const all=()=>SEMS.flatMap(k=>p.sem[k]);
@@ -35,14 +36,14 @@ function renderSim(){
   $('g1').innerHTML=G1.map(s=>`<span>${s.name}</span>`).join('');
   $('board').innerHTML=SEMS.map(k=>{const L2=p.sem[k],n=L2.length,cls=n<4?'low':n>7?'high':'ok';return `<div class="sem${active===k?' is-active':''}" data-sem="${k}"><button class="sem__h" data-act="${k}"><b>${SEM_LABEL[k]}</b><span class="sem__n sem__n--${cls}">${n}과목 · ${n*4}학점</span></button><div class="sem__list">${L2.map(x=>`<div class="chipx" draggable="true" data-chip="${x}" data-from="${k}">${badge(subj(x).type)}<span>${x}</span>${NOT_OFFERED.includes(x)?'<i class="no">공동</i>':''}<button data-rm="${x}" aria-label="${x} 빼기">✕</button></div>`).join('')||'<p class="sem__empty">왼쪽에서 과목을 눌러 담거나<br>끌어다 놓으세요</p>'}</div></div>`;}).join('');
   const C=checks(),w=C.filter(c=>c[0]==='q').length;
-  $('simChecks').innerHTML=`<div class="ck__sum"><b>${w?`선생님과 함께 살펴볼 점 ${w}개`:'함께 살펴볼 점이 정리되었어요'}</b><span>총 ${A_.length}과목 · ${A_.length*4}학점 (2·3학년 선택과목)</span></div>`+C.map(c=>`<div class="ck ck--${c[0]}"><i>${c[0]==='ok'?'✓':c[0]==='q'?'?':'i'}</i><div><b>${c[1]}</b>${c[2]?`<span>${c[2]}</span>`:''}</div></div>`).join('');
+  $('simChecks').innerHTML=`<div class="ck__sum"><b>${w?`선생님과 함께 살펴볼 점 ${w}개`:'함께 살펴볼 점이 정리되었어요'}</b><span>총 ${A_.length}과목 · ${cr(A_)}학점 (2·3학년 선택과목)</span></div>`+C.map(c=>`<div class="ck ck--${c[0]}"><i>${c[0]==='ok'?'✓':c[0]==='q'?'?':'i'}</i><div><b>${c[1]}</b>${c[2]?`<span>${c[2]}</span>`:''}</div></div>`).join('');
 }
 function add(n,k){k=k||active;if(all().includes(n)){showToast(`${n}은(는) 이미 ${SEM_LABEL[where(n)]}에 있어요`);return;}if(p.sem[k].length>=8){showToast('한 학기에 8과목까지 담을 수 있어요');return;}p.sem[k].push(n);p.submit=p.submit>=1?0:p.submit;save();renderSim();}
 function move(n,from,to){if(from===to)return;p.sem[from]=p.sem[from].filter(x=>x!==n);p.sem[to].push(n);save();renderSim();}
 /* 이수계획 */
 function renderPlan(){const groups=[...new Set(SUBJECTS.map(s=>s.group))];const A_=all();
-  $('planTable').innerHTML=`<div class="ctable-w"><table class="ctable ptbl"><thead><tr><th>교과군</th><th>1학년 (공통)</th>${SEMS.map(k=>`<th>${SEM_LABEL[k]}</th>`).join('')}<th>학점</th></tr></thead><tbody>${groups.map(g=>{const g1=G1.filter(s=>s.group===g).map(s=>s.name),cells=SEMS.map(k=>p.sem[k].filter(x=>subj(x).group===g)),cr=(g1.length+cells.flat().length)*4;return `<tr><th>${g}</th><td>${g1.join('<br>')||'–'}</td>${cells.map(c=>`<td>${c.map(x=>`<div>${x}</div>`).join('')||'–'}</td>`).join('')}<td><b>${cr}</b></td></tr>`;}).join('')}<tr><th>합계</th><td><b>${G1.length*4}</b></td>${SEMS.map(k=>`<td><b>${p.sem[k].length*4}</b></td>`).join('')}<td><b>${(G1.length+A_.length)*4}</b></td></tr></tbody></table></div>`;
-  const by={};A_.forEach(x=>{const g=subj(x).group;by[g]=(by[g]||0)+4;});const mx=Math.max(4,...Object.values(by));
+  $('planTable').innerHTML=`<div class="ctable-w"><table class="ctable ptbl"><thead><tr><th>교과군</th><th>1학년 (공통)</th>${SEMS.map(k=>`<th>${SEM_LABEL[k]}</th>`).join('')}<th>학점</th></tr></thead><tbody>${groups.map(g=>{const g1=G1.filter(s=>s.group===g).map(s=>s.name),cells=SEMS.map(k=>p.sem[k].filter(x=>subj(x).group===g)),cr=cr_(g1)+cr_(cells.flat());return `<tr><th>${g}</th><td>${g1.join('<br>')||'–'}</td>${cells.map(c=>`<td>${c.map(x=>`<div>${x}</div>`).join('')||'–'}</td>`).join('')}<td><b>${cr}</b></td></tr>`;}).join('')}<tr><th>합계</th><td><b>${cr_(G1.map(s=>s.name))}</b></td>${SEMS.map(k=>`<td><b>${cr_(p.sem[k])}</b></td>`).join('')}<td><b>${cr_(G1.map(s=>s.name))+cr_(A_)}</b></td></tr></tbody></table></div>`;
+  const by={};A_.forEach(x=>{const g=subj(x).group;by[g]=(by[g]||0)+subj(x).credit;});const mx=Math.max(4,...Object.values(by));
   $('planBars').innerHTML=Object.keys(by).length?Object.entries(by).sort((a,b)=>b[1]-a[1]).map(([g,v])=>`<div class="bar is-top" style="grid-template-columns:56px 1fr 52px"><span>${g}</span><div class="bar__track"><div class="bar__fill" style="width:${v/mx*100}%"></div></div><span class="bar__val">${v}학점</span></div>`).join(''):'<p class="hint">아직 담은 선택과목이 없어요. <a class="link" href="#sim">시뮬레이션에서 과목 담기 ›</a></p>';
   const tc={};A_.forEach(x=>{const t=subj(x).type;tc[t]=(tc[t]||0)+1;});
   $('planTypes').innerHTML=['일반','진로','융합'].map(t=>`<div><dt>${t}선택</dt><dd>${tc[t]||0}과목</dd></div>`).join('')+`<div><dt>목표 학과</dt><dd style="font-size:14px">${major(p.major).name}</dd></div>`;

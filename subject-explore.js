@@ -1,8 +1,8 @@
 (function(){
-const {SUBJECTS,PRE,NOT_OFFERED,OPEN,SEMS,SEM_LABEL,CAT_REC,subj}=SC;const {MAJORS,MAJOR_CATS,major}=EX;const A=SEN_AUTH;const $=id=>document.getElementById(id);
+const {SUBJECTS,GRADE_LABEL,PRE,NOT_OFFERED,OPEN,SEMS,SEM_LABEL,CAT_REC,subj}=SC;const {MAJORS,MAJOR_CATS,major}=EX;const A=SEN_AUTH;const $=id=>document.getElementById(id);
 const PKEY='sen-plan-v1';const P=()=>JSON.parse(localStorage.getItem(PKEY)||'null')||{major:'m2',sem:{'2-1':[],'2-2':[],'3-1':[],'3-2':[]},wish:[],submit:0,memo:''};
 const saveP=p=>localStorage.setItem(PKEY,JSON.stringify(p));
-const GROUPS=['전체','국어','수학','영어','사회','과학','정보','예술','교양'];const TYPES=['공통','일반','진로','융합'];
+const GROUPS=['전체','국어','수학','영어','사회','과학','체육','예술','정보','교양'];const TYPES=['공통','일반','진로','융합'];
 const TINFO={'공통':['1학년','모든 학생이 함께 배우는 기초 과목'],'일반':['2학년~','교과의 기본 내용을 배우는 과목'],'진로':['2·3학년','진로에 맞춰 심화 내용을 배우는 과목'],'융합':['2·3학년','여러 교과를 엮거나 실생활에 적용하는 과목']};
 const badge=t=>`<span class="tb tb--${TYPES.indexOf(t)}">${t}</span>`;
 const f={g:'전체',t:new Set(),q:''};
@@ -15,16 +15,16 @@ function renderSubjects(){
   $('subGrid').innerHTML=L.length?L.map(s=>`<button class="sj" data-sj="${s.name}">${badge(s.type)}<b>${s.name}</b><span>${s.desc}</span><small>${s.group}${A.logged()&&NOT_OFFERED.includes(s.name)?' · <em>우리 학교 미개설</em>':''}</small></button>`).join(''):`<div class="empty-r" style="grid-column:1/-1"><b>찾는 과목이 없어요</b>다른 검색어를 입력해 보세요.</div>`;
 }
 function openSubj(n){const s=subj(n);if(!s)return;const pre=PRE[n],next=Object.keys(PRE).filter(k=>PRE[k]===n),ms=MAJORS.filter(m=>m.subjects.includes(n));
-  const evalTxt=s.type==='공통'||s.type==='일반'?'성취도(A~E) + 석차 등급(5등급) 함께 표기':'성취도(A~E) 중심 표기 (일부 과목 예외)';
+  const evalTxt=GRADE_LABEL[s.grade]||s.grade;
   const wish=A.logged()&&P().wish.includes(n);
   EX.drawer.open(`<div class="dh"><small>${s.group} · ${s.type}선택${s.type==='공통'?'':''}</small><h2>${n}</h2><p>${s.desc}</p></div>
   <div class="dact"><button class="btn ${wish?'btn--ghost':'btn--primary'} btn--pill" data-wish="${n}">${wish?'✓ 학업설계에 담김':'+ 학업설계에 담기'}</button></div>
-  <div class="dsec"><h3>기본 정보</h3><dl class="dgrid"><div><dt>과목 유형</dt><dd>${s.type}${s.type==='공통'?'과목':'선택'}</dd></div><div><dt>학점</dt><dd>4학점 (±1 조정 가능)</dd></div><div><dt>배우는 시기</dt><dd>${TINFO[s.type][0]}</dd></div><div><dt>성적 표기</dt><dd style="font-size:13.5px">${evalTxt}</dd></div></dl></div>
+  <div class="dsec"><h3>기본 정보</h3><dl class="dgrid"><div><dt>과목 유형</dt><dd>${s.type}${s.type==='공통'?'과목':'선택'}</dd></div><div><dt>학점</dt><dd>${s.credit}학점 (±1 조정 가능)</dd></div><div><dt>2028 수능</dt><dd>${s.csat?'출제 과목':'출제 범위 아님'}</dd></div><div><dt>배우는 시기</dt><dd>${TINFO[s.type][0]}</dd></div><div><dt>성적 표기</dt><dd style="font-size:13.5px">${evalTxt}</dd></div></dl></div>
   ${pre?`<div class="dsec"><h3>먼저 들으면 좋은 과목</h3><div class="lchips"><a href="#" data-sj="${pre}">${pre}</a></div></div>`:''}
   ${next.length?`<div class="dsec"><h3>이어서 들을 수 있는 과목</h3><div class="lchips">${next.map(x=>`<a href="#" data-sj="${x}">${x}</a>`).join('')}</div></div>`:''}
   ${ms.length?`<div class="dsec"><h3>이 과목이 도움이 되는 학과</h3><div class="lchips">${ms.map(m=>`<a href="jinro-major.html?open=${m.id}#find">${m.name}</a>`).join('')}</div></div>`:''}
   <div class="dsec"><h3>우리 학교 개설 여부</h3><p>${A.logged()?(NOT_OFFERED.includes(n)?'서울한빛고에는 개설되지 않았어요. 공동교육과정이나 서울온라인학교로 들을 수 있습니다.':'서울한빛고에서 들을 수 있어요'):'<a class="link" href="#" data-loginopen>로그인하면 우리 학교 개설 여부를 확인할 수 있어요 ›</a>'}</p></div>
-  <p class="dsrc">※ 2022 개정 교육과정 과목 구조 기준 · 성적 표기 방식은 학년도별 안내를 확인하세요</p>`);}
+  <p class="dsrc">※ 2022 개정 교육과정 보통 교과 기준 (서교연 2026 진학지도 자료집 p.36~37·55) · 수능 출제 과목은 2028학년도 예고안</p>`);}
 /* ── 진로·전공별 관련 과목 ── */
 let mSel='m2',mCat='전체';
 function plan4(list){const out={'2-1':[],'2-2':[],'3-1':[],'3-2':[]};const ord=[...list].sort((a,b)=>(subj(a).type==='일반'?0:1)-(subj(b).type==='일반'?0:1));
@@ -46,7 +46,7 @@ function renderMySchool(){
   if(!A.logged()){$('msBody').innerHTML=A.gate('🏫','우리 학교 개설과목은 로그인 후 볼 수 있어요','학생 정보에 등록된 학교의 학기별 개설 과목과, 학교에 없는 과목을 듣는 방법을 알려드립니다.');return;}
   $('msBody').innerHTML=`<div class="ms__head"><div><small>나의 학교 (예시)</small><h3>서울한빛고등학교</h3><p>2026학년도 교육과정 편성표 기준 · 2학년 학생에게 보이는 과목입니다</p></div><div class="ms__stat"><div><b>${SEMS.reduce((a,k)=>a+OPEN[k].length,0)}</b><span>개설 과목</span></div><div><b>${NOT_OFFERED.length}</b><span>미개설 과목</span></div></div></div>
   <div class="tabs" style="margin:22px 0 16px">${SEMS.map(k=>`<button class="tab${semTab===k?' is-on':''}" data-sem="${k}">${SEM_LABEL[k]}</button>`).join('')}</div>
-  <div class="ms__grid">${OPEN[semTab].map(n=>{const s=subj(n);return `<button class="sj" data-sj="${n}">${badge(s.type)}<b>${n}</b><small>${s.group} · 4학점</small></button>`;}).join('')}</div>
+  <div class="ms__grid">${OPEN[semTab].map(n=>{const s=subj(n);return `<button class="sj" data-sj="${n}">${badge(s.type)}<b>${n}</b><small>${s.group} · ${s.credit}학점</small></button>`;}).join('')}</div>
   <h3 class="ms__sub">우리 학교에 없는 과목, 이렇게 들을 수 있어요</h3>
   <div class="ms__alt"><div class="ms__altc"><b>🤝 공동교육과정</b><p>가까운 학교들이 함께 과목을 열어 방과 후·주말에 듣습니다</p><div class="lchips">${NOT_OFFERED.slice(0,3).map(n=>`<span>${n}</span>`).join('')}</div><button class="btn btn--ghost btn--pill" data-toast="공동교육과정 수강 신청은 학교 담당 선생님 확인 후 진행됩니다">수강 신청 안내</button></div><div class="ms__altc"><b>💻 서울온라인학교</b><p>온라인 실시간 수업으로 듣고 학교 성적으로 인정받습니다</p><div class="lchips">${NOT_OFFERED.slice(3).map(n=>`<span>${n}</span>`).join('')}</div><button class="btn btn--ghost btn--pill" data-toast="서울온라인학교 수강 신청 화면으로 이동합니다">수강 신청 안내</button></div></div>`;
 }
