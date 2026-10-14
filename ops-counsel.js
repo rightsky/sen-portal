@@ -5,7 +5,7 @@
 (function(){
 const D=window.CNS,esc=SEN_OPS.esc,KEY='sen-ops-counsel-v1';
 const DEF={cd1View:'cal',cd1D:2,cd2St:{},cd2Ap:{},cd3Q:{},cd4Rm:false,copPay:0,cd5Pd:'m',cd5Qs:{3:true},cd5Ms:{8:true},cd5Xl:false,cd5By:'ch',
- grid:null,olX:{},copAppr:{},copCoh:'all',rkSub:null,rkNo:false,
+ grid:null,olX:{},copAppr:{},copCoh:'all',rkSub:null,rkNo:false,fixed:{},
  mgT:0,mgSel:{},mgSent:null,mgDet:null,liveOv:{},detG:null,detHo:null,detSaved:false,vacSel:{},vacSent:null,
  olT:'all',olSel:null,olAct:null,olAi:null,olMs:{},olBulk:null,olSatRm:false,
  vcT:'all',vcSel:null,vcAct:null,vcPv:null,vcPdf:null,wvT:'all',wvSel:null,wvAct:null,wvPv:null,wvPdf:null,
@@ -66,7 +66,7 @@ function vHome(el){
   /* ③ 주 단위 */
   const rkN=D.RK.filter(r=>!S.cd3Q[r[0]]).length;
   const xN=olxOpen();const sec3=`<div class="cg3">${D.CARDS3.map((c,ci)=>{const mx=Math.max(...c[3]);const d=ci===0?`답변완료 35 · 답변중 6 — <b style="color:${xN.total?'#c03535':'#157f3d'}">미배정 ${xN.un} · SLA 초과 ${xN.sla} · 반려 대기 ${xN.rej}</b> (게시판 상담 화면에서 처리)`:c[2];return `<section class="cc"><div class="cc__bd"><div style="display:flex;gap:8px;align-items:center"><b class="sp" style="font-size:13px">${c[0]}</b>${go(c[4])}</div><div class="bignum" style="margin-top:4px">${c[1]}</div><div class="mini">${c[3].map(x=>`<i style="height:${Math.round(x*100/mx)}%"></i>`).join('')}</div><p class="nt" style="font-size:12px">${d}</p></div></section>`;}).join('')}</div>
-   ${card(`<span class="sp">3-4 리스크 관리 — 상담일정 변경·어긋남</span>${chipC(rkN+'건','cnt')}${go('risk')}`,riskRows(),'D-1 18시 이전 어긋남은 플랜B 완전 자동 — 여기 표시되는 건 당일 건·옵션 0개·무응답뿐 · 이번 주 어긋남 9건 중 자동 해결 7 · 예외는 별도 큐 없이 이 목록과 게시판 상담 화면에서 처리','np')}`;
+   ${card(`<span class="sp">3-4 상담일정 변경·어긋남 (플랜B)</span>${chipC(rkN+'건','cnt')}${go('vc','화상 →')}${go('wv','방문 →')}`,riskRows(),'D-1 18시 이전 어긋남은 플랜B 완전 자동 — 여기 표시되는 건 당일 건·옵션 0개·무응답뿐 · 이번 주 어긋남 9건 중 자동 해결 7 · 처리는 화상·방문 상담 화면의 「일정 변경·어긋남」에서 — 교사 사유는 상담자관리 이력 원장, 학생 사유는 3개월 제한으로 자동 기록','np')}`;
   /* ④ 상담관리 */
   const pay=S.copPay||0;
   const sec4=`<div class="cg3"><section class="cc"><div class="cc__bd"><div style="display:flex;gap:8px;align-items:center"><b class="sp" style="font-size:13px">4-1 상담 보고서 관리</b>${go('rp')}</div>
@@ -91,7 +91,8 @@ function vHome(el){
    ${st}</div>`;
 }
 const olxOpen=()=>{const o={un:0,sla:0,rej:0,total:0};Object.entries(D.OLX).forEach(([no,x])=>{if(!S.olX[no]){o[x[0]]++;o.total++;}});return o;};
-function riskRows(){return D.RK.map(r=>`<div class="lr">${chip(r[1],r[2],r[3],'ch--sq')}<span class="sp">${r[4]}</span>${dbtn(S.cd3Q[r[0]],r[5],'✓ 처리됨','cd3Q',r[0])}</div>`).join('');}
+function riskRows(ch){return D.RK.filter(r=>!ch||r[6]===ch).map(r=>`<div class="lr">${chip(r[1],r[2],r[3],'ch--sq')}${ch?'':chCh(r[6]==='vc'?'화상':'방문')}<span class="sp">${r[4]}${r[7]?`<div class="ds">교사 사유 → ${r[7]} T 이력 원장에 사유 코드 자동 기입 (연 단위 재위촉 심사 참고)</div>`:r[8]?`<div class="ds">학생 사유 → ${r[8]} 신청 제한 3개월 자동 · 해제일 마이페이지 표시</div>`:''}</span>${dbtn(S.cd3Q[r[0]],r[5],'✓ 처리됨','cd3Q',r[0])}</div>`).join('');}
+const tchRisk=name=>D.RK.filter(r=>r[7]===name&&S.cd3Q[r[0]]);
 function payStages(pay){const st=[['자동 산정',true],['조서',pay>=1],['결재',pay>=2],['에듀파인 파일',pay>=2]];return `<div class="tgs" style="margin:9px 0">${st.map(([l,on])=>chipP(l,on?C.green:C.off)).join('')}</div>`;}
 function payBtn(pay,cls=''){const L=['월 마감 · 수당지급조서 생성','결재 승인 (정보원 담당자)','✓ 에듀파인 업로드 파일 생성됨'];return pay>=2?`<button type="button" class="cbtn cbtn--done ${cls}" disabled>${L[2]}</button>`:btn(L[pay],'copPay',null,cls);}
 /* ⑤ 통계관리 : 기간 모델 */
@@ -143,6 +144,7 @@ function vMg(el){
     <p class="nt" style="margin-top:8px">상담분류(전문 계열) — <b>${dr[2]}</b> · 태그 다중화 예정<br>채널 — 화상·방문 (한 풀이 전 채널, Q2)</p>
     ${ho?`<h5>휴면 신청 — 선생님이 기간 지정 → 실무사 승인</h5><div class="lr" style="padding:6px 0;border:0;flex-wrap:wrap"><span class="sp">9.20 ~ 10.4 · 사유: 학교 업무 집중 (2학기 수행평가)</span>${hoL}${ho==='pending'?btn('승인','detHoAp',null,'cbtn--xs cbtn--green')+btn('반려','detHoRj',null,'cbtn--xs cbtn--line cbtn--red'):''}</div>${ft('승인 시 기간 중 상태 [휴면중] · 자동 배정 제외 · 기존 확정 건은 플랜B 자동 제시 · 종료일 익일 자동 복귀')}`:''}</div>
    <div class="box"><h4>위촉 정보 (⑪ 수명주기)</h4><p class="nt">${tab===2?'위촉 전 — 후보 풀. 모집 공고 신청 시 심사 대상 (⑪ 수명주기: 공고 → 신청 → 심사 → 위촉)':'위촉 기간 2026.4.1 ~ 2027.3.31 · 연 단위 재승인 · 3월 공문 선발 (경쟁률 약 2:1, K16) · 만료 시 권한 자동 회수'}</p></div>
+   <div class="box"><h4>교사 이력 원장 (⑪ 재위촉 심사 참고 — 페널티 아님)</h4>${(()=>{const h=tchRisk(dr[3]);return h.length?`<p class="nt">취소·미수락 <b>${h.length}건</b> — 사유 코드 자동 기입</p>${h.map(x=>`<div class="lr" style="padding:5px 0">${chip(x[1],x[2],x[3],'ch--sq')}<span class="sp" style="font-size:12px">${x[4]}</span></div>`).join('')}`:'<p class="nt">취소·미수락 0건 — 화상·방문 상담 「일정 변경·어긋남」에서 교사 사유 건이 처리되면 여기에 자동 기입됩니다</p>';})()}${ft('기록은 연 단위 재위촉 심사 참고용 · 학생 사유(노쇼·당일취소)는 학생 측 3개월 제한 이력으로 별도 관리')}</div>
    <div class="box"><h4>계좌 정보 (⑫ — 마스킹)</h4><p class="nt">예금주 강*영 · 거래은행 국민 · 계좌 ****-**-**4821 · 통장사본 S존 · 검증 ✓</p>${ft('전체 조회는 정산 담당 Role만 (열람 사유 로그) · 등록·수정은 교사 본인 T-01에서 — 현행 관리자 직접 입력(F3) 폐지')}</div></div>`;}
   el.innerHTML=`<div class="cns"><section class="cc"><div class="cc__hd"><span>상담자관리</span><span class="path">홈 &gt; 상담관리 &gt; 상담자관리</span><span class="sp"></span>${chipC('위촉 100명 · 후보 풀 412','gray')}</div>
    ${ctabs(D.MGTABS.map((l,i)=>[i,l]),tab,'mgT')}
@@ -153,26 +155,6 @@ function vMg(el){
 }
 /* ─────────────── 콘솔 : 리스크 관리 ─────────────── */
 const vacPool=()=>{const out=[];[0,1].forEach(tab=>D.MGD[tab].forEach((r,i)=>{if(liveOf(tab,i,r[0])==='휴식중')out.push({tab,i,r});}));return out;};
-function vRisk(el){
-  const rkN=D.RK.filter(r=>!S.cd3Q[r[0]]).length;const vac=vacPool();const svN=vac.filter(v=>S.vacSel[v.tab+'-'+v.r[0]]).length;const sub=S.rkSub;
-  const steps=[['① 대체 요청 문자',true],['② 이정민 T 승인',sub!==null],['③ 대체 확정',sub==='fix'],['④ 맥락 카드 전달',sub==='fix']];
-  el.innerHTML=`<div class="cns"><div class="cg2">
-   ${card(`<span class="sp">3-4 리스크 관리 — 상담일정 변경·어긋남</span>${chipC(rkN+'건','cnt')}`,riskRows(),'D-1 18시 이전 어긋남은 플랜B 완전 자동 — 여기 표시되는 건 당일 건·옵션 0개·무응답뿐 · 이번 주 어긋남 9건 중 자동 해결 7','np')}
-   ${card(`<span class="sp">휴식중(공강) 선생님 — 대체 투입 가능</span>${chipC(vac.length+'명','gray')}${btn('대체 요청 문자'+(svN?` (${svN}명)`:''),'vacSend',null,'cbtn--xs'+(svN?'':' cbtn--off'))}`,
-    (S.vacSent?ok(`✓ 대체 상담 요청 문자 ${S.vacSent}명 발송 — 발신: 센터 대표번호 (C-02) · 수락 시 해당 건에 대체 교사로 배정 · 발송 로그 기록`)+'<div style="height:6px"></div>':'')+
-    (vac.length?vac.map((v,i)=>{const k=v.tab+'-'+v.r[0],pr=D.PR[i%3];return `<div class="lr" style="padding:8px 0;align-items:flex-start"><button type="button" class="ck" style="font-size:15px;background:none;border:0;padding:0;cursor:pointer" data-act="vacSel" data-arg="${k}" aria-label="선택">${ck(!!S.vacSel[k])}</button><div class="sp"><b style="color:#1f4fa3">${v.r[3]} (${v.r[4]})</b><div class="ds">${v.tab===0?'진로상담교사단':'대학진학지도지원단'} · ${v.r[5]}</div><div class="ds" style="color:#3a4560">${pr[0]} (본인 설정) · <b style="color:#157f3d">${pr[1]}</b></div></div></div>`;}).join(''):'<p class="ft">현재 휴식중(공강) 선생님 없음 — 상담자관리 상세에서 오늘 상태를 바꾸면 여기에 표시됩니다</p>'),
-    '휴식중 = 하루 근무 중 <b>공강 시간 — 대신 상담 가능한 상태</b>, 선생님이 그날그날 직접 설정 · 좌측 리스크 건의 대체 교사 풀로 활용 — 리스크 대처를 위한 상호 공감대 형성 전제 · 상담자관리 오늘 상태와 실시간 연동')}
-   </div><div class="cg2">
-   <section class="cc"><div class="cc__hd">1. 대체 확정 플로우 — 이정민 T (휴식중·공강)</div><div class="cc__bd"><div class="tgs" style="margin-bottom:10px">${steps.map(([l,on])=>chipP(l,on?C.green:C.off)).join('')}</div>
-    ${sub===null?`<p class="nt">1-1. 이정민 선생님이 대체 요청 문자를 받고 <b>[승인]</b>을 누르면 → 실무사 화면에 [대체 확정] 버튼 생성</p>${btn('이정민 T — 문자 수신 → 승인 (수락 시뮬레이션)','rkAcc',null,'cbtn--line')}`:''}
-    ${sub==='acc'?ok('✓ 이정민 T 승인 (수락) — 9/3 15:00 화상 건 대체 가능 회신')+'<div class="acts">'+btn('대체 확정 — 배정 교체 · 양측 자동 통지','rkFix')+'</div>':''}
-    ${sub==='fix'?ok('✓ 대체 확정 — 박선영 T → 이정민 T 배정 교체 · 학생·교사 양측 자동 통지 · v-meeting URL 유지')+`<div class="box" style="margin-top:10px"><h4>1-2. 맥락 카드 자동 전달 — 이정민 T 화면에만</h4><p class="nt">학생 이** (고3 · 미디어 계열 희망) — 성적 요약 스트립 · 진로검사 결과 · <b>기존 상담이력 2건</b>(7.03 성적 상담 · 8.12 수시 전략) · 사전 질문</p>${ft('동의 스코프 승계 (재동의 불요 — 배정 건 한정) · 열람 권한 = 확정~종료 후 N일 · 전건 열람 로그 · [AI 초안] 요약은 교사 화면에만')}</div>`:''}
-   </div></section>
-   <div class="stack"><section class="cc"><div class="cc__hd">2. 상담 선생님이 없는 경우</div><div class="cc__bd"><p class="nt">공강 풀 0명 또는 전원 미수락 → 자동 분기: 2-1. 학생(학부모)에게 <b>사과 문자 + 대체 일정 재예약 링크</b> 발송</p>
-    ${S.rkNo?ok('✓ 발송 완료 — 센터 대표번호 (C-02) · 딥링크 포함')+`<div class="soft" style="margin-top:8px">"예정된 상담이 부득이하게 취소되어 사과드립니다. 아래 링크에서 원하시는 일정으로 다시 예약하실 수 있습니다. [다시 예약하기 →]" — <b>우선 예약권</b>(P2 슬롯 즉시 확정) 부여</div>`:btn('사과 문자 + 재예약 링크 발송','rkNo')}</div></section>
-   <section class="cc"><div class="cc__hd">3. 패널티 조항 — 자동 기입 · 별도 이력 관리</div><div class="cc__bd"><div class="lr" style="padding:6px 0;align-items:flex-start">${chipC('3-1 교사','navy')}<span class="sp nt">선생님 사정(취소·미수락)이면 사유 코드 자동 기입 → <b>교사 이력 원장</b>에 누적 — 페널티가 아닌 기록, 연 단위 재위촉 심사 참고</span></div>
-    <div class="lr" style="padding:6px 0;align-items:flex-start;border:0">${chipC('3-2 학생','purple')}<span class="sp nt">상담학생(학부모) 사정(노쇼·당일취소)이면 자동 기입 → <b>별도 이력 관리</b> — 3개월 신청 제한 자동 적용, 해제일 마이페이지 표시, 실무사 예외 해제(사유 기록)</span></div></div></section></div></div></div>`;
-}
 /* ─────────────── 콘솔 : 온라인 게시판 상담 ─────────────── */
 function vOl(el){
   const rows=D.OLR.filter(r=>S.olT==='all'||r[7]===S.olT);const msN=rows.filter(r=>S.olMs[r[0]]).length,allOn=msN===rows.length&&rows.length>0;
@@ -222,7 +204,23 @@ function vcwv(el,kind){
   const lkChip=r=>r[F.lk]==='카톡'?chipC(isV?'카톡 링크':'카톡 안내','kakao'):chipC(isV?'이메일 링크':'이메일 안내','link');
   const roleChip=r=>chipC(r[F.role],r[F.role]==='학생'?'teal':'purple');
   const cols=isV?[{l:'번호'},{l:'학교급'},{l:'상담분류'},{l:'제목',cls:'el'},{l:'신청자 · 링크'},{l:'희망(확정) 일시'},{l:'연결한 내 정보'},{l:'상태'},{l:'선생님'}]:[{l:'번호'},{l:'학교급'},{l:'상담분류'},{l:'제목',cls:'el'},{l:'신청자 · 안내'},{l:'희망(확정) 일시'},{l:'상담실'},{l:'연결한 내 정보'},{l:'상태'},{l:'선생님'}];
-  const tbl=gt(cols,rows.map(r=>{const c=[r[0],r[F.sch],r[F.cate],`<b style="color:#1f4fa3">${r[F.t]}</b>`,`<span class="tgs" style="gap:3px">${r[F.wr]} ${roleChip(r)}${lkChip(r)}</span>`,r[F.want]];if(!isV)c.push(r[F.room]);c.push(`<span style="font-size:11.5px">${r[F.info]}</span>`,chipP(r[F.st],CC[r[F.st]]),r[F.tch]);return {cls:S[P.sel]===r[0]?'is-sel':'',click:P.sel,arg:r[0],c};}),{tpl:isV?'40px 100px 72px 1fr 208px 158px 140px 62px 62px':'40px 100px 72px 1fr 208px 158px 64px 140px 62px 62px'});
+  const tbl=gt(cols,rows.map(r=>{const c=[r[0],r[F.sch],r[F.cate],`<b style="color:#1f4fa3">${r[F.t]}</b>`,`<span class="tgs" style="gap:3px">${r[F.wr]} ${roleChip(r)}${lkChip(r)}</span>`,r[F.want]];if(!isV)c.push(r[F.room]);c.push(`<span style="font-size:11.5px">${r[F.info]}</span>`,S.fixed[kind+r[0]]?chipC('재확정 ✓','green'):chipP(r[F.st],CC[r[F.st]]),r[F.tch]);return {cls:S[P.sel]===r[0]?'is-sel':'',click:P.sel,arg:r[0],c};}),{tpl:isV?'40px 100px 72px 1fr 208px 158px 140px 62px 62px':'40px 100px 72px 1fr 208px 158px 64px 140px 62px 62px'});
+  /* 일정 변경·어긋남 (플랜B) — 이 채널의 리스크 건 + 목록의 일정변경 건 */
+  const chg=DATA.filter(x=>x[F.st]==='일정변경');const rkOpen=D.RK.filter(x=>x[6]===kind&&!S.cd3Q[x[0]]).length+chg.filter(x=>!S.fixed[kind+x[0]]).length;
+  const chgRows=chg.map(x=>`<div class="lr">${chipC('신청자 변경 요청','amber','ch--sq')}<span class="sp">#${x[0]} ${x[F.t]} · ${x[F.wr]} · ${x[F.want]} · ${x[F.tch]} T<div class="ds">플랜B 옵션(대체 교사 / 다른 날) 제시됨 — 재확정 대기 · <button type="button" class="nm" data-act="${P.sel}" data-arg="${x[0]}" style="font-size:11px">상세 →</button></div></span>${S.fixed[kind+x[0]]?`<button type="button" class="cbtn cbtn--done" disabled>✓ 재확정 — 양측 통지</button>`:btn('대체 일정 확정 (플랜B)','fixed',kind+x[0])}</div>`).join('');
+  let rkExtra='';
+  if(isV){const vac=vacPool();const svN=vac.filter(v=>S.vacSel[v.tab+'-'+v.r[0]]).length;const sub=S.rkSub;const steps=[['① 대체 요청 문자',true],['② 이정민 T 승인',sub!==null],['③ 대체 확정',sub==='fix'],['④ 맥락 카드 전달',sub==='fix']];
+   rkExtra=`<div class="cg2" style="padding:12px 14px 0"><div class="box"><h4><span class="sp">휴식중(공강) 선생님 — 대체 투입 가능 ${chipC(vac.length+'명','gray')}</span>${btn('대체 요청 문자'+(svN?` (${svN}명)`:''),'vacSend',null,'cbtn--xs'+(svN?'':' cbtn--off'))}</h4>
+    ${S.vacSent?ok(`✓ 대체 상담 요청 문자 ${S.vacSent}명 발송 — 발신: 센터 대표번호 (C-02) · 수락 시 해당 건에 대체 교사로 배정 · 발송 로그 기록`):''}
+    ${vac.length?vac.map((v,i)=>{const k=v.tab+'-'+v.r[0],pr=D.PR[i%3];return `<div class="lr" style="padding:7px 0;align-items:flex-start"><button type="button" class="ck" style="font-size:15px;background:none;border:0;padding:0;cursor:pointer" data-act="vacSel" data-arg="${k}" aria-label="선택">${ck(!!S.vacSel[k])}</button><div class="sp"><b style="color:#1f4fa3">${v.r[3]} (${v.r[4]})</b><div class="ds">${v.tab===0?'진로상담교사단':'대학진학지도지원단'} · ${v.r[5]} · ${pr[0]} · <b style="color:#157f3d">${pr[1]}</b></div></div></div>`;}).join(''):'<p class="ft">현재 휴식중(공강) 선생님 없음 — 상담자관리 상세에서 오늘 상태를 바꾸면 여기에 표시됩니다</p>'}
+    ${ft('휴식중 = 공강 시간에 대신 상담 가능한 상태, 선생님이 그날그날 직접 설정 · 상담자관리 오늘 상태와 실시간 연동 · 교사 취소 건(9/3 박선영 T)의 대체 교사 풀')}</div>
+   <div class="box"><h4>대체 확정 플로우 — 9/3 15:00 교사 취소 건</h4><div class="tgs" style="margin-bottom:8px">${steps.map(([l,on])=>chipP(l,on?C.green:C.off)).join('')}</div>
+    ${sub===null?`<p class="nt" style="font-size:12px">이정민 선생님이 대체 요청 문자를 받고 <b>[승인]</b>을 누르면 → 실무사 화면에 [대체 확정] 버튼 생성</p>${btn('이정민 T — 문자 수신 → 승인 (수락 시뮬레이션)','rkAcc',null,'cbtn--xs cbtn--line')}`:''}
+    ${sub==='acc'?ok('✓ 이정민 T 승인 (수락) — 9/3 15:00 화상 건 대체 가능 회신')+'<div class="acts">'+btn('대체 확정 — 배정 교체 · 양측 자동 통지','rkFix',null,'cbtn--xs')+'</div>':''}
+    ${sub==='fix'?ok('✓ 대체 확정 — 박선영 T → 이정민 T 배정 교체 · 학생·교사 양측 자동 통지 · v-meeting URL 유지')+`<p class="nt" style="font-size:12px;margin-top:8px"><b>맥락 카드 자동 전달 — 이정민 T 화면에만</b> · 학생 이** (고3 · 미디어 계열 희망) — 성적 요약 · 진로검사 · 기존 상담이력 2건 · 사전 질문 · 동의 스코프 승계(재동의 불요)</p>`:''}</div></div>`;}
+  else{rkExtra=`<div style="padding:12px 14px 0"><div class="box"><h4>상담 선생님이 없는 경우 — 9/12 14:00 플랜B 옵션 0개</h4><p class="nt" style="font-size:12px">공강 풀 0명 또는 전원 미수락 → 자동 분기: 학생(학부모)에게 <b>사과 문자 + 대체 일정 재예약 링크</b> 발송 · <b>우선 예약권</b>(P2 슬롯 즉시 확정) 부여</p>${S.rkNo?ok('✓ 발송 완료 — 센터 대표번호 (C-02) · 딥링크 포함 · "예정된 상담이 부득이하게 취소되어 사과드립니다. 아래 링크에서 원하시는 일정으로 다시 예약하실 수 있습니다. [다시 예약하기 →]"'):btn('사과 문자 + 재예약 링크 발송','rkNo',null,'cbtn--xs')}</div></div>`;}
+  const riskSec=`<section class="cc"><div class="cc__hd"><span>일정 변경·어긋남 (플랜B)</span>${chipC(rkOpen+'건','cnt')}<span class="path">D-1 18시 이전은 완전 자동 — 당일 건 · 옵션 0개 · 무응답 · 신청자 변경 요청만 실무사 처리</span></div><div class="cc__bd np">${riskRows(kind)}${chgRows}</div>${rkExtra}
+   <div class="cc__ft">교사 사정(취소·미수락) → 사유 코드 자동 기입 → <b>교사 이력 원장</b>(상담자관리 상세 · 재위촉 심사 참고, 페널티 아님) · 학생(학부모) 사정(노쇼·당일취소) → <b>3개월 신청 제한</b> 자동 · 해제일 마이페이지 표시 · 실무사 예외 해제(사유 기록)</div></section>`;
   let det='';const r=DATA.find(x=>x[0]===S[P.sel]);
   if(r){const st=r[F.st],rec=r[F.rec],role=r[F.role],tch=r[F.tch],act=S[P.act],done=st==='완료';
    const want='1차 '+r[F.want].replace(/ \(1차\)| \(2차\)| → 변경 요청| \(완료\)/g,'')+' · 2차 동일일 오후 4시';
@@ -238,8 +236,8 @@ function vcwv(el,kind){
    const pdfMsg=isV?'✓ PDF 발송 완료 — 수신: 황주* (학부모 · 설정 채널) · 워터마크(수신자명·발송일시) 적용 · 무단 재배포 시 열람 이력 추적 · 발송 로그 기록':'✓ PDF 발송 완료 — 수신자명·발송일시 워터마크 · 무단 재배포 시 열람 이력 추적 · 발송 로그 기록';
    const left=`${kv(KV,92,1)}<p class="nt" style="margin:10px 0"><b>사전 질문</b> — ${preQ}</p><p class="nt"><b>상태</b> — ${info}</p>
     ${done?`<div class="box" style="margin-top:10px"><h4>완료 체크리스트</h4>${chkHtml}<div class="acts">${btn(S[P.pv]?'미리보기 닫기':'결과보고서 미리보기',P.pv+'Tg',null,'cbtn--xs')}${btn('워터마크 PDF 발송 — 학생(학부모)',P.pdf,null,'cbtn--xs cbtn--gl')}</div>${S[P.pdf]?ok(pdfMsg):''}</div>`:''}
-    ${st==='일정변경'?`<div class="acts">${btn('대체 일정 확정 (플랜B)',P.act,'fix')}${btn('문자전송',P.act,'msg','cbtn--line')}<span class="ft" style="margin:0">${isV?'v-meeting URL 1개 — 변경돼도 유지 · 발신은 센터 대표번호(C-02)만':'방문은 센터만(Q3) · 당일 취소·노쇼 3개월 제한 자동 · 발신은 센터 대표번호(C-02)만'}</span></div>`:st==='진행중'?`<div class="acts">${btn('문자전송',P.act,'msg','cbtn--line')}</div>`:''}
-    ${act==='fix'?ok(isV?'✓ 대체 일정 확정 — 재확정·양측 통지 · URL 유지 · 변경 이력 기록':'✓ 대체 일정 확정 — 재확정·양측 통지 · QR 입장권 재발송 · 변경 이력 기록'):''}${act==='msg'?ok('✓ 문자 발송 — 센터 대표번호(C-02 마스킹) · 발송 로그 기록'):''}`;
+    ${st==='일정변경'?`<div class="acts">${S.fixed[kind+r[0]]?'':btn('대체 일정 확정 (플랜B)',P.act,'fix')}${btn('문자전송',P.act,'msg','cbtn--line')}<span class="ft" style="margin:0">${isV?'v-meeting URL 1개 — 변경돼도 유지 · 발신은 센터 대표번호(C-02)만':'방문은 센터만(Q3) · 당일 취소·노쇼 3개월 제한 자동 · 발신은 센터 대표번호(C-02)만'}</span></div>`:st==='진행중'?`<div class="acts">${btn('문자전송',P.act,'msg','cbtn--line')}</div>`:''}
+    ${act==='fix'||S.fixed[kind+r[0]]?ok(isV?'✓ 대체 일정 확정 — 재확정·양측 통지 · URL 유지 · 변경 이력 기록':'✓ 대체 일정 확정 — 재확정·양측 통지 · QR 입장권 재발송 · 변경 이력 기록'):''}${act==='msg'?ok('✓ 문자 발송 — 센터 대표번호(C-02 마스킹) · 발송 로그 기록'):''}`;
    let right='';
    if(!done&&isV){const first=r[F.wr].split(' ')[0];right=`<div class="vm"><h4><span class="sp">v-meeting — 화상 상담실 (URL 1개)</span>${rec?chipC('녹화·녹취 동의 ✓ (사전)','green'):chipC('녹화·녹취 미동의 ✗','red')}${chipP(st,CC[st])}</h4>
      <div class="vid"><div style="text-align:center"><div class="av" style="margin:0 auto 6px">T</div><div style="font-size:12px">${tch} T — 호스트</div></div>${st==='진행중'?(rec?'<span class="rec">● REC 녹취 (사전 동의 ✓ · S존)</span>':'<span class="rec no">녹취 없음 — 미동의 · 교사 메모 기반</span>'):''}</div>
@@ -255,7 +253,7 @@ function vcwv(el,kind){
     <h4 style="margin:12px 0 6px;font-size:12.5px">② 결과보고서 (확정본)</h4><p class="nt">${isV?`작성자 — ${tch} 선생님 (배정 교사) · 진학상담 · 화상 (v-meeting) · 42분 · 주제: 정시 지원선 · 수능최저 · 6장 조합<br><b>상담 요약</b> — 9월 학평 기준 정시 지원선 3개 군 검토. 안정 축 1장 확보 우선 합의 · 수능최저(2합5)는 9월 모평 결과로 재확인.<br><b>판정·근거</b> — 적정 (참고점 957.9 · 전년 컷 2.38 · 유사 사례 38건)<br><b>후속 권고</b> — 모의면접 2회 · 9월 모평 후 재상담 (재예약 링크)`:`작성자 — ${tch} 선생님 (배정 교사) · 진학상담 · 방문 (센터 상담실) · 55분<br><b>상담 요약</b> — 지참 학생부·성적표 기준 수시 6장 조합 검토, 안정 축 확보 합의.<br><b>판정·근거</b> — 적정 (참고점·전년 컷·유사 사례 표기)<br><b>후속 권고</b> — 서류 보완 1건 · 9월 모평 후 재상담 (재예약 링크)`}</p>
     <h4 style="margin:12px 0 6px;font-size:12.5px">③ 완료 체크리스트</h4>${chkHtml}${ft(isV?'본 문서는 워터마크(수신자명·발송일시)가 적용된 개인별 PDF로 발송됩니다 — 무단 재배포 시 열람 이력으로 추적 · 내부 메모 미포함(전달 분리) · 발송·열람 전건 로그':'워터마크(수신자명·발송일시) 적용 PDF — 무단 재배포 시 열람 이력 추적 · 내부 메모 미포함(전달 분리) · 발송·열람 전건 로그')}${isV&&S[P.pdf]?ok('✓ PDF 발송 완료 — 수신: 황주* (학부모 · 사전 설정 채널) · 발송 로그 기록'):''}</div>`;}
    det=`<div class="dh">${chipC('상담 신청 조회 — 신청자 입력','navy')}${chipP(st,CC[st])}<span class="sp"></span>${btn('목록',P.sel+'Close',null,'cbtn--xs cbtn--line')}</div><div class="cc__bd"><div class="cgb" style="gap:24px"><div>${left}</div><div>${right}</div></div></div>${pv}`;}
-  el.innerHTML=`<div class="cns"><section class="cc"><div class="cc__hd"><span>${isV?'온라인(화상) 상담':'방문상담'}</span><span class="path">홈 &gt; 상담관리 &gt; ${isV?'온라인(화상) 상담':'방문상담'} — 상담자(학생·학부모) 입력 정보 중심</span><span class="sp"></span>${chipC(isV?'v-meeting':'센터 방문 · QR 체크인','gray')}</div>
+  el.innerHTML=`<div class="cns">${riskSec}<section class="cc"><div class="cc__hd"><span>${isV?'온라인(화상) 상담':'방문상담'}</span><span class="path">홈 &gt; 상담관리 &gt; ${isV?'온라인(화상) 상담':'방문상담'} — 상담자(학생·학부모) 입력 정보 중심</span><span class="sp"></span>${chipC(isV?'v-meeting':'센터 방문 · QR 체크인','gray')}</div>
    ${ctabs(TABS,S[P.t],P.t)}<p class="ft" style="padding:8px 14px 0;margin:0">상태 3종 — <b>진행중</b> ${isV?'온라인 회의 진행중':'방문 상담 진행중(QR 체크인)'} · <b>완료</b> 보고서·만족도까지 작성 완료 · <b>일정변경</b> ${isV?'화상회의':'방문'} 일정변경(플랜B)</p>
    <div style="height:8px"></div>${tbl}
    <div class="cc__ft">${isV?'행(제목) 클릭 → 하단 상세(신청자가 입력·동의한 정보) · <b>링크 수신 채널(카톡/이메일)은 신청 시 본인이 사전 설정 — v-meeting 링크는 회의 30분 전 자동 발송</b>(발송 로그 기록·실패 시 문자 폴백) · 게시판 상담과 별도 관리 · 완료 = 보고서·만족도까지 작성 완료':'행(제목) 클릭 → 하단 상세(신청자가 입력·동의한 정보) · <b>방문 안내·QR 입장권은 D-1 자동 발송</b>(설정 채널 · 발송 로그) · 방문은 센터만(Q3) · 학기당 1회 한도·당일취소 3개월 제한 자동 · 완료 = 보고서·만족도까지 작성 완료'}</div>${det}</section></div>`;
@@ -311,7 +309,7 @@ function vPy(el){
   let det='';const r=D.PYD.find(x=>x[1]===S.pyDet);
   if(r){const p=payCalc(r),c=p.c,v1=Math.ceil(c*.5),v2=Math.floor(c*.25),v3=c-v1-v2,grp=['이정민','최수아','한승우'].includes(r[1])?'진로상담교사단':'대학진학지도지원단';
    let tc=0,ta=0,a8=0;const mon=[4,5,6,7,8].map((m,i)=>{const cc=Math.max(1,c-4+i),w1=Math.ceil(cc*.5),w2=Math.floor(cc*.25),w3=cc-w1-w2,amt=w1*40000+w2*50000+w3*15000;tc+=cc;ta+=amt;if(m===8)a8=amt;return {c:[`2026.0${m}`,cc+'건',`게시판 ${w3} · 온라인 ${w1} · 방문 ${w2}`,bar(Math.round(cc*100/c)),`<b>${won(amt)}원</b>`,m<8?chipC('지급완료','green'):chipC('미지급 (결재 대기)','amber')]};});
-   det=`<div class="dh">${chipC('상세','navy')}<span>${r[1]} 선생님 — ${grp}</span><span class="sp"></span><button type="button" class="xbt" data-act="pyDetClose" aria-label="닫기">✕</button></div><div class="cc__bd">${kv([['소속학교',r[0]],['위촉 기간','2026.4.1 ~ 2027.3.31 (연 단위 재승인)'],['8월 상담건수',`${c}건 — 화상 ${v1} · 방문 ${v2} · 게시판 답변 ${v3} (전 채널 합산 · 완료 기준 K13)`],['만족도 평균',D.SAT[r[1]][0]+' — 익명 집계'],['보고서 리드타임',D.SAT[r[1]][1]+' 제출'],['노쇼·취소 관련','0건 (교사 사유 취소 이력 없음)'],['8월 수당',`${won(p.amt)}원 · 세액 ${won(p.sum)}원 · 차인 ${won(p.net)}원`],['지급 이력','7월 지급완료 · 6월 지급완료 (에듀파인 전송분)'],['이의 제기','0건 — T-06에서 본인 실적·수당 조회·이의 제기 가능'],['계좌',`${r[4]} ${r[5]} — 마스킹 · 전체 조회는 정산 담당 Role만`]],96)}
+   det=`<div class="dh">${chipC('상세','navy')}<span>${r[1]} 선생님 — ${grp}</span><span class="sp"></span><button type="button" class="xbt" data-act="pyDetClose" aria-label="닫기">✕</button></div><div class="cc__bd">${kv([['소속학교',r[0]],['위촉 기간','2026.4.1 ~ 2027.3.31 (연 단위 재승인)'],['8월 상담건수',`${c}건 — 화상 ${v1} · 방문 ${v2} · 게시판 답변 ${v3} (전 채널 합산 · 완료 기준 K13)`],['만족도 평균',D.SAT[r[1]][0]+' — 익명 집계'],['보고서 리드타임',D.SAT[r[1]][1]+' 제출'],['노쇼·취소 관련',(()=>{const h=tchRisk(r[1]);return h.length?`${h.length}건 — ${h.map(x=>x[1]).join(' · ')} (교사 이력 원장 · 수당 차감 없음, 정책값)`:'0건 (교사 사유 취소 이력 없음)';})()],['8월 수당',`${won(p.amt)}원 · 세액 ${won(p.sum)}원 · 차인 ${won(p.net)}원`],['지급 이력','7월 지급완료 · 6월 지급완료 (에듀파인 전송분)'],['이의 제기','0건 — T-06에서 본인 실적·수당 조회·이의 제기 가능'],['계좌',`${r[4]} ${r[5]} — 마스킹 · 전체 조회는 정산 담당 Role만`]],96)}
    <div class="box" style="margin-top:12px;padding:0;overflow:hidden"><h4 style="padding:10px 13px 0">월별 수당 통계 — 위촉 이후</h4>${gt([{l:'월'},{l:'건수'},{l:'구분 (게시판·온라인·방문)'},{l:''},{l:'금액',cls:'num'},{l:'지급 상태'}],mon,{tpl:'76px 56px 170px 1fr 110px 130px'})}<p class="ft" style="padding:8px 13px 10px;margin:0">위촉(2026.4.1) 이후 누적 — ${tc}건 · ${won(ta)}원 (지급완료 ${won(ta-a8)}원 · 미지급 ${won(a8)}원) · 금액 = 채널별 단가(화상 4.0 · 방문 5.0 · 게시판 1.5만) 합산</p></div></div>`;}
   el.innerHTML=`<div class="cns"><section class="cc"><div class="cc__hd"><span>수당관리 (상담통계 · 수당지급조서)</span><span class="path">홈 &gt; 상담관리 &gt; 수당관리 — 2026년 8월 마감분</span><span class="sp"></span>${chipC('단가표 마스터 v3 — 손입력 폐지','green')}</div>
    <div class="tbar"><span class="lbl">상담구분</span>${[['all','전체'],['온라인','온라인 게시판'],['방문','방문상담'],['화상','화상상담']].map(([k,l])=>tgl(S.pyT===k,l,'pyT',k)).join('')}<span class="sel">기간 2026-08-01 ~ 2026-08-31</span><span class="sp"></span>${btn('엑셀다운','pyDl','x','cbtn--xs cbtn--line')}${btn('선택 조서 작성'+(selN?` (${selN}명)`:''),'pySelGo',null,'cbtn--xs'+(selN?'':' cbtn--off'))}${btn('기간 전체 조서 작성','pyDl','j','cbtn--xs')}</div>
@@ -330,17 +328,17 @@ function vBook(el){
   <div class="stack"><section class="cc"><div class="cc__hd">${chipC('학생·학부모','teal')}<span>S-01 예약 캘린더 (폰)</span></div><div class="cc__bd"><div class="hilite">이번 주 P1 ${p1} · P2 ${slots.length-p1} — 신청자에게 그대로 노출</div>
    ${slots.length?slots.map(s=>`<div class="lr" style="padding:7px 0"><span class="sp">${s[0]}</span>${s[1]===1?chipC('즉시 확정','green'):chipC('요청 후 확정','amber')}</div>`).join(''):'<p class="ft" style="text-align:center;padding:12px 0">등록된 슬롯 없음 — 좌측에서 P1/P2를 등록하세요</p>'}
    ${ft('희망 1·2지망 등록·유선 조율 폐지 — 슬롯 직접 선택으로 흡수 · 학생·학부모는 포털 상담 신청(counsel.html)에서 이 슬롯을 고릅니다')}</div></section>
-  <section class="cc"><div class="cc__bd"><b style="font-size:13px">스케줄이 어긋나면 — 플랜 B</b><p class="nt" style="margin-top:6px">어긋남 이벤트 3종(교사 취소·신청자 변경·노쇼 10분) → <b>옵션 A</b> 대체 교사(같은 지원단·같은 슬롯) / <b>옵션 B</b> 다른 날(같은 교사 P1·P2 2개) 자동 제시 · D-1 18시 이전은 완전 자동 · 옵션 0개·당일 건만 정보원 큐${teacher?'':' — <a href="#risk" style="color:#1f4fa3;font-weight:700">리스크 관리에서 확인 →</a>'}</p></div></section></div></div></div>`;
+  <section class="cc"><div class="cc__bd"><b style="font-size:13px">스케줄이 어긋나면 — 플랜 B</b><p class="nt" style="margin-top:6px">어긋남 이벤트 3종(교사 취소·신청자 변경·노쇼 10분) → <b>옵션 A</b> 대체 교사(같은 지원단·같은 슬롯) / <b>옵션 B</b> 다른 날(같은 교사 P1·P2 2개) 자동 제시 · D-1 18시 이전은 완전 자동 · 옵션 0개·당일 건만 정보원 큐${teacher?'':' — <a href="#vc" style="color:#1f4fa3;font-weight:700">화상·방문 상담의 「일정 변경·어긋남」에서 처리 →</a>'}</p></div></section></div></div></div>`;
 }
 /* ─────────────── 우측 패널 (실무사 콘솔) ─────────────── */
-const ES_VIEWS=['mg','risk','ol','vc','wv'];
+const ES_VIEWS=['mg','ol','vc','wv'];
 function esHtml(){
   const isOl=cur==='ol',isVc=cur==='vc'||cur==='wv';const tab=isOl?'alarm':(S.esTab||'main');
   const curL=tab==='alarm'?'AI 분석 및 상담이력':(isVc?'AI 회의록':'콘솔 정보');
   let body='';
   if(tab==='main'&&!isVc){const pay=S.copPay||0;
    body=`<div class="ekp"><div><b>94%</b><span>자동 배정률 (실무사 개입 0 목표)</span></div><div><b>3%</b><span>실무사 개입 건 비율 — 예외만</span></div><div><b>63%</b><span>만족도 응답률 (현행 11%)</span></div><div><b>0건</b><span>학생부 이메일 전달 · 발송 누락</span></div></div>
-   <p class="ft" style="margin:0">예외는 별도 큐 없이 프로세스 안에서 처리 — 게시판 상담(미배정·SLA·반려) · 리스크 관리(플랜B 옵션 0개·당일 건) 화면의 빨간 배지</p>
+   <p class="ft" style="margin:0">예외는 별도 큐 없이 프로세스 안에서 처리 — 게시판 상담(미배정·SLA·반려) · 화상·방문 상담(일정 변경·어긋남 플랜B) 화면의 빨간 배지</p>
    <div class="ec"><h4>O-01 위촉 명부·승인 — 수명주기 (핵심 ⑪)</h4><p>풀(교원 인증 412명) → <b>3월 공문 모집</b> → 심사·선발(경쟁률 약 2:1, K16) → <b>4.1 위촉</b>(역할 승격·기간 등록) → 활동/보류 → <b>익년 3.31 자동 만료·회수</b> · 연 단위 재승인 — 현행 "상담중/보류" 1비트 대체</p>${D.APR.map(a=>`<div class="qrow"><div class="sp"><b>${a[1]}</b><div class="ds">${a[2]}</div></div>${dbtn(S.copAppr[a[0]],'심사 → 승인','✓ 위촉 승인','copAppr',a[0],'cbtn--xs')}</div>`).join('')}<div class="soft" style="margin-top:8px;background:#fdf1de;color:#7a5410">만료 예정 — 전원 2027.3.31 자동 회수 (연 1회 주기) · 풀 현황 히트맵(O-08): 진로상담교사단 38 · 대학진학지도지원단 62 · 한 풀이 전 채널 담당(Q2)</div></div>
    <div class="ec"><h4>O-06 수당 산정·조서 — 8월 (핵심 ⑨)</h4><p>화상 812건 × 40,000 = 32,480,000<br>방문 391건 × 50,000 = 19,550,000<br>온라인 답변 81건 × 15,000 = 1,215,000</p><p style="font-weight:800;color:#16386f">계 1,284건 · 53,245,000원 — 단가표 마스터 v3</p>${payStages(pay)}${payBtn(pay,'cbtn--block cbtn--xs')}<p class="ft">채널별 완료 기준(K13) — 온라인: 답변 등록 교사만 · 방문/화상: 보고서 확정 · 전화: 실적만 집계, 수당 0 · 취소·노쇼는 정책값 · 단가 손입력·수동 재입력 폐지 · 교사는 T-06에서 본인 실적·이의 제기</p></div>
    <div class="ec"><h4>O-04·O-05 실적·과거 이관 (핵심 ⑧)</h4><p>상담 원장 1개(온라인·방문·화상·전화·현장) + 코드 2축(유형×계열) — 창구 3곳 통계 불일치 0 목표</p><div class="tgs">${[['all','전체'],['A','A 완전 71%'],['B','B 부분 22%'],['C','C 추정 7%']].map(([k,l])=>tgl(S.copCoh===k,l,'copCoh',k)).join('')}</div><div class="soft" style="margin-top:8px">${D.COH[S.copCoh]}</div></div>
@@ -462,6 +460,7 @@ const ACT={
  detHoAp:()=>{const k=S.mgT+'-'+S.mgDet;const o=Object.assign({},S.liveOv);o[k]='휴면중';set({liveOv:o,detHo:'ok'});toast('휴면 승인 — 기간 중 배정 자동 제외');},detHoRj:()=>{set({detHo:'rej'});toast('휴면 신청 반려 — 사유 통지');},
  /* 리스크 */
  vacSel:a=>{toggleK('vacSel',a);S.vacSent=null;save();draw();},vacSend:()=>{const n=Object.keys(S.vacSel).filter(k=>S.vacSel[k]).length;if(!n)return toast('먼저 선생님을 선택하세요');set({vacSel:{},vacSent:n});toast(`대체 요청 문자 ${n}명 발송`);},
+ fixed:a=>{setK('fixed',a,true);toast('대체 일정 확정 — 재확정 · 양측 통지 · 변경 이력 기록');},
  rkAcc:()=>set({rkSub:'acc'}),rkFix:()=>{set({rkSub:'fix'});toast('대체 확정 — 박선영 T → 이정민 T · 양측 자동 통지');},rkNo:()=>{set({rkNo:true});toast('사과 문자 + 재예약 링크를 보냈어요');},
  /* 게시판 */
  olT:a=>set({olT:a,olSel:null,olAct:null}),olMs:a=>{toggleK('olMs',+a);S.olBulk=null;save();draw();},
@@ -471,8 +470,8 @@ const ACT={
  olSel:a=>set({olSel:+a,olAct:null,olAi:null}),olList:()=>set({olSel:null,olAct:null}),olAi:()=>set({olAi:true}),olCat:()=>set({olAct:'cat'}),olCatPick:()=>{set({olAct:'catOk'});toast('담당선생님 변경 — 신·구 교사 양측 알림');},
  olAns:()=>{set({olAct:'ansOk'});toast('답변 저장 — 게시 통지(딥링크) 발송');},olDel:()=>{set({olAct:'delOk'});toast('삭제 처리 — 소프트 삭제 · 사유 통지');},olRest:()=>{set({olAct:'rest'});toast('복원했어요');},olSatRm:()=>{set({olSatRm:true});toast('만족도 리마인드 발송 (C-02)');},
  /* 화상 · 방문 */
- vcT:a=>set({vcT:a,vcSel:null,vcAct:null,vcPv:null,vcPdf:null}),vcSel:a=>set({vcSel:+a,vcAct:null,vcPv:null,vcPdf:null}),vcSelClose:()=>set({vcSel:null,vcAct:null,vcPv:null,vcPdf:null}),vcAct:a=>{set({vcAct:a});toast(a==='fix'?'대체 일정 확정 — 양측 통지 · URL 유지':'문자 발송 — 센터 대표번호(C-02)');},vcPvTg:()=>set({vcPv:!S.vcPv}),vcPdf:()=>{set({vcPdf:true});toast('워터마크 PDF 발송 — 발송 로그 기록');},
- wvT:a=>set({wvT:a,wvSel:null,wvAct:null,wvPv:null,wvPdf:null}),wvSel:a=>set({wvSel:+a,wvAct:null,wvPv:null,wvPdf:null}),wvSelClose:()=>set({wvSel:null,wvAct:null,wvPv:null,wvPdf:null}),wvAct:a=>{set({wvAct:a});toast(a==='fix'?'대체 일정 확정 — QR 입장권 재발송':'문자 발송 — 센터 대표번호(C-02)');},wvPvTg:()=>set({wvPv:!S.wvPv}),wvPdf:()=>{set({wvPdf:true});toast('워터마크 PDF 발송 — 발송 로그 기록');},
+ vcT:a=>set({vcT:a,vcSel:null,vcAct:null,vcPv:null,vcPdf:null}),vcSel:a=>set({vcSel:+a,vcAct:null,vcPv:null,vcPdf:null}),vcSelClose:()=>set({vcSel:null,vcAct:null,vcPv:null,vcPdf:null}),vcAct:a=>{if(a==='fix')S.fixed=Object.assign({},S.fixed,{['vc'+S.vcSel]:true});set({vcAct:a});toast(a==='fix'?'대체 일정 확정 — 양측 통지 · URL 유지':'문자 발송 — 센터 대표번호(C-02)');},vcPvTg:()=>set({vcPv:!S.vcPv}),vcPdf:()=>{set({vcPdf:true});toast('워터마크 PDF 발송 — 발송 로그 기록');},
+ wvT:a=>set({wvT:a,wvSel:null,wvAct:null,wvPv:null,wvPdf:null}),wvSel:a=>set({wvSel:+a,wvAct:null,wvPv:null,wvPdf:null}),wvSelClose:()=>set({wvSel:null,wvAct:null,wvPv:null,wvPdf:null}),wvAct:a=>{if(a==='fix')S.fixed=Object.assign({},S.fixed,{['wv'+S.wvSel]:true});set({wvAct:a});toast(a==='fix'?'대체 일정 확정 — QR 입장권 재발송':'문자 발송 — 센터 대표번호(C-02)');},wvPvTg:()=>set({wvPv:!S.wvPv}),wvPdf:()=>{set({wvPdf:true});toast('워터마크 PDF 발송 — 발송 로그 기록');},
  /* 보고서 · 만족도 · 수당 */
  rpT:a=>set({rpT:a,rpSel:null,rpAct:null}),rpSel:a=>set({rpSel:+a,rpAct:null}),rpSelClose:()=>set({rpSel:null,rpAct:null}),rpAct:()=>{set({rpAct:true});toast('발송 완료 — 상담 전용 메일 + 알림톡 (C-02)');},rpX:a=>{setK('rpX',a,true);toast('처리했어요 · 승인 이력 기록');},
  stCh:a=>set({stCh:a}),stDir:()=>set({stDir:S.stDir==='asc'?'desc':'asc'}),stFu:a=>{setK('stFu',a,true);toast('후속 연락 (C-02) — 이력 기록');},stRm:a=>{setK('stRm',a,true);toast('리마인드 발송 (C-02)');},stBl:()=>{set({stBl:true});toast('채널 개선 백로그에 등록했어요');},
@@ -500,12 +499,12 @@ const ACT={
 document.addEventListener('click',e=>{const t=e.target.closest('[data-act],[data-click]');if(!t||!t.closest('#opsView,#cnsEs,#cnsRail'))return;const name=t.dataset.act||t.dataset.click;const fn=ACT[name];if(!fn)return;if(t.tagName==='A')e.preventDefault();fn(t.dataset.arg,t);});
 document.addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;const t=e.target.closest('[role="button"][data-act]');if(t&&t.closest('#opsView,#cnsRail')){e.preventDefault();ACT[t.dataset.act](t.dataset.arg,t);}});
 /* ─────────────── 렌더 · 메뉴 · 초기화 ─────────────── */
-const VIEWS={home:vHome,mg:vMg,risk:vRisk,ol:vOl,vc:el=>vcwv(el,'vc'),wv:el=>vcwv(el,'wv'),rp:vRp,st:vSt,py:vPy,book:vBook,tdash:vTdash};
+const VIEWS={home:vHome,mg:vMg,ol:vOl,vc:el=>vcwv(el,'vc'),wv:el=>vcwv(el,'wv'),rp:vRp,st:vSt,py:vPy,book:vBook,tdash:vTdash};
 function draw(){const el=document.getElementById('opsView');if(!el||!cur||!VIEWS[cur])return;const y=window.scrollY;VIEWS[cur](el);renderEs();syncBadges();window.scrollTo(0,y);}
 function badges(){const r=window.SEN_AUTH&&SEN_AUTH.roleObj;if(r&&r.k==='counselor')return {tdash:D.RQ.filter(x=>!S.ctRq[x[0]]).length+D.REP2.filter(p=>!S.ctRp[p[0]]).length};
- return {risk:D.RK.filter(x=>!S.cd3Q[x[0]]).length,ol:olxOpen().total,rp:2};}
+ const rk=ch=>D.RK.filter(x=>x[6]===ch&&!S.cd3Q[x[0]]).length;return {vc:rk('vc')+D.VCR.filter(x=>x[11]==='일정변경'&&!S.fixed['vc'+x[0]]).length,wv:rk('wv')+D.WVR.filter(x=>x[12]==='일정변경'&&!S.fixed['wv'+x[0]]).length,ol:olxOpen().total,rp:2};}
 function syncBadges(){const b=badges();document.querySelectorAll('.ops-side a').forEach(a=>{const k=a.getAttribute('href').slice(1);let n=a.querySelector('.n');if(b[k]){if(!n){n=document.createElement('span');n.className='n';a.appendChild(n);}n.textContent=b[k];}else if(n)n.remove();});}
-const MENUS_OFFICE=[{k:'home',label:'실무사 대시보드',grp:'대시보드'},{k:'mg',label:'상담자관리',grp:'상담관리 콘솔'},{k:'risk',label:'리스크 관리 (플랜B)'},{k:'ol',label:'온라인 게시판 상담'},{k:'vc',label:'온라인(화상) 상담'},{k:'wv',label:'방문상담'},{k:'rp',label:'상담 보고서 관리'},{k:'st',label:'상담 만족도 조사'},{k:'py',label:'수당관리 (조서)'},{k:'book',label:'스케줄·예약 (P1/P2)'}];
+const MENUS_OFFICE=[{k:'home',label:'실무사 대시보드',grp:'대시보드'},{k:'mg',label:'상담자관리',grp:'상담관리 콘솔'},{k:'ol',label:'온라인 게시판 상담'},{k:'vc',label:'온라인(화상) 상담'},{k:'wv',label:'방문상담'},{k:'rp',label:'상담 보고서 관리'},{k:'st',label:'상담 만족도 조사'},{k:'py',label:'수당관리 (조서)'},{k:'book',label:'스케줄·예약 (P1/P2)'}];
 const MENUS_COUNSELOR=[{k:'tdash',label:'상담선생님 대시보드',grp:'내 상담'},{k:'book',label:'내 상담 스케줄 (P1/P2)'}];
 SEN_OPS.init({sys:'counsel',title:'상담시스템',desc:'진로진학 상담 운영 · 배정 · 보고서 · 수당 — 상담 원장 1개',extraRoles:['counselor'],
  menus:r=>(r&&r.k==='counselor')?MENUS_COUNSELOR:MENUS_OFFICE,badges,
