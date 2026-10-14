@@ -5,7 +5,7 @@
 (function(){
 const D=window.CNS,esc=SEN_OPS.esc,KEY='sen-ops-counsel-v1';
 const DEF={cd1View:'cal',cd1D:2,cd2St:{},cd2Ap:{},cd3Q:{},cd4Rm:false,copPay:0,cd5Pd:'m',cd5Qs:{3:true},cd5Ms:{8:true},cd5Xl:false,cd5By:'ch',
- grid:null,olX:{},copAppr:{},copCoh:'all',rkSub:null,rkNo:false,fixed:{},
+ grid:null,bkRm:{},olX:{},copAppr:{},copCoh:'all',rkSub:null,rkNo:false,fixed:{},
  mgT:0,mgSel:{},mgSent:null,mgDet:null,liveOv:{},detG:null,detHo:null,detSaved:false,vacSel:{},vacSent:null,
  olT:'all',olSel:null,olAct:null,olAi:null,olMs:{},olBulk:null,olSatRm:false,
  vcT:'all',vcSel:null,vcAct:null,vcPv:null,vcPdf:null,wvT:'all',wvSel:null,wvAct:null,wvPv:null,wvPdf:null,
@@ -320,6 +320,16 @@ function vPy(el){
 /* ─────────────── 스케줄·예약 (P1/P2) ─────────────── */
 function vBook(el){
   const g=S.grid||D.BKDEF;const teacher=isCounselor();
+  if(!teacher){/* 실무사 : 선생님별 등록 현황 */
+    const gp1=Object.values(g).filter(v=>v===1).length,gp2=Object.values(g).filter(v=>v===2).length;
+    const rows=D.BKST.map(r=>{const p1=r[3]===null?gp1:r[3],p2=r[4]===null?gp2:r[4],reg=p1+p2>0;const at=r[0]==='박선영'?'09.02 (T-02 연동)':r[5];return {n:r[0],g:r[1],ch:r[2],p1,p2,reg,at};});
+    const regN=rows.filter(r=>r.reg).length,unN=rows.length-regN,unAll=rows.filter(r=>!r.reg).every(r=>S.bkRm[r.n]);
+    const tbl=gt([{l:'성명'},{l:'지원단'},{l:'채널'},{l:'P1 (즉시 확정)',cls:'num'},{l:'P2 (예비)',cls:'num'},{l:'합계',cls:'num'},{l:'등록 상태'},{l:'최근 등록'},{l:'마감 리마인드'}],rows.map(r=>({cls:r.reg?'':'is-sel',c:[`<b style="color:#1f4fa3">${r.n} T</b>`,r.g,r.ch,r.p1,r.p2,`<b>${r.p1+r.p2}</b>`,r.reg?chipC('등록 완료','green'):chipC('미등록','red'),r.at||'—',r.reg?'<span class="ft" style="margin:0">—</span>':dbtn(S.bkRm[r.n],'리마인드 (C-02)','✓ 발송됨','bkRm',r.n,'cbtn--xs')]})),{tpl:'80px 100px 90px 90px 80px 60px 90px 120px 130px'});
+    el.innerHTML=`<div class="cns"><div class="hilite">선생님이 T-02에서 등록한 P1/P2 슬롯이 그대로 학생·학부모 예약 캘린더에 노출됩니다 — 실무사는 등록 현황 확인·마감 리마인드·집중/특별 모드 설정만, 슬롯 편집은 선생님 본인만</div>
+    <div class="tiles"><div class="tile"><b>${rows.reduce((a,r)=>a+r.p1,0)}</b><span>이번 주 P1 슬롯 (9/7~9/11 · 표본 8명)</span></div><div class="tile"><b>${rows.reduce((a,r)=>a+r.p2,0)}</b><span>이번 주 P2 슬롯</span></div><div class="tile"><b>${regN} / ${rows.length}</b><span>등록 완료 선생님 — 전체 위촉 100명 중 87명 등록</span></div><div class="tile"><b>D-23</b><span>10월분 슬롯 등록 마감 — 9/25 (매월 25일 · 현행 엑셀 제출 마감 승계)</span></div></div>
+    <section class="cc"><div class="cc__hd"><span>선생님별 슬롯 등록 현황 — 이번 주 (9/7 ~ 9/11)</span>${chipC('미등록 '+unN+'명','red')}<span class="sp"></span>${btn('미등록 전원 리마인드'+(unN?` (${unN}명)`:''),'bkRmAll',null,'cbtn--xs'+(unN&&!unAll?'':' cbtn--off'))}</div>${tbl}<div class="cc__ft">P1 = 즉시 확정 · P2 = 요청 시 교사 확인 후 확정 · 박선영 T 행은 상담 선생님 화면의 T-02 그리드와 실시간 연동 · 미등록 선생님에게는 마감 D-7 자동 리마인드 1회, 그 뒤 실무사 수동 발송(C-02 센터 번호) · 리마인드 후에도 미등록이면 해당 주 배정 제외</div></section>
+    <div class="cg2"><section class="cc"><div class="cc__hd">학생·학부모에게 보이는 예약 캘린더 (S-01)</div><div class="cc__bd"><p class="nt">선생님이 등록한 슬롯만 노출 · 희망 1·2지망 등록과 유선 조율 폐지 — 슬롯 직접 선택으로 흡수 · 방문 슬롯은 센터 상담실 6개 연동(방문 = 센터만) · 학기당 1회 한도 · D-1 18시까지 셀프 변경·취소, 당일 취소·노쇼는 3개월 제한</p>${ft('신청 화면은 포털 counsel.html — 여기서는 노출 규칙만 관리')}</div></section>
+    <section class="cc"><div class="cc__hd">집중·특별 상담 모드 설정 (정보원)</div><div class="cc__bd">${kv([['집중상담기간','9/15 ~ 10/10 · 정원 1일 60건 · 교사 풀 전원'],['특별진학상담','9/15 시즌 오픈 · 수시 원서 기간 · 정원 1일 40건 · 대학진학지도지원단 62명'],['대기열','정원 초과 시 대기 번호 발급 · 취소 슬롯 자동 승계'],['상시 모드','선생님 등록 슬롯 그대로 · 정원 제한 없음']],100,1)}${ft('모드 코드는 전건 태그 — 통계관리 「운영 모드별」 분포의 근거 · 설정 변경은 감사로그')}</div></section></div></div>`;return;}
   const cells=D.BKDAYS.map((d,di)=>`<div class="td">${d}</div>`+D.BKTMS.map((t,ti)=>{const v=g[di+'-'+ti]||0;return `<button type="button" class="${v===1?'p1':v===2?'p2':''}" data-act="grid" data-arg="${di}-${ti}" aria-label="${d} ${t} ${v===1?'P1 확정 가능':v===2?'P2 예비':'비어있음'}">${v===1?'P1':v===2?'P2':'+'}</button>`;}).join('')).join('');
   const slots=[];D.BKDAYS.forEach((d,di)=>D.BKTMS.forEach((t,ti)=>{const v=g[di+'-'+ti]||0;if(v)slots.push([d+' '+t+' · 화상 60분',v]);}));const p1=slots.filter(s=>s[1]===1).length;
   el.innerHTML=`<div class="cns"><div class="hilite">스케줄 P1/P2 — ${teacher?'내 주간 스케줄(T-02)':'교사 T-02(좌)'}에서 셀을 누르면 비어있음 → P1 → P2 순환. 신청자 S-01(우) 캘린더가 즉시 따라 바뀝니다 — 엑셀 공동편집·통화 조율의 대체</div>
@@ -480,6 +490,7 @@ const ACT={
  pySelGo:()=>{const n=Object.keys(S.pySel).filter(k=>S.pySel[k]).length;if(!n)return toast('먼저 선생님을 선택하세요');set({pySel:{},pyDl:'s'+n});toast(`선택 ${n}명 조서 생성 — 결재 상신`);},
  pyDl:a=>{set({pyDl:a});toast(a==='x'?'엑셀 다운로드 — 계좌 마스킹':'기간 전체 조서 생성 — 결재 상신');},pyDet:a=>set({pyDet:a,pyDl:null}),pyDetClose:()=>set({pyDet:null}),
  /* 스케줄 */
+ bkRm:a=>{setK('bkRm',a,true);toast(a+' T에게 마감 리마인드 발송 (C-02)');},bkRmAll:()=>{const o=Object.assign({},S.bkRm);let n=0;D.BKST.forEach(r=>{if((r[3]||0)+(r[4]||0)===0&&r[3]!==null&&!o[r[0]]){o[r[0]]=true;n++;}});if(!n)return toast('미등록 선생님이 없거나 이미 발송했어요');set({bkRm:o});toast(`미등록 ${n}명에게 마감 리마인드 발송 (C-02)`);},
  grid:a=>{const g=Object.assign({},S.grid||D.BKDEF);g[a]=((g[a]||0)+1)%3;set({grid:g});},
  /* 패널 */
  olxAssign:a=>{setK('olX',S.olSel,a.split(' — ')[0]);toast('수동 배정 — 배정 통지 · 맥락 카드 전달');},olxEsc:()=>{setK('olX',S.olSel,'esc');toast('에스컬레이션 — 지원단장 통지 · 대체 교사 제시');},olxReject:a=>{setK('olX',S.olSel,a);toast(`반려 — 사유 코드 [${a}] · 신청자 통지`);},copAppr:a=>{setK('copAppr',a,true);toast('위촉 승인 — 역할 승격 · 기간 등록');},copCoh:a=>set({copCoh:a}),aiUse:()=>{set({aiUse:true});toast('보고서 초안에 반영 — 교사 확정 전 미노출');},
@@ -504,7 +515,7 @@ function draw(){const el=document.getElementById('opsView');if(!el||!cur||!VIEWS
 function badges(){const r=window.SEN_AUTH&&SEN_AUTH.roleObj;if(r&&r.k==='counselor')return {tdash:D.RQ.filter(x=>!S.ctRq[x[0]]).length+D.REP2.filter(p=>!S.ctRp[p[0]]).length};
  const rk=ch=>D.RK.filter(x=>x[6]===ch&&!S.cd3Q[x[0]]).length;return {vc:rk('vc')+D.VCR.filter(x=>x[11]==='일정변경'&&!S.fixed['vc'+x[0]]).length,wv:rk('wv')+D.WVR.filter(x=>x[12]==='일정변경'&&!S.fixed['wv'+x[0]]).length,ol:olxOpen().total,rp:2};}
 function syncBadges(){const b=badges();document.querySelectorAll('.ops-side a').forEach(a=>{const k=a.getAttribute('href').slice(1);let n=a.querySelector('.n');if(b[k]){if(!n){n=document.createElement('span');n.className='n';a.appendChild(n);}n.textContent=b[k];}else if(n)n.remove();});}
-const MENUS_OFFICE=[{k:'home',label:'실무사 대시보드',grp:'대시보드'},{k:'mg',label:'상담자관리',grp:'상담관리 콘솔'},{k:'ol',label:'온라인 게시판 상담'},{k:'vc',label:'온라인(화상) 상담'},{k:'wv',label:'방문상담'},{k:'rp',label:'상담 보고서 관리'},{k:'st',label:'상담 만족도 조사'},{k:'py',label:'수당관리 (조서)'},{k:'book',label:'스케줄·예약 (P1/P2)'}];
+const MENUS_OFFICE=[{k:'home',label:'실무사 대시보드',grp:'대시보드'},{k:'mg',label:'상담자관리',grp:'상담관리 콘솔'},{k:'ol',label:'온라인 게시판 상담'},{k:'vc',label:'온라인(화상) 상담'},{k:'wv',label:'방문상담'},{k:'rp',label:'상담 보고서 관리'},{k:'st',label:'상담 만족도 조사'},{k:'py',label:'수당관리 (조서)'},{k:'book',label:'슬롯 등록 현황 (P1/P2)'}];
 const MENUS_COUNSELOR=[{k:'tdash',label:'상담선생님 대시보드',grp:'내 상담'},{k:'book',label:'내 상담 스케줄 (P1/P2)'}];
 SEN_OPS.init({sys:'counsel',title:'상담시스템',desc:'진로진학 상담 운영 · 배정 · 보고서 · 수당 — 상담 원장 1개',extraRoles:['counselor'],
  menus:r=>(r&&r.k==='counselor')?MENUS_COUNSELOR:MENUS_OFFICE,badges,
