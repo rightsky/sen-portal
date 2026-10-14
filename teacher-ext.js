@@ -229,6 +229,88 @@ function bindStats(){
  document.querySelectorAll('[data-spreview]').forEach(b=>b.addEventListener('click',()=>{ST.preview=true;stSave();renderAll();}));
  document.querySelectorAll('[data-spdf]').forEach(b=>b.addEventListener('click',()=>{hlog(`진학통계 PDF 내보내기 · ${SCOPES[ST.scope].t} · ${TOS[ST.to]}`);showToast('워터마크 PDF 생성 · 수신자·발송일시 표시 · 재배포 금지');}));}
 
+/* ═══════════ D. 학생상담모드 M0~M5 : 잠금 띠 · 타 학생 마스킹 · 무입력 10분 · 해제 PIN · 미러링 · 세션 → 요약 초안 → 상담 원장 ═══════════ */
+const MK='sen-cmode-v1',MLK='sen-cmode-log-v1',PIN='0000',IDLE=600;
+let CM=lsGet(MK,null);const cmSave=()=>CM?lsSet(MK,CM):localStorage.removeItem(MK);
+const MTYPES=['진로','수시','정시','학업설계'];const MSTAGE=['공유 자료 함께 보기','살펴볼 점','선생님 의견','다음 행동 합의'];
+const cmActive=()=>!!(CM&&CM.stage>=1&&CM.stage<=4);
+const mmss=s=>`${pad(Math.floor(Math.max(0,s)/60))}:${pad(Math.max(0,s)%60)}`;
+const remain=()=>CM?IDLE-Math.floor((Date.now()-CM.last)/1000):IDLE;
+function cmodeSync(){document.body.classList.toggle('is-cmode',cmActive());document.body.classList.toggle('is-mirror',cmActive()&&!!CM.mirror);}
+function askPin(why){return new Promise(res=>{const m=document.createElement('div');m.className='xpin';m.setAttribute('role','dialog');m.setAttribute('aria-modal','true');m.setAttribute('aria-label','해제 PIN');
+ m.innerHTML=`<div><h2>해제 PIN</h2><p class="caption" style="margin:0">${esc(why)} · 선생님이 정한 4자리 PIN을 입력하세요 (목업 PIN 0000)</p><input type="password" inputmode="numeric" maxlength="4" autocomplete="off" aria-label="4자리 PIN"><p class="caption" data-err style="display:none;color:var(--warn);margin:0 0 8px">PIN이 맞지 않아요</p><div style="display:flex;gap:8px"><button class="btn btn--primary xb" style="flex:1" data-ok>확인</button><button class="btn btn--line xb" style="flex:1" data-no>취소</button></div></div>`;
+ document.body.appendChild(m);const inp=m.querySelector('input');setTimeout(()=>inp.focus(),30);
+ const done=v=>{m.remove();res(v);};const check=()=>{if(inp.value===PIN)done(true);else{m.querySelector('[data-err]').style.display='';inp.value='';inp.focus();}};
+ m.querySelector('[data-ok]').addEventListener('click',check);m.querySelector('[data-no]').addEventListener('click',()=>done(false));inp.addEventListener('keydown',e=>{if(e.key==='Enter')check();if(e.key==='Escape')done(false);});});}
+function mQuestions(){const c=CLASS.find(x=>x.n===CM.stu)||{};const q=[];
+ if(!/✓/.test(c.plan||''))q.push(['권장과목',`희망 학과 권장과목 중 아직 담지 않은 과목이 있어요 (${c.plan||'미작성'}). 다음 학기에 넣을 수 있을까요?`]);
+ if(/누락|오류/.test(c.load||''))q.push(['자료 적재',`자료에 빠진 부분이 있어요 (${c.load}). 어떻게 보완할지 같이 볼까요?`]);
+ if(c.last&&c.last!=='—')q.push(['지난 상담',`지난 상담(${c.last})에서 정한 다음 행동은 어떻게 되고 있나요?`]);
+ if(/대기/.test(c.judge||''))q.push(['판정 상태','지원 전형에 대한 선생님 의견이 준비 중이에요. 궁금한 전형부터 이야기해 볼까요?']);
+ q.push(['상담 유형',{진로:'요즘 마음이 가는 분야는 어디예요? 진로검사 결과와 같은가요, 다른가요?',수시:'수시 6장 구성에서 가장 고민되는 한 장은 어떤 거예요?',정시:'9월 학평 뒤로 달라진 생각이 있나요? 군별로 하나씩 이야기해 볼까요?',학업설계:'다음 학기 과목 중 바꾸고 싶은 게 있나요? 이유도 함께 들려주세요.'}[CM.type]]);
+ q.push(['활동','최근 활동 성장 노트 중 가장 기억에 남는 활동은 무엇이고, 왜 그랬나요?']);
+ q.push(['공유 범위','오늘 함께 본 자료 말고 더 보여주고 싶은 자료가 있나요? 공유는 학생이 정해요.']);
+ return q.slice(0,4);}
+function mDraft(){const c=CLASS.find(x=>x.n===CM.stu)||{};return {t:`${CM.stu} 학생의 ${CM.type} 상담입니다. 공유된 과목 설계와 희망 학과 권장과목을 대조하면 ${c.plan||'계획 미작성'} 상태예요. ${/✓/.test(c.plan||'')?'권장과목은 충족했으니 활동의 깊이를 더하는 쪽으로 이야기해 보면 좋겠어요.':'아직 담지 않은 권장과목을 다음 학기에 넣는 방안을 함께 정해 보면 좋겠어요.'} 지원 방향은 전문시스템에서 확정한 의견만 전달할게요.`,ev:['과목 설계 (학생 공유)','권장과목 기준 (학과 안내)',`최근 상담 ${c.last||'없음'}`]};}
+function mSummary(e){return `${e.stu} · ${e.type} 상담 · ${e.min}분 (${e.reason==='auto'?'무입력 10분 자동 종료':e.reason==='early'?'조기 종료':'정상 종료'})\n함께 본 자료 : ${e.shared||'공유 자료 없음'}\n살펴본 점 : ${e.q.join(' / ')}\n선생님 의견 : ${e.opOk?e.op:'(확정하지 않음 · 학생에게 전달되지 않음)'}\n합의한 다음 행동 : ${e.acts.length?e.acts.join(' / '):'없음'}\n다음 상담 : ${e.next||'미정'}`;}
+function endMode(reason){if(!CM)return;const L=lsGet(MLK,[]);const shared=SHARES.filter(s=>s.who===CM.stu).map(s=>s.what).join(' · ');const acts=['권장과목 1개 다음 학기 반영','활동 성장 노트 1건 작성','다음 상담 전 질문 메모'].filter((_,i)=>CM.acts&&CM.acts[i]);
+ const e={id:'CS-'+String(Date.now()).slice(-6),stu:CM.stu,type:CM.type,at:now(),min:Math.max(1,Math.round((Date.now()-CM.startedAt)/6e4)),reason,shared,q:mQuestions().map(x=>x[0]),op:CM.op||'',opOk:!!CM.opOk,acts,next:CM.next||'',confirmed:false};
+ e.summary=mSummary(e);L.unshift(e);lsSet(MLK,L.slice(0,20));CM.stage=5;CM.logId=e.id;cmSave();cmodeSync();view='mode';localStorage.setItem('sen-teacher-view',view);renderAll();if(reason==='auto')showToast('무입력 10분 · 상담모드를 자동 종료했어요 · 요약 초안을 확인하세요');}
+setInterval(()=>{if(!cmActive())return;const r=remain();const el=document.getElementById('cmTm');if(el)el.textContent=mmss(r);if(r<=0)endMode('auto');},1000);
+['click','keydown','input'].forEach(ev=>document.addEventListener(ev,e=>{if(cmActive()&&e.target.closest&&e.target.closest('#main')){CM.last=Date.now();cmSave();}},true));
+function m0Html(){const L=lsGet(MLK,[]);const mine=state==='counselor';
+ const hist=L.length?`<h3 style="margin:20px 0 8px;font-size:15px">최근 상담 세션</h3><div class="xscroll"><table class="btable"><tr><th>세션</th><th>학생</th><th>유형</th><th>시각</th><th>상태</th></tr>${L.slice(0,5).map(e=>`<tr><td>${e.id}</td><td><b>${e.stu}</b></td><td>${e.type}</td><td>${e.at} · ${e.min}분</td><td>${e.confirmed?'<span class="badge badge--ok">상담 원장 기록</span>':'<span class="badge badge--wait">요약 초안 · 미확정</span>'}</td></tr>`).join('')}</table></div>`:'';
+ const d={stu:mPre.stu||'강지우',type:mPre.type||'진로'};
+ return `<section class="section"><h2 class="t">학생상담모드 <span class="badge badge--teach">M0 · 준비</span></h2><p class="s">태블릿을 학생과 함께 보며 상담하는 화면이에요 · 시작하면 다른 학생 정보가 가려지고, 학생이 공유한 항목과 확정된 [선생님 의견]만 보여요</p>
+ <div class="share__notice">플랫폼관리 정책 : 잠금 띠 · 타 학생 마스킹 · 무입력 10분 세션 종료 · 해제 PIN · 종료 시 상담 세션 자동 생성 → 요약 초안 → 교사 확정 후 상담 원장 · 미러링 시 교사 전용 패널 제외</div>
+ <div class="xgrid" style="margin-top:14px"><div class="card" style="padding:18px 20px"><label class="xlab" style="margin-top:0">학생 (${mine?'배정 학생':'우리 반'})<select class="xsel" data-mstu>${CLASS.map(c=>`<option value="${c.n}"${d.stu===c.n?' selected':''}>${c.n} · ${c.band} · ${/✓/.test(c.plan)?'권장과목 충족':c.plan}</option>`).join('')}</select></label>
+ <p class="xlab">상담 유형</p><div class="xseg" role="radiogroup" aria-label="상담 유형">${MTYPES.map(t=>`<button type="button" role="radio" aria-checked="${d.type===t}" class="${d.type===t?'is-on':''}" data-mtype="${t}">${t}</button>`).join('')}</div></div>
+ <div class="card" style="padding:18px 20px"><h2 style="font-size:16px">시작 전 확인</h2><ul class="rules" style="margin:0 0 12px"><li>학생이 공유한 항목만 보여요 · 성적 원문·판정 결과는 나오지 않아요</li><li>무입력 10분이면 자동 종료 · 조기 종료·잠금 해제는 PIN</li><li>태블릿을 학생에게 돌릴 때는 「미러링 보기」로 교사 전용 패널을 숨겨요</li></ul><button class="btn btn--primary xb" data-mstart>상담모드 시작 (2단계 인증)</button></div></div>${hist}</section>`;}
+function mBand(){return `<div class="lockband" role="status" aria-live="polite"><span>🔒 학생상담모드 · <b>${CM.stu}</b> · ${CM.unlocked?'마스킹 해제됨 (교사 전용)':'다른 학생 정보 마스킹 중'} · 무입력 <span class="tm" id="cmTm">${mmss(remain())}</span> 남음</span><span style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap"><button type="button" class="${CM.mirror?'is-on':''}" data-mmirror aria-pressed="${!!CM.mirror}">미러링 보기${CM.mirror?' 중':''}</button><button type="button" data-munlock aria-label="잠금 해제 (PIN)">${CM.unlocked?'다시 잠금':'잠금 해제'}</button><button type="button" data-mend aria-label="상담모드 종료">종료</button></span></div>`;}
+function mStageHtml(){const s=CM.stage;const shared=SHARES.filter(x=>x.who===CM.stu);const c=CLASS.find(x=>x.n===CM.stu)||{};
+ let stu='',tea='';
+ if(s===1){stu=shared.length?shared.map(x=>`<div style="margin-bottom:12px"><b>${x.what}</b> <span class="badge ${x.badge==='학생 승인'?'badge--ok':'badge--wait'}" style="font-size:11px">${x.badge}</span><dl class="kv2" style="margin-top:8px">${Object.entries(x.detail).map(([k,v])=>`<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl></div>`).join(''):'<p class="caption">학생이 공유한 항목이 없어요 · 학생이 MY에서 공유를 승인하면 여기에 보여요</p>';
+  tea=`<p style="margin:0 0 8px;font-size:13.5px">상담 유형 <b>${CM.type}</b> · 내신 ${c.band} · 자료 적재 ${c.load} · 최근 상담 ${c.last}</p><p class="caption" style="margin:0 0 8px">반 명단 (마스킹) : ${CLASS.map(x=>x.n===CM.stu?`<b>${x.n}</b>`:CM.unlocked?x.n:'●●●').join(' · ')}</p><p class="caption" style="margin:0">판정 상태 ${c.judge} · 확정·전달된 의견만 학생 패널에 보여요</p>`;}
+ if(s===2){const q=mQuestions();stu=`<ol style="margin:0;padding-left:20px;font-size:15px;line-height:1.6">${q.map(x=>`<li style="margin-bottom:10px">${x[1]}</li>`).join('')}</ol>`;
+  tea=`<p class="caption" style="margin:0 0 8px">규칙 기반 질문이에요 (AI 판단 아님) · 근거 : ${q.map(x=>x[0]).join(' · ')}</p><label class="xlab" style="margin-top:0">상담 메모 (교사 전용)<textarea class="xta" data-mmemo placeholder="학생 답변 요지">${esc(CM.memo||'')}</textarea></label>`;}
+ if(s===3){stu=CM.opOk&&CM.op?`<div class="share__notice" style="background:#E2F4EE;color:var(--ok)">[선생님 의견]</div><p style="margin:0;font-size:15px;line-height:1.6;white-space:pre-wrap">${esc(CM.op)}</p>`:'<p class="caption">선생님이 의견을 확정하면 여기에 [선생님 의견]으로 보여요</p>';
+  const d=CM.ai;tea=`<label class="xlab" style="margin-top:0">선생님 의견<textarea class="xta" data-mop placeholder="학생에게 전달할 의견 · 확률 숫자·단정적 합불 표현은 쓰지 않아요">${esc(CM.op||'')}</textarea></label><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><button class="btn btn--line xbs" data-mai>AI 초안 불러오기</button><button class="btn btn--primary xbs" data-mok>교사 확정 → 학생 패널에 표시</button>${CM.opOk?'<span class="badge badge--ok">확정됨</span>':''}</div>${d?`<div style="margin-top:10px;padding:12px;border:1px dashed var(--line);border-radius:12px;font-size:13.5px"><b>AI 초안</b> <span class="badge badge--gray">교사 확정 전에는 학생에게 보이지 않아요</span><p style="margin:6px 0;white-space:pre-wrap">${esc(d.t)}</p><div style="display:flex;gap:6px;flex-wrap:wrap">${d.ev.map(e=>`<span class="badge badge--gray">근거 · ${e}</span>`).join('')}</div><button class="btn btn--line xbs" style="margin-top:8px" data-mapply>초안을 의견 칸에 넣기</button></div>`:''}`;}
+ if(s===4){const acts=['권장과목 1개 다음 학기 반영','활동 성장 노트 1건 작성','다음 상담 전 질문 메모'];
+  stu=`<div>${acts.map((a,i)=>`<label class="xchk"><input type="checkbox" data-mact="${i}"${CM.acts&&CM.acts[i]?' checked':''}><span>${a}</span></label>`).join('')}</div><label class="xlab">다음 상담 예정일<input type="date" class="xsel" data-mnext value="${esc(CM.next||'')}" aria-label="다음 상담 예정일"></label>`;
+  tea=`<p class="caption" style="margin:0">합의한 항목은 학생 「후속 과제」와 상담 원장에 함께 기록돼요 · 종료하면 요약 초안이 만들어져요</p>`;}
+ return `<div class="xstage" aria-label="상담 단계">${MSTAGE.map((t,i)=>`<span class="${i+1===s?'is-on':i+1<s?'is-done':''}">M${i+1} ${t}</span>`).join('')}</div>
+ <div class="xgrid" style="grid-template-columns:1.3fr 1fr"><div class="card" style="padding:18px 20px"><h2 style="font-size:16px">학생과 함께 보는 화면 <span class="badge badge--ok" style="font-size:11px">공유 항목만</span></h2><p class="sub">M${s} · ${MSTAGE[s-1]}</p>${stu}</div>
+ <div class="card" style="padding:18px 20px" data-teacher-only><h2 style="font-size:16px">교사 전용 <span class="badge badge--teach" style="font-size:11px">미러링 시 숨김</span></h2><p class="sub">학생 화면에는 나가지 않아요</p>${tea}</div></div>
+ <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><button class="btn btn--line xb" data-mprev${s===1?' disabled':''}>← 이전</button><button class="btn btn--primary xb" data-mnextstage>${s===4?'종료 · 요약 초안 만들기':'다음 →'}</button></div>
+ <style>@media (max-width:1000px){.xgrid[style*="1.3fr"]{grid-template-columns:1fr !important}}</style>`;}
+function m5Html(){const L=lsGet(MLK,[]);const e=L.find(x=>x.id===CM.logId);if(!e){CM=null;cmSave();return m0Html();}
+ return `<section class="section"><h2 class="t">학생상담모드 <span class="badge badge--teach">M5 · 종료</span></h2><p class="s">상담 세션 ${e.id}이 만들어졌어요 · 요약 초안을 확인하고 확정하면 상담 원장에 기록돼요</p>
+ <div class="card" style="padding:18px 20px"><h2 style="font-size:16px">상담 기록 요약 초안 <span class="badge badge--gray">규칙 기반 · 입력한 내용으로 조립</span></h2><p class="sub">${e.stu} · ${e.type} · ${e.at} · ${e.min}분</p><pre style="margin:0;white-space:pre-wrap;font:inherit;font-size:14px;line-height:1.6;background:var(--surface);border-radius:12px;padding:14px">${esc(e.summary)}</pre>
+ <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="btn btn--primary xb" data-mconfirm>교사 확정 → 상담 원장</button><button class="btn btn--line xb" data-mkeep>초안으로 두고 닫기</button></div>
+ <p class="caption">학생에게는 확정한 [선생님 의견]과 합의한 다음 행동만 가요 · 교사 메모는 원장에 들어가지 않아요</p></div></section>`;}
+window.modeHtml=function(){cmodeSync();
+ if(!['homeroom','head','counselor'].includes(state))return gate('학생상담모드는 담임·진학부장·상담교사만','과목교사·학교관리자 역할은 학생과 1:1로 상담 화면을 열 수 없어요.');
+ if(!CM)return m0Html();if(CM.stage===5)return m5Html();
+ return `${mBand()}<section class="section" style="padding-top:20px"><h2 class="t">학생상담모드 <span class="badge badge--teach">M${CM.stage} · ${MSTAGE[CM.stage-1]}</span></h2><p class="s">${CM.stu} 학생 · ${CM.type} 상담 · 시작 ${new Date(CM.startedAt).toTimeString().slice(0,5)}</p>${mStageHtml()}</section>`;};
+function bindMode(){cmodeSync();const $=s=>document.querySelector(s);
+ document.querySelectorAll('[data-mstu]').forEach(s=>s.addEventListener('change',()=>{mPre.stu=s.value;}));
+ document.querySelectorAll('[data-mtype]').forEach(b=>b.addEventListener('click',()=>{mPre.type=b.dataset.mtype;b.parentElement.querySelectorAll('[data-mtype]').forEach(x=>{x.classList.toggle('is-on',x===b);x.setAttribute('aria-checked',x===b);});}));
+ document.querySelectorAll('[data-mstart]').forEach(b=>b.addEventListener('click',()=>{const stu=($('[data-mstu]')||{}).value||'강지우';const type=mPre.type||'진로';twoFA('학생상담모드 시작 · '+stu).then(()=>{CM={stu,type,startedAt:Date.now(),last:Date.now(),stage:1,mirror:false,unlocked:false,acts:[false,false,false],next:'',op:'',opOk:false,ai:null,memo:''};cmSave();hlog(`학생상담모드 시작 · ${stu} · ${type}`);showToast('상담모드 시작 · 다른 학생 정보를 가렸어요 · 무입력 10분이면 자동 종료');renderAll();window.scrollTo({top:0});});}));
+ const keep=()=>{const m=$('[data-mmemo]');if(m)CM.memo=m.value;const o=$('[data-mop]');if(o)CM.op=o.value;const n=$('[data-mnext]');if(n)CM.next=n.value;};
+ document.querySelectorAll('[data-mprev]').forEach(b=>b.addEventListener('click',()=>{keep();CM.stage=Math.max(1,CM.stage-1);cmSave();renderAll();}));
+ document.querySelectorAll('[data-mnextstage]').forEach(b=>b.addEventListener('click',()=>{keep();if(CM.stage>=4){cmSave();endMode('done');return;}CM.stage++;cmSave();renderAll();}));
+ document.querySelectorAll('[data-mend]').forEach(b=>b.addEventListener('click',()=>{keep();if(CM.stage>=4){cmSave();endMode('done');return;}askPin('조기 종료').then(ok=>{if(ok)endMode('early');});}));
+ document.querySelectorAll('[data-munlock]').forEach(b=>b.addEventListener('click',()=>{if(CM.unlocked){CM.unlocked=false;cmSave();showToast('다시 잠갔어요 · 다른 학생 정보 마스킹');renderAll();return;}askPin('잠금 해제 · 교사 전용 보기').then(ok=>{if(!ok)return;CM.unlocked=true;cmSave();hlog(`학생상담모드 잠금 해제 · ${CM.stu} 상담 중`);showToast('잠금 해제 · 마스킹을 풀었어요 (감사로그)');renderAll();});}));
+ document.querySelectorAll('[data-mmirror]').forEach(b=>b.addEventListener('click',()=>{keep();CM.mirror=!CM.mirror;cmSave();showToast(CM.mirror?'미러링 보기 · 교사 전용 패널을 숨겼어요':'미러링 해제');renderAll();}));
+ document.querySelectorAll('[data-mai]').forEach(b=>b.addEventListener('click',()=>{keep();CM.ai=mDraft();cmSave();showToast('AI 초안을 불러왔어요 · 반드시 검토·확정 후에만 학생에게 보여요');renderAll();}));
+ document.querySelectorAll('[data-mapply]').forEach(b=>b.addEventListener('click',()=>{const o=$('[data-mop]');if(o&&CM.ai)o.value=CM.ai.t;}));
+ document.querySelectorAll('[data-mok]').forEach(b=>b.addEventListener('click',()=>{keep();if(!CM.op.trim()){showToast('의견을 입력해 주세요');return;}CM.opOk=true;cmSave();showToast('확정 · 학생 패널에 [선생님 의견]으로 표시');renderAll();}));
+ document.querySelectorAll('[data-mact]').forEach(c=>c.addEventListener('change',()=>{CM.acts=CM.acts||[false,false,false];CM.acts[+c.dataset.mact]=c.checked;cmSave();}));
+ document.querySelectorAll('[data-mnext]').forEach(i=>i.addEventListener('change',()=>{CM.next=i.value;cmSave();}));
+ document.querySelectorAll('[data-mconfirm]').forEach(b=>b.addEventListener('click',()=>{const L=lsGet(MLK,[]);const e=L.find(x=>x.id===CM.logId);if(e)e.confirmed=true;lsSet(MLK,L);hlog(`상담 세션 ${CM.logId} 확정 · 상담 원장 기록 · ${CM.stu}`);CM=null;cmSave();cmodeSync();showToast('상담 원장에 기록 · 학생에게는 확정한 [선생님 의견]만');renderAll();}));
+ document.querySelectorAll('[data-mkeep]').forEach(b=>b.addEventListener('click',()=>{CM=null;cmSave();cmodeSync();showToast('요약 초안으로 보관 · 최근 상담 세션 목록에 미확정으로 남아요');renderAll();}));}
+const mPre={stu:null,type:'진로'};
+
 /* ═══════════ 공통 바인딩 ═══════════ */
 window.bindExt=function(){bindHitl();bindCompare();if(typeof bindStats==='function')bindStats();if(typeof bindMode==='function')bindMode();};
 })();
