@@ -195,6 +195,9 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
   <a href="#" data-view="hitl">판정 승인(HITL) <span class="n" id="hitlN" style="display:inline-grid;place-items:center;min-width:20px;height:20px;border-radius:999px;background:var(--warn);color:#fff;font-size:11.5px;padding:0 6px"></span></a>
   <a href="#" data-view="susi">수시 지도</a>
   <a href="#" data-view="jeongsi">정시 지도</a>
+  <a href="#" data-view="compare">비교·분석</a>
+  <a href="#" data-view="stats">진학통계</a>
+  <a href="#" data-view="mode">학생상담모드</a>
   <a href="#" data-view="assign">배정 답변 <span class="n" id="asgN" style="display:inline-grid;place-items:center;min-width:20px;height:20px;border-radius:999px;background:var(--assign);color:#fff;font-size:11.5px;padding:0 6px"></span></a>
   <a href="counsel.html">진로진학 상담</a>
   <a href="#" data-toast="상담 이력은 확정된 상담부터 쌓입니다">상담 이력</a>
@@ -210,6 +213,7 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 <div class="toast" id="toast" role="status"></div>
 
 <script src="auth.js?v=20271014c"></script>
+<script src="teacher-ext.js?v=20271014a"></script>
 <script>
 const toast=document.getElementById('toast');let toastT;
 function showToast(m){toast.textContent=m;toast.classList.add('is-on');clearTimeout(toastT);toastT=setTimeout(()=>toast.classList.remove('is-on'),2400);}
@@ -311,7 +315,7 @@ function promoHtml(){const st=ADM.apply;const hasRole=window.SEN_AUTH&&SEN_AUTH.
  return `<div class="card"><h2>역할·위촉</h2><p class="sub">한 계정에 역할이 여러 개 · 역할마다 임기</p><div class="row"><b>정보원 상담교사 위촉 <small style="color:var(--ink-3)">매년 3월 공문 · 교원 인증 회원이면 신청 가능</small></b><div class="acts"><button data-promo="apply">위촉 신청</button></div></div><div class="note">심사(약 2:1) → 4.1 위촉 → 익년 3.31 자동 만료. 위촉되면 온라인·방문·화상 전 채널 배정 건을 맡아요 · 본인 자녀 건은 자동 제외</div></div>`;}
 
 /* ===== 반 관리 · 판정 승인(HITL) (통합 적용 3단계) ===== */
-let view=(['home','class','hitl','susi','jeongsi','assign'].includes(location.hash.slice(1))?location.hash.slice(1):null)||localStorage.getItem('sen-teacher-view')||'home';
+let view=(['home','class','hitl','susi','jeongsi','assign','compare','stats','mode'].includes(location.hash.slice(1))?location.hash.slice(1):null)||localStorage.getItem('sen-teacher-view')||'home';
 const HK='sen-hitl-v1';let HS=(()=>{try{return JSON.parse(localStorage.getItem(HK)||'null')||{};}catch(e){return {};}})();const hsSave=()=>localStorage.setItem(HK,JSON.stringify(HS));
 const CLASS=[
  {no:1,n:'강지우',band:'2등급대',load:'적재 완료',last:'9.5 수시 전략',plan:'권장과목 5/6',judge:'승인 대기 1'},
@@ -347,15 +351,16 @@ function storeHtml(){const st=storeGet();const card=k=>{const o=STORE_OPT[k],on=
  <p class="caption" style="margin-bottom:10px">교육청 서버에 들어가는 데이터는 모두 비식별 처리가 기본이에요. 담임 반 학생의 원본 데이터만 예외로 담임이 볼 수 있고, 그 원본을 어디에 둘지 선생님이 정해요 · 변경은 학년도 전환 때 다시 할 수 있어요${st.at?` · 마지막 변경 ${st.at}`:''}</p>
  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px" class="z7grid">${card('pc')}${card('sen')}</div>
  <p class="caption" style="margin-top:8px">어느 쪽을 골라도 반 집계와 AI 기능은 똑같이 쓸 수 있어요. 달라지는 건 「원본이 어디 있는가」와 「원격에서 원본을 볼 수 있는가」예요.</p>`;}
-function hitlHtml(){const done=HITL.filter(h=>HS[h.id]),todo=HITL.filter(h=>!HS[h.id]);
- const card=h=>{const st=HS[h.id];const acts=h.mine?`<span class="badge badge--gray">본인 자녀 건 · 겸직 제한으로 승인 불가 · 진학부장 대리</span>`:st?`<span class="badge ${st==='ok'||st==='edit'?'badge--ok':st==='no'?'badge--warn':'badge--wait'}">${{ok:'승인 · 확정',edit:'수정 후 승인 · 확정',no:'반려 · 초안 폐기',more:'근거 보강 요청 · AI 재생성 대기'}[st]}</span>${(st==='ok'||st==='edit')?` <label style="font-size:12.5px;font-weight:700;display:inline-flex;gap:6px;align-items:center;margin-left:8px"><input type="checkbox" data-deliver="${h.id}"${HS[h.id+'_d']?' checked':''}> 학생에게 전달</label>`:''}`:`<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn--primary" style="padding:7px 12px;font-size:12.5px" data-hitl="ok" data-id="${h.id}">승인</button><button class="btn btn--line" style="padding:7px 12px;font-size:12.5px" data-hitl="edit" data-id="${h.id}">수정 후 승인</button><button class="btn btn--line" style="padding:7px 12px;font-size:12.5px" data-hitl="no" data-id="${h.id}">반려</button><button class="btn btn--line" style="padding:7px 12px;font-size:12.5px" data-hitl="more" data-id="${h.id}">근거 보강 요청</button></div>`;
+function hitlHtml(){const done=HITL.filter(h=>HS[h.id]&&HS[h.id]!=='sec'),todo=HITL.filter(h=>!HS[h.id]);
+ const card=h=>{const st=HS[h.id];const acts=h.mine?`<span class="badge badge--gray">본인 자녀 건 · 겸직 제한으로 승인 불가 · 진학부장 대리</span>`:st?`<span class="badge ${st==='ok'||st==='edit'?'badge--ok':st==='no'?'badge--warn':'badge--wait'}">${{ok:'승인 · 확정',edit:'수정 후 승인 · 확정',sec:'수정 후 승인 · 2차 검토 대기',no:'반려 · 초안 폐기',more:'근거 보강 요청 · AI 재생성 대기'}[st]}</span>${(st==='ok'||st==='edit')?` <label style="font-size:12.5px;font-weight:700;display:inline-flex;gap:6px;align-items:center;margin-left:8px"><input type="checkbox" data-deliver="${h.id}"${HS[h.id+'_d']?' checked':''}> 학생에게 전달</label>`:''}`:`<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn--primary" style="padding:7px 12px;font-size:12.5px" data-hitl="ok" data-id="${h.id}">승인</button><button class="btn btn--line" style="padding:7px 12px;font-size:12.5px" data-hitl="edit" data-id="${h.id}">수정 후 승인</button><button class="btn btn--line" style="padding:7px 12px;font-size:12.5px" data-hitl="no" data-id="${h.id}">반려</button><button class="btn btn--line" style="padding:7px 12px;font-size:12.5px" data-hitl="more" data-id="${h.id}">근거 보강 요청</button></div>`;
   return `<div class="card" style="padding:18px 20px"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start"><div><b style="font-size:15px">${h.stu} <small style="color:var(--ink-3);font-weight:700">${h.cls}</small></b> · ${h.uni}<div style="margin-top:6px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="badge" style="background:color-mix(in srgb,${JC[h.draft]} 14%,transparent);color:${JC[h.draft]}">AI 초안 「${h.draft}」</span><span style="font-size:12.5px;color:var(--ink-3)">${h.p} · 기준표 원장 v2.1 (모델 버전은 전문시스템 기록)</span></div></div>${acts}</div>
-  <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">${h.ev.map(e=>`<span class="badge badge--gray">근거 · ${e}</span>`).join('')}<span class="badge ${/통과/.test(h.gate)?'badge--ok':'badge--warn'}">게이트 · ${h.gate}</span></div></div>`;};
+  <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">${h.ev.map(e=>`<span class="badge badge--gray">근거 · ${e}</span>`).join('')}<span class="badge ${/통과/.test(h.gate)?'badge--ok':'badge--warn'}">게이트 · ${h.gate}</span></div>${window.hitlCardExtra?hitlCardExtra(h):''}</div>`;};
  return `<section class="section"><h2 class="t">판정 승인 (HITL) <span class="badge badge--wait">${pendingHitl()}건 대기</span></h2><p class="s">AI 초안은 교사 승인 후에만 확정·전달돼요 · 승인권은 담임 반 한정 · 첫 승인 때 2단계 인증, 이후 10분간 유지 · 검토 10초 미만 연속 승인은 관리자에게 알림</p>
  ${(()=>{let a={};try{a=JSON.parse(localStorage.getItem('sen-ops-admin-v1')||'null')||{};}catch(e){}const h=a.hitl||{};const sec=h[3]===true;const warn=h[2]==null?true:h[2];const m=a.mode||'norm';return `<div class="share__notice">학생 화면에는 확률 숫자와 「AI」 표시가 가지 않아요. 확정본은 [선생님 의견] 라벨로만 보여요 · 방향이 AI와 다른 판정은 진학부장 2차 검토 ${sec?'<b>필수</b> (플랫폼관리 정책)':'플래그(필수 아님)'}${warn?'':' · 연속 승인 경고 해제됨'}${m==='special'?' · 운영 모드 : 특별진학상담 (센터 상담 한도 예외 — 교사 추천 경로)':''}</div>`;})()}
  <h3 style="margin:16px 0 8px;font-size:15px">H0 · 미승인 대기 큐 <small style="color:var(--ink-3)">${todo.length}건</small></h3><div style="display:grid;gap:10px">${todo.length?todo.map(card).join(''):'<p class="caption">대기 건이 없어요</p>'}</div>
- <h3 style="margin:20px 0 8px;font-size:15px">H3 · 확정·전달 <small style="color:var(--ink-3)">${done.length}건</small></h3><div style="display:grid;gap:10px">${done.length?done.map(card).join(''):'<p class="caption">아직 확정한 건이 없어요</p>'}</div>
- <p class="caption">H4 후속·인계: 전달된 판정은 상담 원장에 기록되고, 담임 교체 시 전임 교사는 14일간 읽기 전용</p></section>`;}
+ ${window.hitlExtMid?hitlExtMid():''}
+ <h3 style="margin:22px 0 8px;font-size:15px">H3 · 확정·전달 <small style="color:var(--ink-3)">${done.length}건</small></h3><div style="display:grid;gap:10px">${done.length?done.map(card).join(''):'<p class="caption">아직 확정한 건이 없어요</p>'}</div>
+ ${window.hitlExtTail?hitlExtTail():'<p class="caption">H4 후속·인계: 전달된 판정은 상담 원장에 기록되고, 담임 교체 시 전임 교사는 14일간 읽기 전용</p>'}</section>`;}
 /* ── 통합 적용 4단계: 상담교사 워크스페이스(배정 요청함·답변) ── */
 const AK='sen-assign-v1';let AS=(()=>{try{return JSON.parse(localStorage.getItem(AK)||'null')||{};}catch(e){return {};}})();const asSave=()=>localStorage.setItem(AK,JSON.stringify(AS));
 const ASG=[
@@ -420,7 +425,7 @@ let tfaUntil=0;function hitlConfirm(){if(Date.now()<tfaUntil)return Promise.reso
 
 function bindExtra(){
  document.querySelectorAll('[data-view]').forEach(a=>{if(a.dataset.bound)return;a.dataset.bound='1';a.addEventListener('click',e=>{e.preventDefault();view=a.dataset.view;localStorage.setItem('sen-teacher-view',view);renderAll();window.scrollTo({top:0});});});
- document.querySelectorAll('[data-hitl]').forEach(b=>b.addEventListener('click',()=>{const id=b.dataset.id,k=b.dataset.hitl;hitlConfirm().then(()=>{HS[id]=k;hsSave();showToast({ok:'승인했어요 · 확정본 생성 · 전달은 H3에서',edit:'수정 후 승인 · 수정 이력과 함께 확정',no:'반려 · 초안 폐기 · 사유 기록',more:'근거 보강 요청 · AI 재생성 큐로'}[k]);renderAll();});}));
+ document.querySelectorAll('[data-hitl]').forEach(b=>b.addEventListener('click',()=>{const id=b.dataset.id,k=b.dataset.hitl;if(k==='edit'&&window.hitlEditOpen){hitlEditOpen(id);return;}hitlConfirm().then(()=>{HS[id]=k;hsSave();showToast({ok:'승인했어요 · 확정본 생성 · 전달은 H3에서',edit:'수정 후 승인 · 수정 이력과 함께 확정',no:'반려 · 초안 폐기 · 사유 기록',more:'근거 보강 요청 · AI 재생성 큐로'}[k]);renderAll();});}));
  document.querySelectorAll('[data-pro]').forEach(b=>b.addEventListener('click',()=>proEnter(b.dataset.pro)));
  document.querySelectorAll('[data-store]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.store;const go=()=>{const d=new Date();localStorage.setItem(STK,JSON.stringify({loc:k,at:`${d.getMonth()+1}.${d.getDate()}`}));showToast(k==='pc'?'선생님 PC 보관으로 바꿨어요 · 교육청 원본은 파기 예약, 가명본은 유지돼요':'교육청 저장소 보관으로 바꿨어요 · PC 컨테이너는 업로드 후 자동 파기돼요');renderAll();};(authMode()==='B'&&window.SEN_AUTH?SEN_AUTH.stepUp('실데이터 보관 위치 변경'):confirmAdmin('보관 위치 변경')).then(go);}));
  document.querySelectorAll('[data-asg]').forEach(b=>b.addEventListener('click',()=>{const id=b.dataset.id,k=b.dataset.asg;
@@ -430,7 +435,8 @@ function bindExtra(){
  document.querySelectorAll('[data-asgai]').forEach(b=>b.addEventListener('click',()=>{const t=document.querySelector(`[data-asgt="${b.dataset.asgai}"]`);if(t&&!t.value.trim())t.value='안녕하세요. 보내주신 검사 결과와 관심 학과를 함께 봤어요.\n\n1) 두 학과 모두 수학 기반이 중요해요. 통계학과는 확률과 통계·미적분, 컴퓨터공학과는 미적분·정보 과목이 권장과목으로 자주 제시됩니다.\n2) 2학년 2학기에 미적분Ⅰ·확률과 통계를 넣는 선택은 두 학과 모두에 열려 있는 구성이에요.\n3) 다음 상담 전까지: 학업설계 시뮬레이션에서 권장과목 충족을 확인하고, 두 학과 전공 체험 중 하나에 참여해 보세요.\n\n(초안 · 상담교사 검토 후 전달)';}));
  document.querySelectorAll('[data-done]').forEach(b=>{if(b.dataset.bound)return;b.dataset.bound='1';if(b.textContent==='답변')b.addEventListener('click',()=>{view='assign';localStorage.setItem('sen-teacher-view',view);renderAll();});});
  document.querySelectorAll('[data-deliver]').forEach(c=>c.addEventListener('change',()=>{HS[c.dataset.deliver+'_d']=c.checked;hsSave();showToast(c.checked?'학생에게 전달 · [선생님 의견]으로 표시 · 상담 원장 기록':'전달을 취소했어요');}));
- document.querySelectorAll('[data-done]').forEach(b=>{if(b.dataset.bound)return;b.dataset.bound='1';if(b.textContent==='검토')b.addEventListener('click',()=>{view='hitl';localStorage.setItem('sen-teacher-view',view);renderAll();});});}
+ document.querySelectorAll('[data-done]').forEach(b=>{if(b.dataset.bound)return;b.dataset.bound='1';if(b.textContent==='검토')b.addEventListener('click',()=>{view='hitl';localStorage.setItem('sen-teacher-view',view);renderAll();});});
+ if(window.bindExt)bindExt();}
 /* ===== Z1 ===== */
 function renderZ1(){
  const z1=document.getElementById('z1'),body=document.getElementById('z1Body'),gnb=document.getElementById('tgnb');
@@ -484,6 +490,10 @@ function renderMain(){
  if(view==='susi'||view==='jeongsi'){m.innerHTML=state==='counselor'?'<div class="gate"><h2>수시·정시 지도는 학교 교사 역할에서만</h2><p>상담교사 역할은 배정 건만 열람해요. 헤더에서 교사 역할로 전환하세요.</p></div>':(view==='susi'?susiHtml():jeongsiHtml());bindExtra();return;}
  if(view==='assign'){m.innerHTML=state==='counselor'?assignHtml():'<div class="gate"><h2>배정 답변은 정보원 상담교사 역할에서만</h2><p>정보원이 위촉·배정한 상담 건은 상담교사 역할로 전환해야 열람·답변할 수 있어요. 학교 교사 역할에서는 배정 건이 보이지 않아요'+(state==='expired'?' · 위촉 기간이 끝나 역할이 회수됐어요':'')+'.</p></div>';bindExtra();return;}
  if(view==='hitl'){m.innerHTML=(state==='subject'||state==='counselor')?'<div class="gate"><h2>판정 승인권은 담임 반 한정</h2><p>과목교사·상담교사 역할에는 승인권이 없어요. 담임 또는 진학부장(2차 검토)만 승인할 수 있어요.</p></div>':hitlHtml();bindExtra();return;}
+ /* 통합 적용 6단계 (teacher-ext.js) : 비교·분석 · 진학통계 · 학생상담모드 */
+ if(view==='compare'){m.innerHTML=window.compareHtml?compareHtml():'';bindExtra();return;}
+ if(view==='stats'){m.innerHTML=window.statsHtml?statsHtml():'';bindExtra();return;}
+ if(view==='mode'){m.innerHTML=window.modeHtml?modeHtml():'';bindExtra();return;}
  /* 역할별 필터 */
  const isSubj=state==='subject',isHead=state==='head'||state==='schooladmin',isCoun=state==='counselor',isAdm=state==='schooladmin';
  let todo=TODO;
@@ -494,7 +504,7 @@ function renderMain(){
  /* Z2 */
  const z2=todo.map(t=>{
   if(t.lock)return`<details class="todo todo--lock"><summary>🔒 ${t.label}<span class="n zero" style="background:var(--surface-2);color:var(--gray)">${t.lock}</span></summary></details>`;
-  const rows=t.rows.map(r=>`<div class="row"><b>${h(r[0])}</b><span>${h(r[1])}</span><div class="acts">${t.acts.map((a,i)=>`<button class="${i?'ghost':''}" data-done="${a==='일정 확정'?'상담 일정을 확정했어요 · 학생에게 알림':a==='신청'?'신청 완료':a.startsWith('열람')?'열람 기록이 남았습니다 · 학생에게도 표시됩니다':'제안 슬롯 2개를 보냈어요'}">${a}</button>`).join('')}</div></div>`).join('');
+  const rows=t.rows.map(r=>`<div class="row"><b>${h(r[0])}</b><span>${h(r[1])}</span><div class="acts">${t.acts.map((a,i)=>`<button class="${i?'ghost':''}" data-done="${a==='일정 확정'?'예비 슬롯을 확정했어요 · 학생에게 알림 · 상담 이력 기록':a==='신청'?'신청 완료':a.startsWith('열람')?'열람 기록이 남았습니다 · 학생에게도 표시됩니다':'제안 슬롯 2개를 보냈어요'}">${a}</button>`).join('')}</div></div>`).join('');
   return`<details class="todo"${t.open?' open':''}><summary>${t.label}<span class="n${t.n?'':' zero'}">${t.n||'0'}</span></summary>${rows}${t.note?`<div class="note">${t.note}</div>`:''}</details>`;
  }).join('');
 
