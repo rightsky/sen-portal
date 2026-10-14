@@ -21,7 +21,7 @@ box.innerHTML='<b class="fsys__h">업무시스템 바로가기</b>'
  +'<a href="ops-counsel.html">상담시스템</a>'
  +'<a href="ops-ai.html">AI 서비스 관리</a>'
  +'<a href="ops-admin.html">플랫폼관리</a>'
- +'</nav><span class="fsys__note">정보원 담당자 전용 · 교육디지털원패스 L3 + 2단계 인증</span>';
+ +'</nav><span class="fsys__note">정보원 담당자 · 위촉 상담 선생님 전용 · 교육디지털원패스 L3 + 2단계 인증</span>';
 /* 우측 빈칸에 한 줄로 들어가도록 가운데 텍스트 묶음의 기본 폭을 줄인다 */
 [...row.children].forEach(el=>{if(el.tagName==='DIV'&&/flex:\s*1 1 420px/.test(el.getAttribute('style')||''))el.style.flex='1 1 300px';});
 row.appendChild(box);

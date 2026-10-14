@@ -240,7 +240,7 @@ const TODO=[
   ['윤태양','진로 경로(자연 계열 미정) 공유 승인 · 9.4']],
   acts:['열람 (사유 자동 기록)'],note:'열람은 감사로그와 학생 「내 정보를 본 기록」에 남습니다'},
  {k:'event',label:'설명회·연수 신청 마감',n:1,rows:[
-  ['2028 대입 변화 교사 연수(원격)','마감 9.11(목) · 15차시']],
+  ['2028 대입 변화 교사 연수(원격)','마감 9.11(금) · 15차시']],
   acts:['신청'],note:''},
  {k:'hitl',label:'판정 승인 대기 (HITL)',get n(){return pendingHitl();},get rows(){return HITL.filter(h=>!HS[h.id]&&!h.mine).map(h=>[`${h.stu} · ${h.uni}`,`AI 초안 「${h.draft}」 · 근거 ${h.ev.length} · 9.5 생성`]);},acts:['검토'],note:'AI 초안은 교사 승인 후에만 확정·전달 · 승인권은 담임 반 한정 · 검토는 「판정 승인(HITL)」 탭에서'},
  {k:'assign',label:'배정 답변 대기 (게시판·센터 상담)',get lock(){return state==='counselor'?null:'정보원 상담교사 역할 전용';},get n(){return pendingAsg();},get rows(){return ASG.filter(a=>!AS[a.id]||AS[a.id]==='acc').map(a=>[`${a.stu} · ${a.kind}`,`${a.topic} · ${a.when} · ${AS[a.id]==='acc'?'수락 · 답변 작성 중':'배정 대기'}`]);},acts:['답변'],note:'배정 건은 정보원 상담교사 역할에서만 열람·답변 · 배정 수락 시 2단계 인증 · 「배정 답변」 탭에서'}
@@ -335,7 +335,7 @@ function classHtml(){const masked=false;
  <div class="share__notice">이 목록의 모든 조회·열람은 암호화 감사로그에 자동 기록됩니다 (누가·언제·누구를) · 학년도 전환(3.1) 시 담당 범위가 자동으로 바뀌어요</div>
  <div class="kpis" style="grid-template-columns:repeat(4,1fr);margin:14px 0"><div class="kpi"><span>담당 학생</span><b>32명</b><span class="d">3학년 2반</span></div><div class="kpi"><span>적재 이상</span><b>2명</b><span class="d">누락 1 · 격리 1</span></div><div class="kpi"><span>판정 승인 대기</span><b>${pendingHitl()}건</b><span class="d">HITL 탭에서 검토</span></div><div class="kpi"><span>과목 계획 미작성</span><b>1명</b><span class="d">권장과목 미충족 3명</span></div></div>
  <table class="btable"><tr><th>번호</th><th>이름</th><th>내신(등급대)</th><th>자료 적재</th><th>최근 상담</th><th>과목 계획</th><th>판정 상태</th><th></th></tr>${rows}</table>
- <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="btn btn--line" style="padding:8px 14px;font-size:13px" data-toast="NEIS 자료 등록은 학교관리자·전문시스템에서">NEIS 자료 등록 ›</button><button class="btn btn--line" style="padding:8px 14px;font-size:13px" data-toast="진급 처리는 학년도 전환(3.1) 때 학교관리자가 일괄 처리">진급 처리</button><a class="btn btn--line" href="study-plan.html#check" style="padding:8px 14px;font-size:13px">학생 학업설계 점검 화면 보기</a></div>
+ <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="btn btn--line" style="padding:8px 14px;font-size:13px" data-toast="NEIS 자료 등록(Plan A : NEIS 다운로드 → 표준 템플릿 업로드 · 무결성 게이트)은 전문시스템에서 · 담임 또는 학교관리자">NEIS 자료 등록 ›</button><button class="btn btn--line" style="padding:8px 14px;font-size:13px" data-toast="진급 처리는 학년도 전환(3.1) 때 학교관리자가 일괄 처리">진급 처리</button><a class="btn btn--line" href="study-plan.html#check" style="padding:8px 14px;font-size:13px">학생 학업설계 점검 화면 보기</a></div>
  <p class="caption">과목 계획 열은 학생이 학업설계에서 공유 승인한 계획과 희망 학과 권장과목을 대조한 결과예요 (학교 지정 과목 제외)</p>
  ${storeHtml()}</section>`;}
 /* ── 우리 반 실데이터 보관 위치 (교육청 입고 비식별 예외 데이터) ── */
@@ -349,7 +349,7 @@ function storeHtml(){const st=storeGet();const card=k=>{const o=STORE_OPT[k],on=
  <p class="caption" style="margin-top:8px">어느 쪽을 골라도 반 집계와 AI 기능은 똑같이 쓸 수 있어요. 달라지는 건 「원본이 어디 있는가」와 「원격에서 원본을 볼 수 있는가」예요.</p>`;}
 function hitlHtml(){const done=HITL.filter(h=>HS[h.id]),todo=HITL.filter(h=>!HS[h.id]);
  const card=h=>{const st=HS[h.id];const acts=h.mine?`<span class="badge badge--gray">본인 자녀 건 · 겸직 제한으로 승인 불가 · 진학부장 대리</span>`:st?`<span class="badge ${st==='ok'||st==='edit'?'badge--ok':st==='no'?'badge--warn':'badge--wait'}">${{ok:'승인 · 확정',edit:'수정 후 승인 · 확정',no:'반려 · 초안 폐기',more:'근거 보강 요청 · AI 재생성 대기'}[st]}</span>${(st==='ok'||st==='edit')?` <label style="font-size:12.5px;font-weight:700;display:inline-flex;gap:6px;align-items:center;margin-left:8px"><input type="checkbox" data-deliver="${h.id}"${HS[h.id+'_d']?' checked':''}> 학생에게 전달</label>`:''}`:`<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn--primary" style="padding:7px 12px;font-size:12.5px" data-hitl="ok" data-id="${h.id}">승인</button><button class="btn btn--line" style="padding:7px 12px;font-size:12.5px" data-hitl="edit" data-id="${h.id}">수정 후 승인</button><button class="btn btn--line" style="padding:7px 12px;font-size:12.5px" data-hitl="no" data-id="${h.id}">반려</button><button class="btn btn--line" style="padding:7px 12px;font-size:12.5px" data-hitl="more" data-id="${h.id}">근거 보강 요청</button></div>`;
-  return `<div class="card" style="padding:18px 20px"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start"><div><b style="font-size:15px">${h.stu} <small style="color:var(--ink-3);font-weight:700">${h.cls}</small></b> · ${h.uni}<div style="margin-top:6px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="badge" style="background:color-mix(in srgb,${JC[h.draft]} 14%,transparent);color:${JC[h.draft]}">AI 초안 「${h.draft}」</span><span style="font-size:12.5px;color:var(--ink-3)">${h.p} · 모델 v2027.2 · 기준표 원장 v2.1</span></div></div>${acts}</div>
+  return `<div class="card" style="padding:18px 20px"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start"><div><b style="font-size:15px">${h.stu} <small style="color:var(--ink-3);font-weight:700">${h.cls}</small></b> · ${h.uni}<div style="margin-top:6px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="badge" style="background:color-mix(in srgb,${JC[h.draft]} 14%,transparent);color:${JC[h.draft]}">AI 초안 「${h.draft}」</span><span style="font-size:12.5px;color:var(--ink-3)">${h.p} · 기준표 원장 v2.1 (모델 버전은 전문시스템 기록)</span></div></div>${acts}</div>
   <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">${h.ev.map(e=>`<span class="badge badge--gray">근거 · ${e}</span>`).join('')}<span class="badge ${/통과/.test(h.gate)?'badge--ok':'badge--warn'}">게이트 · ${h.gate}</span></div></div>`;};
  return `<section class="section"><h2 class="t">판정 승인 (HITL) <span class="badge badge--wait">${pendingHitl()}건 대기</span></h2><p class="s">AI 초안은 교사 승인 후에만 확정·전달돼요 · 승인권은 담임 반 한정 · 첫 승인 때 2단계 인증, 이후 10분간 유지 · 검토 10초 미만 연속 승인은 관리자에게 알림</p>
  ${(()=>{let a={};try{a=JSON.parse(localStorage.getItem('sen-ops-admin-v1')||'null')||{};}catch(e){}const h=a.hitl||{};const sec=h[3]===true;const warn=h[2]==null?true:h[2];const m=a.mode||'norm';return `<div class="share__notice">학생 화면에는 확률 숫자와 「AI」 표시가 가지 않아요. 확정본은 [선생님 의견] 라벨로만 보여요 · 방향이 AI와 다른 판정은 진학부장 2차 검토 ${sec?'<b>필수</b> (플랫폼관리 정책)':'플래그(필수 아님)'}${warn?'':' · 연속 승인 경고 해제됨'}${m==='special'?' · 운영 모드 : 특별진학상담 (센터 상담 한도 예외 — 교사 추천 경로)':''}</div>`;})()}
@@ -440,7 +440,7 @@ function renderZ1(){
  const scope={homeroom:'서울○○고 3학년 2반',subject:'서울○○고 사회·문화 수강생',head:'서울○○고 3학년 전체(전체보기 승인)',counselor:'서울진로진학정보센터 배정',expired:'—',schooladmin:'서울○○고 전체 · 승인·등록·매핑'}[state];
  let badges=authMode()==='A'?`<span class="badge badge--ok">GPKI 인증서 ✓</span><span class="badge badge--ok">관리자 승인 ✓</span><span class="badge badge--gray">세션 ${state==='schooladmin'?'14:40':'29:40'}</span>`:`<span class="badge badge--ok">교육디지털원패스 ✓</span><span class="badge badge--ok">관리자 승인 ✓</span><span class="badge badge--gray">2FA 승인·식별 화면 진입 시</span><span class="badge badge--gray">세션 ${state==='schooladmin'?'14:40':'29:40'}</span>`;
  if(state==='schooladmin')badges+=`<span class="badge badge--ok">승인권</span>`;
- if(state==='counselor')badges+=`<span class="badge badge--wait">위촉 2027.2.28까지</span>`;
+ if(state==='counselor')badges+=`<span class="badge badge--wait">위촉 2027.3.31까지</span>`;
  if(state==='expired')badges=`<span class="badge badge--warn">권한이 회수되었습니다 · 재위촉 후 이용</span>`;
  body.innerHTML=`<b>${(window.SEN_AUTH&&SEN_AUTH.logged()&&SEN_AUTH.name)||'박선우'} 선생님</b><span class="sep">|</span><span>${scope}</span><span class="sep">|</span><span class="badge badge--teach">${role}</span>${badges}`;
 }
@@ -472,7 +472,7 @@ function renderMain(){
   <div class="gate">
    <h2>위촉 기간이 만료되었습니다</h2>
    <p>정보원 상담교사 권한이 자동 회수되었습니다. 재위촉 후 이용할 수 있습니다.</p>
-   <div class="badge badge--warn" style="margin-bottom:20px">위촉 만료 2027.2.28 · 권한 회수</div>
+   <div class="badge badge--warn" style="margin-bottom:20px">위촉 만료 2027.3.31 · 권한 회수</div>
    <p class="tel">공개 자료실만 열려 있습니다 · <a href="library.html" style="color:var(--brand)">자료실 바로가기</a><br>재위촉 문의 02-3111-362,363</p>
   </div>`;return;}
 
@@ -505,7 +505,7 @@ function renderMain(){
  const z3=`<div class="sys">
   <article class="is-navy"><div class="ico">🖥️</div><h3>SEN 진학프로그램 <small style="font-weight:700;color:var(--navy)">전문시스템</small></h3><p>수시·정시 진학지도 · 판정 승인(HITL) · 데이터 적재 · AI 서비스</p><button class="btn btn--navy" data-toast="전문시스템으로 이동 (SSO) · 진입이 감사로그에 기록됩니다">SEN 진학프로그램 열기 ›</button></article>
   ${sysCard2}
-  <article><div class="ico">💾</div><h3>기존 교사용 쎈진학 <small style="font-weight:700;color:var(--ink-3)">전환 기간</small></h3><p>2027학년도까지 사용한 설치형 프로그램 · 새 창</p><a class="btn btn--line" href="v21.html" target="_blank" rel="noopener">바로가기 ↗</a></article>
+  <article><div class="ico">💾</div><h3>기존 교사용 쎈진학 <small style="font-weight:700;color:var(--ink-3)">전환 기간</small></h3><p>2027학년도까지 사용한 설치형 프로그램 · 새 창</p><button class="btn btn--line" data-toast="설치형 쎈진학은 학교 PC에서 실행 · 전환 기간 중 데이터는 「선생님 PC 보관」 규격으로 통제">바로가기 ↗</button></article>
  </div>
  <p class="caption">전문시스템에서는 학생 식별 정보가 표시됩니다 · 진입과 열람은 감사로그에 기록됩니다.</p>`;
 
