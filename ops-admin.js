@@ -36,6 +36,13 @@ const mono=t=>`<span style="font-family:ui-monospace,monospace;font-size:11px;co
 const aiState=()=>{try{return JSON.parse(localStorage.getItem('sen-ops-ai-v1')||'null')||{};}catch(e){return {};}};
 const cnsState=()=>{try{return JSON.parse(localStorage.getItem('sen-ops-counsel-v1')||'null')||{};}catch(e){return {};}};
 const isSys=()=>ctx&&ctx.role&&ctx.role.opsRole==='시스템';
+const hitlState=()=>{try{return JSON.parse(localStorage.getItem('sen-hitl-v1')||'null')||{};}catch(e){return {};}};
+const tStore=()=>{try{return JSON.parse(localStorage.getItem('sen-teacher-store')||'null');}catch(e){return null;}};
+const xsysLive=()=>{const ai=aiState(),cn=cnsState(),hs=hitlState();const hitlN=Object.keys(hs).filter(k=>!/_d$/.test(k)).length;const planB=Object.keys(cn.fixed||{}).length;const pre=Object.values(ai.preOk||{}).filter(Boolean).length;return [
+ ['상담시스템',`플랜B 확정 ${planB}건 · 게시판 예외 처리 ${Object.keys(cn.olx||{}).length}건 · 단가표 v${S.unit} 적용 · 운영 모드 ${D.modes[S.mode][0]}`,'ops-counsel.html'],
+ ['AI 서비스 관리',ai.stt==null?'이 브라우저에서 미진입 — 관제 상태 없음':`STT 합격선 ${ai.stt===2?'회복':ai.stt===1?'카나리':'경계'} · 정책 위반 ${ai.fixVio?0:1} · 승격 ${ai.promoted?'완료':'대기'} · 모델 교체 진행 ${Object.keys(ai.mdl||{}).length}건 · 효용 스냅샷 ${(ai.effSnap||[]).length}`,'ops-ai.html#home'],
+ ['학습데이터 관리',`NEIS Plan ${ai.plan||'A'} · 전제조건 ${pre}/5 · 보관 위치 시연 ${ai.store==='pc'?'PC':'교육청'} · D7 확인 ${Object.keys(ai.d7Ack||{}).length}건`,'ops-ai.html#dz'],
+ ['교사공간 (포털)',`HITL 처리 ${hitlN}건 (sen-hitl) · 반 실데이터 보관 위치 ${tStore()?(tStore().loc==='pc'?'선생님 PC':'교육청 저장소'):'기본값(교육청)'} · 2차 검토 ${(S.hitl[3]!=null?S.hitl[3]:D.hitlP[3][2])?'필수':'플래그'}`,'teacher.html']];};
 const roleOf=()=>ctx&&ctx.role?ctx.role.opsRole:'';
 const ro=()=>roleOf()==='통계';
 /* ─────────────── 관리자 홈 ─────────────── */
@@ -44,12 +51,12 @@ function vHome(el){
   const kpis=[['회원',D.members.total.toLocaleString(),'7역할 · 활성 관계 173,800','#16386f'],['승인 대기',pendN,'교사·학교관리자·상담교사·자녀 연결','#b3690a'],['연계 7종',D.integrations.filter(r=>r[2]==='정상').length+' 정상',D.integrations.filter(r=>r[2]!=='정상').map(r=>r[0]+' '+r[2]).join(' · '),'#157f3d'],['배치',D.batches.filter(r=>r[2]==='완료').length+' / '+D.batches.length+' 완료','학년도 전환 대기 (3/1)','#16386f'],['감사 플래그',flag,'야간·대량 조회','#c03535'],['요강 검수',D.guidelines.filter(r=>(S.gl[r[0]]||r[2])==='검수중').length+' 검수중','발행 승인은 2단계 인증','#b3690a']];
   const kpi=`<div class="tiles" style="grid-template-columns:repeat(6,1fr)">${kpis.map(k=>`<div class="tile"><span style="font-size:11.5px;color:#6b7690">${k[0]}</span><b style="color:${k[3]};font-size:22px">${k[1]}</b><span>${k[2]}</span></div>`).join('')}</div>`;
   const todo=D.todo.map(t=>`<div class="lr"><span class="sp">${t[0]}</span><a href="#${t[1]}" class="cbtn cbtn--xs cbtn--line">처리 →</a></div>`).join('');
-  const xs=D.xsys.map(x=>`<div class="lr"><b style="min-width:130px">${x[0]}</b><span class="sp" style="font-size:12.5px">${x[1]}</span><a href="${x[2]}" class="cbtn cbtn--xs cbtn--line">열기 ↗</a></div>`).join('');
+  const xs=xsysLive().map(x=>`<div class="lr"><b style="min-width:130px">${x[0]}</b><span class="sp" style="font-size:12.5px">${x[1]}</span><a href="${x[2]}" class="cbtn cbtn--xs cbtn--line">열기 ↗</a></div>`).join('');
   const integ=gt([{l:'연계'},{l:'용도'},{l:'상태'},{l:'최근'}],D.integrations.map(r=>({c:[`<b>${r[0]}</b>`,r[1],`<b style="color:${r[2]==='정상'?'#157f3d':'#b3690a'}">${r[2]}</b>${r[0]==='나이스'?' <span class="ft" style="margin:0">(Plan A : 학교관리자 승인 등록 기준 · Plan B 전환 전)</span>':''}`,`<span style="color:#6b7690">${r[3]}</span>`]})),{tpl:'150px 1.4fr 1.2fr 90px'});
   const bat=gt([{l:'배치'},{l:'주기'},{l:'상태'},{l:'비고'}],D.batches.map(r=>({c:[`<b>${r[0]}</b>`,r[1],stc(r[2]),`<span style="color:#6b7690">${r[3]}</span>`]})),{tpl:'1.3fr 90px 80px 1.4fr'});
   el.innerHTML=`<div class="cns">${desc('home')}${kpi}
   <div class="cg2"><section class="cc"><div class="cc__hd"><span>오늘 할 일 — ${who()}</span>${chipC(roleOf()||'Role','navy')}</div><div class="cc__bd np">${todo}</div><div class="cc__ft">Role별로 보이는 메뉴가 다름 — 콘텐츠 : CMS · 통계 : 관리통계·실시간(읽기) · 시스템 : 전체</div></section>
-  <section class="cc"><div class="cc__hd">다른 업무시스템 요약 — 운영은 그쪽에서</div><div class="cc__bd np">${xs}</div><div class="cc__ft">플랫폼관리는 규칙·마스터·승인 · 상담 운영은 상담시스템, 모델·데이터·GPU 운영은 AI 서비스 관리</div></section></div>
+  <section class="cc"><div class="cc__hd"><span>다른 시스템 현재 상태 — 같은 브라우저 상태를 읽음</span>${chipC('실시간 연동','teal')}</div><div class="cc__bd np">${xs}</div><div class="cc__ft">여기서 발행한 값이 가는 곳 — 운영 모드 → 상담시스템 띠·AI 관제·포털 상담 신청 한도 · 단가표 → 상담시스템 수당 · HITL 정책 → 교사공간 판정 승인 · 요강 발행 → AI D1 요강 원장 · 토큰 재발급 → AI D0·D7</div></section></div>
   <div class="cg2"><section class="cc"><div class="cc__hd">운영연계 7종 — 실패 큐</div>${integ}</section><section class="cc"><div class="cc__hd">배치 6종</div>${bat}</section></div></div>`;
 }
 /* ─────────────── 웹플랫폼 CMS ─────────────── */
@@ -105,7 +112,7 @@ function vDpol(el){
   const planBox=`<div class="soft" style="background:#fafbfe"><b>NEIS 획득 경로</b> — 기본 설계 <b>Plan A 현행 방식</b>(교사 다운로드 → 표준 템플릿 · 게이트) · Plan B 배치 연계는 전제조건 5종 충족 시 전환 — 현재 ${preN} / 5 충족 ${preN===5?chipC('전환 가능','green'):chipC('Plan A 유지','gray')}<div class="tgs" style="margin-top:6px">${['① 법적 근거·동의','② 연계 심의','③ 등급·망 배치','④ 코드·스키마 표준','⑤ 시험·운영 체계'].map(k=>chipC((pre[k]?'✓ ':'')+k,pre[k]?'green':'dim')).join('')}</div><p class="ft" style="margin:6px 0 0">충족 기록은 AI 서비스 관리 D1 「전제조건」 탭에서 · 협의 창구 : 교육연구정보원 나이스운영과 → 본청 학생역량·혁신교육과(학생부) · 중등교육과(학점제) · 정보보호팀 · 성과평가통계팀 · KERIS</p></div>`;
   el.innerHTML=`<div class="cns">${desc('dpol')}<div class="tiles t3"><div class="tile"><b style="color:#c03535">입고 시 비식별이 기본</b><span>교육청 서버 입고분은 가명 토큰 처리 후 저장 · 유일한 예외 = 담임 반 학생 실데이터</span></div><div class="tile"><b style="color:#b3690a">S존 = 데이터 ∥ Key 분리</b><span>KEY(성명·반·번호) / DATA(토큰·성적) — 키 A·B HSM 분리 · 계정·백업 분리 · 조인은 S존 서비스만</span></div><div class="tile"><b style="color:#1f5ed4">온톨로지 · LPG는 '28</b><span>'27 카탈로그·계보는 테이블 원장 · '28 DCAT·Croissant·PROV-O + LPG 구축 (2차 발주)</span></div></div>
   <section class="cc"><div class="cc__hd"><span>N²SF 존 분류 11종 — 상세는 AI 서비스 관리 D0</span><a href="ops-ai.html#dz" class="cbtn cbtn--xs cbtn--line">D0 열기 ↗</a></div>${zone}</section>
-  <div class="cg2"><section class="cc"><div class="cc__hd">담임 반 실데이터 보관 위치 — 정책값</div>${gt([{l:'항목'},{l:'값'}],D.storeP.map(r=>({c:[`<b>${r[0]}</b>`,r[1]]})),{tpl:'110px 1fr'})}<div class="cc__ft">현황(학교별 PC/교육청 반 수)은 AI 서비스 관리 D1 · 선택 UI는 교사공간 「반 관리」</div></section>
+  <div class="cg2"><section class="cc"><div class="cc__hd"><span>담임 반 실데이터 보관 위치 — 정책값</span>${tStore()?chipC('이 브라우저 교사공간 선택 : '+(tStore().loc==='pc'?'선생님 PC':'교육청 저장소'),'link'):chipC('교사공간 선택 없음 — 기본값','gray')}</div>${gt([{l:'항목'},{l:'값'}],D.storeP.map(r=>({c:[`<b>${r[0]}</b>`,r[1]]})),{tpl:'110px 1fr'})}<div class="cc__ft">현황(학교별 PC/교육청 반 수)은 AI 서비스 관리 D1 · 선택 UI는 교사공간 「반 관리」</div></section>
   <section class="cc"><div class="cc__hd"><span>S존 KEY ∥ DATA 키 관리</span>${chipC('키 교체 연 1회 · 다음 2027.03','link')}</div><div class="cc__bd np">${key}</div><div class="cc__bd">${tokBtn}${S.kMsg?ok(S.kMsg):''}</div></section></div>
   <section class="cc"><div class="cc__hd">NEIS 연계 — Plan A / Plan B 전제조건 상태</div><div class="cc__bd">${planBox}</div></section>
   <div class="cg2"><section class="cc"><div class="cc__hd">재현데이터 재식별 위험 임계 (PROVISIONAL)</div>${gt([{l:'항목'},{l:'값'}],D.repP.map(r=>({c:[`<b>${r[0]}</b>`,r[1]]})),{tpl:'140px 1fr'})}<div class="cc__ft">재현은 S존 학습 평면 전용 · 배포 불가 · 교사 화면 노출 금지 · 합성(1:1 없음)만 O존 배포</div></section>
@@ -164,7 +171,8 @@ function vAudit(el){
 /* ─────────────── 관리통계 ─────────────── */
 function vStat(el){
   const T=S.statTab;const ai=aiState();const snaps=ai.effSnap||[];
-  const use=`<div class="tiles" style="grid-template-columns:repeat(3,1fr)">${D.usage.map(u=>`<div class="tile"><b style="font-size:15px;color:#16386f">${u[0]}</b><span>${u[1]}</span></div>`).join('')}</div>`;
+  const hs=hitlState();const hitlN=Object.keys(hs).filter(k=>!/_d$/.test(k)).length;const usage=D.usage.map(u=>u[0]==='HITL'?['HITL (교사공간 실시간)',`이 브라우저 처리 ${hitlN}건 · 대기 ${Math.max(0,4-hitlN)} · 10초 미만 연속 승인 알림 2 · 2차 검토 플래그 7`]:u);
+  const use=`<div class="tiles" style="grid-template-columns:repeat(3,1fr)">${usage.map(u=>`<div class="tile"><b style="font-size:15px;color:#16386f">${u[0]}</b><span>${u[1]}</span></div>`).join('')}</div>`;
   const effT=gt([{l:'모듈'},{l:'활용률'},{l:'품질'},{l:'재사용'},{l:'교사 평가'},{l:'판정 초안'}],D.effStat.map(r=>({c:[`<b>${r[0]}</b>`,`${bar(r[1],r[1]>=60?'#157f3d':r[1]>=30?'#1f4fa3':'#b3690a',8)} <span class="v">${r[1]}%</span>`,r[2],r[3]?r[3]+'%':'—',r[4]==='—'?'—':`<b style="color:${r[4]>=4?'#157f3d':'#b3690a'}">${r[4]}</b>`,chipC(r[5],/보완|중단/.test(r[5])?'amber':'green')]})),{tpl:'1.1fr 1.3fr 1fr 70px 80px 1.2fr'});
   const snapL=snaps.length?snaps.map(s=>`<div class="lr"><span style="font-family:ui-monospace,monospace;font-size:11px;color:#8a94ac;min-width:88px">${s[0]}</span><b class="sp">${s[1]}</b><span style="color:#6b7690;font-size:12px">${s[2]}</span>${chipC('AI 서비스 관리에서 저장','teal')}</div>`).join(''):`<div class="lr"><span class="sp" style="color:#8a94ac">이 브라우저에 저장된 스냅샷 없음 — AI 서비스 관리 「AI 모듈서비스」에서 「분기 스냅샷 저장」을 누르면 여기 나타남</span><a href="ops-ai.html#mods" class="cbtn cbtn--xs cbtn--line">열기 ↗</a></div>`;
   const body=T==='use'?`${use}<section class="cc"><div class="cc__hd">보고서 — 소집단 억제 · 워터마크</div><div class="cc__bd">${kv([['소집단','5명 미만 셀 「<5」 · 개인 식별 조합 금지 · 반 단위 집계는 D1과 같은 규칙'],['산출','매일 03:00 배치(MG-C4) · 재산출 가능 · 산출 시점·원천 배지 필수'],['내보내기','PDF·엑셀 · 수신자·재배포 금지 워터마크 · 감사로그'],['역할','교육청 운영담당 · 통계 Role(읽기) · 학교는 교사공간 진학통계(6단계)에서 자기 학교만']],80,1)}</div></section>`
