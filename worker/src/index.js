@@ -110,7 +110,10 @@ export default {
       },
       body: JSON.stringify({
         model: env.MODEL || "claude-haiku-5-5",
-        max_tokens: Number(env.MAX_OUTPUT_TOKENS || 1200),
+        max_tokens: Number(env.MAX_OUTPUT_TOKENS || 2400),
+        // 생각(thinking)이 기본으로 켜진 모델은 생각 토큰이 출력 한도를 다 써 본문이 비어 올 수 있다.
+        // THINKING=on 으로 두지 않는 한 끈다 (본문 토큰만 쓰게).
+        ...((env.THINKING || "off") === "on" ? {} : { thinking: { type: "disabled" } }),
         system: SERVER_SYSTEM,
         messages: body.messages.map((m) => ({ role: m.role, content: m.content })),
         stream: true,
