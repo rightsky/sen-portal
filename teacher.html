@@ -161,7 +161,7 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 </head>
 <body>
 
-<div class="statebar"><div class="container" id="stateBar" role="group" aria-label="상태 전환 (설계 검토용)"><b>상태 7종 (설계 검토용)</b></div></div>
+<div class="statebar"><div class="container" id="stateBar" role="group" aria-label="상태 전환 (설계 검토용)"><b>상태 8종 (설계 검토용)</b><span id="authHint" style="margin-left:auto;font-size:12px;color:#9AA3B2"></span></div></div>
 
 <div class="brandbar">
   <div class="container">
@@ -207,6 +207,7 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 
 <div class="toast" id="toast" role="status"></div>
 
+<script src="auth.js"></script>
 <script>
 const toast=document.getElementById('toast');let toastT;
 function showToast(m){toast.textContent=m;toast.classList.add('is-on');clearTimeout(toastT);toastT=setTimeout(()=>toast.classList.remove('is-on'),2400);}
@@ -220,6 +221,7 @@ const STATES=[
  {k:'subject',label:'과목교사'},
  {k:'head',label:'진학부장'},
  {k:'counselor',label:'정보원 상담교사'},
+ {k:'schooladmin',label:'학교관리자'},
  {k:'expired',label:'위촉 만료'}
 ];
 let state=localStorage.getItem('sen-teacher-state')||'homeroom';
@@ -309,7 +311,7 @@ function renderMain(){
   </div>`;return;}
 
  /* 역할별 필터 */
- const isSubj=state==='subject',isHead=state==='head',isCoun=state==='counselor';
+ const isSubj=state==='subject',isHead=state==='head'||state==='schooladmin',isCoun=state==='counselor',isAdm=state==='schooladmin';
  let todo=TODO;
  if(isSubj)todo=TODO.filter(t=>['req','event','hitl','assign'].includes(t.k));
  let shares=SHARES;
@@ -431,6 +433,14 @@ function renderAll(){
  bar.querySelectorAll('button').forEach(b=>b.classList.toggle('is-on',b.dataset.k===state));
  renderZ1();renderMain();
 }
+/* ===== 통합 로그인 상태 연동: 로그인한 역할이 있으면 그 역할로 상태를 맞춘다 (상태 바는 설계 검토용으로 그대로 둠) ===== */
+function syncAuth(){const A=window.SEN_AUTH;const hint=document.getElementById('authHint');if(!A||!A.logged()){if(hint)hint.textContent='로그인 전 · 상태 바로 미리보기';return;}
+ const r=A.roleObj;let k=null;
+ if(!r)k='guest';else if(r.k==='teacher')k=r.status==='pending'?'pending':/담임/.test(r.scope)?'homeroom':/과목/.test(r.scope)?'subject':/부장/.test(r.scope)?'head':'homeroom';
+ else if(r.k==='counselor')k='counselor';else if(r.k==='schooladmin')k='schooladmin';else if(r.k==='office')k='schooladmin';else k='guest';
+ if(hint)hint.textContent=`${A.name} · ${A.roleLabel(A.role)} (L${A.level}) 로그인 → 상태 자동 적용`;
+ if(k&&k!==state){state=k;localStorage.setItem('sen-teacher-state',state);renderAll();}}
+document.addEventListener('sen-auth',syncAuth);syncAuth();
 renderAll();
 </script>
 </body>

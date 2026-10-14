@@ -160,6 +160,7 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 
 <div class="toast" id="toast" role="status"></div>
 
+<script src="auth.js"></script>
 <script>
 const toast=document.getElementById('toast');let toastT;
 function showToast(m){toast.textContent=m;toast.classList.add('is-on');clearTimeout(toastT);toastT=setTimeout(()=>toast.classList.remove('is-on'),2600);}
@@ -366,6 +367,10 @@ function renderAll(){
  renderMain();
 }
 renderAll();
+/* ===== 통합 로그인 상태 연동 ===== */
+function syncAuth(){const A=window.SEN_AUTH;if(!A||!A.logged())return;const r=A.roleObj;if(!r||r.k!=='parent')return;
+ const k=r.status==='pending'?'before':/추가/.test(r.scope)?'extra':'basic';if(k!==state){state=k;localStorage.setItem('sen-parent-state',state);kid=0;renderAll();}}
+document.addEventListener('sen-auth',syncAuth);syncAuth();
 </script>
 </body>
 </html>

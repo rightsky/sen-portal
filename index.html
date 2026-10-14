@@ -777,10 +777,19 @@ themeBtn.addEventListener('click',()=>{const r=document.documentElement; const d
 <script src="gnb.js"></script>
 <script src="sen-ai.js"></script>
 <script>
-/* 로그인 상태에 따른 메인 개인화 */
+/* 로그인 상태·역할에 따른 메인 개인화 */
 (function(){const A=window.SEN_AUTH;if(!A)return;const band=document.querySelector('.band'),strip=document.getElementById('meStrip');
-function apply(){const on=A.logged();if(band){band.querySelector('.band__title').textContent=on?'김서울 님, 지금은 고2 · 진로 구체화 단계예요':'지금 나의 단계를 확인해 보세요';band.querySelector('.band__desc').textContent=on?'이번 달 할 일 4개 · 다음 추천 행동: 관심 전형 저장해 비교하기':'로그인하면 학년과 관심분야에 맞는 다음 행동을 알려드립니다';const b=band.querySelector('.btn');b.style.whiteSpace='nowrap';b.textContent=on?'나의 진로진학으로 →':'로그인하고 시작하기';b.setAttribute('href',on?'my.html#stage':'#');if(!on)b.setAttribute('data-loginopen','');else b.removeAttribute('data-loginopen');}
-if(strip){strip.style.display=on?'':'none';}const rc=document.getElementById('roleCards');if(rc)rc.style.display=on?'none':'';}
+const MSG={student:['김서울 님, 지금은 고2 · 진로 구체화 단계예요','이번 달 할 일 4개 · 다음 추천 행동: 관심 전형 저장해 비교하기','나의 진로진학으로 →','my.html#stage'],
+ student2:['비재학 학생 트랙이에요','성적을 응시연도 기준으로 직접 입력하면 지원가능대학과 정시 전략이 이어져요','성적 입력하러 가기 →','strategy.html#grades'],
+ parent:['자녀 진학 가이드로 가요','자녀가 동의한 항목만 열람하고, 학년별 지금 할 일 하나를 확인해요','학부모 서비스로 →','parent.html'],
+ teacher:['교사공간으로 가요','담당 학생 공유 자료, 상담 요청, 2028 브리핑. 판정·적재는 전문시스템에서','교사공간으로 →','teacher.html'],
+ counselor:['상담교사 워크스페이스로 가요','배정 요청함과 오늘 상담. 역할 전환 시 2단계 인증','교사공간으로 →','teacher.html'],
+ schooladmin:['학교 관리로 가요','교사 승인함, 교사 등록, 담당 학생 매핑','교사공간으로 →','teacher.html'],
+ office:['운영 콘솔은 이 목업에 없어요','정보원·교육청 화면은 선생님 검토 범위 밖이라 포함하지 않았어요','교사공간 보기 →','teacher.html'],
+ guest:['일반 사용자로 로그인했어요','열람·알림·관심 저장은 되지만, 학적 연동이나 자녀 연결을 하려면 교육디지털원패스·디지털원패스를 연결해요','인증 수단 연결 →','#']};
+function apply(){const on=A.logged(),role=on?A.role:'guest',m=MSG[role]||MSG.guest,r=A.roleObj;
+ if(band){band.querySelector('.band__title').textContent=on?(r&&r.status==='pending'?`${A.name} 님, 승인 대기 중이에요`:m[0]):'지금 나의 단계를 확인해 보세요';band.querySelector('.band__desc').textContent=on?(r&&r.status==='pending'?'학교 담당자(관리자)가 승인하면 담당 학생 범위가 붙어요. 그때까지 학생 정보는 볼 수 없어요':m[1]):'로그인하면 학년과 관심분야에 맞는 다음 행동을 알려드립니다';const b=band.querySelector('.btn');b.style.whiteSpace='nowrap';b.textContent=on?m[2]:'로그인하고 시작하기';b.setAttribute('href',on?m[3]:'#');if(!on||role==='guest'&&m[3]==='#'){b.setAttribute('data-loginopen','');}else b.removeAttribute('data-loginopen');}
+ if(strip){strip.style.display=on&&role==='student'?'':'none';}const rc=document.getElementById('roleCards');if(rc)rc.style.display=on?'none':'';}
 apply();document.addEventListener('sen-auth',apply);})();
 </script>
 </body>
