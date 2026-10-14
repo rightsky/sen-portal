@@ -1,11 +1,16 @@
 (function(){
-const {SUBJECTS,PRE,NOT_OFFERED,SEMS,SEM_LABEL,CAT_REC,subj}=SC;const {MAJORS,major}=EX;const A=SEN_AUTH;const $=id=>document.getElementById(id);
+const {SUBJECTS,RULES,PRE,NOT_OFFERED,SEMS,SEM_LABEL,CAT_REC,subj}=SC;const {MAJORS,major}=EX;const A=SEN_AUTH;const $=id=>document.getElementById(id);
 const PKEY='sen-plan-v1';
 let p=JSON.parse(localStorage.getItem(PKEY)||'null')||{major:'m2',sem:{'2-1':[],'2-2':[],'3-1':[],'3-2':[]},wish:[],submit:0,memo:''};
 const save=()=>localStorage.setItem(PKEY,JSON.stringify(p));
 const TYPES=['공통','일반','진로','융합'];const badge=t=>`<span class="tb tb--${TYPES.indexOf(t)}">${t}</span>`;
 const G1=SUBJECTS.filter(s=>s.type==='공통');
 const cr_=names=>names.reduce((a,n)=>a+(subj(n)?subj(n).credit:0),0),cr=cr_;
+/* 학점 기준 통계 (자료집 p.35·38·58): 1학년 공통 + 2·3학년 선택. 체육·예술·기술가정 등 학교 지정 과목은 계획에 없어 합계가 실제보다 작게 나옵니다 */
+function stats(){const A_=all(),g1=G1.map(s=>s.name),allN=[...g1,...A_];const byReq={};allN.forEach(n=>{const k=RULES.reqGroup(subj(n).group);byReq[k]=(byReq[k]||0)+subj(n).credit;});
+  const sem=Object.fromEntries(SEMS.map(k=>[k,cr_(p.sem[k])]));const kme=['국어','수학','영어'].reduce((a,g)=>a+(byReq[g]||0),0);
+  const short=Object.entries(RULES.REQ).filter(([g,v])=>(byReq[g]||0)<v).map(([g,v])=>({g,have:byReq[g]||0,need:v}));
+  return {total:cr_(allN),g1:cr_(g1),sel:cr_(A_),sem,kme,byReq,short};}
 const GROUPS=['전체','국어','수학','영어','사회','과학','정보','예술','교양'];
 let active='2-1',pg='전체',pq='',recOnly=false;
 const all=()=>SEMS.flatMap(k=>p.sem[k]);
@@ -18,6 +23,12 @@ function checks(){const out=[],m=major(p.major),core=m.subjects.filter(subj),A_=
   const ord=A_.filter(n=>PRE[n]&&(SEMS.indexOf(where(PRE[n]))===-1||SEMS.indexOf(where(PRE[n]))>=SEMS.indexOf(where(n))));
   if(ord.length)out.push(['q',`순서를 물어볼 과목 ${ord.length}개`,ord.map(n=>`${n} (${PRE[n]}와 이어지는 과목)`).join(', ')+' · 어느 학기에 듣는 게 좋을지 상담에서 확인하세요']);
   const miss=core.filter(x=>!A_.includes(x));if(miss.length)out.push(['q',`${m.name}에서 자주 권하는 과목 중 아직 담지 않은 것`,miss.join(', ')+' · 꼭 들어야 하는지는 선생님과 이야기해 보세요']);
+  const st=stats();
+  SEMS.forEach(k=>{const v=st.sem[k];if(v&&p.sem[k].length>=4&&v<RULES.PER_SEM-8)out.push(['q',`${SEM_LABEL[k]}는 선택과목 ${v}학점이에요`,`학교 지정 과목을 더해 학기당 ${RULES.PER_SEM}학점 안팎이 되는지 선생님과 확인해 보세요`]);if(v>RULES.PER_SEM)out.push(['q',`${SEM_LABEL[k]}는 ${v}학점으로 학기 기준(${RULES.PER_SEM}학점)을 넘어요`,'학교 지정 과목까지 더하면 더 커져요 · 줄일 과목이 있는지 상담에서 봐요']);});
+  if(st.kme>RULES.KME_MAX)out.push(['q',`국어·수학·영어 합계가 ${st.kme}학점이에요`,`세 교과 합은 ${RULES.KME_MAX}학점을 넘지 않는 것이 기준이에요 · 1학년 공통과목을 포함한 숫자예요`]);
+  else if(st.kme>RULES.KME_MAX-8)out.push(['info',`국어·수학·영어 합계 ${st.kme}학점 (상한 ${RULES.KME_MAX})`,'학교 지정 과목이 더해지면 상한에 가까워질 수 있어요']);
+  if(st.short.length)out.push(['info',`교과(군) 필수 이수 학점에 아직 못 미치는 교과 ${st.short.length}개`,st.short.map(x=>`${x.g} ${x.have}/${x.need}`).join(' · ')+' · 체육·예술 등은 학교 지정 과목으로 채워지는 경우가 많아요. 학교 편제표와 비교해 보세요']);
+  out.push(['info',`계획에 담긴 교과 학점 ${st.total}학점 (졸업 기준 교과 ${RULES.SUBJ}학점)`,`1학년 공통 ${st.g1} + 2·3학년 선택 ${st.sel} · 학교 지정 과목은 빠진 숫자예요`]);
   const no=A_.filter(x=>NOT_OFFERED.includes(x));if(no.length)out.push(['info',`우리 학교에 없는 과목 ${no.length}개`,`${no.join(', ')} → 공동교육과정·서울온라인학교로 들을 수 있어요. 신청 방법은 선생님께 문의하세요`]);
   const adv=A_.filter(x=>['진로','융합'].includes(subj(x).type)).length;out.push(['info',`진로·융합선택 ${adv}과목, 일반선택 ${A_.length-adv}과목`,'진로와 얼마나 이어지는 구성인지 상담에서 함께 봐요']);
   if(!out.some(c=>c[0]==='q'))out.unshift(['ok','특별히 걸리는 점은 없어 보여요','그래도 최종 확인은 선생님과 함께 하세요']);
@@ -41,8 +52,9 @@ function renderSim(){
 function add(n,k){k=k||active;if(all().includes(n)){showToast(`${n}은(는) 이미 ${SEM_LABEL[where(n)]}에 있어요`);return;}if(p.sem[k].length>=8){showToast('한 학기에 8과목까지 담을 수 있어요');return;}p.sem[k].push(n);p.submit=p.submit>=1?0:p.submit;save();renderSim();}
 function move(n,from,to){if(from===to)return;p.sem[from]=p.sem[from].filter(x=>x!==n);p.sem[to].push(n);save();renderSim();}
 /* 이수계획 */
-function renderPlan(){const groups=[...new Set(SUBJECTS.map(s=>s.group))];const A_=all();
-  $('planTable').innerHTML=`<div class="ctable-w"><table class="ctable ptbl"><thead><tr><th>교과군</th><th>1학년 (공통)</th>${SEMS.map(k=>`<th>${SEM_LABEL[k]}</th>`).join('')}<th>학점</th></tr></thead><tbody>${groups.map(g=>{const g1=G1.filter(s=>s.group===g).map(s=>s.name),cells=SEMS.map(k=>p.sem[k].filter(x=>subj(x).group===g)),cr=cr_(g1)+cr_(cells.flat());return `<tr><th>${g}</th><td>${g1.join('<br>')||'–'}</td>${cells.map(c=>`<td>${c.map(x=>`<div>${x}</div>`).join('')||'–'}</td>`).join('')}<td><b>${cr}</b></td></tr>`;}).join('')}<tr><th>합계</th><td><b>${cr_(G1.map(s=>s.name))}</b></td>${SEMS.map(k=>`<td><b>${cr_(p.sem[k])}</b></td>`).join('')}<td><b>${cr_(G1.map(s=>s.name))+cr_(A_)}</b></td></tr></tbody></table></div>`;
+function renderPlan(){const groups=[...new Set(SUBJECTS.map(s=>s.group))];const A_=all();const st=stats();
+  $('planTable').innerHTML=`<div class="ctable-w"><table class="ctable ptbl"><thead><tr><th>교과군</th><th>1학년 (공통)</th>${SEMS.map(k=>`<th>${SEM_LABEL[k]}</th>`).join('')}<th>학점</th><th>필수</th></tr></thead><tbody>${groups.map(g=>{const g1=G1.filter(s=>s.group===g).map(s=>s.name),cells=SEMS.map(k=>p.sem[k].filter(x=>subj(x).group===g)),cr=cr_(g1)+cr_(cells.flat());return `<tr><th>${g}</th><td>${g1.join('<br>')||'–'}</td>${cells.map(c=>`<td>${c.map(x=>`<div>${x}</div>`).join('')||'–'}</td>`).join('')}<td><b>${cr}</b></td><td>${(()=>{const rg=RULES.reqGroup(g),need=RULES.REQ[rg],have=st.byReq[rg]||0;return rg===g?`${need}${have>=need?' ✓':''}`:`<small>${rg} ${need}</small>`;})()}</td></tr>`;}).join('')}<tr><th>합계</th><td><b>${st.g1}</b></td>${SEMS.map(k=>`<td><b>${st.sem[k]}</b>${st.sem[k]>RULES.PER_SEM?' <small style="color:#C43B3B">›29</small>':''}</td>`).join('')}<td><b>${st.total}</b><small style="color:var(--ink-3)"> /${RULES.SUBJ}</small></td><td></td></tr></tbody></table></div>`;
+  $('planTable').insertAdjacentHTML('beforeend',`<div class="cks" style="margin-top:12px"><div class="ck ck--info"><i>i</i><div><b>기준선 · 졸업 192학점 = 교과 ${RULES.SUBJ} + 창체 ${RULES.CREATIVE} · 학기당 ${RULES.PER_SEM}학점 안팎 · 국어·수학·영어 합계 ${RULES.KME_MAX}학점 이하</b><span>지금 계획: 교과 ${st.total}학점 · 국영수 ${st.kme}학점 (1학년 공통 포함, 학교 지정 과목 제외) · 필수 열의 ✓는 필수 이수 학점을 채웠다는 뜻이에요 · 기타 = 기술·가정/정보/제2외국어/한문/교양 합산 ${RULES.REQ['기타']}학점</span></div></div></div>`);
   const by={};A_.forEach(x=>{const g=subj(x).group;by[g]=(by[g]||0)+subj(x).credit;});const mx=Math.max(4,...Object.values(by));
   $('planBars').innerHTML=Object.keys(by).length?Object.entries(by).sort((a,b)=>b[1]-a[1]).map(([g,v])=>`<div class="bar is-top" style="grid-template-columns:56px 1fr 52px"><span>${g}</span><div class="bar__track"><div class="bar__fill" style="width:${v/mx*100}%"></div></div><span class="bar__val">${v}학점</span></div>`).join(''):'<p class="hint">아직 담은 선택과목이 없어요. <a class="link" href="#sim">시뮬레이션에서 과목 담기 ›</a></p>';
   const tc={};A_.forEach(x=>{const t=subj(x).type;tc[t]=(tc[t]||0)+1;});
