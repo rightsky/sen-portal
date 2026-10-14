@@ -190,9 +190,9 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 <div class="tband" id="z1" hidden><div class="container" id="z1Body"></div></div>
 
 <nav class="tgnb" id="tgnb" hidden aria-label="교사 메뉴"><div class="container">
-  <a href="#" class="is-on">교사공간 홈</a>
-  <a href="#" class="is-lock" data-toast="반 관리는 9월 오픈 (전문시스템 연동)">반 관리 🔒<span class="lock"> 9월</span></a>
-  <a href="#" class="is-lock" data-toast="판정 승인(HITL)은 9월 오픈">판정 승인(HITL) 🔒<span class="lock"> 9월</span></a>
+  <a href="#" class="is-on" data-view="home">교사공간 홈</a>
+  <a href="#" data-view="class">반 관리</a>
+  <a href="#" data-view="hitl">판정 승인(HITL) <span class="n" id="hitlN" style="display:inline-grid;place-items:center;min-width:20px;height:20px;border-radius:999px;background:var(--warn);color:#fff;font-size:11.5px;padding:0 6px"></span></a>
   <a href="#" class="is-lock" data-toast="배정 답변은 9월 오픈">배정 답변 🔒<span class="lock"> 9월</span></a>
   <a href="counsel.html">진로진학 상담</a>
   <a href="#" data-toast="상담 이력은 확정된 상담부터 쌓입니다">상담 이력</a>
@@ -240,7 +240,7 @@ const TODO=[
  {k:'event',label:'설명회·연수 신청 마감',n:1,rows:[
   ['2028 대입 변화 교사 연수(원격)','마감 9.11(목) · 15차시']],
   acts:['신청'],note:''},
- {k:'hitl',label:'판정 승인 대기 (HITL)',lock:'9월 오픈 · 전문시스템'},
+ {k:'hitl',label:'판정 승인 대기 (HITL)',get n(){return pendingHitl();},get rows(){return HITL.filter(h=>!HS[h.id]&&!h.mine).map(h=>[`${h.stu} · ${h.uni}`,`AI 초안 「${h.draft}」 · 근거 ${h.ev.length} · 9.5 생성`]);},acts:['검토'],note:'AI 초안은 교사 승인 후에만 확정·전달 · 승인권은 담임 반 한정 · 검토는 「판정 승인(HITL)」 탭에서'},
  {k:'assign',label:'배정 답변 대기 (게시판 상담)',lock:'9월 오픈 · 전문시스템'}
 ];
 const SHARES=[
@@ -308,6 +308,49 @@ function promoHtml(){const st=ADM.apply;const hasRole=window.SEN_AUTH&&SEN_AUTH.
  if(st==='applied')return `<div class="card"><h2>역할·위촉</h2><p class="sub">한 계정에 역할이 여러 개 · 역할마다 임기</p><div class="row"><b>정보원 상담교사 위촉 신청 <small style="color:var(--ink-3)">3.10 신청 · 심사 약 2:1</small></b><span class="badge badge--wait">정보원 심사 중</span></div><div class="note">심사·선발 → 4.1 위촉 등록 → 역할 승격. 승인되면 알림이 오고 헤더 역할 스위처에 「상담교사」가 생겨요 (정보원 승인 화면은 이 목업 범위 밖)</div><div style="margin-top:10px"><button class="btn btn--line" style="padding:8px 14px;font-size:13px" data-promo="approve">(목업) 정보원 승인 결과 받기</button></div></div>`;
  return `<div class="card"><h2>역할·위촉</h2><p class="sub">한 계정에 역할이 여러 개 · 역할마다 임기</p><div class="row"><b>정보원 상담교사 위촉 <small style="color:var(--ink-3)">매년 3월 공문 · 교원 인증 회원이면 신청 가능</small></b><div class="acts"><button data-promo="apply">위촉 신청</button></div></div><div class="note">심사(약 2:1) → 4.1 위촉 → 익년 3.31 자동 만료. 위촉되면 온라인·방문·화상 전 채널 배정 건을 맡아요 · 본인 자녀 건은 자동 제외</div></div>`;}
 
+/* ===== 반 관리 · 판정 승인(HITL) (통합 적용 3단계) ===== */
+let view=localStorage.getItem('sen-teacher-view')||'home';
+const HK='sen-hitl-v1';let HS=(()=>{try{return JSON.parse(localStorage.getItem(HK)||'null')||{};}catch(e){return {};}})();const hsSave=()=>localStorage.setItem(HK,JSON.stringify(HS));
+const CLASS=[
+ {no:1,n:'강지우',band:'2등급대',load:'적재 완료',last:'9.5 수시 전략',plan:'권장과목 5/6',judge:'승인 대기 1'},
+ {no:2,n:'김서연',band:'3등급대',load:'적재 완료',last:'9.4 과목 설계',plan:'권장과목 4/4 ✓',judge:'미생성'},
+ {no:3,n:'박서준',band:'2등급대',load:'중간고사 누락',last:'8.28 진로 상담',plan:'권장과목 3/6',judge:'승인 대기 1'},
+ {no:4,n:'윤태양',band:'4등급대',load:'적재 완료',last:'—',plan:'미작성',judge:'미생성'},
+ {no:5,n:'이하은',band:'1등급대',load:'적재 완료',last:'9.6 논술 상담',plan:'권장과목 6/6 ✓',judge:'승인 대기 1'},
+ {no:6,n:'정우진',band:'3등급대',load:'오류 1행 격리',last:'9.6 정시 상담',plan:'권장과목 2/5',judge:'승인 대기 1 · 근거 부족'},
+ {no:7,n:'최민준',band:'2등급대',load:'적재 완료',last:'8.20 학업 설계',plan:'권장과목 5/5 ✓',judge:'확정 1 · 전달됨'}];
+const HITL=[
+ {id:'h1',stu:'강지우',cls:'3-2',uni:'국민대 · 학생부종합(학교생활우수자)',draft:'적정',p:'합격 가능성 61% (±7)',ev:['내신 2.3 · 3개년 합격자 분포 중앙','탐구 활동 3건 전공 연계','수능 최저 없음'],gate:'자격 게이트 통과',mine:false},
+ {id:'h2',stu:'박서준',cls:'3-2',uni:'한강대 · 학생부교과',draft:'소신',p:'합격 가능성 34% (±9)',ev:['내신 2.1 · 전년 70%컷 1.9','수능 최저 2합 5 충족 가능성 보통'],gate:'중간고사 성적 누락 → 환산 불완전',mine:false},
+ {id:'h3',stu:'이하은',cls:'3-2',uni:'서울미래대 · 논술',draft:'안정',p:'합격 가능성 81% (±6)',ev:['논술 모의 상위 15%','내신 1.4','수능 최저 3합 6 충족'],gate:'자격 게이트 통과',mine:false},
+ {id:'h4',stu:'정우진',cls:'3-2',uni:'서울과기대 · 정시(수능위주)',draft:'보류',p:'— (근거 부족)',ev:['9월 학평 반영 전','적재 오류 1행 격리'],gate:'환산 불가 · 근거 보강 필요',mine:false},
+ {id:'h5',stu:'김하늘',cls:'3-2',uni:'한국대 · 학생부종합',draft:'적정',p:'합격 가능성 58% (±8)',ev:['내신 2.0','전공 연계 활동 2건'],gate:'자격 게이트 통과',mine:true}];
+const JC={안정:'var(--ok)',적정:'var(--brand)',소신:'#B06200',상향:'var(--warn)',보류:'var(--gray)'};
+function pendingHitl(){return HITL.filter(h=>!HS[h.id]&&!h.mine).length;}
+function classHtml(){const masked=false;
+ const rows=CLASS.map(c=>`<tr><td>${c.no}</td><td><b>${c.n}</b></td><td>${c.band}</td><td>${/누락|오류/.test(c.load)?`<span class="badge badge--warn">${c.load}</span>`:c.load}</td><td>${c.last}</td><td>${/✓/.test(c.plan)?`<span style="color:var(--ok);font-weight:700">${c.plan}</span>`:c.plan}</td><td>${/대기/.test(c.judge)?`<a href="#" data-view="hitl" style="color:var(--brand);font-weight:700">${c.judge}</a>`:c.judge}</td><td><a class="btn btn--line" href="cns.html#student" style="padding:5px 10px;font-size:12px">브리프</a> <button class="btn btn--line" style="padding:5px 10px;font-size:12px" data-toast="성적 원문·판정 결과는 전문시스템에서 (2FA · 사유 기록)">전문시스템 ›</button></td></tr>`).join('');
+ return `<section class="section"><h2 class="t">반 관리 <span class="badge badge--teach">담당 학생만</span></h2><p class="s">${state==='head'?'진학부장 전체보기 승인 상태 · 담당 반 밖 학생 열람은 사유 입력이 필수':'담임 반 32명 중 공유·상담 이력이 있는 학생 7명 표시 (예시)'} · 내신은 등급대만, 판정은 상태만 보여요. 원문과 판정 결과는 전문시스템에서</p>
+ <div class="share__notice">이 목록의 모든 조회·열람은 암호화 감사로그에 자동 기록됩니다 (누가·언제·누구를) · 학년도 전환(3.1) 시 담당 범위가 자동으로 바뀌어요</div>
+ <div class="kpis" style="grid-template-columns:repeat(4,1fr);margin:14px 0"><div class="kpi"><span>담당 학생</span><b>32명</b><span class="d">3학년 2반</span></div><div class="kpi"><span>적재 이상</span><b>2명</b><span class="d">누락 1 · 격리 1</span></div><div class="kpi"><span>판정 승인 대기</span><b>${pendingHitl()}건</b><span class="d">HITL 탭에서 검토</span></div><div class="kpi"><span>과목 계획 미작성</span><b>1명</b><span class="d">권장과목 미충족 3명</span></div></div>
+ <table class="btable"><tr><th>번호</th><th>이름</th><th>내신(등급대)</th><th>자료 적재</th><th>최근 상담</th><th>과목 계획</th><th>판정 상태</th><th></th></tr>${rows}</table>
+ <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="btn btn--line" style="padding:8px 14px;font-size:13px" data-toast="NEIS 자료 등록은 학교관리자·전문시스템에서">NEIS 자료 등록 ›</button><button class="btn btn--line" style="padding:8px 14px;font-size:13px" data-toast="진급 처리는 학년도 전환(3.1) 때 학교관리자가 일괄 처리">진급 처리</button><a class="btn btn--line" href="study-plan.html#check" style="padding:8px 14px;font-size:13px">학생 학업설계 점검 화면 보기</a></div>
+ <p class="caption">과목 계획 열은 학생이 학업설계에서 공유 승인한 계획과 희망 학과 권장과목을 대조한 결과예요 (학교 지정 과목 제외)</p></section>`;}
+function hitlHtml(){const done=HITL.filter(h=>HS[h.id]),todo=HITL.filter(h=>!HS[h.id]);
+ const card=h=>{const st=HS[h.id];const acts=h.mine?`<span class="badge badge--gray">본인 자녀 건 · 겸직 제한으로 승인 불가 · 진학부장 대리</span>`:st?`<span class="badge ${st==='ok'||st==='edit'?'badge--ok':st==='no'?'badge--warn':'badge--wait'}">${{ok:'승인 · 확정',edit:'수정 후 승인 · 확정',no:'반려 · 초안 폐기',more:'근거 보강 요청 · AI 재생성 대기'}[st]}</span>${(st==='ok'||st==='edit')?` <label style="font-size:12.5px;font-weight:700;display:inline-flex;gap:6px;align-items:center;margin-left:8px"><input type="checkbox" data-deliver="${h.id}"${HS[h.id+'_d']?' checked':''}> 학생에게 전달</label>`:''}`:`<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn--primary" style="padding:7px 12px;font-size:12.5px" data-hitl="ok" data-id="${h.id}">승인</button><button class="btn btn--line" style="padding:7px 12px;font-size:12.5px" data-hitl="edit" data-id="${h.id}">수정 후 승인</button><button class="btn btn--line" style="padding:7px 12px;font-size:12.5px" data-hitl="no" data-id="${h.id}">반려</button><button class="btn btn--line" style="padding:7px 12px;font-size:12.5px" data-hitl="more" data-id="${h.id}">근거 보강 요청</button></div>`;
+  return `<div class="card" style="padding:18px 20px"><div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start"><div><b style="font-size:15px">${h.stu} <small style="color:var(--ink-3);font-weight:700">${h.cls}</small></b> · ${h.uni}<div style="margin-top:6px;display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="badge" style="background:color-mix(in srgb,${JC[h.draft]} 14%,transparent);color:${JC[h.draft]}">AI 초안 「${h.draft}」</span><span style="font-size:12.5px;color:var(--ink-3)">${h.p} · 모델 v2027.2 · 기준표 원장 v2.1</span></div></div>${acts}</div>
+  <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">${h.ev.map(e=>`<span class="badge badge--gray">근거 · ${e}</span>`).join('')}<span class="badge ${/통과/.test(h.gate)?'badge--ok':'badge--warn'}">게이트 · ${h.gate}</span></div></div>`;};
+ return `<section class="section"><h2 class="t">판정 승인 (HITL) <span class="badge badge--wait">${pendingHitl()}건 대기</span></h2><p class="s">AI 초안은 교사 승인 후에만 확정·전달돼요 · 승인권은 담임 반 한정 · 첫 승인 때 2단계 인증, 이후 10분간 유지 · 검토 10초 미만 연속 승인은 관리자에게 알림</p>
+ <div class="share__notice">학생 화면에는 확률 숫자와 「AI」 표시가 가지 않아요. 확정본은 [선생님 의견] 라벨로만 보여요 · 방향이 AI와 다른 판정은 진학부장 2차 검토 플래그(필수 아님)</div>
+ <h3 style="margin:16px 0 8px;font-size:15px">H0 · 미승인 대기 큐 <small style="color:var(--ink-3)">${todo.length}건</small></h3><div style="display:grid;gap:10px">${todo.length?todo.map(card).join(''):'<p class="caption">대기 건이 없어요</p>'}</div>
+ <h3 style="margin:20px 0 8px;font-size:15px">H3 · 확정·전달 <small style="color:var(--ink-3)">${done.length}건</small></h3><div style="display:grid;gap:10px">${done.length?done.map(card).join(''):'<p class="caption">아직 확정한 건이 없어요</p>'}</div>
+ <p class="caption">H4 후속·인계: 전달된 판정은 상담 원장에 기록되고, 담임 교체 시 전임 교사는 14일간 읽기 전용</p></section>`;}
+let tfaUntil=0;function hitlConfirm(){if(Date.now()<tfaUntil)return Promise.resolve(true);return (authMode()==='B'&&window.SEN_AUTH?SEN_AUTH.stepUp('판정 승인(HITL)'):confirmAdmin('판정 승인')).then(r=>{tfaUntil=Date.now()+6e5;return r;});}
+
+function bindExtra(){
+ document.querySelectorAll('[data-view]').forEach(a=>{if(a.dataset.bound)return;a.dataset.bound='1';a.addEventListener('click',e=>{e.preventDefault();view=a.dataset.view;localStorage.setItem('sen-teacher-view',view);renderAll();window.scrollTo({top:0});});});
+ document.querySelectorAll('[data-hitl]').forEach(b=>b.addEventListener('click',()=>{const id=b.dataset.id,k=b.dataset.hitl;hitlConfirm().then(()=>{HS[id]=k;hsSave();showToast({ok:'승인했어요 · 확정본 생성 · 전달은 H3에서',edit:'수정 후 승인 · 수정 이력과 함께 확정',no:'반려 · 초안 폐기 · 사유 기록',more:'근거 보강 요청 · AI 재생성 큐로'}[k]);renderAll();});}));
+ document.querySelectorAll('[data-deliver]').forEach(c=>c.addEventListener('change',()=>{HS[c.dataset.deliver+'_d']=c.checked;hsSave();showToast(c.checked?'학생에게 전달 · [선생님 의견]으로 표시 · 상담 원장 기록':'전달을 취소했어요');}));
+ document.querySelectorAll('[data-done]').forEach(b=>{if(b.dataset.bound)return;b.dataset.bound='1';if(b.textContent==='검토')b.addEventListener('click',()=>{view='hitl';localStorage.setItem('sen-teacher-view',view);renderAll();});});}
 /* ===== Z1 ===== */
 function renderZ1(){
  const z1=document.getElementById('z1'),body=document.getElementById('z1Body'),gnb=document.getElementById('tgnb');
@@ -353,6 +396,11 @@ function renderMain(){
    <p class="tel">공개 자료실만 열려 있습니다 · <a href="library.html" style="color:var(--brand)">자료실 바로가기</a><br>재위촉 문의 02-3111-362,363</p>
   </div>`;return;}
 
+ /* 탭(view) 라우팅: 반 관리·HITL은 담임·진학부장(과목교사는 반 관리만 제한) */
+ document.querySelectorAll('#tgnb [data-view]').forEach(a=>a.classList.toggle('is-on',a.dataset.view===view));
+ const hn=document.getElementById('hitlN');if(hn){hn.textContent=pendingHitl();hn.style.display=pendingHitl()?'':'none';}
+ if(view==='class'){m.innerHTML=state==='counselor'?'<div class="gate"><h2>반 관리는 학교 교사 역할에서만</h2><p>상담교사 역할은 배정 건만 열람해요. 헤더에서 교사 역할로 전환하세요.</p></div>':classHtml();bindExtra();return;}
+ if(view==='hitl'){m.innerHTML=(state==='subject'||state==='counselor')?'<div class="gate"><h2>판정 승인권은 담임 반 한정</h2><p>과목교사·상담교사 역할에는 승인권이 없어요. 담임 또는 진학부장(2차 검토)만 승인할 수 있어요.</p></div>':hitlHtml();bindExtra();return;}
  /* 역할별 필터 */
  const isSubj=state==='subject',isHead=state==='head'||state==='schooladmin',isCoun=state==='counselor',isAdm=state==='schooladmin';
  let todo=TODO;
@@ -466,6 +514,7 @@ function renderMain(){
  document.querySelectorAll('[data-authmode]').forEach(b=>b.addEventListener('click',()=>{localStorage.setItem('sen-authmode',b.dataset.authmode);renderAll();}));
  document.querySelectorAll('[data-approve],[data-reject]').forEach(b=>b.addEventListener('click',()=>{const id=b.dataset.approve||b.dataset.reject,ok=!!b.dataset.approve;confirmAdmin(ok?'교사 승인':'교사 반려').then(()=>{ADM.req[id]=ok?'ok':'no';admSave();showToast(ok?'승인했어요 · 담당 범위 매핑 · 암호화 감사로그 기록':'반려했어요 · 신청자에게 사유 통보');renderAll();});}));
  document.querySelectorAll('[data-fulltoggle]').forEach(b=>b.addEventListener('click',()=>{const i=+b.dataset.fulltoggle;confirmAdmin('전체보기 권한 변경').then(()=>{ADM.full[i]=ADM.full[i]===false?true:false;admSave();showToast(ADM.full[i]===false?'전체보기를 회수했어요':'전체보기를 부여했어요 · 열람 시 사유 기록');renderAll();});}));
+ bindExtra();
  document.querySelectorAll('[data-promo]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.promo==='apply'){ADM.apply='applied';admSave();showToast('위촉 신청을 보냈어요 · 정보원 심사 뒤 알림');renderAll();}else{ADM.apply='approved';admSave();if(window.SEN_AUTH&&SEN_AUTH.logged())SEN_AUTH.addRole({k:'counselor',status:'active',scope:'배정 건',term:'2026.4.1~2027.3.31'});showToast('위촉 승인 · 역할 스위처에 「상담교사」가 추가됐어요');renderAll();}}));
  const dd=document.getElementById('dday1');
  if(dd){const diff=Math.ceil((new Date('2027-09-20')-new Date())/864e5);dd.textContent='D-'+diff;}
