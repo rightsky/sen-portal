@@ -21,6 +21,11 @@ function renderSched(){
   $('upT').textContent=selDay?`${selDay.split('-')[1]*1+1}월 ${selDay.split('-')[2]}일 일정`:'다가오는 일정';
   $('up').innerHTML=list.length?list.map(s=>{const d=new Date(s[0]),dd=Math.ceil((d-today)/864e5),my=S.my.includes(s[0]+s[2]);return `<li class="up"><div class="up__d"><b>${d.getMonth()+1}.${String(d.getDate()).padStart(2,'0')}</b><span>${dd>0?'D-'+dd:dd===0?'오늘':'지남'}</span></div><div class="up__m"><span class="tb tb--${{a:2,b:1,c:3}[TC[s[1]]]}">${s[1]}</span><b>${s[2]}</b></div><button class="mini${my?' is-on':''}" data-my="${s[0]+s[2]}">${my?'✓ 내 일정':'+ 내 일정'}</button></li>`;}).join(''):'<li class="hint">이 날은 일정이 없어요</li>';
 }
+/* ── 대입 기본자료 8종 ── */
+let dtg='전체';
+function renderDocs(){if(!$('docList'))return;$('dTg').innerHTML=['전체','고1','고2','고3'].map(t=>`<button class="fchip${dtg===t?' is-on':''}" data-dtg="${t}">${t}</button>`).join('');
+  const L=ND.DOCS.filter(d=>dtg==='전체'||d.g.includes(dtg));
+  $('docList').innerHTML=L.map(d=>`<div class="panel-c" style="border:1px solid var(--line);box-shadow:none;display:flex;flex-direction:column;gap:6px"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="tb tb--1">${d.when}</span><span class="tb tb--0">${d.who}</span></div><b style="font-size:16px">${d.t}</b><p style="margin:0;font-size:13.5px;color:var(--ink-2)"><b>핵심</b> ${d.core}</p><p style="margin:0;font-size:13.5px;color:var(--ink-2);flex:1"><b>활용</b> ${d.use}</p><a class="link" href="${d.href}" style="font-size:13.5px">관련 화면 ›</a></div>`).join('');}
 /* ── 정책 ── */
 let pw=A.logged()?'고1·2':'전체';
 function renderPolicy(){
@@ -53,13 +58,14 @@ function rerender(){const g=GROUP[tab];
   document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('is-on',p.id==='pane-'+tab));
   $('crumbL2').textContent=L2[g];$('crumbL3').textContent=L3[tab];$('h1').textContent=L2[g];
   $('hdesc').textContent=g==='news'?'입시 주요 일정과 달라지는 제도, 공지사항을 확인하세요. 로그인하면 내 학년 기준으로 먼저 보여드립니다.':'서비스 이용 방법, 서울진로진학정보센터 안내, 자주 묻는 질문입니다.';
-  ({schedule:renderSched,policy:renderPolicy,notice:renderNotice,faq:renderFaq,guide:renderGuide,center:()=>{}})[tab]();}
+  ({schedule:()=>{renderSched();renderDocs();},policy:renderPolicy,notice:renderNotice,faq:renderFaq,guide:renderGuide,center:()=>{}})[tab]();}
 function renderGuide(){$('gLogin').innerHTML=A.logged()?'<span class="st st--ok">✓ 로그인됨 · 아래 모든 기능을 쓸 수 있어요</span>':'<button class="btn btn--primary btn--pill" data-loginopen>로그인하기</button>';}
 function setTab(){tab=(location.hash||'#schedule').slice(1);if(!L3[tab])tab='schedule';document.querySelectorAll('#lnb a').forEach(a=>a.classList.toggle('is-cur',a.getAttribute('href')==='news.html#'+tab));document.title=L3[tab]+' | 서울 진로진학 통합플랫폼';rerender();}
 $('lnb').dataset.current=L3[(location.hash||'#schedule').slice(1)]||L3.schedule;
 addEventListener('hashchange',()=>{setTab();scrollTo({top:document.querySelector('.ptabs').offsetTop-90,behavior:'smooth'});});
 document.addEventListener('sen-auth',()=>{if(A.logged()){tg='고1·2';pw='고1·2';}rerender();});
 document.addEventListener('click',e=>{const c=x=>e.target.closest(x);let b;
+  if(b=c('[data-dtg]')){dtg=b.dataset.dtg;renderDocs();return;}
   if(b=c('[data-tg]')){tg=b.dataset.tg;selDay=null;renderSched();return;}
   if(b=c('[data-cal]')){ym[1]+=+b.dataset.cal;if(ym[1]<0){ym[1]=11;ym[0]--;}if(ym[1]>11){ym[1]=0;ym[0]++;}selDay=null;renderSched();return;}
   if(b=c('[data-day]')){selDay=selDay===b.dataset.day?null:b.dataset.day;renderSched();return;}
