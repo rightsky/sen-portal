@@ -18,14 +18,11 @@ if(!row){row=document.createElement('div');row.style.cssText='display:flex;flex-
 const box=document.createElement('div');box.className='fsys';
 box.innerHTML='<b class="fsys__h">업무시스템 바로가기</b>'
  +'<nav class="fsys__nav" aria-label="업무시스템 바로가기">'
- +'<a href="teacher.html#assign">상담시스템</a>'
- +'<a href="sen-ai-poc.html#kb">AI 서비스 관리</a>'
- +'<a href="#" data-fsys="adm">플랫폼관리</a>'
- +'</nav><span class="fsys__note">교직원·운영 담당자 전용 · 교육디지털원패스 로그인</span>';
+ +'<a href="ops-counsel.html">상담시스템</a>'
+ +'<a href="ops-ai.html">AI 서비스 관리</a>'
+ +'<a href="ops-admin.html">플랫폼관리</a>'
+ +'</nav><span class="fsys__note">정보원 담당자 전용 · 교육디지털원패스 L3 + 2단계 인증</span>';
 /* 우측 빈칸에 한 줄로 들어가도록 가운데 텍스트 묶음의 기본 폭을 줄인다 */
 [...row.children].forEach(el=>{if(el.tagName==='DIV'&&/flex:\s*1 1 420px/.test(el.getAttribute('style')||''))el.style.flex='1 1 300px';});
 row.appendChild(box);
-box.addEventListener('click',e=>{const a=e.target.closest('[data-fsys="adm"]');if(!a)return;e.preventDefault();e.stopPropagation();
-  const m='플랫폼관리(CMS·진학프로그램 관리·상담시스템 관리·통합관리자)는 업무망 운영 콘솔에서 열립니다 · 교육디지털원패스 + 2단계 인증';
-  if(typeof window.showToast==='function')window.showToast(m);});
 })();

@@ -7,7 +7,7 @@
 (function(){
 const KEY='sen-auth-v2',LEGACY='sen-trait-state';
 const ROLE_LABEL={student:'학생',student2:'학생(비재학)',parent:'학부모',teacher:'교사',counselor:'상담교사',schooladmin:'학교관리자',office:'교육청·정보원',guest:'일반 사용자'};
-const ROLE_HOME={student:'my.html#stage',student2:'my.html#stage',parent:'parent.html',teacher:'teacher.html',counselor:'teacher.html',schooladmin:'teacher.html',office:'teacher.html',guest:'index.html'};
+const ROLE_HOME={student:'my.html#stage',student2:'my.html#stage',parent:'parent.html',teacher:'teacher.html',counselor:'teacher.html',schooladmin:'teacher.html',office:'ops-admin.html',guest:'index.html'};
 const IDP={eduonepass:{name:'교육디지털원패스',level:3,desc:'나이스 학적·교원 정보로 역할이 자동으로 붙어요'},onepass:{name:'디지털원패스',level:2,desc:'본인확인. 자녀 연결·상담 신청·동의에 필요해요'},naver:{name:'네이버',level:1,desc:'간편 로그인. 열람·알림·관심 저장만'},kakao:{name:'카카오',level:1,desc:'간편 로그인. 열람·알림·관심 저장만'}};
 /* 인증 수단별 데모 신원 (실제 서비스에서는 IdP가 돌려주는 속성으로 결정됨) */
 const DEMO={
@@ -17,7 +17,12 @@ const DEMO={
   {id:'pend',t:'이정민 · 서울고 교원 (승인 대기)',sub:'교원 속성은 확인됐지만 학교관리자 승인 전 → 권한 0',person:{name:'이정민',school:'서울고'},roles:[{k:'teacher',status:'pending',scope:'담임 신청(자기 선언)',term:'승인 전'}]},
   {id:'cns',t:'박선영 · 정보원 위촉 상담교사',sub:'교원 + 정보원 위촉 승인 → 교사·상담교사 역할 2개',person:{name:'박선영',school:'서울남고'},roles:[{k:'teacher',status:'active',scope:'2학년 과목교사',term:'2026학년도'},{k:'counselor',status:'active',scope:'배정 건',term:'2026.4.1~2027.3.31'}]},
   {id:'adm',t:'이재원 · 서울고 진학부장 (학교관리자)',sub:'교육청 승인으로 학교관리자 승격',person:{name:'이재원',school:'서울고'},roles:[{k:'teacher',status:'active',scope:'진학부장',term:'2026학년도'},{k:'schooladmin',status:'active',scope:'서울고',term:'담당 교체 시 회수'}]},
-  {id:'off',t:'정보원 담당자',sub:'교육청·정보원 내부 RBAC (허용 IP·2FA)',person:{name:'정보원 담당자',school:'교육연구정보원'},roles:[{k:'office',status:'active',scope:'상담운영 Role',term:'인사 발령'}]}],
+  {id:'off',grp:'정보원 담당자 (업무시스템)',t:'한지원 · 정보원 상담운영 담당',sub:'내부 RBAC Role 상담운영 → 상담시스템 (위촉·배정 예외·만족도·수당 조서)',person:{name:'한지원',school:'교육연구정보원'},roles:[{k:'office',status:'active',scope:'상담운영 Role',term:'인사 발령',opsRole:'상담운영',ops:['counsel']}]},
+  {id:'off2',grp:'정보원 담당자 (업무시스템)',t:'최민호 · 정보원 정산 담당',sub:'상담시스템 중 수당·계좌(정산 개인정보)만 열람 · 계좌 열람은 사유 기록',person:{name:'최민호',school:'교육연구정보원'},roles:[{k:'office',status:'active',scope:'정산 Role',term:'인사 발령',opsRole:'정산',ops:['counsel']}]},
+  {id:'off3',grp:'정보원 담당자 (업무시스템)',t:'서다은 · SEN 데이터·AI 관리자',sub:'AI 서비스 관리 (관제·모델 원장·학습데이터·GPU) · 가명 L3·전체 계보',person:{name:'서다은',school:'교육연구정보원'},roles:[{k:'office',status:'active',scope:'데이터·AI Role',term:'인사 발령',opsRole:'데이터·AI',ops:['ai']}]},
+  {id:'off4',grp:'정보원 담당자 (업무시스템)',t:'오경수 · 정보원 콘텐츠 담당',sub:'플랫폼관리 중 CMS·자료실·공지·대학 마스터',person:{name:'오경수',school:'교육연구정보원'},roles:[{k:'office',status:'active',scope:'콘텐츠 Role',term:'인사 발령',opsRole:'콘텐츠',ops:['admin']}]},
+  {id:'off5',grp:'정보원 담당자 (업무시스템)',t:'강수연 · 정보원 통계 담당',sub:'상담시스템·플랫폼관리의 통계·운영실적 읽기 전용',person:{name:'강수연',school:'교육연구정보원'},roles:[{k:'office',status:'active',scope:'통계 Role (읽기)',term:'인사 발령',opsRole:'통계',ops:['counsel','admin']}]},
+  {id:'off6',grp:'정보원 담당자 (업무시스템)',t:'윤태희 · 정보원 시스템관리자 (통합관리자)',sub:'세 업무시스템 모두 · 계정·권한 승인·보안 정책·감사로그 · 2FA + GPKI',person:{name:'윤태희',school:'교육연구정보원'},roles:[{k:'office',status:'active',scope:'시스템 Role (통합관리자)',term:'인사 발령',opsRole:'시스템',ops:['counsel','ai','admin']}]}],
  onepass:[
   {id:'par',t:'김보호 · 학부모 (자녀 연결됨)',sub:'본인확인 L2 + 자녀 김서울 연결(초대코드 승인)',person:{name:'김보호'},roles:[{k:'parent',status:'active',scope:'자녀 김서울 · 기본 동의',term:'자녀 졸업까지'}]},
   {id:'par0',t:'새 학부모 (자녀 연결 전)',sub:'본인확인은 됐지만 자녀 연결 전 → 열람 항목 없음',person:{name:'새 학부모'},roles:[{k:'parent',status:'pending',scope:'자녀 연결 전',term:'—'}]},
@@ -36,7 +41,7 @@ const A={
  get level(){return S?S.level:0;},
  get name(){return S?S.person.name:'';},
  roleLabel(k){return ROLE_LABEL[k]||k;},
- home(){return ROLE_HOME[this.role]||'index.html';},
+ home(){const r=this.roleObj;if(r&&r.k==='office'&&r.ops&&r.ops.length){const f={counsel:'ops-counsel.html',ai:'ops-ai.html',admin:'ops-admin.html'};return f[r.ops[0]];}return ROLE_HOME[this.role]||'index.html';},
  /* 레거시 호출(login(true/false))은 학생 데모로 */
  login(has){const d=DEMO.eduonepass[0];this.signIn('eduonepass',d);if(has===false)localStorage.setItem(LEGACY,'empty');},
  signIn(idp,demo){S={idp,level:IDP[idp].level,person:demo.person,roles:demo.roles,cur:0,at:Date.now()};localStorage.setItem(KEY,JSON.stringify(S));syncLegacy();fire();},
@@ -89,7 +94,7 @@ function openLogin(){m.innerHTML=`<div class="lmodal__p"><button type="button" c
   <details><summary style="cursor:pointer;font-size:13.5px;font-weight:700;color:var(--ink-2)">아이디·비밀번호로 로그인</summary><form id="lmForm" novalidate style="display:grid;gap:10px;margin-top:10px"><label class="fld">아이디<input name="id" autocomplete="username" placeholder="통합 계정 아이디"></label><label class="fld">비밀번호<input name="pw" type="password" autocomplete="current-password" placeholder="비밀번호"></label><p class="lm-err">아이디와 비밀번호를 입력해 주세요</p><button class="btn btn--primary btn--pill" type="submit" style="padding:13px">로그인</button><p class="lm-note">10자 이상 · 90일 변경 · 5회 실패 시 잠금(본인확인 재인증으로 해제) · 아이디 로그인은 인증 수단을 연결한 뒤에만 쓸 수 있어요</p></form></details>
   <p class="lm-note">아직 계정이 없나요? <a href="#" class="link" data-joinopen>회원가입</a> · 목업: 인증 수단을 누르면 데모 신원을 고를 수 있어요</p></div>`;m.classList.add('is-on');}
 function openDemo(idp,mode){const v=IDP[idp];m.innerHTML=`<div class="lmodal__p"><button type="button" class="lmodal__x" data-lmclose aria-label="닫기">✕</button><h2>${v.name}에서 돌아왔어요</h2><p class="lm-note">실제 서비스에서는 ${v.name}가 확인한 정보로 아래 중 하나가 자동으로 정해져요. 목업이니 직접 골라 보세요.</p>
-  <div class="demo">${DEMO[idp].map(d=>`<button data-demo="${d.id}" data-idp="${idp}" data-mode="${mode}"><b>${esc(d.t)}</b><small>${esc(d.sub)}</small></button>`).join('')}</div>
+  <div class="demo">${(()=>{let g='';return DEMO[idp].map(d=>{let h='';if((d.grp||'')!==g){g=d.grp||'';if(g)h=`<p class="lm-note" style="margin:8px 0 2px;font-weight:800;color:var(--ink-2)">${esc(g)}</p>`;}return h+`<button data-demo="${d.id}" data-idp="${idp}" data-mode="${mode}"><b>${esc(d.t)}</b><small>${esc(d.sub)}</small></button>`;}).join('');})()}</div>
   <p class="lm-note"><a href="#" class="link" data-loginopen>← 다른 수단으로</a></p></div>`;}
 function openJoin(){m.innerHTML=`<div class="lmodal__p"><button type="button" class="lmodal__x" data-lmclose aria-label="닫기">✕</button><h2>회원가입</h2><div class="lm-steps"><span class="is-on">① 인증 수단</span><span>② 본인 확인</span><span>③ 역할 확인</span><span>④ 동의</span></div>
   <p class="lm-note">역할을 고르는 단계는 없어요. 재학생은 교육디지털원패스로 학교·학년·반이 자동으로 들어오고, 교사는 교원 확인 뒤 학교 담당자(관리자) 승인을 받아야 권한이 생겨요. 학부모는 디지털원패스 본인확인 뒤 자녀를 연결해요.</p>
