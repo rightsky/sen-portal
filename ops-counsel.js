@@ -5,12 +5,12 @@
 (function(){
 const D=window.CNS,esc=SEN_OPS.esc,KEY='sen-ops-counsel-v1';
 const DEF={cd1View:'cal',cd1D:2,cd2St:{},cd2Ap:{},cd3Q:{},cd4Rm:false,copPay:0,cd5Pd:'m',cd5Qs:{3:true},cd5Ms:{8:true},cd5Xl:false,cd5By:'ch',
- grid:null,copQ:{},copAppr:{},copCoh:'all',rkSub:null,rkNo:false,
+ grid:null,olX:{},copAppr:{},copCoh:'all',rkSub:null,rkNo:false,
  mgT:0,mgSel:{},mgSent:null,mgDet:null,liveOv:{},detG:null,detHo:null,detSaved:false,vacSel:{},vacSent:null,
  olT:'all',olSel:null,olAct:null,olAi:null,olMs:{},olBulk:null,olSatRm:false,
  vcT:'all',vcSel:null,vcAct:null,vcPv:null,vcPdf:null,wvT:'all',wvSel:null,wvAct:null,wvPv:null,wvPdf:null,
  rpT:'all',rpSel:null,rpAct:null,rpX:{},stCh:'all',stDir:'asc',stFu:{},stRm:{},stBl:false,pyT:'all',pySel:{},pyDet:null,pyDl:null,
- esOff:false,esW:400,esTab:'main',aiUse:false,
+ esOff:window.innerWidth<1600,esW:400,esTab:'main',aiUse:false,
  ctEsOff:false,ct3V:'w',ct3D:2,ctRq:{},ctRqF:'all',ctRqSel:null,ctAct:{},ctSt:'상담중',ctRp:{},ctRpW:null,ctObj:false,ctPf:{'수시·학종':true,'정시':true},ctWd:{'수':true,'목':true},ctFaq:null,ctHp:'3m',ctHc:'all',ctHSel:null,ct8P:'m',ct8Xl:null,
  shr:{items:{infoLog:true,infoRpt:true},to:{담임:true,진로진학교사:true,상담교사:true},on:false,at:null,log:[],stuOk:false,schOn:false}};
 const clone=o=>JSON.parse(JSON.stringify(o));
@@ -39,7 +39,7 @@ const tgl=(on,label,act,arg,cls='')=>`<button type="button" class="tg ${cls}${on
 const ck=(on,part)=>`<span style="color:${on||part?'#1f4fa3':'#c3cad8'}">${on?'☑':part?'◪':'☐'}</span>`;
 const ctabs=(tabs,curK,act)=>`<div class="ctabs" role="tablist">${tabs.map(([k,l])=>`<button type="button" role="tab" aria-selected="${String(k)===String(curK)}" data-act="${act}" data-arg="${k}">${l}</button>`).join('')}</div>`;
 const kv=(rows,w=92,cols=2)=>`<div class="kv${cols===1?' kv1':''}">${rows.map(([k,v])=>`<div><span style="width:${w}px">${k}</span><span>${v}</span></div>`).join('')}</div>`;
-const gt=(cols,rows,opts={})=>{const tpl=opts.tpl;const hd=`<div class="gt__hd" style="grid-template-columns:${tpl}">${cols.map(c=>`<div${c.cls?` class="${c.cls}"`:''}>${c.l}</div>`).join('')}</div>`;
+const gt=(cols,rows,opts={})=>{const tpl=opts.tpl.replace(/(\d*\.?\d+)fr/g,'minmax(0,$1fr)');const hd=`<div class="gt__hd" style="grid-template-columns:${tpl}">${cols.map(c=>`<div${c.cls?` class="${c.cls}"`:''}>${c.l}</div>`).join('')}</div>`;
  const body=rows.map(r=>`<div class="gt__r${r.cls?' '+r.cls:''}" style="grid-template-columns:${tpl}"${r.click?` data-click="${r.click}" data-arg="${esc(String(r.arg))}"`:''}>${r.c.map((x,i)=>`<div data-l="${esc(cols[i].l)}"${cols[i].cls?` class="${cols[i].cls}"`:''}>${x}</div>`).join('')}</div>`).join('');
  return `<div class="gt">${hd}${body}</div>`;};
 const won=n=>n.toLocaleString('ko-KR');
@@ -65,8 +65,8 @@ function vHome(el){
     <div class="soft">계열별 커버리지 공백 — <b>의약·예체능 진로 상담 가용 교사 부족</b> (풀 현황 히트맵 O-08) → 3월 정기 모집 시 우선 선발 계열로 반영</div></div></div>`;
   /* ③ 주 단위 */
   const rkN=D.RK.filter(r=>!S.cd3Q[r[0]]).length;
-  const sec3=`<div class="cg3">${D.CARDS3.map(c=>{const mx=Math.max(...c[3]);return `<section class="cc"><div class="cc__bd"><div style="display:flex;gap:8px;align-items:center"><b class="sp" style="font-size:13px">${c[0]}</b>${go(c[4])}</div><div class="bignum" style="margin-top:4px">${c[1]}</div><div class="mini">${c[3].map(x=>`<i style="height:${Math.round(x*100/mx)}%"></i>`).join('')}</div><p class="nt" style="font-size:12px">${c[2]}</p></div></section>`;}).join('')}</div>
-   ${card(`<span class="sp">3-4 리스크 관리 — 상담일정 변경·어긋남</span>${chipC(rkN+'건','cnt')}${go('risk')}`,riskRows(),'D-1 18시 이전 어긋남은 플랜B 완전 자동 — 여기 표시되는 건 당일 건·옵션 0개·무응답뿐 · 이번 주 어긋남 9건 중 자동 해결 7','np')}`;
+  const xN=olxOpen();const sec3=`<div class="cg3">${D.CARDS3.map((c,ci)=>{const mx=Math.max(...c[3]);const d=ci===0?`답변완료 35 · 답변중 6 — <b style="color:${xN.total?'#c03535':'#157f3d'}">미배정 ${xN.un} · SLA 초과 ${xN.sla} · 반려 대기 ${xN.rej}</b> (게시판 상담 화면에서 처리)`:c[2];return `<section class="cc"><div class="cc__bd"><div style="display:flex;gap:8px;align-items:center"><b class="sp" style="font-size:13px">${c[0]}</b>${go(c[4])}</div><div class="bignum" style="margin-top:4px">${c[1]}</div><div class="mini">${c[3].map(x=>`<i style="height:${Math.round(x*100/mx)}%"></i>`).join('')}</div><p class="nt" style="font-size:12px">${d}</p></div></section>`;}).join('')}</div>
+   ${card(`<span class="sp">3-4 리스크 관리 — 상담일정 변경·어긋남</span>${chipC(rkN+'건','cnt')}${go('risk')}`,riskRows(),'D-1 18시 이전 어긋남은 플랜B 완전 자동 — 여기 표시되는 건 당일 건·옵션 0개·무응답뿐 · 이번 주 어긋남 9건 중 자동 해결 7 · 예외는 별도 큐 없이 이 목록과 게시판 상담 화면에서 처리','np')}`;
   /* ④ 상담관리 */
   const pay=S.copPay||0;
   const sec4=`<div class="cg3"><section class="cc"><div class="cc__bd"><div style="display:flex;gap:8px;align-items:center"><b class="sp" style="font-size:13px">4-1 상담 보고서 관리</b>${go('rp')}</div>
@@ -83,13 +83,14 @@ function vHome(el){
    ${payStages(pay)}${payBtn(pay,'cbtn--block')}${ft('채널별 완료 기준(K13) · 단가 손입력 폐지 · 콘솔 O-06과 상태 공유')}</div></section></div>`;
   /* ⑤ 통계관리 */
   const st=statBlock();
-  el.innerHTML=`<div class="cns"><div class="sub"><span>상담실무사 · 예외 관리자 · 상담운영 Role · 2026.09.02 (수)</span><span class="sp"></span>${btn('예외 큐 열기','openQueue',null)}${btn('데모 상태 초기화','reset',null,'cbtn--line')}</div>
+  el.innerHTML=`<div class="cns"><div class="sub"><span>상담실무사 · 예외 관리자 · 상담운영 Role · 2026.09.02 (수)</span><span class="sp"></span>${btn('데모 상태 초기화','reset',null,'cbtn--line')}</div>
    <h2 class="sec" style="margin-top:0">1. 상담일정표 — 2026년 9월 · 전 채널<span class="sp"></span>${seg([['cal','달력'],['list','월별 리스트']],S.cd1View,'cd1View')}</h2>${S.cd1View==='cal'?cal:list}
    <h2 class="sec">2. 상담선생님 관리</h2>${sec2}
    <h2 class="sec">3. 주 단위 상담 현황 — 9/1 (월) ~ 9/5 (금)<small>막대 = 요일별 건수 (월~금)</small></h2>${sec3}
    <h2 class="sec">4. 상담관리</h2>${sec4}
    ${st}</div>`;
 }
+const olxOpen=()=>{const o={un:0,sla:0,rej:0,total:0};Object.entries(D.OLX).forEach(([no,x])=>{if(!S.olX[no]){o[x[0]]++;o.total++;}});return o;};
 function riskRows(){return D.RK.map(r=>`<div class="lr">${chip(r[1],r[2],r[3],'ch--sq')}<span class="sp">${r[4]}</span>${dbtn(S.cd3Q[r[0]],r[5],'✓ 처리됨','cd3Q',r[0])}</div>`).join('');}
 function payStages(pay){const st=[['자동 산정',true],['조서',pay>=1],['결재',pay>=2],['에듀파인 파일',pay>=2]];return `<div class="tgs" style="margin:9px 0">${st.map(([l,on])=>chipP(l,on?C.green:C.off)).join('')}</div>`;}
 function payBtn(pay,cls=''){const L=['월 마감 · 수당지급조서 생성','결재 승인 (정보원 담당자)','✓ 에듀파인 업로드 파일 생성됨'];return pay>=2?`<button type="button" class="cbtn cbtn--done ${cls}" disabled>${L[2]}</button>`:btn(L[pay],'copPay',null,cls);}
@@ -175,13 +176,16 @@ function vRisk(el){
 /* ─────────────── 콘솔 : 온라인 게시판 상담 ─────────────── */
 function vOl(el){
   const rows=D.OLR.filter(r=>S.olT==='all'||r[7]===S.olT);const msN=rows.filter(r=>S.olMs[r[0]]).length,allOn=msN===rows.length&&rows.length>0;
-  const tbl=gt([{l:'',cls:'c'},{l:'번호'},{l:'학교급'},{l:'상담분류'},{l:'제목',cls:'el'},{l:'작성자'},{l:'등록일자'},{l:'답변일자'},{l:'상태'},{l:'상담선생님'}],rows.map(r=>({cls:S.olSel===r[0]?'is-sel':'',c:[`<button type="button" class="ck" data-act="olMs" data-arg="${r[0]}" aria-label="선택">${ck(!!S.olMs[r[0]])}</button>`,`<button type="button" class="nm" data-act="olSel" data-arg="${r[0]}">${r[0]}</button>`,r[1],r[2],`<button type="button" class="nm el" style="max-width:100%" data-act="olSel" data-arg="${r[0]}">${r[3]}</button>`,r[4],r[5],r[6],chipP(r[7],D.STC[r[7]]),r[8]]})),{tpl:'26px 46px 104px 76px 1fr 108px 86px 86px 66px 82px'});
+  const tbl=gt([{l:'',cls:'c'},{l:'번호'},{l:'학교급'},{l:'상담분류'},{l:'제목',cls:'el'},{l:'작성자'},{l:'등록일자'},{l:'답변일자'},{l:'상태'},{l:'상담선생님'}],rows.map(r=>({cls:S.olSel===r[0]?'is-sel':'',c:[`<button type="button" class="ck" data-act="olMs" data-arg="${r[0]}" aria-label="선택">${ck(!!S.olMs[r[0]])}</button>`,`<button type="button" class="nm" data-act="olSel" data-arg="${r[0]}">${r[0]}</button>`,r[1],r[2],`<button type="button" class="nm el" style="max-width:100%" data-act="olSel" data-arg="${r[0]}">${r[3]}</button>`,r[4],r[5],r[6],`<span class="tgs" style="gap:3px">${chipP(r[7],D.STC[r[7]])}${D.OLX[r[0]]&&!S.olX[r[0]]?chipC(D.OLX[r[0]][1],'red'):''}</span>`,r[8]]})),{tpl:'26px 46px 104px 76px 1fr 108px 86px 86px 96px 82px'});
   let det='';const r=D.OLR.find(x=>x[0]===S.olSel);
   if(r){const st=r[7],act=S.olAct,tch=r[8],vw=r[10],sa=r[11];
    const base=kv([['제목',r[3]],['작성자',r[4]],['학교급',r[1]],['상담분류',r[2]],['작성일',r[5]],['조회수',r[9]]],72);
    const content=st==='삭제요청'?'(본문 비공개 — 삭제요청 건 · 삭제사유 미작성 시 삭제 처리 안 됨)':'안녕하세요. 상담 요청드립니다 — 현재 상황과 궁금한 점을 정리해 올립니다. (본문 비공개 — 본인·배정교사·실무사만 열람)';
    let body='';
-   if(st==='진행중'&&act!=='cat'&&act!=='catOk'){body=`<div class="box"><h4>답변작성</h4><p class="nt"><b>담당선생님</b> — ${tch==='—'?'미지정 — 학교급×상담분류 매칭 후보에서 선택':tch+' 선생님 (배정됨)'}</p>
+   const X=D.OLX[r[0]],xd=S.olX[r[0]];let xb='';
+   if(X&&X[0]==='un'){xb=xd?ok(`✓ 수동 배정 — ${xd} 선생님 · 배정 통지 · 맥락 카드 전달 · 열람 권한 부여 · 이력 기록`):`<div class="box rd" style="margin-bottom:8px"><h4 style="color:#c03535">예외 — ${X[1]}</h4><p class="nt" style="font-size:12px">${X[2]}</p><div class="tgs" style="margin-top:6px"><span class="ft" style="margin:0">매칭 후보에서 수동 배정</span>${D.OLXCAND.map(c=>btn(c,'olxAssign',c,'cbtn--xs')).join('')}</div></div>`;}
+   if(X&&X[0]==='sla'){xb=xd?ok('✓ 에스컬레이션 — 담당 교사 + 지원단장 통지 · 대체 교사 매칭 후보 제시 · 신청자 지연 안내 · 이력 기록'):`<div class="box rd" style="margin-bottom:8px"><h4 style="color:#c03535">예외 — ${X[1]}</h4><p class="nt" style="font-size:12px">${X[2]}</p><div class="acts" style="margin-top:6px">${btn('에스컬레이션 — 지원단장 통지 · 대체 교사 제시','olxEsc',null,'cbtn--xs cbtn--red')}<span class="ft" style="margin:0">실무사는 대리 답변 불가 — 재배정·에스컬레이션만</span></div></div>`;}
+   if(st==='진행중'&&act!=='cat'&&act!=='catOk'){body=`${xb}<div class="box"><h4>답변작성</h4><p class="nt"><b>담당선생님</b> — ${xd&&X&&X[0]==='un'?xd+' 선생님 (수동 배정됨)':tch==='—'?'미지정 — 학교급×상담분류 매칭 후보에서 선택':tch+' 선생님 (배정됨)'}</p>
     <div class="box ai" style="margin:8px 0"><div class="tgs" style="margin-bottom:6px">${chipC('[AI 예상답변] RAG','purple')}<span class="ft" style="margin:0">신청 글 + 연결한 내 정보(동의) 기반 · 근거 없으면 '모른다'</span></div>
     <p class="nt">"학종 자소서는 2027 대입에서 대부분 폐지되었으나, 문의하신 전형은 서류평가에서 학생부 세특 중심으로 평가합니다. 연결된 성적(내신 2.55) 기준으로는 ○○ 전형 지원 시…" (초안 전문 3문단)</p>
     <div class="tgs" style="margin:6px 0">${chipC('근거 ① 2027 모집요강 p.34','link')}${chipC('근거 ② FAQ #212','link')}${chipC('근거 ③ 확정 답변 #3540 (가명)','link')}</div>
@@ -197,16 +201,16 @@ function vOl(el){
     ${!sa?(S.olSatRm?ok('✓ 만족도 리마인드 발송 — 센터 대표번호(C-02) · 딥링크 · 발송 로그 기록'):'<div class="acts">'+btn('만족도 리마인드 발송 (C-02)','olSatRm',null,'cbtn--xs')+'</div>'):''}</div></div>
     <div class="acts" style="justify-content:flex-end">${btn('목록','olList',null,'cbtn--line')}${btn('삭제','olDel',null,'cbtn--line cbtn--red')}${btn('수정','noop','목업 — 수정은 작성 교사 화면에서','cbtn--line')}</div>`;}
    if(st==='분류변경'||act==='cat'||act==='catOk'){body=`<div class="box bl"><h4>담당선생님변경 (분류변경)</h4><div class="tgs"><span class="sel tg">학교급 ▾</span><span class="sel tg">상담분류 ▾</span><span class="ft" style="margin:0">변경선생님 —</span>${[['정하늘 — 자연계열'],['윤가람 — 인문계열'],['오세훈 — 대입상담']].map(([x])=>btn(x,'olCatPick',x,'cbtn--xs cbtn--line')).join('')}</div>${ft('선택한 사항으로 담당선생님이 변경(수정)됩니다 — 변경 이력 기록 · 신·구 교사 양측 알림')}</div><div class="acts">${btn('목록','olList',null,'cbtn--line')}</div>`;}
-   if(st==='삭제요청'){body=`<div class="box rd"><h4>삭제사유 (미작성 시 삭제 처리 안 됨)</h4><input class="in" aria-label="삭제 사유" placeholder="삭제 사유를 입력하세요 — 사유는 신청자에게 통지됩니다"></div><div class="acts">${btn('목록','olList',null,'cbtn--line')}${btn('삭제','olDel')}${btn('복원','olRest',null,'cbtn--gl')}</div>`;}
+   if(st==='삭제요청'){const rj=X&&X[0]==='rej'?(xd?ok(`✓ 반려 — 사유 코드 [${xd}] · 신청자에게 사유 통지 · 소프트 보관(삭제 아님 · 복원 가능) · 이력 기록`):`<div class="box rd" style="margin-bottom:8px"><h4 style="color:#c03535">예외 — ${X[1]}</h4><p class="nt" style="font-size:12px">${X[2]}</p><div class="tgs" style="margin-top:6px"><span class="ft" style="margin:0">사유 코드 선택 → 반려·통지</span>${D.REJCODES.map(c=>btn('반려 — '+c,'olxReject',c,'cbtn--xs')).join('')}</div></div>`):'';body=`${rj}<div class="box rd"><h4>삭제사유 (미작성 시 삭제 처리 안 됨)</h4><input class="in" aria-label="삭제 사유" placeholder="삭제 사유를 입력하세요 — 사유는 신청자에게 통지됩니다"></div><div class="acts">${btn('목록','olList',null,'cbtn--line')}${btn('삭제','olDel')}${btn('복원','olRest',null,'cbtn--gl')}</div>`;}
    if(st==='미등록'){body=`<div class="box"><h4>미등록 (임시저장)</h4><p class="nt">신청자가 임시저장한 건 — [확인] 시 저장(등록)되어 [진행중]에서 조회, [임시저장]은 미등록 유지 · 신청자 마이페이지 &gt; 온라인상담내역에 "미등록"으로 표시</p></div><div class="acts">${btn('목록','olList',null,'cbtn--line')}${btn('확인','noop','목업 — 등록 처리는 신청자 화면 기준')}${btn('임시저장','noop','목업 — 미등록 유지','cbtn--line')}</div>`;}
    const msg={ansOk:'✓ 답변 저장 — [탭] 완료에서 조회 · 답변 게시 통지(딥링크) 발송 · 만족도 요청',catOk:'✓ 담당선생님 변경 완료 — 변경 이력 기록 · 신·구 교사 양측 알림 · 열람 권한 이전',delOk:'삭제 처리 — 입력한 삭제사유로 처리·삭제일자 업데이트 (소프트 삭제 — 실질 DB 삭제는 되지 않음) · 사유 통지',rest:'✓ 복원 완료 — 해당 학교급·상담분류 목록에서 조회됩니다'}[act];
    det=`<div class="dh">${chipC('상담 신청 조회','navy')}<span class="sp"></span>${btn('목록','olList',null,'cbtn--xs cbtn--line')}</div><div class="cc__bd">${base}<p class="nt" style="margin:10px 0"><b>상담내용</b> — ${content}</p>${body}${msg?ok(msg):''}</div>`;}
-  el.innerHTML=`<div class="cns"><section class="cc"><div class="cc__hd"><span>온라인 게시판 상담</span><span class="path">홈 &gt; 상담관리 &gt; 온라인 게시판 상담</span><span class="sp"></span>${chipC('누적 17,574건 · SLA 48h','gray')}</div>
+  el.innerHTML=`<div class="cns"><section class="cc"><div class="cc__hd"><span>온라인 게시판 상담</span><span class="path">홈 &gt; 상담관리 &gt; 온라인 게시판 상담</span><span class="sp"></span>${(()=>{const x=olxOpen();return x.total?chipC(`예외 ${x.total}건 — 미배정 ${x.un} · SLA 초과 ${x.sla} · 반려 대기 ${x.rej}`,'red'):chipC('예외 0건','green');})()}${chipC('누적 17,574건 · SLA 48h','gray')}</div>
    ${ctabs(D.OLTABS,S.olT,'olT')}
    <div class="tbar"><span class="sel">2026-08-01</span>~<span class="sel">2026-09-02</span><span class="sel">학교급 ▾</span><span class="sel">상담분류 ▾</span><span class="sel">제목 ▾</span><input type="search" placeholder="검색어" aria-label="검색어"><button type="button" class="cbtn cbtn--xs" data-act="noop" data-arg="검색 결과는 목업 목록과 동일합니다">검색</button><button type="button" class="cbtn cbtn--xs cbtn--line" data-act="noop" data-arg="엑셀 — 개인정보 제외 · 출력 이력 기록">엑셀</button><span class="sp"></span>${btn('일괄 분류변경'+(msN?` (${msN})`:''),'olBulkCat',null,'cbtn--xs'+(msN?'':' cbtn--off'))}${btn('일괄 삭제'+(msN?` (${msN})`:''),'olBulkDel',null,'cbtn--xs '+(msN?'cbtn--red':'cbtn--off'))}</div>
    ${S.olBulk?`<div style="padding:8px 14px 0">${ok('✓ '+S.olBulk)}</div>`:''}
    <div class="gt"><div class="gt__hd" style="grid-template-columns:26px 1fr"><div><button type="button" class="ck" data-act="olAll" aria-label="전체 선택">${ck(allOn,msN>0&&!allOn)}</button></div><div style="font-size:11px;color:#8a94ac;font-weight:600">전체 선택 · 번호·제목 클릭 → 하단 상세</div></div></div>${tbl}
-   <div class="cc__ft">행(제목) 클릭 → 하단 상세 · 답변일자 없는 진행중 건은 SLA 48h 관리(24h 교사 리마인드) · 누적 17,574건 — 교사 확정 답변만 가명화 후 RAG 소스</div>${det}</section></div>`;
+   <div class="cc__ft">행(제목) 클릭 → 하단 상세 · 답변일자 없는 진행중 건은 SLA 48h 관리(24h 교사 리마인드) · 예외(미배정 2h·SLA 48h 초과·반려 대기)는 행에 빨간 배지로 표시, 상세에서 수동 배정·에스컬레이션·반려로 처리 — 정상 건은 실무사 개입 없음 · 누적 17,574건 — 교사 확정 답변만 가명화 후 RAG 소스</div>${det}</section></div>`;
 }
 /* ─────────────── 콘솔 : 온라인(화상) · 방문 (공통 구조) ─────────────── */
 const CC={진행중:C.blue,완료:C.green,일정변경:C.amber};
@@ -334,9 +338,9 @@ function esHtml(){
   const isOl=cur==='ol',isVc=cur==='vc'||cur==='wv';const tab=isOl?'alarm':(S.esTab||'main');
   const curL=tab==='alarm'?'AI 분석 및 상담이력':(isVc?'AI 회의록':'콘솔 정보');
   let body='';
-  if(tab==='main'&&!isVc){const qN=D.QROWS.filter(q=>!S.copQ[q[0]]).length,pay=S.copPay||0;
+  if(tab==='main'&&!isVc){const pay=S.copPay||0;
    body=`<div class="ekp"><div><b>94%</b><span>자동 배정률 (실무사 개입 0 목표)</span></div><div><b>3%</b><span>실무사 개입 건 비율 — 예외만</span></div><div><b>63%</b><span>만족도 응답률 (현행 11%)</span></div><div><b>0건</b><span>학생부 이메일 전달 · 발송 누락</span></div></div>
-   <div class="ec" id="esQueue"><h4><span class="sp">O-02 상담 예외 큐 — 예외만 표시</span>${chipC(qN+'건','cnt')}</h4>${D.QROWS.map(q=>`<div class="qrow"><div class="sp"><b>${q[1]}</b><div class="ds">${q[2]}</div></div>${dbtn(S.copQ[q[0]],q[3],'✓ 처리됨','copQ',q[0],'cbtn--xs')}</div>`).join('')}<p class="ft">정상 건은 큐에 뜨지 않음 — 실무사는 예외 관리자 · 관리자 대리 답변 불가(재배정·반려만)</p></div>
+   <p class="ft" style="margin:0">예외는 별도 큐 없이 프로세스 안에서 처리 — 게시판 상담(미배정·SLA·반려) · 리스크 관리(플랜B 옵션 0개·당일 건) 화면의 빨간 배지</p>
    <div class="ec"><h4>O-01 위촉 명부·승인 — 수명주기 (핵심 ⑪)</h4><p>풀(교원 인증 412명) → <b>3월 공문 모집</b> → 심사·선발(경쟁률 약 2:1, K16) → <b>4.1 위촉</b>(역할 승격·기간 등록) → 활동/보류 → <b>익년 3.31 자동 만료·회수</b> · 연 단위 재승인 — 현행 "상담중/보류" 1비트 대체</p>${D.APR.map(a=>`<div class="qrow"><div class="sp"><b>${a[1]}</b><div class="ds">${a[2]}</div></div>${dbtn(S.copAppr[a[0]],'심사 → 승인','✓ 위촉 승인','copAppr',a[0],'cbtn--xs')}</div>`).join('')}<div class="soft" style="margin-top:8px;background:#fdf1de;color:#7a5410">만료 예정 — 전원 2027.3.31 자동 회수 (연 1회 주기) · 풀 현황 히트맵(O-08): 진로상담교사단 38 · 대학진학지도지원단 62 · 한 풀이 전 채널 담당(Q2)</div></div>
    <div class="ec"><h4>O-06 수당 산정·조서 — 8월 (핵심 ⑨)</h4><p>화상 812건 × 40,000 = 32,480,000<br>방문 391건 × 50,000 = 19,550,000<br>온라인 답변 81건 × 15,000 = 1,215,000</p><p style="font-weight:800;color:#16386f">계 1,284건 · 53,245,000원 — 단가표 마스터 v3</p>${payStages(pay)}${payBtn(pay,'cbtn--block cbtn--xs')}<p class="ft">채널별 완료 기준(K13) — 온라인: 답변 등록 교사만 · 방문/화상: 보고서 확정 · 전화: 실적만 집계, 수당 0 · 취소·노쇼는 정책값 · 단가 손입력·수동 재입력 폐지 · 교사는 T-06에서 본인 실적·이의 제기</p></div>
    <div class="ec"><h4>O-04·O-05 실적·과거 이관 (핵심 ⑧)</h4><p>상담 원장 1개(온라인·방문·화상·전화·현장) + 코드 2축(유형×계열) — 창구 3곳 통계 불일치 0 목표</p><div class="tgs">${[['all','전체'],['A','A 완전 71%'],['B','B 부분 22%'],['C','C 추정 7%']].map(([k,l])=>tgl(S.copCoh===k,l,'copCoh',k)).join('')}</div><div class="soft" style="margin-top:8px">${D.COH[S.copCoh]}</div></div>
@@ -366,12 +370,13 @@ function aiAnalysisHtml(teacher){
 function renderEs(){
   document.querySelectorAll('#cnsEs,#cnsRail').forEach(n=>n.remove());const main=document.getElementById('opsMain');if(!main)return;
   const teacher=isCounselor();const show=teacher?cur==='tdash':ES_VIEWS.includes(cur);const off=teacher?S.ctEsOff:S.esOff;
+  main.classList.remove('cns-narrow');
   if(!show){main.style.marginRight='';return;}
   const tablet=window.matchMedia('(max-width:1023px)').matches;
   if(off){main.style.marginRight=tablet?'':'44px';main.insertAdjacentHTML('beforeend',`<div class="es-rail" id="cnsRail" role="button" tabindex="0" data-act="esOpen" aria-label="${teacher?'AI 분석 패널 열기':'콘솔 정보 패널 열기'}"><b>◀</b><span>${teacher?'AI 분석':'콘솔 정보'}</span></div>`);return;}
-  const w=teacher?400:(S.esW||400);main.style.marginRight=tablet?'':(w+14)+'px';
+  const w=teacher?400:(S.esW||400);main.style.marginRight=tablet?'':(w+14)+'px';if(!tablet&&main.clientWidth<980)main.classList.add('cns-narrow');
   main.insertAdjacentHTML('beforeend',teacher?`<aside class="es" id="cnsEs" aria-label="AI 분석 및 상담이력"><div class="es__hd"><span class="cur">AI 분석 및 상담이력</span><button type="button" class="xbt" data-act="esClose" aria-label="패널 닫기">✕</button></div>${aiAnalysisHtml(true)}</aside>`:esHtml());
-  const h=document.getElementById('esHdl');if(h)h.addEventListener('mousedown',e=>{const sx=e.clientX,sw=S.esW||400;document.body.style.userSelect='none';const mv=ev=>{const nw=Math.min(760,Math.max(340,sw+(sx-ev.clientX)));S.esW=nw;const p=document.getElementById('cnsEs');if(p)p.style.width=nw+'px';main.style.marginRight=(nw+14)+'px';};const up=()=>{window.removeEventListener('mousemove',mv);window.removeEventListener('mouseup',up);document.body.style.userSelect='';save();};window.addEventListener('mousemove',mv);window.addEventListener('mouseup',up);e.preventDefault();});
+  const h=document.getElementById('esHdl');if(h)h.addEventListener('mousedown',e=>{const sx=e.clientX,sw=S.esW||400;document.body.style.userSelect='none';const mv=ev=>{const nw=Math.min(760,Math.max(340,sw+(sx-ev.clientX)));S.esW=nw;const p=document.getElementById('cnsEs');if(p)p.style.width=nw+'px';main.style.marginRight=(nw+14)+'px';main.classList.toggle('cns-narrow',main.clientWidth<980);};const up=()=>{window.removeEventListener('mousemove',mv);window.removeEventListener('mouseup',up);document.body.style.userSelect='';save();};window.addEventListener('mousemove',mv);window.addEventListener('mouseup',up);e.preventDefault();});
 }
 /* ─────────────── 상담선생님 대시보드 ─────────────── */
 const WD3=['화','수','목','금','토','일','월'],wd3=d=>WD3[(d-1)%7];
@@ -441,7 +446,6 @@ const toast=m=>window.showToast&&showToast(m);
 const ACT={
  noop:(a)=>toast(a||'목업 — 이 조작은 시연용입니다'),
  reset:()=>{localStorage.removeItem(KEY);S=clone(DEF);draw();toast('데모 상태를 초기화했어요');},
- openQueue:()=>{S.esOff=false;S.esTab='main';save();if(location.hash==='#mg')draw();else location.hash='#mg';setTimeout(()=>{const q=document.getElementById('esQueue');q&&q.scrollIntoView({block:'start'});},50);},
  cd1View:a=>set({cd1View:a}),cd1D:a=>set({cd1D:+a}),cd2St:a=>{const i=+a;setK('cd2St',i,!(S.cd2St[i]??(i===2)));},cd2Ap:a=>{setK('cd2Ap',a,true);toast('잔여 위촉 기간(~2027.3.31)으로 위촉했어요 · 역할 승격 + 위촉 등록');},
  cd3Q:a=>{setK('cd3Q',a,true);toast('처리했어요 · 감사로그 기록');},cd4Rm:()=>{set({cd4Rm:true});toast('미확정 2건에 리마인드를 보냈어요 (C-02)');},
  copPay:()=>{const p=Math.min((S.copPay||0)+1,2);set({copPay:p});toast(p===1?'수당지급조서를 생성했어요':'결재 승인 · 에듀파인 업로드 파일을 생성했어요');},
@@ -479,7 +483,7 @@ const ACT={
  /* 스케줄 */
  grid:a=>{const g=Object.assign({},S.grid||D.BKDEF);g[a]=((g[a]||0)+1)%3;set({grid:g});},
  /* 패널 */
- copQ:a=>{setK('copQ',a,true);toast('예외 큐 처리 — 감사로그 기록');},copAppr:a=>{setK('copAppr',a,true);toast('위촉 승인 — 역할 승격 · 기간 등록');},copCoh:a=>set({copCoh:a}),aiUse:()=>{set({aiUse:true});toast('보고서 초안에 반영 — 교사 확정 전 미노출');},
+ olxAssign:a=>{setK('olX',S.olSel,a.split(' — ')[0]);toast('수동 배정 — 배정 통지 · 맥락 카드 전달');},olxEsc:()=>{setK('olX',S.olSel,'esc');toast('에스컬레이션 — 지원단장 통지 · 대체 교사 제시');},olxReject:a=>{setK('olX',S.olSel,a);toast(`반려 — 사유 코드 [${a}] · 신청자 통지`);},copAppr:a=>{setK('copAppr',a,true);toast('위촉 승인 — 역할 승격 · 기간 등록');},copCoh:a=>set({copCoh:a}),aiUse:()=>{set({aiUse:true});toast('보고서 초안에 반영 — 교사 확정 전 미노출');},
  esTab:a=>set({esTab:a}),esClose:()=>set(isCounselor()?{ctEsOff:true}:{esOff:true}),esOpen:()=>set(isCounselor()?{ctEsOff:false}:{esOff:false}),
  /* 상담선생님 */
  ct3V:a=>set({ct3V:a}),ct3D:a=>set({ct3D:+a}),ctRqF:a=>set({ctRqF:a}),ctRqOk:a=>{setK('ctRq',a,'ok');toast('수락 — 내 일정 추가 · 양측 통지');},ctRqNo:a=>{setK('ctRq',a,'no');toast('거절 — 사유 기록 · 자동 재배정');},ctRqSel:a=>set({ctRqSel:S.ctRqSel===a?null:a}),
@@ -499,7 +503,7 @@ document.addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;c
 const VIEWS={home:vHome,mg:vMg,risk:vRisk,ol:vOl,vc:el=>vcwv(el,'vc'),wv:el=>vcwv(el,'wv'),rp:vRp,st:vSt,py:vPy,book:vBook,tdash:vTdash};
 function draw(){const el=document.getElementById('opsView');if(!el||!cur||!VIEWS[cur])return;const y=window.scrollY;VIEWS[cur](el);renderEs();syncBadges();window.scrollTo(0,y);}
 function badges(){const r=window.SEN_AUTH&&SEN_AUTH.roleObj;if(r&&r.k==='counselor')return {tdash:D.RQ.filter(x=>!S.ctRq[x[0]]).length+D.REP2.filter(p=>!S.ctRp[p[0]]).length};
- return {risk:D.RK.filter(x=>!S.cd3Q[x[0]]).length,mg:D.QROWS.filter(q=>!S.copQ[q[0]]).length,rp:2};}
+ return {risk:D.RK.filter(x=>!S.cd3Q[x[0]]).length,ol:olxOpen().total,rp:2};}
 function syncBadges(){const b=badges();document.querySelectorAll('.ops-side a').forEach(a=>{const k=a.getAttribute('href').slice(1);let n=a.querySelector('.n');if(b[k]){if(!n){n=document.createElement('span');n.className='n';a.appendChild(n);}n.textContent=b[k];}else if(n)n.remove();});}
 const MENUS_OFFICE=[{k:'home',label:'실무사 대시보드',grp:'대시보드'},{k:'mg',label:'상담자관리',code:'O-01',grp:'상담관리 콘솔'},{k:'risk',label:'리스크 관리 (플랜B)',code:'O-02'},{k:'ol',label:'온라인 게시판 상담',code:'O-03'},{k:'vc',label:'온라인(화상) 상담',code:'O-03'},{k:'wv',label:'방문상담',code:'O-03'},{k:'rp',label:'상담 보고서 관리',code:'O-05'},{k:'st',label:'상담 만족도 조사',code:'O-07'},{k:'py',label:'수당관리 (조서)',code:'O-06'},{k:'book',label:'스케줄·예약 (P1/P2)',code:'T-02'}];
 const MENUS_COUNSELOR=[{k:'tdash',label:'상담선생님 대시보드',grp:'내 상담'},{k:'book',label:'내 상담 스케줄 (P1/P2)',code:'T-02'}];

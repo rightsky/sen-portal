@@ -68,6 +68,7 @@
 .gt{font-size:12px}
 .gt__hd,.gt__r{display:grid;gap:8px;align-items:center;padding:8px 14px;border-bottom:1px solid var(--ln3)}
 .gt__hd{font-size:11px;font-weight:800;color:#5b6680;background:#fff}
+.gt__hd>div,.gt__r>div{min-width:0;overflow-wrap:anywhere}
 .gt__r:hover{background:#f7f9fc}
 .gt__r.is-sel{background:#eef3fb}
 .gt__r.is-sum{background:#f7f9fc;font-weight:800}
@@ -205,6 +206,14 @@
 .cns .week.is-today{background:#eef3fb}
 .cns .rk{width:22px;height:22px;border-radius:6px;display:inline-grid;place-items:center;font-size:11px;font-weight:800;flex:none}
 .cns .hilite{background:#e8effc;color:var(--n);font-weight:700;border-radius:8px;padding:7px 10px;font-size:12px;margin-bottom:8px}
+/* 우측 패널이 열려 본문이 좁을 때(≤980px) : 표 그리드 → 카드 */
+.cns-narrow .gt__hd{display:none}
+.cns-narrow .gt__r{grid-template-columns:1fr 1fr!important;gap:3px 14px;padding:10px 14px}
+.cns-narrow .gt__r>[data-l]::before{content:attr(data-l) " · ";color:var(--dim);font-size:11px;font-weight:700}
+.cns-narrow .gt__r>[data-l=""]::before{content:none}
+.cns-narrow .gt .num{text-align:left}.cns-narrow .gt .el{white-space:normal}
+.cns-narrow .gt__r.is-sum{display:flex;flex-wrap:wrap;gap:8px 14px}
+.cns-narrow .cgb,.cns-narrow .cga,.cns-narrow .cg2{grid-template-columns:1fr}
 /* 태블릿 */
 @media (max-width:1023px){
   .cg2,.cg3,.cg4,.cga,.cgb,.cgc,.cgd{grid-template-columns:1fr}
