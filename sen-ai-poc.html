@@ -182,6 +182,10 @@ th{color:var(--ink-3);font-weight:600;font-size:13px}
   </header>
 
   <h1>AI PoC</h1>
+  <div class="card" style="border:2px solid var(--brand);background:var(--brand-soft)">
+    <div class="row" style="justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap"><div><b style="font-size:16px">예시 데이터로 전체 PoC 체험하기</b><p class="muted" style="margin:4px 0 0">파일이나 생기부가 없어도 돼요. 예시 문서 2건(docx) → md 변환·지식DB 등록 → 예시 질문으로 RAG → 예시 생기부로 세 역량 분석까지 순서대로 돌아갑니다. AI가 연결되지 않은 상태에서도 검색·규칙 기반으로 끝까지 진행돼요.</p></div><button class="btn" id="demoAll" style="flex:none">처음부터 끝까지 자동 실행 ▶</button></div>
+    <div class="row" style="margin-top:10px;gap:8px"><button class="btn gray" id="demoMd">① 예시 문서 md 변환</button><button class="btn gray" id="demoRag">② 예시 질문으로 RAG</button><button class="btn gray" id="demoRec">③ 예시 생기부 분석</button><span class="muted" id="demoState" style="align-self:center;font-size:13px"></span></div>
+  </div>
   <p class="muted">오른쪽 아래 <b>AI PoC</b> 버튼을 누르면 세 기능(원천 데이터 md 만들기 · RAG 어시스턴트 · 생기부 AI 활용) 중 하나를 고를 수 있습니다. 모든 AI 응답에는 근거 출처·학년도·기준일이 붙고, 생기부는 비식별 처리 뒤에만 AI에 전달됩니다.</p>
 
   <div class="tabs" role="tablist" aria-label="PoC 영역">
@@ -663,6 +667,7 @@ function workerSample(base){
       for(;;){const{value,done}=await rd.read();if(done)break;buf+=dec.decode(value,{stream:true});
         let i;while((i=buf.indexOf('\n'))>=0){const line=buf.slice(0,i).trim();buf=buf.slice(i+1);
           if(!line.startsWith('data:'))continue;let ev;try{ev=JSON.parse(line.slice(5));}catch(e){continue;}
+          window.__aiDbg=window.__aiDbg||{n:0,types:{}};window.__aiDbg.n++;window.__aiDbg.types[ev.type]=(window.__aiDbg.types[ev.type]||0)+1;if(ev.type==='message_delta'&&ev.delta)window.__aiDbg.stop=ev.delta.stop_reason||'';if(ev.type==='message_start')window.__aiDbg={n:1,types:{message_start:1},stop:''};
           if(ev.type==='content_block_delta'&&ev.delta&&ev.delta.type==='text_delta'){text+=ev.delta.text;if(opts.onText)opts.onText({text});}
           else if(ev.type==='error'){throw{code:(ev.error&&ev.error.type)==='overloaded_error'?'rate_limited':'upstream',text};}}}
     }catch(e){if(e&&e.code)throw e;throw{code:e.name==='AbortError'?'cancelled':'network',text};}
@@ -726,6 +731,7 @@ function ragRestore(){try{const arr=JSON.parse(sessionStorage.getItem(RAG_KEY)||
 function autoGrow(t){t.style.height='auto';t.style.height=Math.min(160,t.scrollHeight)+'px';}
 async function askRag(preset){
   const inp=$('#ragInput');const q=(preset!=null?preset:inp.value).trim();if(!q||ragCtl)return;inp.value='';autoGrow(inp);
+  if(!KB.chunks.length){toast('지식DB가 비어 있어 기본 지식 6편을 먼저 불러왔어요');await ingest(SEED.map(x=>new File([x.text],x.name,{type:'text/markdown'})));}
   addUser(q);ragSeen.add(q);renderChips();ragKbBadge();
   const hits=search(q,4);
   if(!hits.length){noResult(q);ragSave(q,'',[]);return;}
@@ -785,31 +791,38 @@ $('#recDeid').addEventListener('click',()=>{
 let synthText='',recCtl=null;const recHist=[];
 function recContext(){const hits=search('학업역량 진로역량 공동체역량 좋은 기록 아쉬운 기록 세특 실전 기록법',5);return hits.map((h,i)=>`[${i+1}] (${h.c.doc} › ${h.c.sec})\n${h.c.text}`).join('\n\n');}
 let recPrompt='';
-function recNote(l){const n=$('#recOutNote');if(!n)return;n.textContent=l==='합성데이터'?'이 결과는 방금 만든 가상 기록을 읽은 시범이에요. 내 기록 평가가 아니니 「이런 구조면 이렇게 읽힌다」는 참고로만 보고, 공유해도 괜찮아요.':'이 결과는 가린 내 기록을 읽은 거예요. 읽는 순서: ① 한 줄 총평 → ② 역량별 잘 읽히는 기록·아쉬운 기록 → ③ 고쳐 쓴 예시 → ④ 역량 연결 → ⑤ 다음에 할 한 가지. 합격 가능성은 말하지 않고, 결과는 나와 선생님만 봐요.';}
-async function analyze(basisText,basisLabel){recPrompt='';
-  if(!sample){$('#recOutCard').style.display='';$('#recBasis').textContent=basisLabel+' · 규칙 기반 미리보기';recNote(basisLabel);const box=$('#recChat');box.innerHTML='';
+function rulePreview(basisText,basisLabel,why){$('#recOutCard').style.display='';$('#recBasis').textContent=basisLabel+' · 규칙 기반 미리보기';recNote(basisLabel);const box=$('#recChat');box.innerHTML='';
     const KW={'학업역량':/탐구|실험|보고서|분석|문제|가설|데이터|수업|과제|발표|심화|논문|계산|증명|탐색/,'진로역량':/진로|직업|전공|희망|관련 분야|관심|조사|체험|학과|견학|동아리/,'공동체역량':/협력|협업|배려|갈등|조정|합의|회의|봉사|리더|부장|친구|나눔|소통|규칙|책임/};
     const lines=basisText.split(/\n+/).map(l=>l.trim()).filter(l=>l.length>8&&!/^\[/.test(l));
     const pick=re=>lines.map(l=>({l,n:(l.match(new RegExp(re.source,'g'))||[]).length})).filter(x=>x.n).sort((a,b)=>b.n-a.n).slice(0,2);
     let out='규칙 기반 미리보기 — AI가 연결되지 않아 키워드로만 읽었어요. 세 역량에서 강하게 읽히는 기록과 근거 문장만 보여 드립니다.\n';
     Object.entries(KW).forEach(([k,re])=>{const ps=pick(re);out+=`\n■ ${k} (${ps.length?'관련 문장 '+lines.filter(l=>re.test(l)).length+'개':'관련 기록 없음'})\n`;ps.forEach(x=>out+=`  · ${x.l.slice(0,110)}${x.l.length>110?'…':''}\n`);if(!ps.length)out+='  · 이 역량을 보여 주는 기록이 약해요 — 동기·과정·수정·성찰 구조로 1개 보강 권장\n';});
     out+='\n다음에 할 한 가지: 가장 약한 역량 1개를 골라 실제 했던 활동 중 과정과 성찰이 드러나는 문장으로 다시 쓰기\n이 미리보기는 키워드 규칙이며 AI 연결 시 기준 문서(생기부_3대역량_읽기) 근거로 정밀 분석합니다 · 학생부 기재와 평가는 교사가 결정합니다';
-    addMsg(box,'a',out,'기준: 지식DB 생기부_3대역량_읽기 · '+basisLabel+' · AI 미연결');$('#rs3').classList.add('done');$('#recOutCard').scrollIntoView({behavior:'smooth',block:'start'});return;}
+    addMsg(box,'a',out,'기준: 지식DB 생기부_3대역량_읽기 · '+basisLabel+' · '+(why||'AI 미연결'));$('#rs3').classList.add('done');$('#recOutCard').scrollIntoView({behavior:'smooth',block:'start'});}
+function recNote(l){const n=$('#recOutNote');if(!n)return;n.textContent=l==='합성데이터'?'이 결과는 방금 만든 가상 기록을 읽은 시범이에요. 내 기록 평가가 아니니 「이런 구조면 이렇게 읽힌다」는 참고로만 보고, 공유해도 괜찮아요.':'이 결과는 가린 내 기록을 읽은 거예요. 읽는 순서: ① 한 줄 총평 → ② 역량별 잘 읽히는 기록·아쉬운 기록 → ③ 고쳐 쓴 예시 → ④ 역량 연결 → ⑤ 다음에 할 한 가지. 합격 가능성은 말하지 않고, 결과는 나와 선생님만 봐요.';}
+async function analyze(basisText,basisLabel){recPrompt='';
+  if(!sample){rulePreview(basisText,basisLabel);return;}
   const ctx=recContext();const box=$('#recChat');box.innerHTML='';$('#recOutCard').style.display='';$('#recBasis').textContent=basisLabel;recNote(basisLabel);$('#recOutCard').scrollIntoView({behavior:'smooth',block:'start'});
   const prompt=`당신은 서울 진로진학 통합플랫폼의 생기부 어시스턴트입니다. 아래 [기준]을 근거로 [생기부]를 읽고 한국어로 분석하세요. 생기부는 ${basisLabel}이며 개인 식별 정보는 [이름] 같은 토큰으로 가려져 있으니 신원을 추측하지 마세요.\n\n출력 형식(마크다운 헤더 없이, 번호 목록):\n1. 한 줄 총평\n2. 학업역량 · 진로역량 · 공동체역량 각각: 강하게 읽히는 기록 1개(어느 항목인지 인용), 약하게 읽히는 기록 1개, 근거 번호\n3. 아쉬운 기록 → 보완 방향 (동기-과정-수정-성찰 구조로 바꾼 예시 문장 1개. 과장 금지, 없는 활동 만들지 않기)\n4. 세 역량의 연결 흐름이 보이는지 한 줄\n5. 다음에 할 한 가지 (학생이 할 행동 1개)\n마지막 줄: "이 분석은 AI 계산이며 학생부 기재와 평가는 교사가 결정합니다 · 근거: [번호]"\n합격 가능성이나 대학 수준을 언급하지 마세요.\n\n[기준]\n${ctx||'(지식DB에 기준 문서가 없음. 학업·진로·공동체 역량의 일반 원칙으로 분석하되 그 사실을 첫 줄에 밝힐 것)'}\n\n[생기부]\n${basisText}`;
   const a=addMsg(box,'a','분석 중…','기준: 지식DB 생기부_3대역량_읽기 · '+basisLabel);recCtl=new AbortController();$('#recStop').disabled=false;
-  try{const{text}=await sample(prompt,{signal:recCtl.signal,cache:false,modelTier:'default',onText:({text})=>{a.firstChild.textContent=text;}});recHist.length=0;if(text&&text.trim()){a.firstChild.textContent=text;recHist.push({role:'user',content:prompt},{role:'assistant',content:text});$('#rs3').classList.add('done');}else{a.firstChild.textContent='AI 응답이 비어 있어요. 잠시 뒤 다시 눌러 주세요 (생기부가 길면 핵심 항목만 남기고 다시 시도).';recPrompt=prompt;}}
+  try{const{text}=await sample(prompt,{signal:recCtl.signal,cache:false,modelTier:'default',onText:({text})=>{a.firstChild.textContent=text;}});recHist.length=0;if(text&&text.trim()){a.firstChild.textContent=text;recHist.push({role:'user',content:prompt},{role:'assistant',content:text});$('#rs3').classList.add('done');}
+    else{const dbg=window.__aiDbg||{};const why=`AI 응답이 비어 있음 (종료 사유: ${dbg.stop||'알 수 없음'} · 이벤트 ${dbg.n||0})`;a.firstChild.textContent='AI 응답이 비어 있어 기준 문서 없이 한 번 더 요청합니다…';
+      const p2=`아래는 개인 식별 정보가 [이름]·[학교명] 같은 토큰으로 가려진 학교생활기록부 발췌(${basisLabel})입니다. 학업역량·진로역량·공동체역량 세 기준으로 읽어 1) 한 줄 총평 2) 역량별로 잘 읽히는 기록 1개와 아쉬운 기록 1개 3) 아쉬운 기록을 동기-과정-수정-성찰 구조로 고친 예시 1개 4) 다음에 할 한 가지를 번호 목록으로 쓰세요. 합격 가능성·대학 수준은 언급하지 말고, 토큰은 추측하지 마세요.\n\n[생기부]\n${basisText}`;
+      let t2='';try{const r2=await sample(p2,{signal:recCtl.signal,cache:false,modelTier:'default',onText:({text})=>{a.firstChild.textContent=text;}});t2=r2.text||'';}catch(e2){}
+      if(t2&&t2.trim()){a.firstChild.textContent=t2;recHist.push({role:'user',content:p2},{role:'assistant',content:t2});$('#rs3').classList.add('done');toast('기준 문서 없이 분석했어요 (1차 응답이 비어 재요청)');}
+      else{recPrompt=prompt;rulePreview(basisText,basisLabel,why+' · 규칙 기반으로 대체');console.warn('AI empty response',dbg);}}}
   catch(e){a.firstChild.textContent=(e.text||'')+'\n'+errCopy(e);}finally{$('#recStop').disabled=true;recCtl=null;}
 }
 $('#recAnalyze').addEventListener('click',()=>{if(!deidText)return;$('#rs2').classList.add('done');analyze(deidText,'가명데이터');});
+function ruleSynth(){const SW=[['환경','에너지'],['분리수거','교내 물 절약'],['음식물','전력'],['배출계수','사용량 지표'],['급식 메뉴','절전 캠페인'],['환경공학자','에너지공학자'],['환경탐구반','과학탐구반'],['영문 기사','과학 다큐멘터리'],['단어 정리','용어 노트'],['학급 회의','동아리 회의'],['배치 문제','일정 문제'],['1주일','2주일'],['발표','토론'],['보고서','포트폴리오'],['수학','과학'],['영어','국어'],['과제','탐구 활동'],['책임감','성실함'],['환경 분야','기술 분야']];
+    let t=deidText;SW.forEach(([a,b])=>{t=t.split(a).join(b);});t=t.replace(/(\d+)(?=[%명건개회])/g,m=>String(Math.max(1,Math.round(+m*1.3))));
+    synthText='※ 합성데이터 · 실제 학생 아님 (규칙 기반 치환 — AI 연결 시 생성모델로 새 기록 생성)\n'+t;$('#synthView').textContent=synthText;$('#rs2').classList.add('done');toast('합성데이터(규칙 기반)를 만들었어요 · 분석은 합성본으로 진행');return analyze(synthText,'합성데이터');}
 $('#recSynth').addEventListener('click',async()=>{
   if(!deidText)return;$('#recSynthCard').style.display='';$('#synthView').textContent='생성 중…';
-  if(!sample){const SW=[['환경','에너지'],['분리수거','교내 물 절약'],['음식물','전력'],['배출계수','사용량 지표'],['급식 메뉴','절전 캠페인'],['환경공학자','에너지공학자'],['환경탐구반','과학탐구반'],['영문 기사','과학 다큐멘터리'],['단어 정리','용어 노트'],['학급 회의','동아리 회의'],['배치 문제','일정 문제'],['1주일','2주일'],['발표','토론'],['보고서','포트폴리오'],['수학','과학'],['영어','국어'],['과제','탐구 활동'],['책임감','성실함'],['환경 분야','기술 분야']];
-    let t=deidText;SW.forEach(([a,b])=>{t=t.split(a).join(b);});t=t.replace(/(\d+)(?=[%명건개회])/g,m=>String(Math.max(1,Math.round(+m*1.3))));
-    synthText='※ 합성데이터 · 실제 학생 아님 (규칙 기반 치환 — AI 연결 시 생성모델로 새 기록 생성)\n'+t;$('#synthView').textContent=synthText;$('#rs2').classList.add('done');toast('합성데이터(규칙 기반)를 만들었어요 · 분석은 합성본으로 진행');await analyze(synthText,'합성데이터');return;}
+  if(!sample){await ruleSynth();return;}
   const p=`아래는 개인 식별 정보가 토큰으로 가려진 학교생활기록부 일부입니다. 이것과 "같은 항목 구조·같은 분량·같은 수준의 구체성"을 가진 완전히 새로운 가상의 기록을 한국어로 작성하세요. 조건: 과목·활동 주제·사례·수치를 모두 바꿀 것(원문의 문장을 재사용하지 말 것), 사람 이름·학교명·연락처·주소 등 실제처럼 보이는 식별 정보를 넣지 말고 "[이름]", "[학교명]" 토큰을 그대로 쓸 것, 첫 줄에 "※ 합성데이터 · 실제 학생 아님"을 적을 것. 다른 설명 없이 기록 본문만 출력.\n\n[원본 구조]\n${deidText}`;
   recCtl=new AbortController();
-  try{const{text}=await sample(p,{signal:recCtl.signal,cache:false,modelTier:'default',onText:({text})=>{$('#synthView').textContent=text;}});synthText=text;$('#synthView').textContent=text;$('#rs2').classList.add('done');toast('합성데이터를 만들었어요 · 분석은 합성본으로 진행');await analyze(synthText,'합성데이터');}
+  try{const{text}=await sample(p,{signal:recCtl.signal,cache:false,modelTier:'default',onText:({text})=>{$('#synthView').textContent=text;}});if(!text||!text.trim()){toast('AI 응답이 비어 규칙 기반 합성으로 대체했어요');await ruleSynth();return;}synthText=text;$('#synthView').textContent=text;$('#rs2').classList.add('done');toast('합성데이터를 만들었어요 · 분석은 합성본으로 진행');await analyze(synthText,'합성데이터');}
   catch(e){$('#synthView').textContent=errCopy(e);}
 });
 $('#recAsk').addEventListener('click',async()=>{
@@ -823,6 +836,38 @@ $('#recAsk').addEventListener('click',async()=>{
 $('#recFollow').addEventListener('keydown',e=>{if(e.key==='Enter')$('#recAsk').click();});
 $('#recStop').addEventListener('click',()=>recCtl?.abort());
 
+
+/* ========= 예시 데이터로 전체 PoC 체험 ========= */
+const DEMO_DOCS=[{f:'samples/예시_2028학년도_서울시립대_수시요강_발췌.docx',md:`# 2028학년도 서울시립대학교 수시 모집요강 발췌 (예시 · 합성)
+학년도: 2028 · 기준일: 2027.05.02 · 원천: 예시 문서 (실제 요강 아님)
+## 학생부교과(지역균형) 전형
+모집인원 194명. 학교장 추천 필요, 고교별 추천 10명 이내. 전형 방법 학생부 교과 100%. 수능 최저학력기준 3개 영역 등급 합 7 이내(탐구 1과목). 진로선택과목은 성취도 환산 점수로 반영.
+## 학생부종합(학생부종합Ⅰ) 전형
+모집인원 412명. 1단계 서류 100%로 3배수 선발, 2단계 1단계 성적 50% + 면접 50%. 서류 평가 요소 학업역량 35%, 진로역량 35%, 공동체역량 30%. 수능 최저 없음. 면접은 제출 서류 기반 10분 내외.
+## 전형 일정
+원서 접수 2027.09.20(월) 10:00 ~ 09.23(목) 18:00 · 면접 2027.11.20(토) · 합격자 발표 2027.12.14(화)
+| 전형 | 모집인원 | 전형 방법 | 수능 최저 |
+| --- | --- | --- | --- |
+| 지역균형 | 194 | 교과 100 | 3합 7 |
+| 학생부종합Ⅰ | 412 | 서류 → 서류50+면접50 | 없음 |
+| 논술 | 118 | 논술 70+교과 30 | 없음 |`},
+ {f:'samples/예시_2027_진학지도_자료집_고교학점제_발췌.docx',md:`# 2027 진학지도 자료집 발췌 · 고교학점제 과목 선택 (예시)
+학년도: 2027 · 기준일: 2027.03.02 · 원천: 예시 문서 (체험용)
+## 이수 학점 기준
+3년간 192학점(교과 174 + 창의적 체험활동 18) 이수. 필수 84학점, 자율 90학점, 국·수·영 합계 81학점 상한.
+## 과목 구분과 성적
+공통과목은 9등급 상대평가와 성취도를 함께 산출, 진로선택·융합선택은 성취도(A~E)와 분포 비율만 제공. 2028학년도 대입부터 내신 5등급제(1등급 10%).
+## 학교에 없는 과목을 듣는 길
+공동교육과정(거점학교·온라인), 온라인학교 주문형 강좌, 학교 밖 교육으로 이수 가능. 이수 경로는 학생부 교과학습발달상황 비고란에 기록.
+## 과목 선택 후 체크리스트
+① 졸업 요건 192학점 ② 희망 전공 권장과목 ③ 선이수(위계) 순서 ④ 국·영·수 81학점 상한`}];
+const dwait=ms=>new Promise(r=>setTimeout(r,ms));const dstate=t=>{const e=$('#demoState');if(e)e.textContent=t;};
+async function demoMd(){showTab('kb');dstate('① 예시 문서 2건을 md로 변환하는 중…');const files=[];for(const d of DEMO_DOCS){const nm=d.f.split('/').pop();try{const r=await fetch(d.f);if(!r.ok)throw 0;const b=await r.blob();files.push(new File([b],nm,{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'}));}catch(e){files.push(new File([d.md],nm.replace(/\.docx$/,'.md'),{type:'text/markdown'}));}}
+  await ingest(files);if(!KB.chunks.some(c=>/3대역량/.test(c.doc)))await ingest(SEED.map(x=>new File([x.text],x.name,{type:'text/markdown'})));dstate('① 완료 — 예시 문서 2건 + 기본 지식 6편이 지식DB에 들어갔어요');}
+async function demoRag(){if(!KB.chunks.length)await ingest(SEED.map(x=>new File([x.text],x.name,{type:'text/markdown'})));showTab('rag');dstate('② 예시 질문으로 RAG 실행 중…');const q=KB.chunks.some(c=>/서울시립대/.test(c.doc))?'서울시립대 학생부종합Ⅰ 전형은 몇 명 뽑고 면접 비중은?':SAMPLES['대입 제도·전형'][0];await askRag(q);dstate('② 완료 — 답변과 근거 카드를 확인하세요 (인용 번호 클릭 → 원문)');}
+async function demoRec(){showTab('rec');dstate('③ 예시 생기부로 세 역량 분석 중…');$('#recText').value=SAMPLE_REC;$('#recDeid').click();await dwait(500);$('#recAnalyze').click();await dwait(600);dstate('③ 완료 — 1단계 가린 결과와 3단계 분석을 확인하세요');}
+$('#demoMd').addEventListener('click',demoMd);$('#demoRag').addEventListener('click',demoRag);$('#demoRec').addEventListener('click',demoRec);
+$('#demoAll').addEventListener('click',async()=>{const b=$('#demoAll');b.disabled=true;try{await demoMd();await dwait(600);await demoRag();await dwait(800);await demoRec();dstate('전체 PoC 체험 완료 — 각 탭에서 결과를 보세요');toast('전체 PoC 체험 완료');}finally{b.disabled=false;}});
 renderKb();renderChips();
 </script>
 </body>
