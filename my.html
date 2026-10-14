@@ -288,7 +288,7 @@ applyTheme(localStorage.getItem('sen-theme'));
 btnTheme.addEventListener('click',()=>{const cur=document.documentElement.dataset.theme==='dark'||(!document.documentElement.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches);const next=cur?'light':'dark';localStorage.setItem('sen-theme',next);applyTheme(next);});
 </script>
 <script src="explore-data.js"></script>
-<script src="auth.js"></script>
+<script src="auth.js?v=20271014c"></script>
 <script src="univ-data.js"></script>
 <script src="school-data.js"></script>
 <script src="roadmap-data.js"></script>

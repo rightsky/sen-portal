@@ -8,7 +8,13 @@
 const KEY='sen-auth-v2',LEGACY='sen-trait-state';
 const ROLE_LABEL={student:'학생',student2:'학생(비재학)',parent:'학부모',teacher:'교사',counselor:'상담교사',schooladmin:'학교관리자',office:'교육청·정보원',guest:'일반 사용자'};
 const ROLE_HOME={student:'my.html#stage',student2:'my.html#stage',parent:'parent.html',teacher:'teacher.html',counselor:'teacher.html',schooladmin:'teacher.html',office:'ops-admin.html',guest:'index.html'};
-const IDP={eduonepass:{name:'교육디지털원패스',level:3,desc:'나이스 학적·교원 정보로 역할이 자동으로 붙어요'},onepass:{name:'디지털원패스',level:2,desc:'본인확인. 자녀 연결·상담 신청·동의에 필요해요'},naver:{name:'네이버',level:1,desc:'간편 로그인. 열람·알림·관심 저장만'},kakao:{name:'카카오',level:1,desc:'간편 로그인. 열람·알림·관심 저장만'}};
+const IDP={eduonepass:{name:'교육디지털원패스',level:3,desc:'나이스 학적·교원 정보로 역할이 자동으로 붙어요',who:'학생 · 선생님 · 정보원 담당자'},onepass:{name:'디지털원패스',level:2,desc:'본인확인. 자녀 연결·상담 신청·동의에 필요해요',who:'학부모 · 비재학생'},naver:{name:'네이버',level:1,desc:'간편 로그인. 열람·알림·관심 저장만',who:'일반 사용자'},kakao:{name:'카카오',level:1,desc:'간편 로그인. 열람·알림·관심 저장만',who:'일반 사용자'}};
+/* 역할별 주 로그인 수단 (로그인 모달 상단 안내) */
+const MAIN_WAY=[
+ ['학생','eduonepass','교육디지털원패스','나이스 재학 정보로 학교·학년·반이 자동으로 붙어요 (비재학생은 디지털원패스 본인확인)'],
+ ['학부모','onepass','디지털원패스','본인확인 뒤 자녀 초대코드로 연결 · 네이버·카카오는 열람만'],
+ ['선생님','eduonepass','교육디지털원패스 (교원)','교원 확인 뒤 학교관리자 승인으로 담임·과목 권한 (GPKI는 비교용 A안)'],
+ ['정보원 담당자','eduonepass','교육디지털원패스 + 2단계 인증','업무시스템(상담·AI·플랫폼관리) 진입 때 휴대폰 6자리 · 통합관리자는 GPKI 추가']];
 /* 인증 수단별 데모 신원 (실제 서비스에서는 IdP가 돌려주는 속성으로 결정됨) */
 const DEMO={
  eduonepass:[
@@ -69,6 +75,16 @@ const css=`.who{display:inline-flex;gap:10px;align-items:center;flex-wrap:wrap}
 .idp button:hover{border-color:var(--brand)}.idp b{display:block;font-size:15px}.idp small{display:block;color:var(--ink-3);font-size:12.5px}
 .idp .lv{margin-left:auto;flex:none;font-size:11.5px;font-weight:800;padding:3px 8px;border-radius:999px;background:var(--surface);color:var(--ink-2)}
 .idp .lv--3{background:color-mix(in srgb,var(--brand) 14%,transparent);color:var(--brand)}
+.idp .idp__who{color:var(--brand);font-weight:700;margin-top:2px}
+.lm-way{display:grid;gap:6px;padding:10px;border-radius:var(--radius-md);background:var(--surface)}
+.lm-way__t{margin:0 0 2px;font-size:13px;font-weight:800;color:var(--ink-2)}
+.lm-way__r{display:grid;grid-template-columns:88px minmax(0,1fr) auto;gap:10px;align-items:center;text-align:left;padding:9px 10px;border:1px solid var(--line);border-radius:var(--radius-md);background:var(--bg);font:inherit;color:var(--ink);cursor:pointer}
+.lm-way__r:hover{border-color:var(--brand)}
+.lm-way__role{font-size:13.5px;font-weight:900;color:var(--brand)}
+.lm-way__m b{display:block;font-size:13.5px}.lm-way__m small{display:block;color:var(--ink-3);font-size:11.5px;line-height:1.4}
+.lm-way__lv{flex:none;font-size:11px;font-weight:800;padding:2px 7px;border-radius:999px;background:var(--bg);border:1px solid var(--line);color:var(--ink-2)}
+.lm-way__lv.lv--3{background:color-mix(in srgb,var(--brand) 14%,transparent);color:var(--brand);border-color:transparent}
+@media (max-width:430px){.lm-way__r{grid-template-columns:minmax(0,1fr) auto}.lm-way__role{grid-column:1/-1}}
 .demo{display:grid;gap:6px}.demo button{text-align:left;padding:10px 12px;border:1px solid var(--line);border-radius:var(--radius-md);background:var(--surface);font:inherit;color:var(--ink)}
 .demo button:hover{border-color:var(--brand)}.demo b{display:block;font-size:14px}.demo small{color:var(--ink-3);font-size:12px}
 .fld{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:700;color:var(--ink-2)}
@@ -88,8 +104,11 @@ const st=document.createElement('style');st.textContent=css;document.head.append
 const m=document.createElement('div');m.className='lmodal';m.id='lmodal';m.setAttribute('role','dialog');m.setAttribute('aria-modal','true');document.body.appendChild(m);
 const close=()=>m.classList.remove('is-on');
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const idpList=(mode)=>`<div class="idp">${Object.entries(IDP).map(([k,v])=>`<button data-idp="${k}" data-mode="${mode}"><span><b>${v.name}</b><small>${v.desc}</small></span><span class="lv lv--${v.level}">L${v.level}</span></button>`).join('')}</div>`;
+const idpList=(mode)=>`<div class="idp">${Object.entries(IDP).map(([k,v])=>`<button data-idp="${k}" data-mode="${mode}"><span><b>${v.name}</b><small>${v.desc}</small><small class="idp__who">주 사용 : ${v.who}</small></span><span class="lv lv--${v.level}">L${v.level}</span></button>`).join('')}</div>`;
+const mainWay=()=>`<div class="lm-way"><p class="lm-way__t">누가 어떻게 로그인하나요?</p>${MAIN_WAY.map(([r,k,n,d])=>`<button type="button" class="lm-way__r" data-idp="${k}" data-mode="login"><span class="lm-way__role">${r}</span><span class="lm-way__m"><b>${n}</b><small>${d}</small></span><span class="lm-way__lv lv--${IDP[k].level}">L${IDP[k].level}</span></button>`).join('')}</div>`;
 function openLogin(){m.innerHTML=`<div class="lmodal__p"><button type="button" class="lmodal__x" data-lmclose aria-label="닫기">✕</button><h2>로그인</h2><p class="lm-note">역할(학생·학부모·교사)을 고르지 않아요. 인증 수단이 확인해 주는 학적·교원 정보와 학교 승인으로 역할이 자동으로 붙어요.</p>
+  ${mainWay()}
+  <p class="lm-note" style="margin-top:2px;font-weight:800;color:var(--ink-2)">인증 수단 고르기</p>
   ${idpList('login')}
   <details><summary style="cursor:pointer;font-size:13.5px;font-weight:700;color:var(--ink-2)">아이디·비밀번호로 로그인</summary><form id="lmForm" novalidate style="display:grid;gap:10px;margin-top:10px"><label class="fld">아이디<input name="id" autocomplete="username" placeholder="통합 계정 아이디"></label><label class="fld">비밀번호<input name="pw" type="password" autocomplete="current-password" placeholder="비밀번호"></label><p class="lm-err">아이디와 비밀번호를 입력해 주세요</p><button class="btn btn--primary btn--pill" type="submit" style="padding:13px">로그인</button><p class="lm-note">10자 이상 · 90일 변경 · 5회 실패 시 잠금(본인확인 재인증으로 해제) · 아이디 로그인은 인증 수단을 연결한 뒤에만 쓸 수 있어요</p></form></details>
   <p class="lm-note">아직 계정이 없나요? <a href="#" class="link" data-joinopen>회원가입</a> · 목업: 인증 수단을 누르면 데모 신원을 고를 수 있어요</p></div>`;m.classList.add('is-on');}
