@@ -188,6 +188,47 @@ function bindCompare(){
  document.querySelectorAll('[data-csend]').forEach(b=>b.addEventListener('click',()=>{const sel=document.querySelector('[data-ctarget]');const id=sel&&sel.value;if(!id)return;const A=slotObj(CS.a),B=slotObj(CS.b),G=BGS[CS.bg];
   const chip=`${A.label} vs ${B.label} · 내신 ${A.band} / ${B.band} · 배경 ${G.t}`;const ev=Array.isArray(HS[id+'_ev'])?HS[id+'_ev']:[];if(!ev.includes(chip))ev.push(chip);HS[id+'_ev']=ev;hsSave();hlog(`비교·분석 근거 칩 → ${hById(id).stu} 판정 대기 건`);showToast('HITL 근거 칩으로 보냈어요 · 판정 승인 H0·H2 카드에 표시');}));}
 
+/* ═══════════ C. 진학통계 : 역할 스위처(범위) · 졸업생 진학결과(소집단 억제) · 보고서 빌더 ═══════════ */
+const SK='sen-stats-v1';
+let ST=Object.assign({scope:null,blocks:['apply','rate'],period:'2',to:'principal',preview:false},lsGet(SK,{}));
+const stSave=()=>lsSet(SK,ST);
+const SCOPES={cls:{t:'우리 반',sub:'3학년 2반 · 2027.2 졸업 32명',roles:['homeroom','head','schooladmin']},grade:{t:'학년 (반 간 비교)',sub:'3학년 8학급 · 2027.2 졸업 312명',roles:['head','schooladmin']},school:{t:'학교',sub:'서울○○고 · 2027.2 졸업 312명 · 계열별',roles:['head','schooladmin']}};
+const defScope=()=>state==='homeroom'?'cls':state==='head'?'grade':'school';
+const GRAD={cls:{type:[['학생부교과',21,6,4],['학생부종합',38,9,5],['논술',12,2,1],['정시(수능위주)',17,8,7]],line:[['인문',41,12,8],['자연',43,12,8],['예체능',4,1,1]]},
+ grade:{type:[['학생부교과',205,58,41],['학생부종합',372,91,55],['논술',118,14,9],['정시(수능위주)',166,77,63]],line:[['인문',402,118,82],['자연',431,117,84],['예체능',28,5,2]],cls:[['1반',31,20],['2반',25,17],['3반',29,22],['4반',27,19],['5반',30,21],['6반',22,16],['7반',31,24],['8반',45,29]]},
+ school:{type:[['학생부교과',205,58,41],['학생부종합',372,91,55],['논술',118,14,9],['정시(수능위주)',166,77,63]],line:[['인문',402,118,82],['자연',431,117,84],['예체능',28,5,2]]}};
+const BLOCKS={apply:'지원 현황',rate:'전형별 합격률',min:'수능 최저 충족',cnt:'상담 건수',share:'공유 승인율',judge:'판정 확정 현황'};
+const PERIODS={'1':'2027 1학기','2':'2027 2학기',y:'연간'};const TOS={principal:'학교장 보고',meet:'학년 협의회',parents:'학부모 설명회'};
+const sup=n=>n<5?'<span class="badge badge--gray">5명 미만 · 비공개</span>':n;
+function gradTbl(rows,heads){const any=rows.some(r=>r.slice(1).some(n=>n<5));
+ return `<div class="xscroll"><table class="btable"><tr>${heads.map(h=>`<th>${h}</th>`).join('')}<th></th></tr>${rows.map(r=>{const f=r.slice(1).some(n=>n<5);return `<tr><td><b>${r[0]}</b></td>${r.slice(1).map(n=>`<td>${sup(n)}</td>`).join('')}<td>${f?'<span class="badge badge--wait">소집단 억제</span>':''}</td></tr>`;}).join('')}</table></div>${any?'<p class="caption">5명 미만 칸은 개인 추정을 막기 위해 비공개 · 플랫폼관리 관리통계와 같은 규칙</p>':''}`;}
+const blockTbl=k=>{const t={apply:[['교과·종합·논술·정시 지원','88 · 110 · 12 · 17'],['1인당 수시 카드','5.6장']],rate:[['학생부교과','29%'],['학생부종합','24%'],['논술','5명 미만 · 비공개'],['정시','47%']],min:[['최저 있는 전형 지원','41건'],['충족 예상 · 미달 우려','31 · 6 · 점검 4']],cnt:[['학교 상담','54건'],['센터 방문·화상·게시판','9 · 6 · 14']],share:[['공유 요청 → 승인','47 → 41 (87%)'],['상담 한정 공유','6건']],judge:[['확정 · 전달','11 · 9'],['대기 · 2차 검토','4 · 1']]}[k];
+ return `<div class="card" style="padding:14px 16px"><b style="font-size:14px">${BLOCKS[k]}</b><table class="mini-tbl" style="margin-top:6px">${t.map(r=>`<tr><td>${r[0]}</td><td style="text-align:right;font-weight:700">${r[1]}</td></tr>`).join('')}</table></div>`;};
+window.statsHtml=function(){
+ if(state==='counselor')return gate('진학통계는 학교 교사 역할에서만','상담교사 역할은 배정 건만 열람해요. 헤더에서 교사 역할로 전환하세요.');
+ const ro=state==='subject';if(!ST.scope||!SCOPES[ST.scope].roles.includes(state))ST.scope=defScope();
+ const sc=SCOPES[ST.scope],g=GRAD[ST.scope];
+ const sw=`<div class="xseg" role="radiogroup" aria-label="통계 범위">${Object.entries(SCOPES).map(([k,v])=>{const ok=v.roles.includes(state);return `<button type="button" role="radio" aria-checked="${ST.scope===k}" class="${ST.scope===k?'is-on':''}" data-sscope="${k}"${ok?'':' disabled'} title="${ok?'':'이 역할에서는 열 수 없어요'}">${v.t}</button>`;}).join('')}</div><p class="caption">담임 = 우리 반 · 진학부장 = 학년(반 간 비교) · 학교관리자 = 학교 · 학년·학교 범위에는 개인 단위 자료가 없어요</p>`;
+ const grad=`<h3 style="margin:20px 0 8px;font-size:15px">졸업생 진학결과 <span class="badge badge--gray">합성 · 실제 학생 아님</span> <small style="color:var(--ink-3)">${sc.sub} · 2027학년도 입학 기준</small></h3>
+ <h4 style="margin:10px 0 6px;font-size:13.5px;color:var(--ink-2)">전형 유형별</h4>${gradTbl(g.type,['전형 유형','지원','합격','등록'])}
+ <h4 style="margin:14px 0 6px;font-size:13.5px;color:var(--ink-2)">계열별</h4>${gradTbl(g.line,['계열','지원','합격','등록'])}
+ ${g.cls?`<h4 style="margin:14px 0 6px;font-size:13.5px;color:var(--ink-2)">반 간 비교</h4>${gradTbl(g.cls,['학급','합격','등록'])}`:''}`;
+ const builder=ro?'<p class="caption">과목교사 역할은 읽기 전용이라 보고서를 만들 수 없어요</p>':`<h3 style="margin:22px 0 8px;font-size:15px">보고서 빌더</h3>
+ <div class="xgrid"><div class="card" style="padding:16px 18px"><b>블록</b><div style="margin-top:8px">${Object.entries(BLOCKS).map(([k,v])=>`<label class="xchk"><input type="checkbox" data-sblock="${k}"${ST.blocks.includes(k)?' checked':''}><span>${v}</span></label>`).join('')}</div></div>
+ <div class="card" style="padding:16px 18px"><label class="xlab" style="margin-top:0">기간<select class="xsel" data-speriod>${Object.entries(PERIODS).map(([k,v])=>`<option value="${k}"${ST.period===k?' selected':''}>${v}</option>`).join('')}</select></label><label class="xlab">수신자<select class="xsel" data-sto>${Object.entries(TOS).map(([k,v])=>`<option value="${k}"${ST.to===k?' selected':''}>${v}</option>`).join('')}</select></label>
+ <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><button class="btn btn--line xb" data-spreview>미리보기</button><button class="btn btn--primary xb" data-spdf>PDF 내보내기(워터마크)</button></div><p class="caption">수신자·발송일시가 워터마크로 들어가고, 5명 미만 칸은 보고서에도 비공개예요</p></div></div>
+ ${ST.preview?`<h4 style="margin:16px 0 8px;font-size:14px">미리보기 · ${PERIODS[ST.period]} · ${TOS[ST.to]} · ${sc.t}</h4>${ST.blocks.length?`<div class="xgrid--3 xgrid">${ST.blocks.map(blockTbl).join('')}</div>`:'<p class="caption">블록을 하나 이상 고르세요</p>'}`:''}`;
+ return `<section class="section"><h2 class="t">진학통계 <span class="badge badge--teach">${ro?'과목교사 · 읽기 전용':sc.t}</span></h2><p class="s">반·학년·학교 단위 집계만 보여요 · 원문·개인 판정은 전문시스템 · 5명 미만은 비공개</p>
+ <div class="share__notice">집계는 비식별 처리된 반·학년 단위 · 내보내기에는 워터마크와 수신자가 찍혀요</div>
+ <h3 style="margin:16px 0 8px;font-size:15px">범위</h3>${sw}${grad}${builder}</section>`;};
+function bindStats(){
+ document.querySelectorAll('[data-sscope]').forEach(b=>b.addEventListener('click',()=>{ST.scope=b.dataset.sscope;stSave();renderAll();}));
+ document.querySelectorAll('[data-sblock]').forEach(c=>c.addEventListener('change',()=>{const k=c.dataset.sblock;ST.blocks=c.checked?[...new Set([...ST.blocks,k])]:ST.blocks.filter(x=>x!==k);stSave();if(ST.preview)renderAll();}));
+ document.querySelectorAll('[data-speriod]').forEach(s=>s.addEventListener('change',()=>{ST.period=s.value;stSave();if(ST.preview)renderAll();}));
+ document.querySelectorAll('[data-sto]').forEach(s=>s.addEventListener('change',()=>{ST.to=s.value;stSave();if(ST.preview)renderAll();}));
+ document.querySelectorAll('[data-spreview]').forEach(b=>b.addEventListener('click',()=>{ST.preview=true;stSave();renderAll();}));
+ document.querySelectorAll('[data-spdf]').forEach(b=>b.addEventListener('click',()=>{hlog(`진학통계 PDF 내보내기 · ${SCOPES[ST.scope].t} · ${TOS[ST.to]}`);showToast('워터마크 PDF 생성 · 수신자·발송일시 표시 · 재배포 금지');}));}
+
 /* ═══════════ 공통 바인딩 ═══════════ */
 window.bindExt=function(){bindHitl();bindCompare();if(typeof bindStats==='function')bindStats();if(typeof bindMode==='function')bindMode();};
 })();
