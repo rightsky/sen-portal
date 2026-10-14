@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>SEN AI PoC · 서울 진로진학 통합플랫폼</title>
+<title>AI PoC · 서울 진로진학 통합플랫폼</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap">
 <style>
 :root{
@@ -70,7 +70,8 @@ th{color:var(--ink-3);font-weight:600;font-size:13px}
 .sheet{background:var(--bg);width:100%;max-width:760px;border-radius:18px 18px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom,0px));max-height:92vh;overflow:auto}
 @media(min-width:760px){.ov{align-items:center;padding:20px}.sheet{border-radius:18px}}
 .choice{display:grid;grid-template-columns:1fr;gap:12px;margin-top:14px}
-@media(min-width:640px){.choice{grid-template-columns:1fr 1fr}}
+@media(min-width:640px){.choice{grid-template-columns:1fr 1fr 1fr}}
+.choice button.c{border-color:#16386f}
 .choice button{text-align:left;padding:18px;border-radius:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);min-height:120px}
 .choice button b{display:block;font-size:17px;margin-bottom:6px}
 .choice button span{font-size:13.5px;color:var(--ink-2)}
@@ -125,12 +126,12 @@ th{color:var(--ink-3);font-weight:600;font-size:13px}
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="logo"><a href="main-everland-style.html" style="color:inherit;text-decoration:none">← 서울 진로진학 통합플랫폼</a><small>SEN AI PoC · 지식베이스 · 생기부 어시스턴트</small></div>
+    <div class="logo"><a href="main-everland-style.html" style="color:inherit;text-decoration:none">← 서울 진로진학 통합플랫폼</a><small>AI PoC · md 변환 · RAG 어시스턴트 · 생기부 AI 활용</small></div>
     <div class="row"><span class="badge" id="aiState">AI 연결 확인 중</span></div>
   </header>
 
   <h1>AI PoC</h1>
-  <p class="muted">오른쪽 아래 <b>SEN AI</b> 버튼을 누르면 두 서비스 중 하나를 고를 수 있습니다. 모든 AI 응답에는 근거 출처·학년도·기준일이 붙고, 생기부는 비식별 처리 뒤에만 AI에 전달됩니다.</p>
+  <p class="muted">오른쪽 아래 <b>AI PoC</b> 버튼을 누르면 세 기능(원천 데이터 md 만들기 · RAG 어시스턴트 · 생기부 AI 활용) 중 하나를 고를 수 있습니다. 모든 AI 응답에는 근거 출처·학년도·기준일이 붙고, 생기부는 비식별 처리 뒤에만 AI에 전달됩니다.</p>
 
   <div class="tabs" role="tablist" aria-label="PoC 영역">
     <button role="tab" aria-selected="true" data-tab="kb">① 지식베이스</button>
@@ -270,7 +271,7 @@ th{color:var(--ink-3);font-weight:600;font-size:13px}
   </section>
 </div>
 
-<button class="fab" id="fab" aria-haspopup="dialog" aria-controls="aiSheet">SEN AI <span class="ai" aria-hidden="true">AI</span></button>
+<button class="fab" id="fab" aria-haspopup="dialog" aria-controls="aiSheet">AI PoC <span class="ai" aria-hidden="true">AI</span></button>
 
 <div class="ov" id="aiSheet" role="dialog" aria-modal="true" aria-labelledby="aiTitle">
   <div class="sheet">
@@ -278,10 +279,11 @@ th{color:var(--ink-3);font-weight:600;font-size:13px}
       <h2 id="aiTitle" style="margin:0">어떤 서비스를 이용하시겠어요?</h2>
       <button class="btn gray" id="aiClose" aria-label="닫기" style="min-height:36px;padding:4px 12px">닫기</button>
     </div>
-    <p class="muted" style="margin-top:8px">SEN AI는 지식DB를 근거로 답하는 대화형 서비스와, 생기부를 비식별 처리한 뒤 3대 역량으로 읽어 주는 어시스턴트로 나뉩니다.</p>
+    <p class="muted" style="margin-top:8px">AI PoC는 ① 원천 데이터(요강·자료집·보고서)를 md로 만들어 지식DB에 넣는 기능, ② 그 지식DB를 근거로 답하는 RAG 어시스턴트(챗봇), ③ 생기부를 비식별 처리한 뒤 3대 역량으로 읽어 주는 생기부 AI 활용으로 나뉩니다.</p>
     <div class="choice">
-      <button class="a" id="goRag"><b>대화형 AI 이용하기</b><span>2028 대입 시행계획·제도 변화·학년별 준비 등 등록된 지식DB를 검색해 출처와 함께 답합니다 (RAG)</span></button>
-      <button class="b" id="goRec"><b>생기부 어시스턴트 이용하기</b><span>세특·창체 기록을 비식별 처리해 가명·합성 데이터로 만든 뒤 학업·진로·공동체 역량으로 분석합니다</span></button>
+      <button class="c" id="goMd"><b>1. 원천 데이터의 md 만들기</b><span>요강·자료집·보고서(docx·hwpx·pdf)를 md로 변환해 지식DB에 등록 · 변환 미리보기 · 출처 태그 · 기본 지식 6편</span></button>
+      <button class="a" id="goRag"><b>2. RAG 어시스턴트 (챗봇)</b><span>2028 대입 시행계획·제도 변화·학년별 준비 등 등록된 지식DB를 검색해 출처와 함께 답합니다 (RAG)</span></button>
+      <button class="b" id="goRec"><b>3. 생기부 AI 활용</b><span>세특·창체 기록을 비식별 처리해 가명·합성 데이터로 만든 뒤 학업·진로·공동체 역량으로 분석합니다</span></button>
     </div>
     <p class="muted" style="margin-top:12px">AI 응답은 참고 자료이며 선생님 확정 뒤에만 판단이 됩니다.</p>
   </div>
@@ -506,6 +508,7 @@ $('#fab').addEventListener('click',()=>{sheet.classList.add('on');$('#goRag').fo
 $('#aiClose').addEventListener('click',()=>sheet.classList.remove('on'));
 sheet.addEventListener('click',e=>{if(e.target===sheet)sheet.classList.remove('on');});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')sheet.classList.remove('on');});
+$('#goMd').addEventListener('click',()=>{sheet.classList.remove('on');showTab('kb');const f=$('#mdFile');if(f)f.scrollIntoView({block:'center'});});
 $('#goRag').addEventListener('click',()=>{sheet.classList.remove('on');showTab('rag');$('#ragInput').focus();});
 $('#goRec').addEventListener('click',()=>{sheet.classList.remove('on');showTab('rec');$('#recText').focus();});
 
@@ -628,7 +631,7 @@ function workerSample(base){
   if(!sample){const base=aiEndpoint();
     if(base){try{const r=await fetch(base+'/health');if(r.ok){aiMode='worker';sample=workerSample(base);}}catch(e){}}}
   if(aiMode==='builtin'){s.textContent='AI 연결됨 · 호출 시 1회 동의';s.className='badge ok';}
-  else if(aiMode==='worker'){s.textContent='AI 연결됨 · SEN AI 서버';s.className='badge ok';}
+  else if(aiMode==='worker'){s.textContent='AI 연결됨 · AI PoC 중계 서버';s.className='badge ok';}
   else{s.textContent='AI 미연결 · 검색·비식별만 동작';s.className='badge warn';}
 })();
 function errCopy(e){return({not_granted:'AI 사용이 허용되지 않았어요. 검색 결과와 비식별 기능은 계속 쓸 수 있어요.',rate_limited:'요청이 많아요. 잠시 뒤 다시 시도하세요.',cancelled:'중지했어요.',too_long:'질문과 근거가 너무 길어요. 질문을 줄이거나 대화를 새로 시작하세요.',network:'AI 서버에 연결하지 못했어요. 인터넷 연결을 확인하세요.',origin_not_allowed:'이 주소에서는 AI 서버를 쓸 수 없어요.',server_not_configured:'AI 서버 설정이 끝나지 않았어요. 관리자에게 알려 주세요.'})[e.code]||('AI 호출에 실패했어요 ('+(e.code||'오류')+')');}
