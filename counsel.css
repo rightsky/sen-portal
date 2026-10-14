@@ -28,6 +28,12 @@
 .pick small{font-size:12px;color:var(--ink-3);font-weight:600}
 .pick:hover{border-color:var(--brand)}.pick.is-sel{background:var(--brand);color:#fff}.pick.is-sel small{color:rgba(255,255,255,.8)}
 .pick[disabled]{opacity:.4;cursor:default}
+/* 확정 가능 · 예비 슬롯 */
+.pick--ok{border-color:#CFE3DB}.pick--ok small{color:var(--accent-green,#0F8A6C)}
+.pick--prov{border:1.5px dashed #D9A25C;background:#FFFBF4}.pick--prov small{color:#B06200}
+.pick--prov.is-sel{background:#B06200;border-color:#B06200}.pick--prov.is-sel small{color:rgba(255,255,255,.85)}
+.pick-grid--7 .pick{min-height:56px}
+.lg{font-weight:900}.lg--ok{color:#0F8A6C}.lg--prov{color:#B06200}
 .blab{font-size:13px;font-weight:800;color:var(--ink-3);margin:18px 0 8px}
 .modal-foot{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .bsum{margin-top:16px;padding:14px 16px;border-radius:var(--radius-md);background:var(--surface);display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--ink-2)}
