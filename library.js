@@ -1,8 +1,8 @@
 (function(){
 const {RES,GRADES,NOW_PICK,VIDEOS,EVENTS,TEACHER,PLAYLIST}=ND;const A=SEN_AUTH;const $=id=>document.getElementById(id);
 const K='sen-lib-v1';let S=JSON.parse(localStorage.getItem(K)||'{"scrap":[],"applied":[]}');const save=()=>localStorage.setItem(K,JSON.stringify(S));
-const GROUP={mid:'res',hs12:'res',hs3:'res',video:'media',briefing:'media',teacher:'media',guides:'guide',parents:'guide',ethics:'guide'};
-const L3={mid:'중학생 자료',hs12:'고1·2 자료',hs3:'고3·졸업생 자료',video:'진로 영상',briefing:'진학 설명회',teacher:'교사 추천 자료',guides:'탐구·활동 작성 틀',parents:'학부모 가이드',ethics:'기록 윤리 안내'};
+const GROUP={mid:'res',hs12:'res',hs3:'res',video:'media',briefing:'media',teacher:'media',guides:'guide',cases:'guide',parents:'guide',ethics:'guide'};
+const L3={mid:'중학생 자료',hs12:'고1·2 자료',hs3:'고3·졸업생 자료',video:'진로 영상',briefing:'진학 설명회',teacher:'교사 추천 자료',guides:'탐구·활동 작성 틀',cases:'계열·교과 탐구 예시',parents:'학부모 가이드',ethics:'기록 윤리 안내'};
 const L2={res:'맞춤 자료실',media:'영상·설명회 자료',guide:'작성 틀·안내'};
 const ICON={'자료집':'📘','안내서':'📗','가이드북':'📙','동영상':'🎬','워크시트':'📝'};
 const needLogin=msg=>{if(A.logged())return false;showToast(msg);A.open();return true;};
@@ -76,6 +76,28 @@ function renderEthics(){
   <div class="ud" style="margin-top:18px"><div class="panel-c" style="border:1px solid var(--line);box-shadow:none"><h3>하지 말아야 할 것</h3><ul class="reading"><li><b>대필·대리 작성</b>타인이 써 준 탐구·자료는 면접에서 바로 드러나고, 적발 시 불이익이 커요</li><li><b>과장·허위</b>하지 않은 활동을 부풀리면 기록 전체의 신뢰가 무너져요</li><li><b>표절</b>자료를 쓰면 출처를 남기고, 인용과 내 생각을 구분해요</li><li><b>공동 작업 무임승차</b>역할과 기여를 기록해 내 몶을 설명할 수 있게 해요</li></ul></div>
   <div class="panel-c" style="border:1px solid var(--line);box-shadow:none"><h3>AI 도구 사용</h3><ul class="reading"><li><b>학교 규정 먼저</b>과제·수행평가의 AI 사용 허용 범위는 학교와 교과 선생님 지침을 먼저 확인해요</li><li><b>보조 도구로</b>아이디어 탐색·자료 찾기에 쓰되, 글은 내가 쓰고 사용 사실을 밝혀요</li><li><b>이 플랫폼의 AI</b>정보 안내만 하고 판정하지 않으며, 내 글을 대신 써주지 않아요</li></ul></div></div>
   <div class="panel-c" style="margin-top:20px;background:var(--surface);box-shadow:none"><h3>대입 반영 기준은 공식 문서로만 확인하세요</h3><p style="margin:0;color:var(--ink-2);font-size:14.5px">학교폭력 조치사항의 전형 반영, 학생부 미반영 항목 같은 기준은 해마다 바뀔 수 있어요. 이 화면은 요약하지 않고 원문 링크만 안내해요.</p><div class="lchips" style="margin-top:10px"><a href="https://www.kcue.or.kr" target="_blank" rel="noopener">대교협 · 2028학년도 대입전형 기본사항 ↗</a><a href="https://www.moe.go.kr" target="_blank" rel="noopener">교육부 · 학생부 기재요령 ↗</a><a href="https://www.adiga.kr" target="_blank" rel="noopener">어디가 · 대학별 모집요강 ↗</a></div></div>`;}
+/* ── 계열·교과 탐구 예시 (cases-data.js) ── */
+const CS={view:'track',track:'전체',subj:'전체',open:null};
+const CSUBJ=['전체','국어','수학','영어','일반사회','역사','윤리','지리','물리학','화학','생명과학','지구과학'];
+function renderCases(){const {SUBJ_CASES:SC,TRACK_CASES:TC,SRC}=window.CASES||{SUBJ_CASES:[],TRACK_CASES:[],SRC:''};
+  const head=`<div class="rbar" style="margin-top:0"><div><h2 class="section__title" style="font-size:24px">계열·교과 탐구 예시</h2><p class="section__sub">진로 희망 → 과목 선택 → 교과 활동 → 창체로 이어지는 흐름을 가상 사례로 보여 줘요. 모범 답안이 아니라 "나라면 어떻게 잇지?"를 생각하는 재료예요</p></div><div class="fchips"><button class="fchip${CS.view==='track'?' is-on':''}" data-csv="track">계열별 설계 사례 ${TC.length}</button><button class="fchip${CS.view==='subj'?' is-on':''}" data-csv="subj">교과별 탐구 주제 ${SC.length}</button></div></div>`;
+  let body='';
+  if(CS.view==='track'){const tracks=['전체',...new Set(TC.map(t=>t.track))];const L=TC.filter(t=>CS.track==='전체'||t.track===CS.track);
+    body=`<div class="fchips" style="margin-top:14px">${tracks.map(t=>`<button class="fchip${CS.track===t?' is-on':''}" data-cst="${t}">${t}</button>`).join('')}</div>
+    <div class="preview" style="margin-top:14px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">${L.map(t=>{const o=CS.open===t.id;return `<div class="panel-c" style="border:1px solid ${o?'var(--brand)':'var(--line)'};box-shadow:none;display:flex;flex-direction:column;gap:8px${o?';grid-column:1/-1':''}"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="tb tb--1">${t.label}</span><small style="color:var(--ink-3)">p.${t.page}</small></div><b style="font-size:16px">${t.major}</b><p style="margin:0;color:var(--ink-2);font-size:13.5px">${t.hope}</p>
+      ${o?`<div style="font-size:13.5px"><b>과목 선택</b><table class="ctable" style="margin-top:6px;font-size:12.5px"><tbody>${Object.entries(t.subjects).map(([k,v])=>`<tr><th style="white-space:nowrap">${k.replace('-','학년 ')}학기</th><td>${v.join(', ')||'–'}</td></tr>`).join('')}</tbody></table></div>
+      <div style="font-size:13.5px"><b>교과 활동</b><ul class="reading" style="margin:6px 0 0">${t.acts.map(a=>`<li>${a}</li>`).join('')}</ul></div>
+      <div style="font-size:13.5px"><b>창의적 체험활동</b><ul class="reading" style="margin:6px 0 0">${t.ca.map(a=>`<li>${a}</li>`).join('')}</ul></div>
+      <div class="ck ck--info" style="padding:10px 12px"><i>i</i><div><b style="font-size:13.5px">배울 점</b><span style="font-size:13px">${t.point}</span></div></div>`:''}
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:auto"><button class="btn btn--${o?'ghost':'primary'} btn--pill" style="padding:8px 14px;font-size:13px" data-cso="${t.id}">${o?'접기':'4층 흐름 보기'}</button><a class="btn btn--ghost btn--pill" style="padding:8px 14px;font-size:13px" href="study-plan.html#sim">내 계획에 참고 →</a></div></div>`;}).join('')}</div>`;}
+  else{const L=SC.filter(c=>CS.subj==='전체'||c.subj===CS.subj);
+    body=`<div class="fchips" style="margin-top:14px">${CSUBJ.map(t=>`<button class="fchip${CS.subj===t?' is-on':''}" data-css="${t}">${t}</button>`).join('')}</div>
+    <div class="preview" style="margin-top:14px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">${L.map(c=>{const o=CS.open===c.id;return `<div class="panel-c" style="border:1px solid ${o?'var(--brand)':'var(--line)'};box-shadow:none;display:flex;flex-direction:column;gap:8px${o?';grid-column:1/-1':''}"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="tb tb--2">${c.subj}</span>${c.skills.slice(0,2).map(k=>`<span class="tb tb--0">${k}</span>`).join('')}<small style="color:var(--ink-3)">p.${c.page}</small></div><b style="font-size:16px">${c.title}</b><p style="margin:0;color:var(--ink-2);font-size:13.5px">${c.theme}</p><p style="margin:0;font-size:12.5px;color:var(--ink-3)">${c.subjects.join(' · ')}</p>
+      ${o?`<div style="font-size:13.5px"><b>먼저 해 보기 (사전 활동)</b><ul class="reading" style="margin:6px 0 0">${(c.pre.length?c.pre:['자료집에 사전 활동이 따로 없어요']).map(a=>`<li>${a}</li>`).join('')}</ul></div>
+      <div style="font-size:13.5px"><b>이어서 넓히기 (후속 활동)</b><ul class="reading" style="margin:6px 0 0">${c.post.map(a=>`<li>${a}</li>`).join('')}</ul></div>
+      <p style="margin:0;font-size:12.5px;color:var(--ink-3)">성취기준 ${c.std.join(', ')}</p>`:''}
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:auto"><button class="btn btn--${o?'ghost':'primary'} btn--pill" style="padding:8px 14px;font-size:13px" data-cso="${c.id}">${o?'접기':'활동 보기'}</button><a class="btn btn--ghost btn--pill" style="padding:8px 14px;font-size:13px" href="#guides">탐구보고서 틀로 →</a></div></div>`;}).join('')}</div>`;}
+  $('casesBody').innerHTML=head+body+`<p class="hint">가상 사례 · 모범 답안 아님 · 세부능력 및 특기사항 기록 예시는 교사용 자료에만 있어요 · 출처: ${SRC}</p>`;}
 /* ── 탭 ── */
 let tab='mid';
 function rerender(){const g=GROUP[tab];
@@ -83,7 +105,7 @@ function rerender(){const g=GROUP[tab];
   document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('is-on',p.id==='pane-'+(g==='res'?'res':tab)));
   $('crumbL2').textContent=L2[g];$('crumbL3').textContent=L3[tab];$('h1').textContent=L2[g];
   $('hdesc').textContent=g==='res'?'학년과 시기에 맞춘 진로·진학 자료를 찾아보고 내려받으세요. 스크랩한 자료는 나의 진로진학에 모입니다.':g==='guide'?'탐구보고서 틀, 학부모 질문 카드, 기록 윤리까지 — 직접 쓰고 묻는 데 필요한 틀과 안내를 모았습니다.':'진로 영상과 진학 설명회, 선생님이 추천한 자료를 한곳에서 봅니다.';
-  if(g==='res')renderRes(tab);else if(g==='guide')({guides:renderGuides,parents:renderParents,ethics:renderEthics})[tab]();else({video:renderVideo,briefing:renderBrief,teacher:renderTeacher})[tab]();}
+  if(g==='res')renderRes(tab);else if(g==='guide')({guides:renderGuides,cases:renderCases,parents:renderParents,ethics:renderEthics})[tab]();else({video:renderVideo,briefing:renderBrief,teacher:renderTeacher})[tab]();}
 function setTab(){tab=(location.hash||'#mid').slice(1);if(!L3[tab])tab=A.logged()?'hs12':'mid';
   document.querySelectorAll('#lnb a').forEach(a=>a.classList.toggle('is-cur',a.getAttribute('href')==='library.html#'+tab));document.title=L3[tab]+' | 서울 진로진학 통합플랫폼';rerender();}
 if(!location.hash&&A.logged())history.replaceState(null,'','#hs12');
@@ -92,6 +114,10 @@ addEventListener('hashchange',()=>{setTab();scrollTo({top:document.querySelector
 document.addEventListener('sen-auth',rerender);
 document.addEventListener('click',e=>{
   const c=x=>e.target.closest(x);let b;
+  if(b=c('[data-csv]')){CS.view=b.dataset.csv;CS.open=null;renderCases();return;}
+  if(b=c('[data-cst]')){CS.track=b.dataset.cst;CS.open=null;renderCases();return;}
+  if(b=c('[data-css]')){CS.subj=b.dataset.css;CS.open=null;renderCases();return;}
+  if(b=c('[data-cso]')){CS.open=CS.open===b.dataset.cso?null:b.dataset.cso;renderCases();return;}
   if(b=c('[data-scrap]')){e.stopPropagation();if(needLogin('스크랩은 로그인 후 이용할 수 있어요'))return;const id=b.dataset.scrap,i=S.scrap.indexOf(id);i>-1?S.scrap.splice(i,1):S.scrap.push(id);save();showToast(i>-1?'스크랩을 취소했어요':'스크랩했어요 · 나의 진로진학에서도 볼 수 있어요');rerender();if(b.dataset.redraw)openRes(b.dataset.redraw);return;}
   if(b=c('[data-dl]')){e.stopPropagation();showToast(`${b.dataset.ext} 파일을 내려받습니다 · ${b.dataset.dl}`);return;}
   if(b=c('[data-res]')){openRes(b.dataset.res);return;}
