@@ -240,16 +240,16 @@ const TODO=[
   ['윤태양','진로 경로(자연 계열 미정) 공유 승인 · 9.4']],
   acts:['열람 (사유 자동 기록)'],note:'열람은 감사로그와 학생 「내 정보를 본 기록」에 남습니다'},
  {k:'event',label:'설명회·연수 신청 마감',n:1,rows:[
-  ['2028 대입 변화 교사 연수(원격)','마감 9.11(금) · 15차시']],
+  ['2028 대입 변화 교사 연수(원격)','마감 9.10(금) · 15차시']],
   acts:['신청'],note:''},
  {k:'hitl',label:'판정 승인 대기 (HITL)',get n(){return pendingHitl();},get rows(){return HITL.filter(h=>!HS[h.id]&&!h.mine).map(h=>[`${h.stu} · ${h.uni}`,`AI 초안 「${h.draft}」 · 근거 ${h.ev.length} · 9.5 생성`]);},acts:['검토'],note:'AI 초안은 교사 승인 후에만 확정·전달 · 승인권은 담임 반 한정 · 검토는 「판정 승인(HITL)」 탭에서'},
  {k:'assign',label:'배정 답변 대기 (게시판·센터 상담)',get lock(){return state==='counselor'?null:'정보원 상담교사 역할 전용';},get n(){return pendingAsg();},get rows(){return ASG.filter(a=>!AS[a.id]||AS[a.id]==='acc').map(a=>[`${a.stu} · ${a.kind}`,`${a.topic} · ${a.when} · ${AS[a.id]==='acc'?'수락 · 답변 작성 중':'배정 대기'}`]);},acts:['답변'],note:'배정 건은 정보원 상담교사 역할에서만 열람·답변 · 배정 수락 시 2단계 인증 · 「배정 답변」 탭에서'}
 ];
 const SHARES=[
  {who:'김서연',cls:'3-2',what:'진로검사 결과 · 과목 설계',when:'9.5 공유',badge:'학생 승인',kind:'설계',
-  detail:{'진로검사':'직업가치관검사 상위: 사회봉사 · 자율성 (2026.8 실시)','희망 경로':'사회과학 → 심리학과 · 사회학과 비교 중','과목 설계':'3-1 사회·문화 / 3-2 심화 국어 선택 · 확률과 통계 유지','사전 메모':'상담 시 "지원 대학 수준이 맞는지" 질문 예정'}},
+  detail:{'진로검사':'직업가치관검사 상위: 사회봉사 · 자율성 (2027.8 실시)','희망 경로':'사회과학 → 심리학과 · 사회학과 비교 중','과목 설계':'3-1 사회·문화 / 3-2 심화 국어 선택 · 확률과 통계 유지','사전 메모':'상담 시 "지원 대학 수준이 맞는지" 질문 예정'}},
  {who:'윤태양',cls:'3-2',what:'진로 경로(자연 계열 미정)',when:'9.4 공유',badge:'학생 승인',kind:'진로',
-  detail:{'희망 경로':'자연 계열 미정 · 화학/생명 사이에서 탐색 중','진로검사':'흥미검사 RIA형 (2026.5 실시)','최근 활동':'활동 성장 노트 2건 작성 (탐구 1 · 독서 1)'}},
+  detail:{'희망 경로':'자연 계열 미정 · 화학/생명 사이에서 탐색 중','진로검사':'흥미검사 RIA형 (2027.5 실시)','최근 활동':'활동 성장 노트 2건 작성 (탐구 1 · 독서 1)'}},
  {who:'강지우',cls:'3-2',what:'과목 설계 · 상담 한정 공유',when:'9.3 공유 · 상담 종결 30일 후 만료',badge:'상담 한정',kind:'설계',
   detail:{'공유 범위':'이번 상담 1건 한정 (수시 지원 전략)','과목 설계':'미적분 · 물리학Ⅱ 선택','사전 질문':'"최저 3합 7 가능할까요" — 전문시스템 사전정보에 병합됨'}}
 ];
@@ -306,7 +306,7 @@ function adminHtml(){const mode=authMode();
  </div></section>`;}
 /* 승격 흐름: 일반 선생님 → 정보원 상담교사 위촉 (선생님이 보는 쪽만) */
 function promoHtml(){const st=ADM.apply;const hasRole=window.SEN_AUTH&&SEN_AUTH.logged()&&SEN_AUTH.session.roles.some(r=>r.k==='counselor');
- if(hasRole||st==='approved')return `<div class="card"><h2>역할·위촉</h2><p class="sub">한 계정에 역할이 여러 개 · 역할마다 임기</p><div class="row"><b>정보원 상담교사 (위촉) <small style="color:var(--ink-3)">2026.4.1~2027.3.31 · 익년 3.31 자동 만료</small></b><span class="badge badge--ok">위촉 승인</span></div><div class="note">헤더의 역할 스위처에서 「상담교사」로 전환하면 배정 요청함이 열려요 · 전환 시 2단계 인증 · 위촉 만료 시 자동 회수</div></div>`;
+ if(hasRole||st==='approved')return `<div class="card"><h2>역할·위촉</h2><p class="sub">한 계정에 역할이 여러 개 · 역할마다 임기</p><div class="row"><b>정보원 상담교사 (위촉) <small style="color:var(--ink-3)">2027.4.1~2028.3.31 · 익년 3.31 자동 만료</small></b><span class="badge badge--ok">위촉 승인</span></div><div class="note">헤더의 역할 스위처에서 「상담교사」로 전환하면 배정 요청함이 열려요 · 전환 시 2단계 인증 · 위촉 만료 시 자동 회수</div></div>`;
  if(st==='applied')return `<div class="card"><h2>역할·위촉</h2><p class="sub">한 계정에 역할이 여러 개 · 역할마다 임기</p><div class="row"><b>정보원 상담교사 위촉 신청 <small style="color:var(--ink-3)">3.10 신청 · 심사 약 2:1</small></b><span class="badge badge--wait">정보원 심사 중</span></div><div class="note">심사·선발 → 4.1 위촉 등록 → 역할 승격. 승인되면 알림이 오고 헤더 역할 스위처에 「상담교사」가 생겨요 (정보원 승인 화면은 이 목업 범위 밖)</div><div style="margin-top:10px"><button class="btn btn--line" style="padding:8px 14px;font-size:13px" data-promo="approve">(목업) 정보원 승인 결과 받기</button></div></div>`;
  return `<div class="card"><h2>역할·위촉</h2><p class="sub">한 계정에 역할이 여러 개 · 역할마다 임기</p><div class="row"><b>정보원 상담교사 위촉 <small style="color:var(--ink-3)">매년 3월 공문 · 교원 인증 회원이면 신청 가능</small></b><div class="acts"><button data-promo="apply">위촉 신청</button></div></div><div class="note">심사(약 2:1) → 4.1 위촉 → 익년 3.31 자동 만료. 위촉되면 온라인·방문·화상 전 채널 배정 건을 맡아요 · 본인 자녀 건은 자동 제외</div></div>`;}
 
@@ -408,8 +408,8 @@ function susiHtml(){const ro=state==='subject';
 function jeongsiHtml(){const ro=state==='subject';
  const rows=JS.map(r=>`<tr><td><b>${r.n}</b></td><td>${/미반영/.test(r.mock)?`<span class="badge badge--warn">${r.mock}</span>`:r.mock}</td><td>${r.ga}</td><td>${r.na}</td><td>${r.da}</td><td>${/대기|불가/.test(r.st)?`<span class="badge badge--wait">${r.st}</span>`:r.st}</td></tr>`).join('');
  return `<section class="section"><h2 class="t">정시 지도 <span class="badge badge--teach">${ro?'과목교사 · 읽기 전용':'담임 반 한정'}</span></h2><p class="s">환산점 원장 상태와 군별 모의 배치 <b>상태</b>를 봐요 · 환산점 계산·판정 생성은 전문시스템 · 수능 전까지는 학평 기준 잠정</p>${proNote}
- <div class="kpis" style="grid-template-columns:repeat(4,1fr);margin:14px 0"><div class="kpi"><span>환산점 원장</span><b>v2.1</b><span class="d"><span class="badge badge--wait">PROVISIONAL</span> 시행계획 2026.7 기준</span></div><div class="kpi"><span>정시요강 반영</span><b>대기</b><span class="d">2026.9 요강 확정분 적재 예정</span></div><div class="kpi"><span>모의 배치 학생</span><b>${JS.filter(r=>!/미반영/.test(r.mock)).length}/${JS.length}명</b><span class="d">환산 불가 ${JS.filter(r=>/미반영/.test(r.mock)).length}명</span></div><div class="kpi"><span>판정 확정</span><b>${JS.reduce((a,r)=>a+(+(r.st.match(/확정 (\d)/)||[0,0])[1]),0)}건</b><span class="d">대기 ${JS.reduce((a,r)=>a+(+(r.st.match(/대기 (\d)/)||[0,0])[1]),0)}건</span></div></div>
- <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px"><span class="badge badge--gray">원천 · [실] 대교협 2027 기본사항</span><span class="badge badge--gray">[실] 대학 시행계획 2026.7</span><span class="badge badge--gray">[합성·순도 0.6] 전년 입결 분포(가상 대학)</span><span class="badge badge--gray">[파생] 환산점 v2.1</span></div>
+ <div class="kpis" style="grid-template-columns:repeat(4,1fr);margin:14px 0"><div class="kpi"><span>환산점 원장</span><b>v2.1</b><span class="d"><span class="badge badge--wait">PROVISIONAL</span> 시행계획 2027.7 기준</span></div><div class="kpi"><span>정시요강 반영</span><b>대기</b><span class="d">2027.9 요강 확정분 적재 예정</span></div><div class="kpi"><span>모의 배치 학생</span><b>${JS.filter(r=>!/미반영/.test(r.mock)).length}/${JS.length}명</b><span class="d">환산 불가 ${JS.filter(r=>/미반영/.test(r.mock)).length}명</span></div><div class="kpi"><span>판정 확정</span><b>${JS.reduce((a,r)=>a+(+(r.st.match(/확정 (\d)/)||[0,0])[1]),0)}건</b><span class="d">대기 ${JS.reduce((a,r)=>a+(+(r.st.match(/대기 (\d)/)||[0,0])[1]),0)}건</span></div></div>
+ <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px"><span class="badge badge--gray">원천 · [실] 대교협 2027 기본사항</span><span class="badge badge--gray">[실] 대학 시행계획 2027.7</span><span class="badge badge--gray">[합성·순도 0.6] 전년 입결 분포(가상 대학)</span><span class="badge badge--gray">[파생] 환산점 v2.1</span></div>
  <table class="btable"><tr><th>이름</th><th>모의고사 반영</th><th>가군</th><th>나군</th><th>다군</th><th>판정 상태</th></tr>${rows}</table>
  <p class="caption">판정 라벨(안정·적정·소신·상향)은 전문시스템에서 교사가 승인한 결과의 상태 표기 · 학생 화면에는 [선생님 의견]으로만 전달 · 가상 대학·가상 사례</p>
  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">${ro?'':`<button class="btn btn--primary" style="padding:8px 14px;font-size:13px" data-pro="정시 환산점 계산·판정 생성">전문시스템에서 환산·판정 ›</button>`}<a class="btn btn--line" href="strategy.html#plan" style="padding:8px 14px;font-size:13px">학생 정시 카드 보기</a><button class="btn btn--line" style="padding:8px 14px;font-size:13px" data-toast="수능 가채점 입력은 11.19 이후 전문시스템에서 열려요">수능 가채점 입력</button></div>
@@ -598,7 +598,7 @@ function renderMain(){
  document.querySelectorAll('[data-approve],[data-reject]').forEach(b=>b.addEventListener('click',()=>{const id=b.dataset.approve||b.dataset.reject,ok=!!b.dataset.approve;confirmAdmin(ok?'교사 승인':'교사 반려').then(()=>{ADM.req[id]=ok?'ok':'no';admSave();showToast(ok?'승인했어요 · 담당 범위 매핑 · 암호화 감사로그 기록':'반려했어요 · 신청자에게 사유 통보');renderAll();});}));
  document.querySelectorAll('[data-fulltoggle]').forEach(b=>b.addEventListener('click',()=>{const i=+b.dataset.fulltoggle;confirmAdmin('전체보기 권한 변경').then(()=>{ADM.full[i]=ADM.full[i]===false?true:false;admSave();showToast(ADM.full[i]===false?'전체보기를 회수했어요':'전체보기를 부여했어요 · 열람 시 사유 기록');renderAll();});}));
  bindExtra();
- document.querySelectorAll('[data-promo]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.promo==='apply'){ADM.apply='applied';admSave();showToast('위촉 신청을 보냈어요 · 정보원 심사 뒤 알림');renderAll();}else{ADM.apply='approved';admSave();if(window.SEN_AUTH&&SEN_AUTH.logged())SEN_AUTH.addRole({k:'counselor',status:'active',scope:'배정 건',term:'2026.4.1~2027.3.31'});showToast('위촉 승인 · 역할 스위처에 「상담교사」가 추가됐어요');renderAll();}}));
+ document.querySelectorAll('[data-promo]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.promo==='apply'){ADM.apply='applied';admSave();showToast('위촉 신청을 보냈어요 · 정보원 심사 뒤 알림');renderAll();}else{ADM.apply='approved';admSave();if(window.SEN_AUTH&&SEN_AUTH.logged())SEN_AUTH.addRole({k:'counselor',status:'active',scope:'배정 건',term:'2027.4.1~2028.3.31'});showToast('위촉 승인 · 역할 스위처에 「상담교사」가 추가됐어요');renderAll();}}));
  const dd=document.getElementById('dday1');
  if(dd){const diff=Math.ceil((new Date('2027-09-20')-new Date())/864e5);dd.textContent='D-'+diff;}
 }

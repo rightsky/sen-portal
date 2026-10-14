@@ -13,10 +13,10 @@ const IDP={eduonepass:{name:'교육디지털원패스',level:3,desc:'나이스 �
 const DEMO={
  eduonepass:[
   {id:'stu',t:'김서울 · 서울한빛고 2학년',sub:'나이스 재학 정보 → 학생(재학) 자동 부여',person:{name:'김서울',grade:'고2',school:'서울한빛고'},roles:[{k:'student',status:'active',scope:'본인',term:'재학 중'}]},
-  {id:'tch',t:'김민정 · 서울고 교원',sub:'교원 속성 → 학교관리자가 담임으로 승인함 (3-1)',person:{name:'김민정',school:'서울고'},roles:[{k:'teacher',status:'active',scope:'3학년 1반 담임',term:'2026학년도'},{k:'parent',status:'active',scope:'자녀 1명 연결',term:'자녀 졸업까지'}]},
+  {id:'tch',t:'김민정 · 서울고 교원',sub:'교원 속성 → 학교관리자가 담임으로 승인함 (3-1)',person:{name:'김민정',school:'서울고'},roles:[{k:'teacher',status:'active',scope:'3학년 1반 담임',term:'2027학년도'},{k:'parent',status:'active',scope:'자녀 1명 연결',term:'자녀 졸업까지'}]},
   {id:'pend',t:'이정민 · 서울고 교원 (승인 대기)',sub:'교원 속성은 확인됐지만 학교관리자 승인 전 → 권한 0',person:{name:'이정민',school:'서울고'},roles:[{k:'teacher',status:'pending',scope:'담임 신청(자기 선언)',term:'승인 전'}]},
-  {id:'cns',t:'박선영 · 정보원 위촉 상담교사',sub:'교원 + 정보원 위촉 승인 → 교사·상담교사 역할 2개',person:{name:'박선영',school:'서울남고'},roles:[{k:'teacher',status:'active',scope:'2학년 과목교사',term:'2026학년도'},{k:'counselor',status:'active',scope:'배정 건',term:'2026.4.1~2027.3.31'}]},
-  {id:'adm',t:'이재원 · 서울고 진학부장 (학교관리자)',sub:'교육청 승인으로 학교관리자 승격',person:{name:'이재원',school:'서울고'},roles:[{k:'teacher',status:'active',scope:'진학부장',term:'2026학년도'},{k:'schooladmin',status:'active',scope:'서울고',term:'담당 교체 시 회수'}]},
+  {id:'cns',t:'박선영 · 정보원 위촉 상담교사',sub:'교원 + 정보원 위촉 승인 → 교사·상담교사 역할 2개',person:{name:'박선영',school:'서울남고'},roles:[{k:'teacher',status:'active',scope:'2학년 과목교사',term:'2027학년도'},{k:'counselor',status:'active',scope:'배정 건',term:'2027.4.1~2028.3.31'}]},
+  {id:'adm',t:'이재원 · 서울고 진학부장 (학교관리자)',sub:'교육청 승인으로 학교관리자 승격',person:{name:'이재원',school:'서울고'},roles:[{k:'teacher',status:'active',scope:'진학부장',term:'2027학년도'},{k:'schooladmin',status:'active',scope:'서울고',term:'담당 교체 시 회수'}]},
   {id:'off',grp:'정보원 담당자 (업무시스템)',t:'한지원 · 정보원 상담운영 담당',sub:'내부 RBAC Role 상담운영 → 상담시스템 (위촉·배정 예외·만족도·수당 조서)',person:{name:'한지원',school:'교육연구정보원'},roles:[{k:'office',status:'active',scope:'상담운영 Role',term:'인사 발령',opsRole:'상담운영',ops:['counsel']}]},
   {id:'off2',grp:'정보원 담당자 (업무시스템)',t:'최민호 · 정보원 정산 담당',sub:'상담시스템 중 수당·계좌(정산 개인정보)만 열람 · 계좌 열람은 사유 기록',person:{name:'최민호',school:'교육연구정보원'},roles:[{k:'office',status:'active',scope:'정산 Role',term:'인사 발령',opsRole:'정산',ops:['counsel']}]},
   {id:'off3',grp:'정보원 담당자 (업무시스템)',t:'서다은 · SEN 데이터·AI 관리자',sub:'AI 서비스 관리 (관제·모델 원장·학습데이터·GPU) · 가명 L3·전체 계보',person:{name:'서다은',school:'교육연구정보원'},roles:[{k:'office',status:'active',scope:'데이터·AI Role',term:'인사 발령',opsRole:'데이터·AI',ops:['ai']}]},
