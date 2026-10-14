@@ -398,5 +398,6 @@ function syncAuth(){const A=window.SEN_AUTH;if(!A||!A.logged())return;const r=A.
  const k=r.status==='pending'?'before':/추가/.test(r.scope)?'extra':'basic';if(k!==state){state=k;localStorage.setItem('sen-parent-state',state);kid=0;renderAll();}}
 document.addEventListener('sen-auth',syncAuth);syncAuth();
 </script>
+<script src="footer-sys.js"></script>
 </body>
 </html>

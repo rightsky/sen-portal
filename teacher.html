@@ -311,7 +311,7 @@ function promoHtml(){const st=ADM.apply;const hasRole=window.SEN_AUTH&&SEN_AUTH.
  return `<div class="card"><h2>역할·위촉</h2><p class="sub">한 계정에 역할이 여러 개 · 역할마다 임기</p><div class="row"><b>정보원 상담교사 위촉 <small style="color:var(--ink-3)">매년 3월 공문 · 교원 인증 회원이면 신청 가능</small></b><div class="acts"><button data-promo="apply">위촉 신청</button></div></div><div class="note">심사(약 2:1) → 4.1 위촉 → 익년 3.31 자동 만료. 위촉되면 온라인·방문·화상 전 채널 배정 건을 맡아요 · 본인 자녀 건은 자동 제외</div></div>`;}
 
 /* ===== 반 관리 · 판정 승인(HITL) (통합 적용 3단계) ===== */
-let view=localStorage.getItem('sen-teacher-view')||'home';
+let view=(['home','class','hitl','susi','jeongsi','assign'].includes(location.hash.slice(1))?location.hash.slice(1):null)||localStorage.getItem('sen-teacher-view')||'home';
 const HK='sen-hitl-v1';let HS=(()=>{try{return JSON.parse(localStorage.getItem(HK)||'null')||{};}catch(e){return {};}})();const hsSave=()=>localStorage.setItem(HK,JSON.stringify(HS));
 const CLASS=[
  {no:1,n:'강지우',band:'2등급대',load:'적재 완료',last:'9.5 수시 전략',plan:'권장과목 5/6',judge:'승인 대기 1'},
@@ -613,5 +613,6 @@ function syncAuth(){const A=window.SEN_AUTH;const hint=document.getElementById('
 document.addEventListener('sen-auth',syncAuth);syncAuth();
 renderAll();
 </script>
+<script src="footer-sys.js"></script>
 </body>
 </html>
