@@ -266,17 +266,60 @@ const AUDIT=[
  ['9.3 16:40','강지우(학생)','상담 한정 공유 3항목 승인','상담 #4102']
 ];
 
+/* ===== 학교 관리(학교관리자) · 승격 흐름 · 인증 방식 비교 (통합 적용 2단계) ===== */
+const authMode=()=>localStorage.getItem('sen-authmode')||'B';   /* B: 교육디지털원패스 + 2단계(기본) / A: GPKI 인증서(비교용) */
+const ADM_KEY='sen-admin-v1';
+const admLoad=()=>{try{return JSON.parse(localStorage.getItem(ADM_KEY)||'null')||{req:{},full:{},apply:'none'};}catch(e){return {req:{},full:{},apply:'none'};}};
+let ADM=admLoad();const admSave=()=>localStorage.setItem(ADM_KEY,JSON.stringify(ADM));
+const REQS=[
+ {id:'r1',who:'박성호',role:'담임교사 신청',scope:'3학년 4반',when:'8.19',src:'나이스 편성표 일치',note:'교원 확인 ✓ · 편성표와 일치해 바로 승인 가능'},
+ {id:'r2',who:'최유진',role:'진로전담 교사 신청',scope:'진로 상담실',when:'8.18',src:'학교 관리자 편성',note:'교원 확인 ✓ · 담당 범위는 관리자가 지정'},
+ {id:'r3',who:'이정민',role:'담임교사 신청 (자기 선언)',scope:'2학년 3반',when:'9.2',src:'편성표 불일치',note:'나이스 편성표에 2-3 담임은 다른 교사 · 사유 확인 뒤 반려 또는 범위 수정'}];
+const TEACHERS=[
+ {n:'김민정',kind:'반 담임',scope:'3학년 1반',perm:'담당 반 학생만'},
+ {n:'박성호',kind:'반 담임',scope:'3학년 4반',perm:'담당 반 학생만'},
+ {n:'최유진',kind:'과목 교사',scope:'수학 · 3학년 1·2·4반',perm:'담당 과목 수강생만'},
+ {n:'이재원',kind:'진학부장',scope:'학급명단 전체보기',perm:'전체 · 사유 기록',full:true}];
+/* 승인권 행사 전 확인: B안은 2단계 인증 모달, A안은 GPKI 인증서 선택(목업) */
+function confirmAdmin(why){if(authMode()==='B'&&window.SEN_AUTH)return SEN_AUTH.stepUp(why);
+ return new Promise(res=>{showToast('GPKI 인증서 선택 → 인증서 비밀번호 입력 (목업: 바로 통과)');setTimeout(()=>res(true),400);});}
+function adminHtml(){const mode=authMode();
+ const sw=`<div class="share__notice" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><b>인증 방식 보기 (설계 검토용)</b><button class="btn btn--line" style="padding:6px 12px;font-size:12.5px${mode==='B'?';background:var(--brand);color:#fff;border-color:var(--brand)':''}" data-authmode="B">B안 · 교육디지털원패스 + 2단계 (기본)</button><button class="btn btn--line" style="padding:6px 12px;font-size:12.5px${mode==='A'?';background:var(--brand);color:#fff;border-color:var(--brand)':''}" data-authmode="A">A안 · GPKI 인증서 (비교)</button><span style="font-size:12.5px;color:var(--ink-3)">승인·전송 같은 승인권 기능에서만 차이가 나요</span></div>`;
+ const alt=mode==='B'
+  ?`<div class="note">휴대폰을 쓸 수 없을 때: 학교 담당자에게 임시 코드(1회용·30분) 요청 → 본인확인 뒤 발급. 휴대폰 변경 시 교육디지털원패스에서 기기 재등록. 번거로운 점: 승인할 때마다 6자리 입력</div>`
+  :`<div class="note">인증서가 만료됐을 때: GPKI 인증센터에서 갱신(연 1회) 후 다시 로그인. PC에만 설치되므로 교실 태블릿·휴대폰에서는 승인 불가. 번거로운 점: 인증서 관리·PC 종속</div>`;
+ const reqs=REQS.map(r=>{const st=ADM.req[r.id];return `<div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line)"><div style="font-size:13.5px;line-height:1.5"><b>${r.who}</b> <span style="color:var(--ink-3)">${r.role} · ${r.scope} · ${r.when}</span><br><span style="color:${r.src==='편성표 불일치'?'var(--warn)':'var(--ok)'};font-weight:800">${r.src}</span> <span style="color:var(--ink-3)">${r.note}</span></div>${st?`<span class="badge ${st==='ok'?'badge--ok':'badge--warn'}" style="flex:none">${st==='ok'?'승인됨 · 감사로그':'반려됨 · 사유 통보'}</span>`:`<div style="display:flex;gap:6px;flex:none"><button class="btn btn--primary" style="padding:7px 12px;font-size:12.5px" data-approve="${r.id}">승인</button><button class="btn btn--line" style="padding:7px 12px;font-size:12.5px" data-reject="${r.id}">반려</button></div>`}</div>`;}).join('');
+ const pendingN=REQS.filter(r=>!ADM.req[r.id]).length;
+ const tbl=`<table class="btable"><tr><th>이름</th><th>구분</th><th>담당 범위</th><th>조회 권한</th><th></th></tr>${TEACHERS.map((t,i)=>`<tr><td><b>${t.n}</b></td><td>${t.kind}</td><td>${t.scope}</td><td>${t.full?(ADM.full[i]===false?'담당 반 학생만':'전체 · 사유 기록'):t.perm}</td><td>${t.full?`<button class="btn btn--line" style="padding:5px 10px;font-size:12px" data-fulltoggle="${i}">${ADM.full[i]===false?'전체보기 부여':'전체보기 회수'}</button>`:''}</td></tr>`).join('')}</table>`;
+ return `<section class="section" id="schoolAdmin"><h2 class="t">학교 관리 <span class="badge badge--teach">학교관리자 전용</span></h2><p class="s">모든 계정은 학교 센진학 담당자(관리자) 승인을 거쳐 활성화돼요 · 승인·반려·권한 변경은 승인권 확인(${mode==='B'?'2단계 인증':'GPKI 인증서'}) 뒤 암호화 감사로그에 남아요</p>
+ ${sw}${alt}
+ <div class="grid" style="margin-top:14px">
+  <div class="card"><h2>① 승인함 <span class="badge badge--wait">${pendingN}건 대기</span></h2><p class="sub">교원 확인이 끝난 신청만 올라와요. 담임은 나이스 편성표와 대조해 승인하고, 승인·반려 이력은 암호화 감사로그에 기록 · 담당 교체 시 기존 계정 자동 회수</p>${reqs}</div>
+  <div style="display:flex;flex-direction:column;gap:20px">
+   <div class="card"><h2>② 교사 등록</h2><p class="sub">기본값은 담당 학생만 보임 · 전체보기는 여기서만 설정 · UI·DB·API 3중 권한 동일 적용</p>${tbl}<div style="margin-top:10px"><button class="btn btn--line" style="padding:8px 14px;font-size:13px" data-toast="교사 추가: 교육디지털원패스로 가입한 교원 중에서 고릅니다 (새 계정 생성 없음)">+ 교사 추가</button></div></div>
+   <div class="card"><h2>③ 학생 등록 · 권한 매핑</h2><p class="sub">학년·반 명단을 일괄 등록하면 담임별로 자동 배정 · 교사는 매핑된 담당 학생만 조회 · 모든 열람은 누가·언제·누구를 기록</p>
+    <div class="kpis" style="grid-template-columns:repeat(3,1fr)"><div class="kpi"><span>3학년 1반</span><b>32명</b><span class="d">담임 김민정 매핑</span></div><div class="kpi"><span>미배정 학생</span><b>0명</b><span class="d">전 학급 매핑 완료</span></div><div class="kpi"><span>NEIS 자료</span><b>적재 완료</b><span class="d">무결성 게이트 통과 · 9.1</span></div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="btn btn--line" style="padding:8px 14px;font-size:13px" data-toast="학년·반 명단 일괄 등록(xlsx) → 담임 자동 배정 · 목업">명단 일괄 등록</button><button class="btn btn--line" style="padding:8px 14px;font-size:13px" data-toast="학생부·비교과·중간고사 적재는 전문시스템(SEN 진학프로그램)에서 · 전송 건별 감사로그">NEIS 자료 등록 (전문시스템) ›</button></div></div>
+  </div>
+ </div></section>`;}
+/* 승격 흐름: 일반 선생님 → 정보원 상담교사 위촉 (선생님이 보는 쪽만) */
+function promoHtml(){const st=ADM.apply;const hasRole=window.SEN_AUTH&&SEN_AUTH.logged()&&SEN_AUTH.session.roles.some(r=>r.k==='counselor');
+ if(hasRole||st==='approved')return `<div class="card"><h2>역할·위촉</h2><p class="sub">한 계정에 역할이 여러 개 · 역할마다 임기</p><div class="row"><b>정보원 상담교사 (위촉) <small style="color:var(--ink-3)">2026.4.1~2027.3.31 · 익년 3.31 자동 만료</small></b><span class="badge badge--ok">위촉 승인</span></div><div class="note">헤더의 역할 스위처에서 「상담교사」로 전환하면 배정 요청함이 열려요 · 전환 시 2단계 인증 · 위촉 만료 시 자동 회수</div></div>`;
+ if(st==='applied')return `<div class="card"><h2>역할·위촉</h2><p class="sub">한 계정에 역할이 여러 개 · 역할마다 임기</p><div class="row"><b>정보원 상담교사 위촉 신청 <small style="color:var(--ink-3)">3.10 신청 · 심사 약 2:1</small></b><span class="badge badge--wait">정보원 심사 중</span></div><div class="note">심사·선발 → 4.1 위촉 등록 → 역할 승격. 승인되면 알림이 오고 헤더 역할 스위처에 「상담교사」가 생겨요 (정보원 승인 화면은 이 목업 범위 밖)</div><div style="margin-top:10px"><button class="btn btn--line" style="padding:8px 14px;font-size:13px" data-promo="approve">(목업) 정보원 승인 결과 받기</button></div></div>`;
+ return `<div class="card"><h2>역할·위촉</h2><p class="sub">한 계정에 역할이 여러 개 · 역할마다 임기</p><div class="row"><b>정보원 상담교사 위촉 <small style="color:var(--ink-3)">매년 3월 공문 · 교원 인증 회원이면 신청 가능</small></b><div class="acts"><button data-promo="apply">위촉 신청</button></div></div><div class="note">심사(약 2:1) → 4.1 위촉 → 익년 3.31 자동 만료. 위촉되면 온라인·방문·화상 전 채널 배정 건을 맡아요 · 본인 자녀 건은 자동 제외</div></div>`;}
+
 /* ===== Z1 ===== */
 function renderZ1(){
  const z1=document.getElementById('z1'),body=document.getElementById('z1Body'),gnb=document.getElementById('tgnb');
  if(state==='guest'||state==='pending'){z1.hidden=true;gnb.hidden=true;return;}
  z1.hidden=false;gnb.hidden=false;
- const role={homeroom:'담임교사',subject:'과목교사(사회)',head:'진학부장',counselor:'정보원 상담교사(위촉)',expired:'정보원 상담교사(위촉)'}[state];
- const scope={homeroom:'서울○○고 3학년 2반',subject:'서울○○고 사회·문화 수강생',head:'서울○○고 3학년 전체(전체보기 승인)',counselor:'서울진로진학정보센터 배정',expired:'—'}[state];
- let badges=`<span class="badge badge--ok">GPKI ✓</span><span class="badge badge--ok">관리자 승인 ✓</span><span class="badge badge--gray">2FA 학생 식별 화면 진입 시</span><span class="badge badge--gray">세션 29:40</span>`;
+ const role={homeroom:'담임교사',subject:'과목교사(사회)',head:'진학부장',counselor:'정보원 상담교사(위촉)',expired:'정보원 상담교사(위촉)',schooladmin:'학교관리자(센진학 담당자)'}[state];
+ const scope={homeroom:'서울○○고 3학년 2반',subject:'서울○○고 사회·문화 수강생',head:'서울○○고 3학년 전체(전체보기 승인)',counselor:'서울진로진학정보센터 배정',expired:'—',schooladmin:'서울○○고 전체 · 승인·등록·매핑'}[state];
+ let badges=authMode()==='A'?`<span class="badge badge--ok">GPKI 인증서 ✓</span><span class="badge badge--ok">관리자 승인 ✓</span><span class="badge badge--gray">세션 ${state==='schooladmin'?'14:40':'29:40'}</span>`:`<span class="badge badge--ok">교육디지털원패스 ✓</span><span class="badge badge--ok">관리자 승인 ✓</span><span class="badge badge--gray">2FA 승인·식별 화면 진입 시</span><span class="badge badge--gray">세션 ${state==='schooladmin'?'14:40':'29:40'}</span>`;
+ if(state==='schooladmin')badges+=`<span class="badge badge--ok">승인권</span>`;
  if(state==='counselor')badges+=`<span class="badge badge--wait">위촉 2027.2.28까지</span>`;
  if(state==='expired')badges=`<span class="badge badge--warn">권한이 회수되었습니다 · 재위촉 후 이용</span>`;
- body.innerHTML=`<b>박선우 선생님</b><span class="sep">|</span><span>${scope}</span><span class="sep">|</span><span class="badge badge--teach">${role}</span>${badges}`;
+ body.innerHTML=`<b>${(window.SEN_AUTH&&SEN_AUTH.logged()&&SEN_AUTH.name)||'박선우'} 선생님</b><span class="sep">|</span><span>${scope}</span><span class="sep">|</span><span class="badge badge--teach">${role}</span>${badges}`;
 }
 
 /* ===== 본문 ===== */
@@ -391,10 +434,12 @@ function renderMain(){
  </div>`;
 
  m.innerHTML=`
+ ${isAdm?adminHtml():''}
  <div class="grid">
   <div class="card"><h2>오늘 할 일</h2><p class="sub">건수 0이면 완료 · 잠긴 항목은 오픈 시점을 표시합니다</p>${z2}</div>
   <div style="display:flex;flex-direction:column;gap:20px">
    <div class="card"><h2>전문시스템 진입</h2><p class="sub">학생 식별·판정·적재가 필요한 업무는 전문시스템에서</p>${z3}</div>
+   ${(state==='homeroom'||state==='subject'||state==='head')?promoHtml():''}
    ${z4}
   </div>
  </div>
@@ -418,6 +463,10 @@ function renderMain(){
  document.querySelectorAll('[data-share]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-share]').forEach(x=>x.classList.remove('is-on'));b.classList.add('is-on');showShare(+b.dataset.share);}));
  if(shares.length)showShare(0);
  document.querySelectorAll('[data-done]').forEach(b=>b.addEventListener('click',()=>showToast(b.dataset.done)));
+ document.querySelectorAll('[data-authmode]').forEach(b=>b.addEventListener('click',()=>{localStorage.setItem('sen-authmode',b.dataset.authmode);renderAll();}));
+ document.querySelectorAll('[data-approve],[data-reject]').forEach(b=>b.addEventListener('click',()=>{const id=b.dataset.approve||b.dataset.reject,ok=!!b.dataset.approve;confirmAdmin(ok?'교사 승인':'교사 반려').then(()=>{ADM.req[id]=ok?'ok':'no';admSave();showToast(ok?'승인했어요 · 담당 범위 매핑 · 암호화 감사로그 기록':'반려했어요 · 신청자에게 사유 통보');renderAll();});}));
+ document.querySelectorAll('[data-fulltoggle]').forEach(b=>b.addEventListener('click',()=>{const i=+b.dataset.fulltoggle;confirmAdmin('전체보기 권한 변경').then(()=>{ADM.full[i]=ADM.full[i]===false?true:false;admSave();showToast(ADM.full[i]===false?'전체보기를 회수했어요':'전체보기를 부여했어요 · 열람 시 사유 기록');renderAll();});}));
+ document.querySelectorAll('[data-promo]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.promo==='apply'){ADM.apply='applied';admSave();showToast('위촉 신청을 보냈어요 · 정보원 심사 뒤 알림');renderAll();}else{ADM.apply='approved';admSave();if(window.SEN_AUTH&&SEN_AUTH.logged())SEN_AUTH.addRole({k:'counselor',status:'active',scope:'배정 건',term:'2026.4.1~2027.3.31'});showToast('위촉 승인 · 역할 스위처에 「상담교사」가 추가됐어요');renderAll();}}));
  const dd=document.getElementById('dday1');
  if(dd){const diff=Math.ceil((new Date('2027-09-20')-new Date())/864e5);dd.textContent='D-'+diff;}
 }

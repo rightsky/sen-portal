@@ -40,6 +40,7 @@ const A={
  /* 레거시 호출(login(true/false))은 학생 데모로 */
  login(has){const d=DEMO.eduonepass[0];this.signIn('eduonepass',d);if(has===false)localStorage.setItem(LEGACY,'empty');},
  signIn(idp,demo){S={idp,level:IDP[idp].level,person:demo.person,roles:demo.roles,cur:0,at:Date.now()};localStorage.setItem(KEY,JSON.stringify(S));syncLegacy();fire();},
+ addRole(r){if(!S)return;const i=S.roles.findIndex(x=>x.k===r.k);if(i>-1)S.roles[i]=r;else S.roles.push(r);localStorage.setItem(KEY,JSON.stringify(S));fire();},
  switchRole(i){if(!S||!S.roles[i])return;S.cur=i;localStorage.setItem(KEY,JSON.stringify(S));fire();},
  logout(){S=null;localStorage.removeItem(KEY);localStorage.setItem(LEGACY,'guest');fire();},
  /* 보증 수준 올리기: 필요한 수준 미달이면 안내 모달 */
