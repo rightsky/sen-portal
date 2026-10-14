@@ -505,8 +505,8 @@ function draw(){const el=document.getElementById('opsView');if(!el||!cur||!VIEWS
 function badges(){const r=window.SEN_AUTH&&SEN_AUTH.roleObj;if(r&&r.k==='counselor')return {tdash:D.RQ.filter(x=>!S.ctRq[x[0]]).length+D.REP2.filter(p=>!S.ctRp[p[0]]).length};
  return {risk:D.RK.filter(x=>!S.cd3Q[x[0]]).length,ol:olxOpen().total,rp:2};}
 function syncBadges(){const b=badges();document.querySelectorAll('.ops-side a').forEach(a=>{const k=a.getAttribute('href').slice(1);let n=a.querySelector('.n');if(b[k]){if(!n){n=document.createElement('span');n.className='n';a.appendChild(n);}n.textContent=b[k];}else if(n)n.remove();});}
-const MENUS_OFFICE=[{k:'home',label:'실무사 대시보드',grp:'대시보드'},{k:'mg',label:'상담자관리',code:'O-01',grp:'상담관리 콘솔'},{k:'risk',label:'리스크 관리 (플랜B)',code:'O-02'},{k:'ol',label:'온라인 게시판 상담',code:'O-03'},{k:'vc',label:'온라인(화상) 상담',code:'O-03'},{k:'wv',label:'방문상담',code:'O-03'},{k:'rp',label:'상담 보고서 관리',code:'O-05'},{k:'st',label:'상담 만족도 조사',code:'O-07'},{k:'py',label:'수당관리 (조서)',code:'O-06'},{k:'book',label:'스케줄·예약 (P1/P2)',code:'T-02'}];
-const MENUS_COUNSELOR=[{k:'tdash',label:'상담선생님 대시보드',grp:'내 상담'},{k:'book',label:'내 상담 스케줄 (P1/P2)',code:'T-02'}];
+const MENUS_OFFICE=[{k:'home',label:'실무사 대시보드',grp:'대시보드'},{k:'mg',label:'상담자관리',grp:'상담관리 콘솔'},{k:'risk',label:'리스크 관리 (플랜B)'},{k:'ol',label:'온라인 게시판 상담'},{k:'vc',label:'온라인(화상) 상담'},{k:'wv',label:'방문상담'},{k:'rp',label:'상담 보고서 관리'},{k:'st',label:'상담 만족도 조사'},{k:'py',label:'수당관리 (조서)'},{k:'book',label:'스케줄·예약 (P1/P2)'}];
+const MENUS_COUNSELOR=[{k:'tdash',label:'상담선생님 대시보드',grp:'내 상담'},{k:'book',label:'내 상담 스케줄 (P1/P2)'}];
 SEN_OPS.init({sys:'counsel',title:'상담시스템',desc:'진로진학 상담 운영 · 배정 · 보고서 · 수당 — 상담 원장 1개',extraRoles:['counselor'],
  menus:r=>(r&&r.k==='counselor')?MENUS_COUNSELOR:MENUS_OFFICE,badges,
  views:Object.fromEntries(Object.keys(VIEWS).map(k=>[k,(el,c)=>{cur=k;ctx=c;VIEWS[k](el);}])),
