@@ -855,6 +855,8 @@ const RULES=[
   {k:'문서확인번호',re:/(문서확인번호)\s*[:：]?\s*[\d-]{10,25}/g,t:'$1: [번호]'},
   {k:'대장번호',re:/(대장\s*번호)\s*[:：]?\s*\*{0,2}\s*:?\s*\d{2,8}/g,t:'$1 : [번호]'},
   {k:'연락처',re:/\b01[016789]\s*-?\s*\d{3,4}\s*-?\s*\d{4}\b/g,t:'[연락처]'},
+  {k:'전화번호',re:/\b0\d{1,2}\s*-\s*\d{3,4}\s*-\s*\d{4}\b/g,t:'[전화번호]'},
+  {k:'발급번호',re:/(발급\s*번호)\s*[:：]?\s*[A-Z]?\d{6,}[-\d]*/g,t:'$1: [번호]'},
   {k:'이메일',re:/[\w.+-]+@[\w-]+\.[\w.-]+/g,t:'[이메일]'},
   {k:'생년월일',re:/(생년월일|출생)\s*[:：]?\s*\d{4}[.\-/년]\s*\d{1,2}[.\-/월]\s*\d{1,2}일?/g,t:'$1: [생년월일]'},
   {k:'학번',re:/(학번)\s*[:：]?\s*\d{4,6}/g,t:'$1: [학번]'},
@@ -862,13 +864,13 @@ const RULES=[
   {k:'학교명',re:/[가-힣]{2,10}(초등학교|중학교|고등학교|고교)/g,t:'[학교명]'},
   {k:'학년·반',re:/\d\s*학년\s*\d{1,2}\s*반/g,t:'[학년·반]'},
   {k:'담임성명(표)',re:/(\|[^\n]*담임\s*성명[^\n]*\|\n\|[^\n]*\|\n)((?:\|[^\n]*\|\n?)+)/g,t:(m,h,rows)=>h+rows.replace(/\|\s*[가-힣]{2,4}\s*\|(?=\s*$)/gm,'| [이름] |')},
-  {k:'이름(라벨)',re:/(성명|이름|학생명|담임|보호자|교사|신청인)\s*[:：]?\s*(?!성명|이름|학생명|선생님|교사)[가-힣]{2,4}(?=\s|$|[,.)|])/g,t:'$1: [이름]'},
+  {k:'이름(라벨)',re:/(성\s?명|이름|학생명|담임|보호자|교사|신청인|담\s?당\s?자)\s*[:：]?\s*(?!성명|이름|학생명|선생님|교사)[가-힣]{2,4}(?=\s|$|[,.)|])/g,t:'$1: [이름]'},
   {k:'이름(호칭)',re:/[가-힣]{2,4}(?=\s*(학생|군|양)\b)/g,t:'[이름]'}
 ];
 let deidText='',deidNames=[];
 function deidentify(src){
   let out=src;const rep={};
-  const nm=[...src.matchAll(/(성명|이름|학생명)\s*[:：]?\s*([가-힣]{2,4})/g)].map(m=>m[2]);deidNames=[...new Set(nm)];
+  const nm=[...src.matchAll(/(성\s?명|이름|학생명)\s*[:：]?\s*([가-힣]{2,4})/g)].map(m=>m[2]).filter(n=>!/^(성명|이름|학생명|인적)/.test(n));deidNames=[...new Set(nm)];
   RULES.forEach(r=>{let n=0;out=out.replace(r.re,(...a)=>{n++;return typeof r.t==='function'?r.t(...a):r.t.replace('$1',a[1]||'');});if(n)rep[r.k]=n;});
   deidNames.forEach(n=>{const re=new RegExp(n,'g');let c=0;out=out.replace(re,()=>{c++;return'[이름]';});if(c)rep['이름(전체)']=(rep['이름(전체)']||0)+c;});
   return{out,rep};
@@ -880,13 +882,13 @@ async function recImport(f){
   if(!isPdf&&!isMd){toast('PDF나 .md 파일만 가져올 수 있어요');return;}
   if(f.size>(isPdf?20*1024*1024:512*1024)){toast('파일이 너무 커요 (PDF 최대 20MB · md 최대 500KB)');return;}
   const note=$('#recFileNote'),note0=note.dataset.base||(note.dataset.base=note.textContent);
-  if(isMd){$('#recText').value=await f.text();note.textContent=note0;toast(f.name+' 을 읽었어요 · 처리는 브라우저 안에서만 · 원본은 저장되지 않아요');return;}
+  if(isMd){$('#recText').value=neisClean(await f.text());note.textContent=note0;toast(f.name+' 을 읽었어요 · 처리는 브라우저 안에서만 · 원본은 저장되지 않아요');return;}
   if(!window.Doc2MD){toast('PDF 변환기를 불러오지 못했어요. 새로고침 뒤 다시 시도하세요');return;}
   note.textContent=f.name+' 에서 글자를 읽는 중…';
   try{
     const r=await Doc2MD.convert(f,{numberedHeadings:false});
     // 생기부는 줄글로 다루므로 md 제목 표시(#)와 강조 표시는 걷어 낸다
-    const stem=f.name.replace(/\.[^.]+$/,'');const text=r.md.replace(/^>?\s*원천:.*변환일.*$/m,'').replace(new RegExp('^#\\s+'+stem.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\s*$','m'),'').replace(/^#{1,6}\s+/gm,'').replace(/\*\*(.+?)\*\*/g,'$1').replace(/\n{3,}/g,'\n\n').trim();
+    const stem=f.name.replace(/\.[^.]+$/,'');const text=neisClean(r.md).replace(/^>?\s*원천:.*변환일.*$/m,'').replace(new RegExp('^#\\s+'+stem.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\s*$','m'),'').replace(/^#{1,6}\s+/gm,'').replace(/\*\*(.+?)\*\*/g,'$1').replace(/\n{3,}/g,'\n\n').trim();
     if(text.replace(/\s/g,'').length<50){note.textContent='글자를 거의 찾지 못했어요. 스캔한 이미지 PDF라면 글자 인식(OCR)이 먼저 필요해요.';toast('PDF에서 글자를 찾지 못했어요');return;}
     $('#recText').value=text;
     const w=(r.warnings||[]).filter(x=>!/표는 칸 구분/.test(x));
@@ -925,10 +927,10 @@ function recCheck(src){
 }
 $('#recDeid').addEventListener('click',()=>{
   const src=$('#recText').value.trim();if(!src){toast('생기부 텍스트를 먼저 넣으세요');return;}
-  const chk=recCheck(src);
+  const chk=recCheck(neisClean(src));
   if(!chk.ok){deidText='';['#recDeidCard','#recSynthCard','#recOutCard'].forEach(x=>$(x).style.display='none');$('#rs1').classList.remove('done');$('#recRejectWhy').textContent=chk.why;$('#recRejectCard').style.display='';$('#recRejectCard').scrollIntoView({behavior:'smooth',block:'start'});toast('생기부 기록이 아니어서 진행하지 않았어요');return;}
   $('#recRejectCard').style.display='none';
-  const{out,rep}=deidentify(src);deidText=out;
+  const{out,rep}=deidentify(neisClean(src));deidText=out;
   $('#rs1').classList.add('done');$('#rs2').classList.remove('done');$('#rs3').classList.remove('done');
   const keys=Object.keys(rep);$('#deidReport').innerHTML=(keys.length?keys.map(k=>`<span class="badge warn">${esc(k)} ${rep[k]}건</span>`).join(''):'<span class="badge ok">탐지된 식별자 없음</span>')+`<span class="badge">${src.length}자 → ${out.length}자</span>`;
   $('#deidView').innerHTML=esc(out).replace(/\[(주민번호|연락처|이메일|생년월일|학번|주소|학교명|학년·반|이름)\]/g,'<span class="mask">[$1]</span>');
@@ -951,6 +953,39 @@ function recNote(l){const n=$('#recOutNote');if(!n)return;n.textContent=l==='합
 /* 긴 생기부(나이스 전체 출력 등)는 역량 읽기에 필요한 부분만 AI에 보낸다
    - 뺌 : 인적·학적, 출결, 자격증, 증명서 발급 정보, 성적표(| 표 |), 구분선·강조 기호
    - 둠 : 수상, 창체(자율·동아리·진로·봉사), 세특, 독서, 행특 */
+/* 나이스 「학교생활세부사항기록부」 PDF를 글자로 바꾼 결과를 항목별로 정리한다
+   - 쪽 머리글·바닥글(학교명·발급일·쪽수·반·번호·이름), 반복되는 표 머리 제거
+   - 성적표 행(원점수/과목평균(표준편차) 성취도 석차등급) 제거 · 세특은 「과목: 내용」 그대로
+   - 끝의 증명서 발급 페이지(발급번호·담당자·전화) 제거 · 「N. 항목」을 제목(##)으로 */
+function isNeis(t){return /학교생활세부사항기록부|학교생활기록부\s*[ⅠⅡI]{1,2}|교과학습발달상황/.test(t);}
+function neisClean(text){
+  if(!isNeis(text))return text;
+  let lines=text.split(/\r?\n/);
+  // 증명서 페이지 이후 제거
+  const endIdx=lines.findIndex(l=>/^#*\s*(발급번호|학 교 생 활 기 록 부\s*$|위 사람의 학교생활기록부 사본임)/.test(l.trim()));
+  if(endIdx>0)lines=lines.slice(0,endIdx);
+  const out=[];let started=false;
+  const headerRe=/^(창 ?의 ?적 ?체 ?험 ?활 ?동 ?상 ?황|과목 세 ?부 ?능 ?력|학년 행 ?동 ?특 ?성|원점수\/과목평균|학년 과목 또는 영역|학년\s*영역\s*시간|구분\s*학과|학년 수업일수|결석일수|질병 미인정|학년\s*\(학기\)|\(참가인원\)|학년 학과 반 번호|졸업 대장 번호 .*담임성명|교과\s+과목\s+단위수|성취도\s*학기|이수단위|\(수강자수\)|학년 참가대상|수 ?상 ?명 등급|성취도별|분포비율)/;
+  const footerRe=/(\d{4}년\s*\d{1,2}월\s*\d{1,2}일\s*\d+\/\d+|\d+\/\d+\s*\d{4}년\s*\d{1,2}월\s*\d{1,2}일|반\s*\d+\s*번호\s*\d+\s*이름\s*[가-힣]{2,4})/;
+  const gradeRe=/\d{1,3}\/\d{1,3}\.\d\s*\(\d{1,2}\.\d\)|\b[A-E]\(\d{2,3}\)|석차등급/;
+  for(let raw of lines){
+    let l=raw.replace(/\*\*/g,'').trim();
+    if(!l)continue;
+    const sec=l.match(/^#*\s*(\d)\.\s*([가-힣 ·ㆍ]+)$/);
+    if(sec){started=true;out.push('','## '+sec[1]+'. '+sec[2].replace(/\s+/g,' ').replace(/^출 결 상 황$/,'출결상황').replace(/^수 상 경 력$/,'수상경력'),'');continue;}
+    if(!started){if(/^#\s/.test(l))out.push(l);continue;} // 표지 머리(담임성명 표 등)는 버림
+    if(/^원천:.*변환일/.test(l))continue;
+    if(footerRe.test(l)||headerRe.test(l)||gradeRe.test(l))continue;
+    if(/^\[\d학년\]$/.test(l)){out.push('','### '+l.replace(/[\[\]]/g,''),'');continue;}
+    // 문단 사이에 끼어든 표 열 값(학년 1~3) 제거
+    l=l.replace(/(?<=[가-힣.,'’)])\s[1-3]\s(?=[가-힣'‘(])/g,' ');
+    // 문단 중간에 끼어든 창체 영역 열(자율활동 95 등)은 문단 머리로 옮김
+    const area=l.match(/(?<=[가-힣.,'’)])\s(자율활동|동아리활동|진로활동|봉사활동)\s(\d{1,3})\s(?=[가-힣'‘(])/);
+    if(area){l='('+area[1]+' '+area[2]+'시간) '+l.replace(area[0],' ');}
+    out.push(l);
+  }
+  return out.join('\n').replace(/\n{3,}/g,'\n\n').trim();
+}
 const REC_SEND_MAX=90000; // 중계 서버 MAX_INPUT_CHARS(120000)보다 여유 있게
 function recCondense(text){
   const dropSec=/^(인적·학적사항|인적\s*·\s*학적\s*사항|출결상황|출결\s*상황|자격증 및 인증 취득상황|자격증|증명서 발급 정보|증명서)/;
