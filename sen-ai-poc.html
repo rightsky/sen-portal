@@ -245,15 +245,8 @@ th{color:var(--ink-3);font-weight:600;font-size:13px}
   <section class="pane" id="pane-store" role="tabpanel">
     <div class="card">
       <h2>지식저장소 <span class="soon" style="display:inline-block;margin-left:6px;padding:1px 8px;border-radius:999px;background:var(--brand-soft);color:var(--brand);font-size:13px;vertical-align:middle">신규</span></h2>
-      <p class="muted">① md 변환기에서 저장한 문서가 여기 모이고, 아래 단계를 거쳐 ③ RAG 어시스턴트가 검색하는 지식DB가 됩니다. 세부 기능은 따로 기획하고 있어요.</p>
-      <p class="muted"><b>기본 지식저장소</b> : 페이지를 열면 기본 지식 6편과 <b>2027학년도 서울 소재 대학 정시 모집요강 통합본</b>(41개교 · 2116쪽)이 자동으로 들어갑니다. 「지식저장소 비우기」를 눌러도 기본 문서는 남고, 직접 저장한 문서만 지워져요.</p>
-      <div class="steps" id="kbSteps">
-        <div class="step" data-s="1"><div class="n">1</div><div><b>md 수신</b><span id="step1Note">md 변환기에서 저장한 문서를 받음</span></div></div>
-        <div class="step" data-s="2"><div class="n">2</div><div><b>청킹</b><span>제목(#·##·###) 단위로 자르고 400자 넘으면 문단으로 재분할</span></div></div>
-        <div class="step" data-s="3"><div class="n">3</div><div><b>메타데이터 추출</b><span>출처 파일 · 섹션 경로 · 학년도 · 기준일(본문에서 자동 탐지)</span></div></div>
-        <div class="step" data-s="4"><div class="n">4</div><div><b>인덱싱</b><span>한글 2-gram + 단어 토큰 BM25 역색인</span></div></div>
-        <div class="step" data-s="5"><div class="n">5</div><div><b>검증 · 활성화</b><span>중복 청크 제거 · 건수 확인 · 저장</span></div></div>
-      </div>
+      <p class="muted">① md 변환기에서 저장한 문서가 여기 모여 ③ RAG 어시스턴트가 검색하는 지식DB가 됩니다(제목 단위 청킹 · 출처·학년도 메타데이터 · BM25 색인). 세부 기능은 따로 기획하고 있어요.</p>
+      <p class="muted"><b>기본 지식저장소</b> : 페이지를 열면 기본 지식 6편과 <b>2027학년도 서울 소재 대학 정시 모집요강 통합본</b>(41개교 · 2116쪽)이 자동으로 들어갑니다. 기본 문서도 하나씩 삭제할 수 있고, 새로고침하면 다시 들어갑니다. 「지식저장소 비우기」는 직접 저장한 문서만 지워요.</p>
       <div class="kpi" id="kbKpi">
         <div><b id="kFiles">0</b><span>문서</span></div>
         <div><b id="kChunks">0</b><span>청크</span></div>
@@ -652,7 +645,7 @@ function saveKb(){store('sen-kb',{docs:KB.docs,chunks:KB.chunks.map(({tf,len,...
    - 기본 지식 6편(SEED) + 2027학년도 서울 소재 대학 정시 모집요강 통합본(41개교 · 2116쪽 · kb/ 폴더)
    - 「지식저장소 비우기」로도 지워지지 않고, 직접 저장한 문서만 비워진다 */
 const DEFAULT_DOCS=[{name:'2027_서울소재대학_정시모집요강_통합본.md',url:'kb/2027-seoul-jeongsi-yogang.md?v=20261016',meta:{year:'2027',src:'각 대학 2027학년도 정시 모집요강 PDF 41건(2116쪽) · 대교협 심의 등으로 바뀔 수 있어 최종은 각 대학 입학처 공지 확인'}}];
-let DEFAULT_STATE='loading';
+let DEFAULT_STATE='loading';const KB_BASE_NAMES=new Set();
 async function addBaseDoc(name,text,meta){
   // 큰 문서는 대학(##) 단위로 나눠 청킹하며 중간중간 화면에 양보한다
   KB.docs=KB.docs.filter(d=>d.name!==name);KB.chunks=KB.chunks.filter(c=>c.doc!==name);
@@ -660,7 +653,7 @@ async function addBaseDoc(name,text,meta){
   const title=(text.match(/^# (.*)/m)||[])[1]||'';
   for(let i=0;i<parts.length;i++){const head=i&&title?'# '+title+'\n':'';all=all.concat(chunkMd(name,head+parts[i],meta,all.length));if(i%4===3)await new Promise(r=>setTimeout(r,0));}
   const seen=new Set();all=all.filter(c=>{const k=c.sec+'|'+c.text;if(seen.has(k))return false;seen.add(k);return true;});
-  KB.chunks=KB.chunks.concat(all);KB.docs.push({name,md:text,base:true,size:text.length,chunks:all.length,year:meta?.year||all[0]?.year||'',date:meta?.date||''});KB.dirty=true;
+  KB.chunks=KB.chunks.concat(all);KB_BASE_NAMES.add(name);KB.docs.push({name,md:text,base:true,size:text.length,chunks:all.length,year:meta?.year||all[0]?.year||'',date:meta?.date||''});KB.dirty=true;
 }
 const DEFAULT_READY=(async()=>{
   try{
@@ -678,9 +671,9 @@ function renderKb(){if(typeof ragKbBadge==='function')ragKbBadge();
   if(KB.chunks.length&&!KB.chunks[0].tf)KB.chunks.forEach(c=>c.tf=countTf(tokens(c.sec+' '+c.text)));if(KB.dirty!==false)rebuild();
   $('#kFiles').textContent=KB.docs.length;$('#kChunks').textContent=KB.chunks.length;$('#kTerms').textContent=Object.keys(KB.df||{}).length;$('#kDate').textContent=KB.updated?KB.updated.split(' ').slice(0,3).join(' '):'-';
   const l=$('#kbList');if(!KB.docs.length){l.textContent=DEFAULT_STATE==='loading'?'기본 지식저장소를 불러오는 중이에요…':'아직 없습니다. ① md 변환기에서 문서를 변환한 뒤 지식저장소에 저장하세요.';return;}
-  const docs=[...KB.docs].sort((a,b)=>(b.base?1:0)-(a.base?1:0));l.innerHTML=(DEFAULT_STATE==='loading'?'<p class="muted" style="margin:0 0 8px">기본 지식저장소를 불러오는 중이에요…</p>':DEFAULT_STATE==='fail'?'<p class="muted" style="margin:0 0 8px">정시 모집요강 통합본을 불러오지 못했어요. 새로고침해 보세요.</p>':'')+docs.map(d=>`<div class="kbitem"><span>${d.base?'<span class="badge ok" style="margin-right:6px">기본</span>':''}${esc(d.name)} <span class="muted">· ${d.chunks}청크 · ${(d.size/1000).toFixed(1)}k자${d.year?' · '+d.year+'학년도':''}${d.date?' · 기준일 '+esc(d.date):''}</span></span><span class="row" style="gap:6px;flex:none">${d.md?`<button class="btn gray" style="min-height:32px;padding:2px 10px" data-dl="${esc(d.name)}">md 내려받기</button>`:''}${d.base?'':`<button class="btn gray" style="min-height:32px;padding:2px 10px" data-del="${esc(d.name)}">삭제</button>`}</span></div>`).join('');
+  const docs=[...KB.docs].sort((a,b)=>(b.base?1:0)-(a.base?1:0));l.innerHTML=(DEFAULT_STATE==='loading'?'<p class="muted" style="margin:0 0 8px">기본 지식저장소를 불러오는 중이에요…</p>':DEFAULT_STATE==='fail'?'<p class="muted" style="margin:0 0 8px">정시 모집요강 통합본을 불러오지 못했어요. 새로고침해 보세요.</p>':'')+docs.map(d=>`<div class="kbitem"><span>${d.base?'<span class="badge ok" style="margin-right:6px">기본</span>':''}${esc(d.name)} <span class="muted">· ${d.chunks}청크 · ${(d.size/1000).toFixed(1)}k자${d.year?' · '+d.year+'학년도':''}${d.date?' · 기준일 '+esc(d.date):''}</span></span><span class="row" style="gap:6px;flex:none">${d.md?`<button class="btn gray" style="min-height:32px;padding:2px 10px" data-dl="${esc(d.name)}">md 내려받기</button>`:''}<button class="btn gray" style="min-height:32px;padding:2px 10px" data-del="${esc(d.name)}">삭제</button></span></div>`).join('');
   l.querySelectorAll('[data-dl]').forEach(b=>b.addEventListener('click',()=>{const d=KB.docs.find(x=>x.name===b.dataset.dl);if(d)downloadMd(d.name,d.md);}));
-  l.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>{const n=b.dataset.del;KB.docs=KB.docs.filter(d=>d.name!==n);KB.chunks=KB.chunks.filter(c=>c.doc!==n);KB.dirty=true;saveKb();renderKb();toast(n+' 을 지식저장소에서 뺐어요');}));
+  l.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>{const n=b.dataset.del;KB.docs=KB.docs.filter(d=>d.name!==n);KB.chunks=KB.chunks.filter(c=>c.doc!==n);KB.dirty=true;saveKb();renderKb();toast(n+' 을 지식저장소에서 뺐어요'+(KB_BASE_NAMES.has(n)?' · 기본 문서는 새로고침하면 다시 들어와요':''));}));
   renderChips();
 }
 $('#mdFile').addEventListener('change',e=>{convertFiles([...e.target.files]);e.target.value='';});
