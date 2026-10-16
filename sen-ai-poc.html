@@ -199,7 +199,7 @@ th{color:var(--ink-3);font-weight:600;font-size:13px}
   <section class="pane on" id="pane-kb" role="tabpanel">
     <div class="card">
       <h2>지식베이스 구축</h2>
-      <p class="muted">한글·워드·PDF 문서를 올리면 먼저 md로 바꾼 뒤 아래 5단계로 지식DB를 만듭니다. 변환과 처리는 모두 이 브라우저 안에서 끝나고 파일은 서버로 가지 않으며, 결과는 이 기기에만 저장됩니다.</p>
+      <p class="muted">한글·워드·PDF 문서를 올리면 먼저 md로 바꾼 뒤 아래 5단계로 지식DB를 만듭니다. 변환과 처리는 이 브라우저 안에서 끝나고 파일 자체는 서버로 가지 않아요. 지식DB는 이 페이지에만 잠시 있다가 <b>탭이나 브라우저를 닫거나 새로고침하면 모두 지워집니다.</b> 질문할 때는 관련 단락 일부가 AI로 전달되니, 개인정보가 담긴 문서는 올리지 말아 주세요.</p>
       <div class="drop" id="dropZone">
         <div class="fmts" aria-label="지원 형식"><span class="fmt hwp">HWP</span><span class="fmt hwpx">HWPX</span><span class="fmt docx">DOCX</span><span class="fmt pdf">PDF</span><span class="fmt md">MD</span></div>
         <div class="row">
@@ -311,7 +311,8 @@ th{color:var(--ink-3);font-weight:600;font-size:13px}
         <tr><td>입력</td><td>원본은 서버에 보내지 않는다</td><td>파일은 브라우저 FileReader로만 읽고, 네트워크 호출 없음</td></tr>
         <tr><td>비식별</td><td>직접 식별자는 AI 호출 전에 제거</td><td>이름·학교·학번·주민번호·연락처·주소·이메일·생년월일 규칙 치환 + 결과 화면에서 사람이 확인</td></tr>
         <tr><td>AI 호출</td><td>가명 또는 합성 텍스트만 전달</td><td>sample 호출 입력에 원문 변수를 쓰지 않음(코드 수준 분리)</td></tr>
-        <tr><td>저장</td><td>생기부는 저장하지 않는다</td><td>localStorage에는 지식DB(md)만 · 생기부·분석 결과는 새로고침 시 소멸</td></tr>
+        <tr><td>저장</td><td>아무것도 남기지 않는다</td><td>지식DB·대화·생기부·분석 결과 모두 페이지 메모리에만 보관 · 브라우저 저장소(localStorage·sessionStorage) 미사용 · 탭·브라우저 종료나 새로고침 시 소멸 · 예전 버전이 남긴 기록은 페이지를 열 때 삭제</td></tr>
+        <tr><td>전송</td><td>AI에는 필요한 만큼만</td><td>RAG 질문 시 질문과 관련 단락 일부, 생기부 분석 시 비식별 텍스트만 중계 서버를 거쳐 Claude API로 전달 · 중계 서버는 내용을 기록하지 않음 · Claude API는 받은 입력·출력을 30일 안에 자동 삭제(정책 위반 의심 시 예외)</td></tr>
         <tr><td>표시</td><td>원천을 문자로 구분</td><td><span class="badge real">실데이터</span> <span class="badge pseudo">가명데이터</span> <span class="badge synth">합성데이터</span> 배지 (색 + 문자)</td></tr>
         <tr><td>판단</td><td>AI는 확정하지 않는다</td><td>"AI 계산 · 출처 보기"만, "AI 의견" 라벨 없음, 기재 결정은 교사</td></tr>
       </table></div>
@@ -541,8 +542,15 @@ const $=s=>document.querySelector(s);
 const toastEl=$('#toast');let toastT;
 function toast(m){toastEl.textContent=m;toastEl.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>toastEl.classList.remove('on'),2400);}
 function esc(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
-function store(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
-function load(k){try{const v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch(e){return null;}}
+/* 개인정보 보호 : 올린 문서·지식DB·대화는 이 페이지의 메모리에만 둔다.
+   localStorage·sessionStorage에 쓰지 않으므로 탭이나 브라우저를 닫으면(새로고침 포함) 모두 사라진다.
+   예전 버전이 브라우저에 남긴 지식DB·대화 기록은 페이지를 열 때 지운다. */
+const MEM=new Map();
+function store(k,v){MEM.set(k,v);}
+function load(k){return MEM.has(k)?MEM.get(k):null;}
+try{localStorage.removeItem('sen-kb');}catch(e){}
+try{sessionStorage.removeItem('sen-rag-chat-v2');}catch(e){}
+addEventListener('pagehide',()=>{MEM.clear();});
 
 /* ========= 탭 ========= */
 document.querySelectorAll('.tabs [role=tab]').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
@@ -726,8 +734,8 @@ function finishAnswer(d,text,hits,q){const ans=d.querySelector('.ans');let body=
 function noResult(q){const box=$('#ragChat');const e=box.querySelector('.empty');if(e)e.remove();const d=document.createElement('div');d.className='msg a';
   d.innerHTML=`<div class="ahd"><span class="av">AI</span><span>자료에 없음</span></div><div class="abody"><div class="nores"><b>등록된 자료에는 「${esc(q)}」에 대한 내용이 없어요.</b><div style="margin-top:6px;font-size:13.5px;color:var(--ink-2)">추측해서 답하지 않아요. ① 원천 데이터의 md 만들기에서 관련 문서를 등록하거나, 선생님 상담으로 확인하세요.</div></div><div class="acts"><button type="button" data-kb>① md 만들기로 →</button><a class="go" href="counsel.html#book">선생님 상담으로 확인 →</a></div></div>`;
   box.appendChild(d);box.scrollTop=box.scrollHeight;d.querySelector('[data-kb]').addEventListener('click',()=>{showTab('kb');});}
-function ragSave(q,text,hits){try{const arr=JSON.parse(sessionStorage.getItem(RAG_KEY)||'[]');arr.push({q,text,hits:hits.map(h=>({c:{doc:h.c.doc,sec:h.c.sec,year:h.c.year,date:h.c.date,src:h.c.src,text:h.c.text.slice(0,600)}}))});sessionStorage.setItem(RAG_KEY,JSON.stringify(arr.slice(-12)));}catch(e){}}
-function ragRestore(){try{const arr=JSON.parse(sessionStorage.getItem(RAG_KEY)||'[]');arr.forEach(it=>{addUser(it.q);ragSeen.add(it.q);if(it.hits.length){const d=addAnswer(it.hits,it.q);finishAnswer(d,it.text,it.hits,it.q);}else noResult(it.q);});}catch(e){}ragEmpty();}
+function ragSave(q,text,hits){try{const arr=load(RAG_KEY)||[];arr.push({q,text,hits:hits.map(h=>({c:{doc:h.c.doc,sec:h.c.sec,year:h.c.year,date:h.c.date,src:h.c.src,text:h.c.text.slice(0,600)}}))});store(RAG_KEY,arr.slice(-12));}catch(e){}}
+function ragRestore(){try{const arr=load(RAG_KEY)||[];arr.forEach(it=>{addUser(it.q);ragSeen.add(it.q);if(it.hits.length){const d=addAnswer(it.hits,it.q);finishAnswer(d,it.text,it.hits,it.q);}else noResult(it.q);});}catch(e){}ragEmpty();}
 function autoGrow(t){t.style.height='auto';t.style.height=Math.min(160,t.scrollHeight)+'px';}
 async function askRag(preset){
   const inp=$('#ragInput');const q=(preset!=null?preset:inp.value).trim();if(!q||ragCtl)return;inp.value='';autoGrow(inp);
@@ -749,7 +757,7 @@ $('#ragSend').addEventListener('click',()=>askRag());
 $('#ragInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();askRag();}});
 $('#ragInput').addEventListener('input',e=>autoGrow(e.target));
 $('#ragStop').addEventListener('click',()=>ragCtl?.abort());
-$('#ragNew').addEventListener('click',()=>{ragCtl?.abort();ragHist.length=0;ragSeen.clear();try{sessionStorage.removeItem(RAG_KEY);}catch(e){}$('#ragChat').innerHTML='';ragEmpty();renderChips();toast('새 대화를 시작했어요');});
+$('#ragNew').addEventListener('click',()=>{ragCtl?.abort();ragHist.length=0;ragSeen.clear();MEM.delete(RAG_KEY);$('#ragChat').innerHTML='';ragEmpty();renderChips();toast('새 대화를 시작했어요');});
 ragRestore();
 
 /* 생기부 탭 공용 메시지 (구 RAG 헬퍼 유지) */
