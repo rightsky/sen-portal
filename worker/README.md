@@ -54,7 +54,7 @@ window.SEN_AI_ENDPOINT = "https://sen-ai-proxy.<계정>.workers.dev";
 | MAX_OUTPUT_TOKENS | 16000 | 생각 토큰 + 답변 최대 길이. 생각을 켜면 16000 이상 권장 (2400이면 본문이 비어 올 수 있음) |
 | THINKING | on | on = 적응형 생각(`thinking: adaptive`), off = `thinking: disabled`. 본문이 비어 오면(종료 사유 max_tokens) MAX_OUTPUT_TOKENS를 먼저 늘린다 |
 | EFFORT | medium | 생각 깊이 low · medium · high. 깊을수록 느리고 비용 증가 |
-| MAX_INPUT_CHARS | 24000 | 질문+근거 최대 글자 수 |
+| MAX_INPUT_CHARS | 120000 | 질문+근거 최대 글자 수 (나이스 생기부 전체 분석을 위해 2026-10-16 24000 → 120000) |
 | RATE_PER_MINUTE | 8 | IP당 분당 요청 수 (인스턴스 단위 간이 제한) |
 
 값을 바꾼 뒤 `npx wrangler deploy` 를 다시 실행한다.

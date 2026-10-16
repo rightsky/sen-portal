@@ -96,7 +96,7 @@ export default {
       return json(400, { error: "bad_json" }, origin);
     }
 
-    const problem = validMessages(body.messages, Number(env.MAX_INPUT_CHARS || 24000));
+    const problem = validMessages(body.messages, Number(env.MAX_INPUT_CHARS || 120000));
     if (problem) return json(400, { error: problem }, origin);
 
     const upstream = await fetch(ANTHROPIC_URL, {

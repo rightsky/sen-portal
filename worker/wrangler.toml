@@ -27,7 +27,8 @@ MAX_OUTPUT_TOKENS = "16000"
 THINKING = "on"
 # 생각 깊이 : low · medium · high (Opus 5.5 기본 medium). 깊을수록 느리고 비용이 늘어난다
 EFFORT = "medium"
-MAX_INPUT_CHARS = "24000"
+# 나이스 생기부 전체(3~4만 자)도 들어가도록 넉넉히. 비용은 입력 글자 수에 비례
+MAX_INPUT_CHARS = "120000"
 RATE_PER_MINUTE = "8"
 
 # API 키는 여기 적지 않는다. 터미널에서:  npx wrangler secret put ANTHROPIC_API_KEY
