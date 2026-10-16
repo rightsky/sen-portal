@@ -43,6 +43,8 @@ p{margin:0 0 10px}
 .btn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:10px 18px;border-radius:12px;border:1px solid var(--brand);background:var(--brand);color:#fff;font-weight:600}
 .btn.ghost{background:transparent;color:var(--brand)}
 .btn.gray{background:transparent;color:var(--ink-2);border-color:var(--line)}
+.btn.soft{background:var(--brand-soft);color:var(--brand);border-color:var(--brand-soft);font-weight:700}
+.btn.soft:hover{border-color:var(--brand)}
 .btn:disabled{opacity:.45;cursor:not-allowed}
 .btn:focus-visible,.card:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #ffb400;outline-offset:2px}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
@@ -148,7 +150,7 @@ th{color:var(--ink-3);font-weight:600;font-size:13px}
 .pane{display:none}.pane.on{display:block}
 #recText.over{outline:2px dashed var(--brand);outline-offset:2px}
 .rec-actions{gap:8px;flex-wrap:wrap}.rec-actions .btn.gray{min-height:44px}
-@media(max-width:640px){.rec-actions .btn{flex:1 1 100%;text-align:center}}
+@media(max-width:640px){.rec-actions .btn{flex:1 1 100%;text-align:center;justify-content:center}}
 .kbitem{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
 .kbitem:last-child{border-bottom:0}
 .mask{background:#FFF1E0;color:#7A3E00;border-radius:4px;padding:0 3px}
@@ -291,11 +293,11 @@ th{color:var(--ink-3);font-weight:600;font-size:13px}
       <label for="recText">생기부 텍스트</label>
       <textarea id="recText" placeholder="세특·창체·행특 기록을 붙여 넣으세요. 생기부 PDF나 .md 파일을 여기에 끌어다 놓아도 돼요. 아래 「예시 데이터 불러오기」로 먼저 써 봐도 좋아요."></textarea>
       <div class="row rec-actions" style="margin-top:12px">
-        <button class="btn" id="recDeid">개인정보 가리고 시작하기</button>
         <label class="btn gray" for="recFile" style="margin:0">PDF · md 파일 가져오기</label>
         <input id="recFile" type="file" accept=".pdf,application/pdf,.md,text/markdown" class="sr">
         <button class="btn gray" id="recSample">예시 데이터 불러오기 (합성)</button>
         <button class="btn gray" id="recClear">모두 지우기</button>
+        <button class="btn soft" id="recDeid">개인정보 가리고 시작하기 →</button>
       </div>
       <p class="note" id="recFileNote" style="margin:8px 0 0">「개인정보 가리고 시작하기」를 누르면 1단계가 바로 실행돼요. 나이스에서 내려받은 생기부 PDF도 가져올 수 있고, 파일은 이 브라우저 안에서만 글자로 바뀌어 서버로 가거나 저장되지 않아요. 스캔한 이미지 PDF는 글자를 읽지 못해요.</p>
     </div>
