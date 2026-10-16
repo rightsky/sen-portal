@@ -1,6 +1,14 @@
 name = "sen-ai-proxy"
 main = "src/index.js"
-compatibility_date = "2026-10-01"
+compatibility_date = "2026-10-08"
+# 대시보드 설정과 맞춤(2026-10-16) : 미리보기 URL 끔, 로그 기록 켬 (배포 시 "override" 확인 창이 뜨지 않게)
+preview_urls = false
+
+[observability]
+enabled = true
+
+[observability.logs]
+enabled = true
 
 [vars]
 # 이 주소에서 온 요청만 받는다. 쉼표로 여러 개. 로컬 테스트용 주소는 시연 전에 지워도 된다.
