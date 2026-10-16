@@ -206,7 +206,7 @@ th{color:var(--ink-3);font-weight:600;font-size:13px}
 
   <h1>AI PoC</h1>
   <div class="card" style="border:2px solid var(--brand);background:var(--brand-soft)">
-    <div class="row" style="justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap"><div><b style="font-size:16px">예시 데이터로 전체 PoC 체험하기</b><p class="muted" style="margin:4px 0 0">파일이나 생기부가 없어도 돼요. 예시 문서 2건(docx) → md 변환 → 지식저장소 저장 → 예시 질문으로 RAG → 예시 생기부로 세 역량 분석까지 순서대로 돌아갑니다. AI가 연결되지 않은 상태에서도 검색·규칙 기반으로 끝까지 진행돼요.</p></div><button class="btn" id="demoAll" style="flex:none">처음부터 끝까지 자동 실행 ▶</button></div>
+    <div class="row" style="justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap"><div><b style="font-size:16px">예시 데이터로 전체 PoC 체험하기</b><p class="muted" style="margin:4px 0 0">파일이나 생기부가 없어도 돼요. 아래 버튼을 차례로 누르면 예시 문서 2건(docx) → md 변환 → 지식저장소 저장 → 예시 질문으로 RAG → 예시 생기부로 세 역량 분석을 하나씩 볼 수 있어요. AI가 연결되지 않은 상태에서도 검색·규칙 기반으로 진행돼요.</p></div></div>
     <div class="row" style="margin-top:10px;gap:8px"><button class="btn gray" id="demoMd">① 예시 문서 md 변환</button><button class="btn gray" id="demoRag">③ 예시 질문으로 RAG</button><button class="btn gray" id="demoRec">④ 예시 생기부 분석</button><span class="muted" id="demoState" style="align-self:center;font-size:13px"></span></div>
   </div>
   <p class="muted">오른쪽 아래 <b>AI PoC</b> 버튼을 누르면 네 기능(md 변환기 · 지식저장소 · RAG 어시스턴트 · 생기부 AI 활용) 중 하나를 고를 수 있습니다. 처음 쓰신다면 맨 앞 「개인정보 원칙」을 먼저 읽어 주세요. 모든 AI 응답에는 근거 출처·학년도·기준일이 붙고, 생기부는 비식별 처리 뒤에만 AI에 전달됩니다.</p>
@@ -1006,7 +1006,6 @@ async function demoMd(){showTab('kb');dstate('① 예시 문서 2건을 md로 �
 async function demoRag(){if(!KB.chunks.length)await storeTexts(SEED.map(x=>({name:x.name,text:x.text})));showTab('rag');dstate('③ 예시 질문으로 RAG 실행 중…');const q=KB.chunks.some(c=>/서울시립대/.test(c.doc))?'서울시립대 학생부종합Ⅰ 전형은 몇 명 뽑고 면접 비중은?':SAMPLES['대입 제도·전형'][0];await askRag(q);dstate('③ 완료 — 답변과 근거 카드를 확인하세요 (인용 번호 클릭 → 원문)');}
 async function demoRec(){showTab('rec');dstate('④ 예시 생기부로 세 역량 분석 중…');$('#recText').value=SAMPLE_REC;$('#recDeid').click();await dwait(500);$('#recAnalyze').click();await dwait(600);dstate('④ 완료 — 1단계 가린 결과와 3단계 분석을 확인하세요');}
 $('#demoMd').addEventListener('click',demoMd);$('#demoRag').addEventListener('click',demoRag);$('#demoRec').addEventListener('click',demoRec);
-$('#demoAll').addEventListener('click',async()=>{const b=$('#demoAll');b.disabled=true;try{await demoMd();await dwait(600);await demoRag();await dwait(800);await demoRec();dstate('전체 PoC 체험 완료 — 각 탭에서 결과를 보세요');toast('전체 PoC 체험 완료');}finally{b.disabled=false;}});
 renderKb();renderChips();
 </script>
 </body>
