@@ -149,7 +149,12 @@ th{color:var(--ink-3);font-weight:600;font-size:13px}
 .tabs button[aria-selected=true]{color:var(--brand);border-bottom-color:var(--brand)}
 .pane{display:none}.pane.on{display:block}
 #recText.over{outline:2px dashed var(--brand);outline-offset:2px}
-.rec-actions{gap:8px;flex-wrap:wrap}.rec-actions .btn.gray{min-height:44px}
+.rec-actions{gap:8px;flex-wrap:wrap}
+.rec-actions .btn{min-height:44px;padding:10px 18px;font:inherit;font-size:15px;font-weight:600;line-height:1.2;border-radius:12px;cursor:pointer}
+.rec-actions .btn.gray{background:#EEF1F6;border-color:#EEF1F6;color:var(--ink)}
+.rec-actions .btn.gray:hover{border-color:var(--line)}
+:root[data-theme="dark"] .rec-actions .btn.gray{background:var(--surface);border-color:var(--surface)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .rec-actions .btn.gray{background:var(--surface);border-color:var(--surface)}}
 @media(max-width:640px){.rec-actions .btn{flex:1 1 100%;text-align:center;justify-content:center}}
 .kbitem{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
 .kbitem:last-child{border-bottom:0}
