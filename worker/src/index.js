@@ -109,11 +109,15 @@ export default {
         ...(env.ANTHROPIC_WORKSPACE_ID ? { "anthropic-workspace-id": env.ANTHROPIC_WORKSPACE_ID } : {}),
       },
       body: JSON.stringify({
-        model: env.MODEL || "claude-haiku-5-5",
-        max_tokens: Number(env.MAX_OUTPUT_TOKENS || 2400),
-        // 생각(thinking)이 기본으로 켜진 모델은 생각 토큰이 출력 한도를 다 써 본문이 비어 올 수 있다.
-        // THINKING=on 으로 두지 않는 한 끈다 (본문 토큰만 쓰게).
-        ...((env.THINKING || "off") === "on" ? {} : { thinking: { type: "disabled" } }),
+        model: env.MODEL || "claude-opus-5-5",
+        max_tokens: Number(env.MAX_OUTPUT_TOKENS || 16000),
+        // THINKING=on : 적응형 생각(adaptive). 깊이는 EFFORT(low·medium·high)로 정한다.
+        //   Opus 5.5 등 최신 모델은 budget_tokens 방식(type: enabled)을 받지 않는다.
+        //   생각 토큰도 max_tokens 안에서 쓰이므로 MAX_OUTPUT_TOKENS를 넉넉히(16000) 둔다.
+        // THINKING=off : 생각을 끄고 본문 토큰만 쓴다.
+        ...((env.THINKING || "on") === "on"
+          ? { thinking: { type: "adaptive" }, ...(env.EFFORT ? { output_config: { effort: env.EFFORT } } : {}) }
+          : { thinking: { type: "disabled" } }),
         system: SERVER_SYSTEM,
         messages: body.messages.map((m) => ({ role: m.role, content: m.content })),
         stream: true,

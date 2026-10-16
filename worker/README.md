@@ -50,9 +50,10 @@ window.SEN_AI_ENDPOINT = "https://sen-ai-proxy.<계정>.workers.dev";
 | 이름 | 기본값 | 의미 |
 |---|---|---|
 | ALLOWED_ORIGINS | rightsky.github.io, localhost:8000 | 이 출처에서 온 요청만 받음 |
-| MODEL | claude-haiku-5-5 | 품질을 높이려면 claude-sonnet-5-5 |
-| MAX_OUTPUT_TOKENS | 2400 | 답변 최대 길이 (생기부 분석은 1200으로 부족) |
-| THINKING | off | 모델의 생각(thinking) 사용 여부. off면 `thinking: disabled`를 보내 본문 토큰만 씀 · 생각이 켜진 모델에서 본문이 비어 오면(종료 사유 max_tokens) 이 값이 off인지 확인 |
+| MODEL | claude-opus-5-5 | 품질 우선(2026-10-16 Haiku 5.5에서 변경). 비용을 줄이려면 claude-sonnet-5-5 · claude-haiku-5-5 |
+| MAX_OUTPUT_TOKENS | 16000 | 생각 토큰 + 답변 최대 길이. 생각을 켜면 16000 이상 권장 (2400이면 본문이 비어 올 수 있음) |
+| THINKING | on | on = 적응형 생각(`thinking: adaptive`), off = `thinking: disabled`. 본문이 비어 오면(종료 사유 max_tokens) MAX_OUTPUT_TOKENS를 먼저 늘린다 |
+| EFFORT | medium | 생각 깊이 low · medium · high. 깊을수록 느리고 비용 증가 |
 | MAX_INPUT_CHARS | 24000 | 질문+근거 최대 글자 수 |
 | RATE_PER_MINUTE | 8 | IP당 분당 요청 수 (인스턴스 단위 간이 제한) |
 
