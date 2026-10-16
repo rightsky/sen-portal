@@ -71,13 +71,15 @@ th{color:var(--ink-3);font-weight:600;font-size:13px}
 .sheet{background:var(--bg);width:100%;max-width:760px;border-radius:18px 18px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom,0px));max-height:92vh;overflow:auto}
 @media(min-width:760px){.ov{align-items:center;padding:20px}.sheet{border-radius:18px}}
 .choice{display:grid;grid-template-columns:1fr;gap:12px;margin-top:14px}
-@media(min-width:640px){.choice{grid-template-columns:1fr 1fr 1fr}}
+@media(min-width:640px){.choice{grid-template-columns:1fr 1fr}}
 .choice button.c{border-color:#16386f}
 .choice button{text-align:left;padding:18px;border-radius:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);min-height:120px}
 .choice button b{display:block;font-size:17px;margin-bottom:6px}
 .choice button span{font-size:13.5px;color:var(--ink-2)}
 .choice button.a{border-color:var(--teal)}
 .choice button.b{border-color:var(--violet)}
+.choice button.d{border-style:dashed}
+.choice button.d .soon,.tabs .soon{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:999px;background:var(--brand-soft);color:var(--brand);font-size:12px;font-weight:700;vertical-align:middle}
 /* chat */
 .chat{display:flex;flex-direction:column;gap:10px;min-height:200px;max-height:52vh;overflow:auto;padding:4px 2px}
 .msg{max-width:92%;padding:10px 14px;border-radius:14px;font-size:15px;white-space:pre-wrap;word-break:break-word}
@@ -178,28 +180,47 @@ th{color:var(--ink-3);font-weight:600;font-size:13px}
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="logo"><a href="main-everland-style.html" style="color:inherit;text-decoration:none">← 서울 진로진학 통합플랫폼</a><small>AI PoC · md 변환 · RAG 어시스턴트 · 생기부 AI 활용</small></div>
+    <div class="logo"><a href="main-everland-style.html" style="color:inherit;text-decoration:none">← 서울 진로진학 통합플랫폼</a><small>AI PoC · md 변환기 · 지식저장소 · RAG 어시스턴트 · 생기부 AI 활용</small></div>
     <div class="row"><span class="badge" id="aiState">AI 연결 확인 중</span></div>
   </header>
 
   <h1>AI PoC</h1>
   <div class="card" style="border:2px solid var(--brand);background:var(--brand-soft)">
     <div class="row" style="justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap"><div><b style="font-size:16px">예시 데이터로 전체 PoC 체험하기</b><p class="muted" style="margin:4px 0 0">파일이나 생기부가 없어도 돼요. 예시 문서 2건(docx) → md 변환·지식DB 등록 → 예시 질문으로 RAG → 예시 생기부로 세 역량 분석까지 순서대로 돌아갑니다. AI가 연결되지 않은 상태에서도 검색·규칙 기반으로 끝까지 진행돼요.</p></div><button class="btn" id="demoAll" style="flex:none">처음부터 끝까지 자동 실행 ▶</button></div>
-    <div class="row" style="margin-top:10px;gap:8px"><button class="btn gray" id="demoMd">① 예시 문서 md 변환</button><button class="btn gray" id="demoRag">② 예시 질문으로 RAG</button><button class="btn gray" id="demoRec">③ 예시 생기부 분석</button><span class="muted" id="demoState" style="align-self:center;font-size:13px"></span></div>
+    <div class="row" style="margin-top:10px;gap:8px"><button class="btn gray" id="demoMd">① 예시 문서 md 변환</button><button class="btn gray" id="demoRag">③ 예시 질문으로 RAG</button><button class="btn gray" id="demoRec">④ 예시 생기부 분석</button><span class="muted" id="demoState" style="align-self:center;font-size:13px"></span></div>
   </div>
-  <p class="muted">오른쪽 아래 <b>AI PoC</b> 버튼을 누르면 세 기능(원천 데이터 md 만들기 · RAG 어시스턴트 · 생기부 AI 활용) 중 하나를 고를 수 있습니다. 모든 AI 응답에는 근거 출처·학년도·기준일이 붙고, 생기부는 비식별 처리 뒤에만 AI에 전달됩니다.</p>
+  <p class="muted">오른쪽 아래 <b>AI PoC</b> 버튼을 누르면 네 기능(md 변환기 · 지식저장소 · RAG 어시스턴트 · 생기부 AI 활용) 중 하나를 고를 수 있습니다. 처음 쓰신다면 맨 앞 「개인정보 원칙」을 먼저 읽어 주세요. 모든 AI 응답에는 근거 출처·학년도·기준일이 붙고, 생기부는 비식별 처리 뒤에만 AI에 전달됩니다.</p>
 
   <div class="tabs" role="tablist" aria-label="PoC 영역">
-    <button role="tab" aria-selected="true" data-tab="kb">① 원천 데이터 md 만들기 · 지식베이스</button>
-    <button role="tab" aria-selected="false" data-tab="rag">② RAG 어시스턴트 (챗봇)</button>
-    <button role="tab" aria-selected="false" data-tab="rec">③ 생기부 AI 활용</button>
-    <button role="tab" aria-selected="false" data-tab="priv">④ 개인정보 원칙</button>
+    <button role="tab" aria-selected="true" data-tab="priv">개인정보 원칙</button>
+    <button role="tab" aria-selected="false" data-tab="kb">① md 변환기</button>
+    <button role="tab" aria-selected="false" data-tab="store">② 지식저장소<span class="soon">신규</span></button>
+    <button role="tab" aria-selected="false" data-tab="rag">③ RAG 어시스턴트</button>
+    <button role="tab" aria-selected="false" data-tab="rec">④ 생기부 AI 활용</button>
   </div>
 
-  <!-- ① KB -->
-  <section class="pane on" id="pane-kb" role="tabpanel">
+  <!-- 개인정보 원칙 -->
+  <section class="pane on" id="pane-priv" role="tabpanel">
     <div class="card">
-      <h2>지식베이스 구축</h2>
+      <h2>개인정보 원칙 (이 PoC가 지키는 것)</h2>
+      <div class="tablewrap"><table>
+        <tr><th>단계</th><th>원칙</th><th>구현</th></tr>
+        <tr><td>입력</td><td>원본은 서버에 보내지 않는다</td><td>파일은 브라우저 FileReader로만 읽고, 네트워크 호출 없음</td></tr>
+        <tr><td>비식별</td><td>직접 식별자는 AI 호출 전에 제거</td><td>이름·학교·학번·주민번호·연락처·주소·이메일·생년월일 규칙 치환 + 결과 화면에서 사람이 확인</td></tr>
+        <tr><td>AI 호출</td><td>가명 또는 합성 텍스트만 전달</td><td>sample 호출 입력에 원문 변수를 쓰지 않음(코드 수준 분리)</td></tr>
+        <tr><td>저장</td><td>아무것도 남기지 않는다</td><td>지식DB·대화·생기부·분석 결과 모두 페이지 메모리에만 보관 · 브라우저 저장소(localStorage·sessionStorage) 미사용 · 탭·브라우저 종료나 새로고침 시 소멸 · 예전 버전이 남긴 기록은 페이지를 열 때 삭제</td></tr>
+        <tr><td>전송</td><td>AI에는 필요한 만큼만</td><td>RAG 질문 시 질문과 관련 단락 일부, 생기부 분석 시 비식별 텍스트만 중계 서버를 거쳐 Claude API로 전달 · 중계 서버는 내용을 기록하지 않음 · Claude API는 받은 입력·출력을 30일 안에 자동 삭제(정책 위반 의심 시 예외)</td></tr>
+        <tr><td>표시</td><td>원천을 문자로 구분</td><td><span class="badge real">실데이터</span> <span class="badge pseudo">가명데이터</span> <span class="badge synth">합성데이터</span> 배지 (색 + 문자)</td></tr>
+        <tr><td>판단</td><td>AI는 확정하지 않는다</td><td>"AI 계산 · 출처 보기"만, "AI 의견" 라벨 없음, 기재 결정은 교사</td></tr>
+      </table></div>
+      <p class="note">운영 전환 시: 비식별은 S존 안 서버 배치(가명처리·k-익명성·DP), 합성 생성 주체는 SEN 단일, 원본은 요약 뒤 즉시 삭제. 이 PoC의 규칙 치환은 데모용 1차 필터입니다.</p>
+    </div>
+  </section>
+
+  <!-- ① md 변환기 -->
+  <section class="pane" id="pane-kb" role="tabpanel">
+    <div class="card">
+      <h2>md 변환기</h2>
       <p class="muted">한글·워드·PDF 문서를 올리면 먼저 md로 바꾼 뒤 아래 5단계로 지식DB를 만듭니다. 변환과 처리는 이 브라우저 안에서 끝나고 파일 자체는 서버로 가지 않아요. 지식DB는 이 페이지에만 잠시 있다가 <b>탭이나 브라우저를 닫거나 새로고침하면 모두 지워집니다.</b> 질문할 때는 관련 단락 일부가 AI로 전달되니, 개인정보가 담긴 문서는 올리지 말아 주세요.</p>
       <div class="drop" id="dropZone">
         <div class="fmts" aria-label="지원 형식"><span class="fmt hwp">HWP</span><span class="fmt hwpx">HWPX</span><span class="fmt docx">DOCX</span><span class="fmt pdf">PDF</span><span class="fmt md">MD</span></div>
@@ -237,7 +258,17 @@ th{color:var(--ink-3);font-weight:600;font-size:13px}
     </div>
   </section>
 
-  <!-- ② RAG -->
+  <!-- ② 지식저장소 (신규 · 별도 기획) -->
+  <section class="pane" id="pane-store" role="tabpanel">
+    <div class="card">
+      <h2>지식저장소 <span class="soon" style="display:inline-block;margin-left:6px;padding:1px 8px;border-radius:999px;background:var(--brand-soft);color:var(--brand);font-size:13px;vertical-align:middle">신규</span></h2>
+      <p class="muted">md 변환기로 만든 문서를 모아 두고 관리하는 공간입니다. 기능은 따로 기획하고 있어요.</p>
+      <p class="muted">지금은 <b>① md 변환기</b> 화면 아래쪽에서 변환한 문서를 지식DB에 바로 등록하고 비울 수 있고, <b>③ RAG 어시스턴트</b>가 그 지식DB를 근거로 답합니다.</p>
+      <div class="row" style="gap:8px;margin-top:6px"><button class="btn gray" type="button" onclick="showTab('kb')">① md 변환기로 가기</button><button class="btn gray" type="button" onclick="showTab('rag')">③ RAG 어시스턴트로 가기</button></div>
+    </div>
+  </section>
+
+  <!-- ③ RAG -->
   <section class="pane" id="pane-rag" role="tabpanel">
     <div class="card rag">
       <div class="rag__hd"><div><h2>RAG 어시스턴트 (챗봇)</h2><p class="muted">질문 → 지식DB에서 근거 청크 검색 → 근거만으로 답변 · 문장마다 [번호]로 출처를 달고, 지식DB에 없는 내용은 「자료에 없음」으로 답한 뒤 상담으로 안내합니다.</p></div><div class="rag__meta"><span class="badge" id="ragKb">지식DB 확인 중</span><button class="btn gray" id="ragNew" style="min-height:36px;padding:4px 12px">새 대화</button></div></div>
@@ -248,7 +279,7 @@ th{color:var(--ink-3);font-weight:600;font-size:13px}
     </div>
   </section>
 
-  <!-- ③ 생기부 -->
+  <!-- ④ 생기부 -->
   <section class="pane" id="pane-rec" role="tabpanel">
     <div class="card">
       <h2>생기부 AI 활용</h2>
@@ -303,23 +334,6 @@ th{color:var(--ink-3);font-weight:600;font-size:13px}
     </div>
   </section>
 
-  <!-- ④ privacy -->
-  <section class="pane" id="pane-priv" role="tabpanel">
-    <div class="card">
-      <h2>개인정보 원칙 (이 PoC가 지키는 것)</h2>
-      <div class="tablewrap"><table>
-        <tr><th>단계</th><th>원칙</th><th>구현</th></tr>
-        <tr><td>입력</td><td>원본은 서버에 보내지 않는다</td><td>파일은 브라우저 FileReader로만 읽고, 네트워크 호출 없음</td></tr>
-        <tr><td>비식별</td><td>직접 식별자는 AI 호출 전에 제거</td><td>이름·학교·학번·주민번호·연락처·주소·이메일·생년월일 규칙 치환 + 결과 화면에서 사람이 확인</td></tr>
-        <tr><td>AI 호출</td><td>가명 또는 합성 텍스트만 전달</td><td>sample 호출 입력에 원문 변수를 쓰지 않음(코드 수준 분리)</td></tr>
-        <tr><td>저장</td><td>아무것도 남기지 않는다</td><td>지식DB·대화·생기부·분석 결과 모두 페이지 메모리에만 보관 · 브라우저 저장소(localStorage·sessionStorage) 미사용 · 탭·브라우저 종료나 새로고침 시 소멸 · 예전 버전이 남긴 기록은 페이지를 열 때 삭제</td></tr>
-        <tr><td>전송</td><td>AI에는 필요한 만큼만</td><td>RAG 질문 시 질문과 관련 단락 일부, 생기부 분석 시 비식별 텍스트만 중계 서버를 거쳐 Claude API로 전달 · 중계 서버는 내용을 기록하지 않음 · Claude API는 받은 입력·출력을 30일 안에 자동 삭제(정책 위반 의심 시 예외)</td></tr>
-        <tr><td>표시</td><td>원천을 문자로 구분</td><td><span class="badge real">실데이터</span> <span class="badge pseudo">가명데이터</span> <span class="badge synth">합성데이터</span> 배지 (색 + 문자)</td></tr>
-        <tr><td>판단</td><td>AI는 확정하지 않는다</td><td>"AI 계산 · 출처 보기"만, "AI 의견" 라벨 없음, 기재 결정은 교사</td></tr>
-      </table></div>
-      <p class="note">운영 전환 시: 비식별은 S존 안 서버 배치(가명처리·k-익명성·DP), 합성 생성 주체는 SEN 단일, 원본은 요약 뒤 즉시 삭제. 이 PoC의 규칙 치환은 데모용 1차 필터입니다.</p>
-    </div>
-  </section>
 </div>
 
 <button class="fab" id="fab" aria-haspopup="dialog" aria-controls="aiSheet">AI PoC <span class="ai" aria-hidden="true">AI</span></button>
@@ -330,11 +344,12 @@ th{color:var(--ink-3);font-weight:600;font-size:13px}
       <h2 id="aiTitle" style="margin:0">어떤 서비스를 이용하시겠어요?</h2>
       <button class="btn gray" id="aiClose" aria-label="닫기" style="min-height:36px;padding:4px 12px">닫기</button>
     </div>
-    <p class="muted" style="margin-top:8px">AI PoC는 ① 원천 데이터(요강·자료집·보고서)를 md로 만들어 지식DB에 넣는 기능, ② 그 지식DB를 근거로 답하는 RAG 어시스턴트(챗봇), ③ 생기부를 비식별 처리한 뒤 3대 역량으로 읽어 주는 생기부 AI 활용으로 나뉩니다.</p>
+    <p class="muted" style="margin-top:8px">AI PoC는 ① 원천 데이터(요강·자료집·보고서)를 md로 바꾸는 md 변환기, ② 변환한 문서를 모아 관리하는 지식저장소(준비 중), ③ 지식DB를 근거로 답하는 RAG 어시스턴트(챗봇), ④ 생기부를 비식별 처리한 뒤 3대 역량으로 읽어 주는 생기부 AI 활용으로 나뉩니다.</p>
     <div class="choice">
-      <button class="c" id="goMd"><b>1. 원천 데이터의 md 만들기</b><span>요강·자료집·보고서(docx·hwpx·pdf)를 md로 변환해 지식DB에 등록 · 변환 미리보기 · 출처 태그 · 기본 지식 6편</span></button>
-      <button class="a" id="goRag"><b>2. RAG 어시스턴트 (챗봇)</b><span>2028 대입 시행계획·제도 변화·학년별 준비 등 등록된 지식DB를 검색해 출처와 함께 답합니다 (RAG)</span></button>
-      <button class="b" id="goRec"><b>3. 생기부 AI 활용</b><span>세특·창체 기록을 비식별 처리해 가명·합성 데이터로 만든 뒤 학업·진로·공동체 역량으로 분석합니다</span></button>
+      <button class="c" id="goMd"><b>1. md 변환기</b><span>요강·자료집·보고서(docx·hwpx·pdf)를 md로 변환해 지식DB에 등록 · 변환 미리보기 · 출처 태그 · 기본 지식 6편</span></button>
+      <button class="d" id="goStore"><b>2. 지식저장소<span class="soon">신규</span></b><span>md 변환기로 만든 문서를 모아 두고 관리하는 공간 · 기능은 별도 기획 중</span></button>
+      <button class="a" id="goRag"><b>3. RAG 어시스턴트 (챗봇)</b><span>2028 대입 시행계획·제도 변화·학년별 준비 등 등록된 지식DB를 검색해 출처와 함께 답합니다 (RAG)</span></button>
+      <button class="b" id="goRec"><b>4. 생기부 AI 활용</b><span>세특·창체 기록을 비식별 처리해 가명·합성 데이터로 만든 뒤 학업·진로·공동체 역량으로 분석합니다</span></button>
     </div>
     <p class="muted" style="margin-top:12px">AI 응답은 참고 자료이며 선생님 확정 뒤에만 판단이 됩니다.</p>
   </div>
@@ -558,8 +573,8 @@ document.querySelectorAll('.tabs [role=tab]').forEach(b=>b.addEventListener('cli
 const __h=(location.hash||'').slice(1);
 function showTab(k){if(k==='rag'&&typeof ragKbBadge==='function')setTimeout(ragKbBadge,0);document.querySelectorAll('.tabs [role=tab]').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===k));document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on',p.id==='pane-'+k));}
 
-if(['kb','rag','rec','priv'].includes(__h))showTab(__h);
-addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(['kb','rag','rec','priv'].includes(h))showTab(h);});
+if(['priv','kb','store','rag','rec'].includes(__h))showTab(__h);
+addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(['priv','kb','store','rag','rec'].includes(h))showTab(h);});
 /* ========= AI 버튼 · 시트 ========= */
 const sheet=$('#aiSheet');
 $('#fab').addEventListener('click',()=>{sheet.classList.add('on');$('#goRag').focus();});
@@ -567,6 +582,7 @@ $('#aiClose').addEventListener('click',()=>sheet.classList.remove('on'));
 sheet.addEventListener('click',e=>{if(e.target===sheet)sheet.classList.remove('on');});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')sheet.classList.remove('on');});
 $('#goMd').addEventListener('click',()=>{sheet.classList.remove('on');showTab('kb');const f=$('#mdFile');if(f)f.scrollIntoView({block:'center'});});
+$('#goStore').addEventListener('click',()=>{sheet.classList.remove('on');showTab('store');});
 $('#goRag').addEventListener('click',()=>{sheet.classList.remove('on');showTab('rag');$('#ragInput').focus();});
 $('#goRec').addEventListener('click',()=>{sheet.classList.remove('on');showTab('rec');$('#recText').focus();});
 
@@ -873,8 +889,8 @@ const DEMO_DOCS=[{f:'samples/예시_2028학년도_서울시립대_수시요강_�
 const dwait=ms=>new Promise(r=>setTimeout(r,ms));const dstate=t=>{const e=$('#demoState');if(e)e.textContent=t;};
 async function demoMd(){showTab('kb');dstate('① 예시 문서 2건을 md로 변환하는 중…');const files=[];for(const d of DEMO_DOCS){const nm=d.f.split('/').pop();try{const r=await fetch(d.f);if(!r.ok)throw 0;const b=await r.blob();files.push(new File([b],nm,{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'}));}catch(e){files.push(new File([d.md],nm.replace(/\.docx$/,'.md'),{type:'text/markdown'}));}}
   await ingest(files);if(!KB.chunks.some(c=>/3대역량/.test(c.doc)))await ingest(SEED.map(x=>new File([x.text],x.name,{type:'text/markdown'})));dstate('① 완료 — 예시 문서 2건 + 기본 지식 6편이 지식DB에 들어갔어요');}
-async function demoRag(){if(!KB.chunks.length)await ingest(SEED.map(x=>new File([x.text],x.name,{type:'text/markdown'})));showTab('rag');dstate('② 예시 질문으로 RAG 실행 중…');const q=KB.chunks.some(c=>/서울시립대/.test(c.doc))?'서울시립대 학생부종합Ⅰ 전형은 몇 명 뽑고 면접 비중은?':SAMPLES['대입 제도·전형'][0];await askRag(q);dstate('② 완료 — 답변과 근거 카드를 확인하세요 (인용 번호 클릭 → 원문)');}
-async function demoRec(){showTab('rec');dstate('③ 예시 생기부로 세 역량 분석 중…');$('#recText').value=SAMPLE_REC;$('#recDeid').click();await dwait(500);$('#recAnalyze').click();await dwait(600);dstate('③ 완료 — 1단계 가린 결과와 3단계 분석을 확인하세요');}
+async function demoRag(){if(!KB.chunks.length)await ingest(SEED.map(x=>new File([x.text],x.name,{type:'text/markdown'})));showTab('rag');dstate('③ 예시 질문으로 RAG 실행 중…');const q=KB.chunks.some(c=>/서울시립대/.test(c.doc))?'서울시립대 학생부종합Ⅰ 전형은 몇 명 뽑고 면접 비중은?':SAMPLES['대입 제도·전형'][0];await askRag(q);dstate('③ 완료 — 답변과 근거 카드를 확인하세요 (인용 번호 클릭 → 원문)');}
+async function demoRec(){showTab('rec');dstate('④ 예시 생기부로 세 역량 분석 중…');$('#recText').value=SAMPLE_REC;$('#recDeid').click();await dwait(500);$('#recAnalyze').click();await dwait(600);dstate('④ 완료 — 1단계 가린 결과와 3단계 분석을 확인하세요');}
 $('#demoMd').addEventListener('click',demoMd);$('#demoRag').addEventListener('click',demoRag);$('#demoRec').addEventListener('click',demoRec);
 $('#demoAll').addEventListener('click',async()=>{const b=$('#demoAll');b.disabled=true;try{await demoMd();await dwait(600);await demoRag();await dwait(800);await demoRec();dstate('전체 PoC 체험 완료 — 각 탭에서 결과를 보세요');toast('전체 PoC 체험 완료');}finally{b.disabled=false;}});
 renderKb();renderChips();
