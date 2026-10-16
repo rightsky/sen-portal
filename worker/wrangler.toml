@@ -4,6 +4,12 @@ compatibility_date = "2026-10-08"
 # 대시보드 설정과 맞춤(2026-10-16) : 미리보기 URL 끔, 로그 기록 켬 (배포 시 "override" 확인 창이 뜨지 않게)
 preview_urls = false
 
+# 실행 위치 : 한국 접속 시 Worker가 홍콩에서 실행되면 Claude API가 403(Request not allowed)으로 거부한다.
+# api.anthropic.com 가까운 곳에서 실행되게 고정 (대시보드 Placement 설정과 같음 · 배포해도 유지되도록 파일에 둠)
+[placement]
+mode = "smart"
+hostname = "api.anthropic.com"
+
 [observability]
 enabled = true
 
