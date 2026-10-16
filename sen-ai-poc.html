@@ -147,6 +147,8 @@ th{color:var(--ink-3);font-weight:600;font-size:13px}
 .tabs button[aria-selected=true]{color:var(--brand);border-bottom-color:var(--brand)}
 .pane{display:none}.pane.on{display:block}
 #recText.over{outline:2px dashed var(--brand);outline-offset:2px}
+.rec-actions{gap:8px;flex-wrap:wrap}.rec-actions .btn.gray{min-height:44px}
+@media(max-width:640px){.rec-actions .btn{flex:1 1 100%;text-align:center}}
 .kbitem{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
 .kbitem:last-child{border-bottom:0}
 .mask{background:#FFF1E0;color:#7A3E00;border-radius:4px;padding:0 3px}
@@ -286,19 +288,16 @@ th{color:var(--ink-3);font-weight:600;font-size:13px}
         <div class="step" id="rs2"><div class="n">2</div><div><b>무엇으로 분석할지 고르기</b><span>「내 기록으로 분석」은 가린 내 기록 그대로(결과는 나만 보기), 「가상 기록으로 시범」은 구조만 같은 가짜 기록을 만들어 분석(결과를 남과 공유해도 괜찮아요)</span></div></div>
         <div class="step" id="rs3"><div class="n">3</div><div><b>세 역량으로 읽기</b><span>학업역량 · 진로역량 · 공동체역량 기준으로 잘 읽히는 기록, 아쉬운 기록, 고쳐 쓰는 예시, 다음에 할 한 가지를 알려줘요</span></div></div>
       </div>
-      <div class="row" style="margin-top:4px">
+      <label for="recText">생기부 텍스트</label>
+      <textarea id="recText" placeholder="세특·창체·행특 기록을 붙여 넣으세요. 생기부 PDF나 .md 파일을 여기에 끌어다 놓아도 돼요. 아래 「예시 데이터 불러오기」로 먼저 써 봐도 좋아요."></textarea>
+      <div class="row rec-actions" style="margin-top:12px">
+        <button class="btn" id="recDeid">개인정보 가리고 시작하기</button>
         <label class="btn gray" for="recFile" style="margin:0">PDF · md 파일 가져오기</label>
         <input id="recFile" type="file" accept=".pdf,application/pdf,.md,text/markdown" class="sr">
         <button class="btn gray" id="recSample">예시 데이터 불러오기 (합성)</button>
         <button class="btn gray" id="recClear">모두 지우기</button>
       </div>
-      <p class="note" id="recFileNote" style="margin:6px 0 12px">나이스에서 내려받은 학교생활기록부 PDF도 가져올 수 있어요. 파일은 이 브라우저 안에서만 글자로 바뀌고 서버로 가지 않으며, 저장되지도 않아요. 스캔한 이미지 PDF는 글자를 읽지 못해요.</p>
-      <label for="recText">생기부 텍스트</label>
-      <textarea id="recText" placeholder="세특·창체·행특 기록을 붙여 넣으세요. 생기부 PDF나 .md 파일을 여기에 끌어다 놓아도 돼요. 또는 위의 예시 데이터를 불러오세요."></textarea>
-      <div class="row" style="margin-top:12px">
-        <button class="btn" id="recDeid">개인정보 가리고 시작하기</button>
-        <span class="note" style="align-self:center">누르면 1단계가 바로 실행돼요 · 예시 데이터로 먼저 써 봐도 좋아요</span>
-      </div>
+      <p class="note" id="recFileNote" style="margin:8px 0 0">「개인정보 가리고 시작하기」를 누르면 1단계가 바로 실행돼요. 나이스에서 내려받은 생기부 PDF도 가져올 수 있고, 파일은 이 브라우저 안에서만 글자로 바뀌어 서버로 가거나 저장되지 않아요. 스캔한 이미지 PDF는 글자를 읽지 못해요.</p>
     </div>
 
     <div class="card soft" id="recDeidCard" style="display:none">
