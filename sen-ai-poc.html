@@ -313,6 +313,11 @@ th{color:var(--ink-3);font-weight:600;font-size:13px}
       <p class="note" id="recFileNote" style="margin:8px 0 0">「개인정보 가리고 시작하기」를 누르면 1단계가 바로 실행돼요. 나이스에서 내려받은 생기부 PDF도 가져올 수 있고, 파일은 이 브라우저 안에서만 글자로 바뀌어 서버로 가거나 저장되지 않아요. 스캔한 이미지 PDF는 글자를 읽지 못해요.</p>
     </div>
 
+    <div class="card" id="recRejectCard" style="display:none;border:1px solid #F3C4C4;background:#FFF7F7">
+      <div class="row" style="justify-content:space-between;align-items:flex-start;gap:10px"><h3 style="margin:0;color:#B42318">생기부 기록이 아닌 것 같아 진행하지 않았어요</h3><span class="badge" style="background:#FDECEC;color:#B42318;border-color:#F3C4C4">반려</span></div>
+      <p class="muted" id="recRejectWhy" style="margin:8px 0 0"></p>
+      <p class="muted" style="margin:6px 0 0">이 기능은 학교생활기록부의 <b>세부능력 및 특기사항 · 창의적 체험활동(자율·동아리·진로·봉사) · 행동특성 및 종합의견 · 독서활동</b> 같은 기록을 읽습니다. 그 항목 이름이나 문장이 들어 있는 생기부 텍스트나 PDF를 넣어 주세요. 어떤 형식인지 보려면 「예시 데이터 불러오기 (합성)」를 눌러 보세요.</p>
+    </div>
     <div class="card soft" id="recDeidCard" style="display:none">
       <div class="row" style="justify-content:space-between"><h3>1단계 결과 · 개인정보를 가렸어요</h3><span class="badge pseudo">가명데이터 (식별자만 가린 내 기록)</span></div>
       <div id="deidReport" class="row" style="margin-bottom:8px"></div>
@@ -894,9 +899,35 @@ $('#recFile').addEventListener('change',e=>{const f=e.target.files[0];e.target.v
 ['dragleave','drop'].forEach(t=>$('#recText').addEventListener(t,e=>{$('#recText').classList.remove('over');}));
 $('#recText').addEventListener('drop',e=>{const f=e.dataTransfer?.files?.[0];if(f){e.preventDefault();recImport(f);}});
 $('#recSample').addEventListener('click',()=>{$('#recText').value=SAMPLE_REC;toast('합성 예시를 불러왔어요 · 실제 학생이 아닙니다');});
-$('#recClear').addEventListener('click',()=>{$('#recText').value='';{const n=$('#recFileNote');if(n.dataset.base)n.textContent=n.dataset.base;}deidText='';['#recDeidCard','#recSynthCard','#recOutCard'].forEach(s=>$(s).style.display='none');$('#recChat').innerHTML='';toast('모두 지웠어요');});
+$('#recClear').addEventListener('click',()=>{$('#recText').value='';$('#recRejectCard').style.display='none';{const n=$('#recFileNote');if(n.dataset.base)n.textContent=n.dataset.base;}deidText='';['#recDeidCard','#recSynthCard','#recOutCard'].forEach(s=>$(s).style.display='none');$('#recChat').innerHTML='';toast('모두 지웠어요');});
+/* 생기부가 아닌 글(공문·요강·일반 문서·잡담)은 분석하지 않고 반려한다 : 생기부 항목 이름·문체를 규칙으로 확인 */
+const REC_MARKERS=[
+  [/학교생활기록부|생활기록부|생기부/,'학교생활기록부'],
+  [/세부\s*능력\s*및\s*특기\s*사항|세특|특기사항/,'세부능력 및 특기사항'],
+  [/창의적\s*체험\s*활동|창체/,'창의적 체험활동'],
+  [/자율\s*활동|동아리\s*활동|진로\s*활동|봉사\s*활동/,'자율·동아리·진로·봉사활동'],
+  [/행동\s*특성\s*및\s*종합\s*의견|행특|종합의견/,'행동특성 및 종합의견'],
+  [/독서\s*활동/,'독서활동'],
+  [/교과\s*학습\s*발달|수상\s*경력|출결\s*상황|인적\s*[·ㆍ]?\s*학적/,'교과학습발달·수상·출결·학적'],
+  [/(?:^|\n)\s*\[?\s*(국어|수학|영어|통합과학|통합사회|과학|사회|물리|화학|생명|지구|한국사|정보|미술|음악|체육|기술|가정|한문|제2외국어|일본어|중국어)[^\n]{0,20}(\]|[:：]|\))/,'과목명']
+];
+function recCheck(src){
+  const t=src.replace(/\s+/g,' ');
+  const hits=REC_MARKERS.filter(([re])=>re.test(src)).map(([,name])=>name);
+  const style=(src.match(/(함|음|임|됨|냄|줌|감|보임|나타냄|드러남|돋보임)\.(\s|$)/g)||[]).length; // 생기부 특유의 「~함.」 문체
+  const tooShort=t.length<80;
+  const ok=!tooShort&&(hits.length>=2||(hits.length>=1&&style>=3)||style>=8);
+  let why='';
+  if(tooShort)why='내용이 너무 짧아요('+t.length+'자). 세특·창체·행특 기록을 더 넣어 주세요.';
+  else if(!hits.length&&style<8)why='생기부 항목 이름(세특·창체·행특·독서 등)도, 생기부 특유의 「~함.」 문장도 거의 보이지 않아요.';
+  else why='생기부 항목이 '+hits.length+'개만 보이고 기록 문장이 부족해요. 세특이나 창체 기록 본문을 함께 넣어 주세요.';
+  return{ok,hits,style,why};
+}
 $('#recDeid').addEventListener('click',()=>{
   const src=$('#recText').value.trim();if(!src){toast('생기부 텍스트를 먼저 넣으세요');return;}
+  const chk=recCheck(src);
+  if(!chk.ok){deidText='';['#recDeidCard','#recSynthCard','#recOutCard'].forEach(x=>$(x).style.display='none');$('#rs1').classList.remove('done');$('#recRejectWhy').textContent=chk.why;$('#recRejectCard').style.display='';$('#recRejectCard').scrollIntoView({behavior:'smooth',block:'start'});toast('생기부 기록이 아니어서 진행하지 않았어요');return;}
+  $('#recRejectCard').style.display='none';
   const{out,rep}=deidentify(src);deidText=out;
   $('#rs1').classList.add('done');$('#rs2').classList.remove('done');$('#rs3').classList.remove('done');
   const keys=Object.keys(rep);$('#deidReport').innerHTML=(keys.length?keys.map(k=>`<span class="badge warn">${esc(k)} ${rep[k]}건</span>`).join(''):'<span class="badge ok">탐지된 식별자 없음</span>')+`<span class="badge">${src.length}자 → ${out.length}자</span>`;
