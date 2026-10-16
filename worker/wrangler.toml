@@ -7,7 +7,7 @@ preview_urls = false
 # 실행 위치 : 한국 접속 시 Worker가 홍콩에서 실행되면 Claude API가 403(Request not allowed)으로 거부한다.
 # api.anthropic.com 가까운 곳에서 실행되게 고정 (대시보드 Placement 설정과 같음 · 배포해도 유지되도록 파일에 둠)
 [placement]
-mode = "smart"
+mode = "targeted"
 hostname = "api.anthropic.com"
 
 [observability]

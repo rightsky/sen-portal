@@ -63,7 +63,7 @@ window.SEN_AI_ENDPOINT = "https://sen-ai-proxy.<계정>.workers.dev";
 
 ## 4-1. 실행 위치 (중요)
 
-한국에서 접속하면 Worker가 홍콩 데이터센터에서 실행되는 경우가 있는데, Claude API는 홍콩발 요청을 `403 forbidden : Request not allowed`로 거부한다. `wrangler.toml`의 `[placement] mode = "smart" · hostname = "api.anthropic.com"` 설정이 Claude API 가까운 곳에서 실행되게 한다. (2026.10.8 대시보드에서 적용 → 2026.10.16 배포로 풀려 403 재발 → 파일에 넣어 배포마다 유지)
+한국에서 접속하면 Worker가 홍콩 데이터센터에서 실행되는 경우가 있는데, Claude API는 홍콩발 요청을 `403 forbidden : Request not allowed`로 거부한다. `wrangler.toml`의 `[placement] mode = "targeted" · hostname = "api.anthropic.com"` 설정이 Claude API 가까운 곳에서 실행되게 한다. (2026.10.8 대시보드에서 적용 → 2026.10.16 배포로 풀려 403 재발 → 파일에 넣어 배포마다 유지)
 
 ## 5. 보안·운영 메모
 
