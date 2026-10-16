@@ -164,6 +164,16 @@ th{color:var(--ink-3);font-weight:600;font-size:13px}
 @media(max-width:640px){.rec-actions .btn{flex:1 1 100%;text-align:center;justify-content:center}}
 .kbitem{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
 .kbitem:last-child{border-bottom:0}
+.kbitem{flex-wrap:wrap;align-items:center}
+.kbitem .kbm{display:flex;gap:6px;flex-wrap:wrap;align-items:center;background:transparent;border:0;padding:6px 8px;border-radius:8px;color:var(--ink);font:inherit;cursor:pointer}.kbitem .kbm:hover{background:var(--surface)}
+.kbitem .tagc{display:inline-block;padding:1px 8px;border-radius:999px;font-size:12px;font-weight:700;background:var(--surface);border:1px solid var(--line);color:var(--ink-2)}
+.kbitem .tagc.t-요강{background:#E8EFFC;color:#1F4FA3;border-color:#C9D8F5}.kbitem .tagc.t-시행계획{background:#E6F4EA;color:#157F3D;border-color:#BFE3C9}.kbitem .tagc.t-제도{background:#FDF1DE;color:#8A5410;border-color:#F0D9B0}.kbitem .tagc.t-기준{background:#F1E8FD;color:#5B3FD6;border-color:#D9CBF7}
+.kbedit{grid-column:1/-1;width:100%;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;padding:10px;margin:6px 0 2px;border:1px dashed var(--line);border-radius:10px;background:var(--surface)}
+.kbedit label{font-size:12px;color:var(--ink-3);display:flex;flex-direction:column;gap:4px}
+.kbedit input,.kbedit select{min-height:36px;border:1px solid var(--line);border-radius:8px;padding:4px 8px;font:inherit;background:var(--bg);color:var(--ink)}
+.kbedit .secs{grid-column:1/-1;font-size:12.5px;color:var(--ink-2);max-height:120px;overflow:auto;white-space:pre-wrap}
+.kbtools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 10px}
+.kbtools select{min-height:36px;border:1px solid var(--line);border-radius:8px;padding:4px 8px;font:inherit;background:var(--bg);color:var(--ink)}
 .mask{background:#FFF1E0;color:#7A3E00;border-radius:4px;padding:0 3px}
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .mask{background:#4A2E0A;color:#FFD9A8} }
 .pre{white-space:pre-wrap;font-size:13.5px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px;max-height:260px;overflow:auto}
@@ -265,7 +275,7 @@ th{color:var(--ink-3);font-weight:600;font-size:13px}
   <section class="pane" id="pane-store" role="tabpanel">
     <div class="card">
       <h2>지식저장소 <span class="soon" style="display:inline-block;margin-left:6px;padding:1px 8px;border-radius:999px;background:var(--brand-soft);color:var(--brand);font-size:13px;vertical-align:middle">신규</span></h2>
-      <p class="muted">① md 변환기에서 저장한 문서가 여기 모여 ③ RAG 어시스턴트가 검색하는 지식DB가 됩니다(제목 단위 청킹 · 출처·학년도 메타데이터 · BM25 색인). 세부 기능은 따로 기획하고 있어요.</p>
+      <p class="muted">① md 변환기에서 저장한 문서가 여기 모여 ③ RAG 어시스턴트가 검색하는 지식DB가 됩니다(제목 단위 청킹 · 출처·학년도 메타데이터 · BM25 색인). 문서별 정보 수정 · 분류 · 내보내기·불러오기를 제공해요.</p>
       <p class="muted"><b>기본 지식저장소</b> : 페이지를 열면 기본 지식 6편과 <b>2027학년도 서울 소재 대학 정시 모집요강 통합본</b>(41개교 · 2116쪽)이 자동으로 들어갑니다. 기본 문서도 하나씩 삭제할 수 있고, 새로고침하면 다시 들어갑니다. 「지식저장소 비우기」는 직접 저장한 문서만 지워요.</p>
       <div class="kpi" id="kbKpi">
         <div><b id="kFiles">0</b><span>문서</span></div>
@@ -275,7 +285,15 @@ th{color:var(--ink-3);font-weight:600;font-size:13px}
       </div>
     </div>
     <div class="card soft">
-      <h3>저장된 문서</h3>
+      <div class="row" style="justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><h3 style="margin:0">저장된 문서</h3>
+        <div class="kbtools">
+          <label class="muted" style="display:flex;align-items:center;gap:6px;font-size:13px">분류 <select id="kbFilter"><option value="">전체</option><option>요강</option><option>시행계획</option><option>제도</option><option>기준</option><option>기타</option></select></label>
+          <button class="btn gray sm" id="kbExport">내 문서 내보내기</button>
+          <label class="btn gray sm" for="kbImportFile" style="margin:0">내보낸 파일 불러오기</label>
+          <input id="kbImportFile" type="file" accept=".json,application/json" class="sr">
+        </div>
+      </div>
+      <p class="muted" style="margin:6px 0 10px">문서를 누르면 학년도·기준일·출처·분류를 고치고 섹션 목록을 볼 수 있어요. 지식저장소는 브라우저를 닫으면 지워지니, 직접 저장한 문서는 「내 문서 내보내기」로 파일(json)로 받아 두었다가 다음에 「내보낸 파일 불러오기」로 되살리세요.</p>
       <div id="kbList" class="muted">아직 없습니다. ① md 변환기에서 문서를 변환한 뒤 지식저장소에 저장하세요.</div>
     </div>
   </section>
@@ -362,7 +380,7 @@ th{color:var(--ink-3);font-weight:600;font-size:13px}
     <p class="muted" style="margin-top:8px">AI PoC는 ① 원천 데이터(요강·자료집·보고서)를 md로 바꾸는 md 변환기, ② 변환한 문서를 모아 지식DB로 만드는 지식저장소, ③ 지식DB를 근거로 답하는 RAG 어시스턴트(챗봇), ④ 생기부를 비식별 처리한 뒤 3대 역량으로 읽어 주는 생기부 AI 활용으로 나뉩니다.</p>
     <div class="choice">
       <button class="c" id="goMd"><b>1. md 변환기</b><span>요강·자료집·보고서(hwp·docx·pdf)를 md로 변환 · 변환 미리보기 · md 내려받기 · 지식저장소에 저장</span></button>
-      <button class="d" id="goStore"><b>2. 지식저장소<span class="soon">신규</span></b><span>md 변환기에서 저장한 문서를 모아 RAG가 검색하는 지식DB로 만듭니다 · 세부 기능은 별도 기획 중</span></button>
+      <button class="d" id="goStore"><b>2. 지식저장소<span class="soon">신규</span></b><span>md 변환기에서 저장한 문서를 모아 RAG가 검색하는 지식DB로 만듭니다 · 분류 · 정보 수정 · 내보내기·불러오기</span></button>
       <button class="a" id="goRag"><b>3. RAG 어시스턴트 (챗봇)</b><span>2028 대입 시행계획·제도 변화·학년별 준비 등 등록된 지식DB를 검색해 출처와 함께 답합니다 (RAG)</span></button>
       <button class="b" id="goRec"><b>4. 생기부 AI 활용</b><span>세특·창체 기록을 비식별 처리해 가명·합성 데이터로 만든 뒤 학업·진로·공동체 역량으로 분석합니다</span></button>
     </div>
@@ -657,7 +675,7 @@ async function storeTexts(texts){
   const wait=ms=>new Promise(r=>setTimeout(r,ms));
   set(0,'on');await wait(250);
   set(1,'on');await wait(250);
-  let newChunks=[];texts.forEach(t=>{KB.docs=KB.docs.filter(d=>d.name!==t.name);KB.chunks=KB.chunks.filter(c=>c.doc!==t.name);const ch=chunkMd(t.name,t.text,t.meta);newChunks=newChunks.concat(ch);KB.docs.push({name:t.name,md:t.text,base:!!t.base,size:t.text.length,chunks:ch.length,year:ch[0]?.year||'',date:ch[0]?.date||''});});
+  let newChunks=[];texts.forEach(t=>{KB.docs=KB.docs.filter(d=>d.name!==t.name);KB.chunks=KB.chunks.filter(c=>c.doc!==t.name);const ch=chunkMd(t.name,t.text,t.meta);newChunks=newChunks.concat(ch);KB.docs.push({name:t.name,md:t.text,base:!!t.base,tag:t.tag||'',src:t.meta?.src||'',size:t.text.length,chunks:ch.length,year:ch[0]?.year||'',date:ch[0]?.date||''});});
   set(2,'on');await wait(250);
   set(3,'on');const seen=new Set();newChunks=newChunks.filter(c=>{const key=c.doc+'|'+c.sec+'|'+c.text;if(seen.has(key))return false;seen.add(key);return true;});KB.chunks=KB.chunks.concat(newChunks);KB.dirty=true;rebuild();await wait(250);
   set(4,'on');KB.updated=new Date().toLocaleString('ko-KR');saveKb();await wait(200);set(5,'done');
@@ -694,7 +712,18 @@ function renderKb(){if(typeof ragKbBadge==='function')ragKbBadge();
   if(KB.chunks.length&&!KB.chunks[0].tf)KB.chunks.forEach(c=>c.tf=countTf(tokens(c.sec+' '+c.text)));if(KB.dirty!==false)rebuild();
   $('#kFiles').textContent=KB.docs.length;$('#kChunks').textContent=KB.chunks.length;$('#kTerms').textContent=Object.keys(KB.df||{}).length;$('#kDate').textContent=KB.updated?KB.updated.split(' ').slice(0,3).join(' '):'-';
   const l=$('#kbList');if(!KB.docs.length){l.textContent=DEFAULT_STATE==='loading'?'기본 지식저장소를 불러오는 중이에요…':'아직 없습니다. ① md 변환기에서 문서를 변환한 뒤 지식저장소에 저장하세요.';return;}
-  const docs=[...KB.docs].sort((a,b)=>(b.base?1:0)-(a.base?1:0));l.innerHTML=(DEFAULT_STATE==='loading'?'<p class="muted" style="margin:0 0 8px">기본 지식저장소를 불러오는 중이에요…</p>':DEFAULT_STATE==='fail'?'<p class="muted" style="margin:0 0 8px">정시 모집요강 통합본을 불러오지 못했어요. 새로고침해 보세요.</p>':'')+docs.map(d=>`<div class="kbitem"><span>${d.base?'<span class="badge ok" style="margin-right:6px">기본</span>':''}${esc(d.name)} <span class="muted">· ${d.chunks}청크 · ${(d.size/1000).toFixed(1)}k자${d.year?' · '+d.year+'학년도':''}${d.date?' · 기준일 '+esc(d.date):''}</span></span><span class="row" style="gap:6px;flex:none">${d.md?`<button class="btn gray" style="min-height:32px;padding:2px 10px" data-dl="${esc(d.name)}">md 내려받기</button>`:''}<button class="btn gray" style="min-height:32px;padding:2px 10px" data-del="${esc(d.name)}">삭제</button></span></div>`).join('');
+  const KB_TAGS=['요강','시행계획','제도','기준','기타'];
+  const guessTag=d=>d.tag||(/요강/.test(d.name)?'요강':/시행계획/.test(d.name)?'시행계획':/3대변화|고교학점제|제도/.test(d.name)?'제도':/역량|기준|규칙/.test(d.name)?'기준':'기타');
+  KB.docs.forEach(d=>{if(!d.tag)d.tag=guessTag(d);});
+  const filt=(window.__kbFilter||'');
+  const docs=[...KB.docs].filter(d=>!filt||d.tag===filt).sort((a,b)=>(b.base?1:0)-(a.base?1:0));
+  l.innerHTML=(DEFAULT_STATE==='loading'?'<p class="muted" style="margin:0 0 8px">기본 지식저장소를 불러오는 중이에요…</p>':DEFAULT_STATE==='fail'?'<p class="muted" style="margin:0 0 8px">정시 모집요강 통합본을 불러오지 못했어요. 새로고침해 보세요.</p>':'')+(docs.length?docs.map(d=>`<div class="kbitem" data-doc="${esc(d.name)}"><button type="button" class="kbm" data-open="${esc(d.name)}" style="text-align:left;flex:1;min-width:240px">${d.base?'<span class="badge ok">기본</span>':''}<span class="tagc t-${esc(d.tag)}">${esc(d.tag)}</span><b>${esc(d.name)}</b> <span class="muted">· ${d.chunks}청크 · ${(d.size/1000).toFixed(1)}k자${d.year?' · '+d.year+'학년도':''}${d.date?' · 기준일 '+esc(d.date):''}</span></button><span class="row" style="gap:6px;flex:none">${d.md?`<button class="btn gray" style="min-height:32px;padding:2px 10px" data-dl="${esc(d.name)}">md 내려받기</button>`:''}<button class="btn gray" style="min-height:32px;padding:2px 10px" data-del="${esc(d.name)}">삭제</button></span></div>`).join(''):'<p class="muted" style="margin:0">이 분류에 해당하는 문서가 없어요.</p>');
+  l.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>{const item=b.closest('.kbitem');const ex=item.querySelector('.kbedit');if(ex){ex.remove();return;}const d=KB.docs.find(x=>x.name===b.dataset.open);if(!d)return;
+    const secs=[...new Set(KB.chunks.filter(c=>c.doc===d.name).map(c=>c.sec||'본문'))];const secTxt=secs.slice(0,40).map(x=>'· '+x).join('\n')+(secs.length>40?'\n… 외 '+(secs.length-40)+'개':'');
+    const e=document.createElement('div');e.className='kbedit';e.innerHTML=`<label>학년도<input data-f="year" value="${esc(d.year||'')}" placeholder="2027"></label><label>기준일<input data-f="date" value="${esc(d.date||'')}" placeholder="2026.07"></label><label>출처<input data-f="src" value="${esc(d.src||(KB.chunks.find(c=>c.doc===d.name)||{}).src||'')}" placeholder="기관·문서명"></label><label>분류<select data-f="tag">${KB_TAGS.map(t=>`<option${t===d.tag?' selected':''}>${t}</option>`).join('')}</select></label><div class="secs"><b>섹션 ${secs.length}개</b>\n${esc(secTxt)}</div><div class="row" style="grid-column:1/-1;gap:8px"><button type="button" class="btn sm" data-save>저장</button><button type="button" class="btn gray sm" data-cancel>닫기</button></div>`;
+    item.appendChild(e);
+    e.querySelector('[data-cancel]').addEventListener('click',()=>e.remove());
+    e.querySelector('[data-save]').addEventListener('click',()=>{const g=f=>e.querySelector(`[data-f="${f}"]`).value.trim();d.year=g('year');d.date=g('date');d.src=g('src');d.tag=g('tag');KB.chunks.forEach(c=>{if(c.doc===d.name){c.year=d.year;c.date=d.date;c.src=d.src;}});KB.dirty=true;saveKb();renderKb();toast(d.name+' 정보를 고쳤어요');});}));
   l.querySelectorAll('[data-dl]').forEach(b=>b.addEventListener('click',()=>{const d=KB.docs.find(x=>x.name===b.dataset.dl);if(d)downloadMd(d.name,d.md);}));
   l.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>{const n=b.dataset.del;KB.docs=KB.docs.filter(d=>d.name!==n);KB.chunks=KB.chunks.filter(c=>c.doc!==n);KB.dirty=true;saveKb();renderKb();toast(n+' 을 지식저장소에서 뺐어요'+(KB_BASE_NAMES.has(n)?' · 기본 문서는 새로고침하면 다시 들어와요':''));}));
   renderChips();
@@ -726,6 +755,9 @@ function renderConv(){
   $('#convList').querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',async()=>{const c=CONV[+b.dataset.copy];try{await navigator.clipboard.writeText(c.md);toast('md를 복사했어요');}catch(e){const pre=$('#convPre'+b.dataset.copy);pre.textContent=c.md;pre.hidden=false;const r=document.createRange();r.selectNodeContents(pre);const sel=getSelection();sel.removeAllRanges();sel.addRange(r);toast('복사가 막혀 있어요. 선택된 내용을 직접 복사하세요');}}));
 }
 $('#saveAll').addEventListener('click',()=>saveToStore(CONV.filter(c=>!c.error).map(c=>c.id)));
+$('#kbFilter').addEventListener('change',e=>{window.__kbFilter=e.target.value;renderKb();});
+$('#kbExport').addEventListener('click',()=>{const mine=KB.docs.filter(d=>!d.base&&d.md);if(!mine.length){toast('직접 저장한 문서가 없어요 (기본 문서는 내보내지 않아요)');return;}const data={kind:'sen-kb-export',version:1,exported:new Date().toISOString(),docs:mine.map(d=>({name:d.name,md:d.md,year:d.year||'',date:d.date||'',src:d.src||'',tag:d.tag||''}))};const url=URL.createObjectURL(new Blob([JSON.stringify(data)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='지식저장소_'+new Date().toISOString().slice(0,10)+'.json';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);toast(mine.length+'편을 파일로 내보냈어요');});
+$('#kbImportFile').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;try{const j=JSON.parse(await f.text());if(j.kind!=='sen-kb-export'||!Array.isArray(j.docs))throw 0;showTab('store');await storeTexts(j.docs.map(d=>({name:d.name,text:d.md,tag:d.tag,meta:{year:d.year,date:d.date,src:d.src}})));}catch(err){toast('지식저장소 내보내기 파일(json)이 아니에요');}});
 $('#clearKb').addEventListener('click',()=>{const keep=new Set(KB.docs.filter(d=>d.base).map(d=>d.name));const n=KB.docs.length-keep.size;KB.docs=KB.docs.filter(d=>keep.has(d.name));KB.chunks=KB.chunks.filter(c=>keep.has(c.doc));KB.dirty=true;saveKb();renderKb();toast(n?'직접 저장한 문서 '+n+'편을 비웠어요 · 기본 지식저장소 '+keep.size+'편은 그대로예요':'직접 저장한 문서가 없어요 · 기본 지식저장소는 비우지 않아요');});
 
 /* ========= AI 연결 ========= */

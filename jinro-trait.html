@@ -630,7 +630,7 @@ setState(state);
 document.getElementById('recs').addEventListener('click',e=>{const b=e.target.closest('[data-save]');if(!b)return;const k=b.dataset.save;if(saved.has(k)){saved.delete(k);b.classList.remove('is-on');b.textContent='🤍';showToast('저장을 취소했습니다');}else{saved.add(k);b.classList.add('is-on');b.textContent='❤️';showToast('나의 진로진학에 저장했습니다');}});
 </script>
 <script src="gnb.js"></script>
-<script src="sen-ai.js?v=20261016b"></script>
+<script src="sen-ai.js?v=20261016c"></script>
 <script src="footer-sys.js"></script>
 </body>
 </html>

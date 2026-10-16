@@ -29,7 +29,7 @@ const sh=document.createElement('div');sh.className='senai-sheet';sh.innerHTML=`
 <h2>어떤 서비스를 이용하시겠어요?</h2><p>AI PoC 네 기능 : 모두 근거와 기준일을 함께 보여주는 참고 도구예요.</p><a class="senai-priv" href="sen-ai-poc.html#priv">처음이시면 개인정보 원칙부터 읽어 주세요 →</a>
 <div class="senai-cards">
 <a class="senai-c senai-c--md" href="sen-ai-poc.html#kb"><b>1. md 변환기</b><span>요강·자료집·보고서(hwp·docx·pdf)를 md로 변환합니다 · 변환 미리보기 · md 내려받기 · 지식저장소에 저장</span></a>
-<a class="senai-c senai-c--store" href="sen-ai-poc.html#store"><b>2. 지식저장소<span class="new">신규</span></b><span>md 변환기에서 저장한 문서를 모아 RAG가 검색하는 지식DB로 만듭니다 · 세부 기능은 따로 기획 중이에요</span></a>
+<a class="senai-c senai-c--store" href="sen-ai-poc.html#store"><b>2. 지식저장소<span class="new">신규</span></b><span>md 변환기에서 저장한 문서를 모아 RAG가 검색하는 지식DB로 만듭니다 · 분류 · 정보 수정 · 내보내기·불러오기</span></a>
 <a class="senai-c senai-c--rag" href="sen-ai-poc.html#rag"><b>3. RAG 어시스턴트 (챗봇)</b><span>등록된 md 지식DB를 검색해 2028 대입 시행계획·제도 변화·학년별 준비를 출처와 함께 답합니다 · 모른다 카드</span></a>
 <div class="senai-c senai-c--rec"><a href="sen-ai-poc.html#rec" style="color:#fff;display:flex;flex-direction:column;gap:6px"><b>4. 생기부 AI 활용</b><span>세특·창체 기록을 비식별 처리해 가명·합성 데이터로 만든 뒤 학업·진로·공동체 역량으로 분석합니다</span></a><a class="sub" href="cns.html" data-cns>교사 로그인 · 선생님 상담 준비(우리 반 생기부 + 진로검사 브리프) →</a></div>
 </div><p class="senai-note">AI 응답은 참고 자료이며 선생님 확정 뒤에만 판단이 됩니다.</p></div>`;
