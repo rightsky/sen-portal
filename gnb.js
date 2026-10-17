@@ -56,6 +56,9 @@ if(header&&gnb){
     if(cur!==l1){cur=l1;drop.innerHTML=`<div class="gnb-drop__in"><p class="gnb-drop__l1">${l1}</p><div class="gnb-drop__cols">${m.map(([l2,l3])=>`<div><h4>${l2}</h4><ul>${l3.map(x=>`<li>${link(x,l1,l2)}</li>`).join('')}</ul></div>`).join('')}</div></div>`;}
     gnb.querySelectorAll('a').forEach(x=>x.classList.toggle('is-hover',x===a));drop.classList.add('is-on');};
   const hide=()=>{t=setTimeout(()=>{drop.classList.remove('is-on');gnb.querySelectorAll('a').forEach(x=>x.classList.remove('is-hover'));},120);};
+  // 대분류를 누르면(터치 포함) 그 분류의 대표 화면으로 이동 : href="#"인 경우만 채운다
+  const TOP={'미래탐색':'jinro-test.html','학교·과목설계':'school-explore.html','대학·전형탐색':'univ.html','지원전략':'strategy.html','상담·체험':'counsel.html','나의 진로진학':'my.html','자료·소식':'library.html'};
+  gnb.querySelectorAll('a').forEach(a=>{const k=a.textContent.trim();if((a.getAttribute('href')||'#')==='#'&&TOP[k])a.setAttribute('href',TOP[k]);});
   gnb.querySelectorAll('a').forEach(a=>{a.addEventListener('mouseenter',()=>show(a));a.addEventListener('focus',()=>show(a));});
   header.addEventListener('mouseleave',hide);
   drop.addEventListener('mouseenter',()=>clearTimeout(t));

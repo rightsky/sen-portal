@@ -168,7 +168,7 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
   <div class="container">
     <nav class="brandbar__sites" aria-label="패밀리 사이트">
       <a class="is-active" href="main-everland-style.html">서울 진로진학 통합플랫폼</a>
-      <a href="#">서울특별시교육청</a><a href="#">서울특별시교육청교육연구정보원</a>
+      <a href="https://www.sen.go.kr" target="_blank" rel="noopener" title="새 창">서울특별시교육청</a><a href="https://www.serii.re.kr" target="_blank" rel="noopener" title="새 창">서울특별시교육청교육연구정보원</a>
     </nav>
     <div class="brandbar__util"><a href="#" data-toast="통합계정 로그아웃">로그아웃</a></div>
   </div>
@@ -262,8 +262,8 @@ const RES=[
  {t:'2028 진학지도 자료집',p:'대교협 주요사항 + 서울 주요대 변동 정리 · 교사 인증 열람분 전문(全文)',a:'내려받기',href:'library.html'},
  {t:'고1, 2 교사를 위한 진로·진학·학업 설계의 이론과 실제 (2026)',p:'서교연 진학지도 자료집 03 · 학년별 로드맵, 과목 선택 지도, 상담 4단계, 교과·계열 사례 38건 (세특 기록 예시 포함, 교사 전용) · 학생 화면에는 사례·워크시트만 공개',a:'내려받기',href:'library.html#cases'},
  {t:'생기부 읽기 도우미 (교사용)',p:'가명처리 요약 · 3역량 관점 읽기 · 반복 경고 점검 — AI 초안, 확정은 교사가',a:'열기 ›',href:'sen-ai-poc.html'},
- {t:'원격연수 · 설명회',p:'2028 대입 변화 15차시 · 진학지도 실무 과정 · 수료증 발급',a:'신청하기',href:'#'},
- {t:'진학지도 Q&A 게시판',p:'교사 간 사례 공유 · 센터 답변 · 같은 학교 담당자와 공동 열람',a:'바로가기',href:'#'}
+ {t:'원격연수 · 설명회',p:'2028 대입 변화 15차시 · 진학지도 실무 과정 · 수료증 발급',a:'신청하기',href:'#',toast:'원격연수·설명회 신청은 다음 단계에서 설계합니다'},
+ {t:'진학지도 Q&A 게시판',p:'교사 간 사례 공유 · 센터 답변 · 같은 학교 담당자와 공동 열람',a:'바로가기',href:'#',toast:'진학지도 Q&A 게시판은 다음 단계에서 설계합니다'}
 ];
 const AUDIT=[
  ['9.5 14:21','나','김서연 진로검사 결과 열람','사유: 상담 준비'],
@@ -531,7 +531,7 @@ function renderMain(){
  </div>`;
 
  /* Z5 */
- const z5=RES.map(r=>`<article><h3>${r.t}</h3><p>${r.p}</p><a href="${r.href}">${r.a}</a></article>`).join('');
+ const z5=RES.map(r=>`<article><h3>${r.t}</h3><p>${r.p}</p><a href="${r.href}"${r.toast?` data-toast="${r.toast}"`:''}>${r.a}</a></article>`).join('');
 
  /* Z6 */
  const headKpi=isHead?`<div class="kpi"><span>우리 학교 3학년 (진학부장)</span><b>312명</b><span class="d">상담 신청 41 · 공유 승인 188</span></div>`:'';
@@ -598,7 +598,7 @@ function renderMain(){
    <div class="meta">${s.what} · ${s.when} · <span class="badge ${s.badge==='학생 승인'?'badge--ok':'badge--wait'}">${s.badge}</span></div>
    <dl class="kv2">${Object.entries(s.detail).map(([k,v])=>`<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
-    <a class="btn btn--line" href="cns.html#student" style="padding:9px 16px;font-size:13.5px">상담 브리프 보기</a>
+    <a class="btn btn--line" href="cns.html" style="padding:9px 16px;font-size:13.5px">상담 브리프 보기</a>
     <button class="btn btn--line" style="padding:9px 16px;font-size:13.5px" data-toast="성적·판정은 전문시스템에서 열립니다 (2FA)">전문시스템에서 열기 ›</button>
    </div>`;
  }
