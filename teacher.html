@@ -116,6 +116,11 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 .steps5 li.is-on{opacity:1;background:#EEF3FF;border-color:#C9D8F5}
 .steps5 li em{font-style:normal;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--navy);color:#fff;font-size:12px;font-weight:800;flex:none}
 .steps5 li b{display:block;font-size:14px}.steps5 li span{font-size:12.5px;color:var(--ink-2);line-height:1.45}
+.lite-rules{list-style:none;margin:0 0 12px;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}
+.lite-rules li{font-size:13px;color:var(--ink-2);background:var(--surface);border-radius:10px;padding:10px 12px;line-height:1.5}
+.lite-rules li b{color:var(--navy);margin-right:4px}
+.lite-add textarea{width:100%;box-sizing:border-box;margin-top:6px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;font-size:13.5px;resize:vertical;min-height:110px}
+.btable tr.is-lite td{background:#FBFCFF}
 .badge--gray{background:var(--surface-2);color:var(--gray)}
 .sys article.pro .btn--navy{align-self:flex-start;background:#fff;color:var(--navy);border-color:#fff;padding:12px 22px;font-size:15px}
 .sys article.pro .btn--navy:hover{background:#EEF3FF}
@@ -478,6 +483,17 @@ function bindExtra(){
  document.querySelectorAll('[data-hitl]').forEach(b=>b.addEventListener('click',()=>{const id=b.dataset.id,k=b.dataset.hitl;if(k==='edit'&&window.hitlEditOpen){hitlEditOpen(id);return;}hitlConfirm().then(()=>{HS[id]=k;hsSave();showToast({ok:'승인했어요 · 확정본 생성 · 전달은 H3에서',edit:'수정 후 승인 · 수정 이력과 함께 확정',no:'반려 · 초안 폐기 · 사유 기록',more:'근거 보강 요청 · AI 재생성 큐로'}[k]);renderAll();});}));
  document.querySelectorAll('[data-pro]').forEach(b=>b.addEventListener('click',()=>proEnter(b.dataset.pro)));
  document.querySelectorAll('[data-pcadopt]').forEach(b=>b.addEventListener('click',()=>{localStorage.setItem(PC_ADOPT_KEY,b.dataset.pcadopt);renderAll();}));
+ const liteBtn=document.getElementById('liteAdd');if(liteBtn&&!liteBtn.dataset.bound){liteBtn.dataset.bound='1';
+  const pv=document.getElementById('litePreview');const ta=document.getElementById('liteText');
+  document.getElementById('liteFile').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;if(f.size>200*1024){showToast('파일이 너무 커요 (200KB까지)');return;}ta.value=await f.text();showToast(f.name+' 을 읽었어요 · 이 기기 안에서만 처리');});
+  liteBtn.addEventListener('click',()=>{if(!document.getElementById('liteConsent').checked){showToast('학생·보호자 동의 확인에 체크해 주세요');return;}
+   const r=liteParse(ta.value);if(r.err){pv.style.display='';pv.innerHTML='<b style="color:var(--warn)">넣지 않았어요</b> · '+h(r.err);return;}
+   const cur=liteRows();if(cur.length+r.rows.length>LITE_MAX){pv.style.display='';pv.innerHTML=`<b style="color:var(--warn)">넣지 않았어요</b> · 지금 ${cur.length}명 + ${r.rows.length}명은 ${LITE_MAX}명을 넘어요. 반 전체는 학교 연계 서비스에서`;return;}
+   if(r.alias){pv.style.display='';pv.innerHTML=`<b style="color:var(--warn)">넣지 않았어요</b> · 첫 칸은 번호나 별칭이어야 해요 (이름으로 보이는 행 ${r.alias}개). 번호·별칭으로 바꿔 다시 넣어 주세요`;return;}
+   const mk=Object.entries(r.masked);liteSave(cur.concat(r.rows.map(c=>({head:r.head,cells:c,at:Date.now()}))));
+   showToast(`${r.rows.length}명을 추가했어요${mk.length?' · 가림 : '+mk.map(([k,v])=>k+' '+v+'건').join(', '):''} · 이 기기 안에서만`);renderMain();});
+ }
+ document.querySelectorAll('[data-lite-clear]').forEach(b=>b.addEventListener('click',()=>{liteSave([]);showToast('직접 추가한 자료를 모두 지웠어요');renderMain();}));
  document.querySelectorAll('[data-pc-guide]').forEach(b=>b.addEventListener('click',()=>{setTimeout(()=>{const c=document.querySelector('.sys article.pro');if(c)c.scrollIntoView({behavior:'smooth',block:'center'});},50);}));
  document.querySelectorAll('[data-store]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.store;const go=()=>{const d=new Date();localStorage.setItem(STK,JSON.stringify({loc:k,at:`${d.getMonth()+1}.${d.getDate()}`}));showToast(k==='pc'?'선생님 PC 보관으로 바꿨어요 · 교육청 원본은 파기 예약, 가명본은 유지돼요':'교육청 저장소 보관으로 바꿨어요 · PC 컨테이너는 업로드 후 자동 파기돼요');renderAll();};(authMode()==='B'&&window.SEN_AUTH?SEN_AUTH.stepUp('실데이터 보관 위치 변경'):confirmAdmin('보관 위치 변경')).then(go);}));
  document.querySelectorAll('[data-asg]').forEach(b=>b.addEventListener('click',()=>{const id=b.dataset.id,k=b.dataset.asg;
@@ -507,11 +523,38 @@ function renderZ1(){
 function h(s){return s.replace(/</g,'&lt;');}
 function liteInject(fn){const m=document.getElementById('main');const sec=m.querySelector('section .t')||m.querySelector('h2');if(!sec)return;const p=sec.nextElementSibling&&sec.nextElementSibling.classList.contains('s')?sec.nextElementSibling:sec;p.insertAdjacentHTML('afterend',liteBand(fn));}
 /* 교과환산점 (기본 모드) : 학생이 공유한 성적으로 대학별 환산점 샘플 */
+/* 기본 모드 「내 학생 자료 추가」 : 식별자 없이 · 기기 안 보관(세션) · 10명까지 · 학생·보호자 동의 확인 */
+const LITE_KEY='sen-lite-import',LITE_MAX=10;
+function liteRows(){try{return JSON.parse(localStorage.getItem(LITE_KEY)||'[]');}catch(e){return[];}}
+function liteSave(r){localStorage.setItem(LITE_KEY,JSON.stringify(r));}
+const LITE_RULES=[[/\b\d{6}\s*-\s*[1-4*][\d*]{6}(?![\d*])/g,'[주민번호]','주민번호'],[/\b01[016789]\s*-?\s*\d{3,4}\s*-?\s*\d{4}\b/g,'[연락처]','연락처'],[/[\w.+-]+@[\w-]+\.[\w.-]+/g,'[이메일]','이메일'],[/[가-힣]{2,10}(초등학교|중학교|고등학교|고교)/g,'[학교명]','학교명'],[/\b\d{5,6}\b/g,'[학번]','학번']];
+function liteParse(text){
+ const lines=text.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);if(lines.length<2)return{err:'첫 줄은 머리글(번호, 국, 수, 영, 탐1, 탐2), 둘째 줄부터 학생 한 명씩 넣어 주세요'};
+ const sep=lines[0].includes('\t')?'\t':lines[0].includes(',')?',':/\s+/;
+ const head=lines[0].split(sep).map(x=>x.trim());const masked={};
+ const nameCol=head.findIndex(h=>/이름|성명|학생명/.test(h));if(nameCol===0||!/번호|별칭|No|no|#|식별/.test(head[0]))return{err:'첫 칸은 「번호」나 「별칭」이어야 해요. 이름 열이 첫 칸이면 넣지 않아요'};
+ const rows=lines.slice(1).map(l=>{let cells=l.split(sep).map(x=>x.trim());
+  if(nameCol>=0&&cells[nameCol]){cells[nameCol]='[이름]';masked['이름 열']=(masked['이름 열']||0)+1;}
+  cells=cells.map(c=>{LITE_RULES.forEach(([re,t,k])=>{c=c.replace(re,()=>{masked[k]=(masked[k]||0)+1;return t;});});return c;});
+  // 머리글에 없는 칸에 한글 2~4자(과목명 제외)가 남아 있으면 이름으로 보고 가림
+  cells=cells.map((c,i)=>{if(i===0)return c;if(/^[가-힣]{2,4}$/.test(c)&&!/^(국어|수학|영어|탐구|사회|과학|한국사|등급|백분위|미응시)$/.test(c)){masked['이름(추정)']=(masked['이름(추정)']||0)+1;return'[이름]';}return c;});
+  return cells;});
+ if(rows.length>LITE_MAX)return{err:`한 번에 ${LITE_MAX}명까지만 넣을 수 있어요 (${rows.length}명). 반 전체는 학교 연계 서비스에서 NEIS 일괄 적재로 처리합니다`};
+ const idCol=0;const bad=rows.filter(r=>!r[idCol]||/^[가-힣]{2,4}$/.test(r[idCol]));
+ return{head,rows,masked,alias:bad.length};
+}
+function liteConv(cells,head){const g=k=>{const i=head.findIndex(h=>new RegExp(k).test(h));const v=i>=0?parseFloat(cells[i]):NaN;return isNaN(v)?3:v;};const sum=g('국')*1.2+g('수')*1.4+g('영')*1.0+((g('탐1')||g('탐'))+g('탐2'))/2*1.2;const base=Math.round((1000-sum*32)*10)/10;return [['서울시립대 가군',base],['국민대 나군',Math.round((base-9.6)*10)/10],['숭실대 다군',Math.round((base-4.1)*10)/10]];}
 function convHtml(){const rows=[['김서연','3-2','국 2 · 수 3 · 영 2 · 탐 2·3',[['서울시립대 가군','612.4','PROV'],['국민대 나군','598.1','PROV'],['숭실대 다군','604.7','PROV']]],['강지우','3-2','국 3 · 수 2 · 영 3 · 탐 2·2',[['서울시립대 가군','606.9','PROV'],['국민대 나군','603.3','PROV'],['숭실대 다군','599.0','PROV']]],['윤태양','3-2','국 2 · 수 2 · 영 1 · 탐 3·3',[['서울시립대 가군','618.2','PROV'],['국민대 나군','611.5','PROV'],['숭실대 다군','609.8','PROV']]]];
  return `<section class="section"><h2 class="t">교과환산점 <span class="badge badge--teach">기본 모드</span></h2><p class="s">학생이 공유한 학평·내신으로 대학별 환산점을 참고용으로 계산합니다 · 환산식 원장 v2.1(2027 기준) · 공식 판정과 학생 전달은 학교 연계 서비스에서</p>${liteBand('교과환산점')}
  <div class="card" style="margin-top:16px"><h2>대학별 환산점 (참고)</h2><p class="sub">PROV = 잠정(학평 기준) · 수능 성적 반영 전 · 값은 합성 데이터</p>
- <table class="btable"><tr><th>학생</th><th>공유 성적</th><th>대학·군</th><th>환산점</th><th>상태</th></tr>${rows.map(r=>r[3].map((u,i)=>`<tr>${i===0?`<td rowspan="3"><b>${r[0]}</b> <small style="color:var(--ink-3)">${r[1]}</small></td><td rowspan="3" style="font-size:13px">${r[2]}</td>`:''}<td>${u[0]}</td><td><b>${u[1]}</b> <small style="color:var(--ink-3)">/ 1000</small></td><td><span class="badge badge--wait">${u[2]}</span></td></tr>`).join('')).join('')}</table>
- <div class="note" style="margin-top:12px">학교 연계(PC)에서는 NEIS 일괄 적재로 반 전체 환산 · 군별 모의 배치 · 합격률지수 · P1~P7 환산식 원장 검수까지 이어집니다.</div></div></section>`;}
+ <table class="btable"><tr><th>학생</th><th>공유 성적</th><th>대학·군</th><th>환산점</th><th>상태</th></tr>${rows.map(r=>r[3].map((u,i)=>`<tr>${i===0?`<td rowspan="3"><b>${r[0]}</b> <small style="color:var(--ink-3)">${r[1]}</small></td><td rowspan="3" style="font-size:13px">${r[2]}</td>`:''}<td>${u[0]}</td><td><b>${u[1]}</b> <small style="color:var(--ink-3)">/ 1000</small></td><td><span class="badge badge--wait">${u[2]}</span></td></tr>`).join('')).join('')}${liteRows().map(r=>liteConv(r.cells,r.head).map((u,i)=>`<tr class="is-lite">${i===0?`<td rowspan="3"><b>${h(r.cells[0])}</b> <span class="badge badge--src">직접 추가</span></td><td rowspan="3" style="font-size:13px">${h(r.head.slice(1).map((hd,i)=>[hd,r.cells[i+1]||'']).filter(([hd,c])=>c&&!/^\[/.test(c)).map(([hd,c])=>hd+' '+c).join(' · '))}</td>`:''}<td>${u[0]}</td><td><b>${u[1]}</b> <small style="color:var(--ink-3)">/ 1000</small></td><td><span class="badge badge--wait">PROV</span></td></tr>`).join('')).join('')}</table>
+ <div class="note" style="margin-top:12px">학교 연계(PC)에서는 NEIS 일괄 적재로 반 전체 환산 · 군별 모의 배치 · 합격률지수 · P1~P7 환산식 원장 검수까지 이어집니다.</div></div>
+ <div class="card lite-add" style="margin-top:16px"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap"><div><h2>내 학생 자료 추가 <span class="badge badge--teach">기본 모드</span></h2><p class="sub">학생이 공유하지 않은 자료를 선생님이 직접 넣어 환산점을 참고로 볼 수 있어요 · 지금 ${liteRows().length}명 / 최대 ${LITE_MAX}명</p></div>${liteRows().length?`<button class="btn btn--line" style="padding:8px 14px;font-size:13px" data-lite-clear>직접 추가 자료 모두 지우기</button>`:''}</div>
+  <ul class="lite-rules"><li><b>식별자 없이</b> 번호·별칭만 쓰고 이름·학번·연락처·학교명은 넣지 마세요. 들어오면 자동으로 가리고, 가려지지 않으면 넣지 않아요</li><li><b>이 기기 안에서만</b> 서버에 저장하지 않고 탭을 닫으면 지워져요</li><li><b>${LITE_MAX}명까지</b> 반 전체는 학교 연계 서비스(NEIS 일괄 적재)에서</li><li><b>동의 확인</b> 학생·보호자 동의를 받은 자료만</li></ul>
+  <label for="liteText" style="font-size:13.5px;font-weight:700">붙여 넣기 (첫 줄 머리글 · 쉼표·탭·띄어쓰기 구분)</label>
+  <textarea id="liteText" rows="5" placeholder="번호, 국, 수, 영, 탐1, 탐2&#10;7, 2, 3, 2, 2, 3&#10;15, 3, 2, 3, 2, 2"></textarea>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px"><label class="btn btn--line" for="liteFile" style="padding:8px 14px;font-size:13px;margin:0">CSV·txt 파일 가져오기</label><input id="liteFile" type="file" accept=".csv,.txt,text/csv,text/plain" style="display:none"><label style="display:flex;align-items:center;gap:6px;font-size:13.5px"><input type="checkbox" id="liteConsent"> 학생·보호자 동의를 받은 자료입니다</label><button class="btn btn--navy" id="liteAdd" style="padding:8px 16px;font-size:13.5px;margin-left:auto">가리고 추가</button></div>
+  <div id="litePreview" class="note" style="margin-top:10px;display:none"></div></div></section>`;}
 function renderMain(){
  const m=document.getElementById('main');
  if(state==='guest'){m.innerHTML=`
