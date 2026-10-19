@@ -421,7 +421,12 @@ function jeongsiHtml(){const ro=state==='subject';
  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">${ro?'':`<button class="btn btn--primary" style="padding:8px 14px;font-size:13px" data-pro="정시 환산점 계산·판정 생성">전문시스템에서 환산·판정 ›</button>`}<a class="btn btn--line" href="strategy.html#plan" style="padding:8px 14px;font-size:13px">학생 정시 카드 보기</a><button class="btn btn--line" style="padding:8px 14px;font-size:13px" data-toast="수능 가채점 입력은 11.19 이후 전문시스템에서 열려요">수능 가채점 입력</button></div>
  <h3 style="margin:20px 0 8px;font-size:15px">정시 일정</h3>${calHtml('jeongsi')}
  <h3 style="margin:20px 0 8px;font-size:15px">학급 점검 체크리스트</h3><div class="share__notice" style="background:var(--surface)">① 수능 전 모의 배치는 9월 학평 기준 잠정 — 학생에게 숫자가 아닌 방향으로 안내 ② 환산 불가(적재 오류) 학생은 학교관리자에게 재적재 요청 ③ 수시 합격(등록) 학생은 정시 지원 불가 — 12.17 이후 명단 갱신 ④ 군별 1장씩, 추가 모집 안내까지 ⑤ 12.5 원장 CONFIRMED 전환 후 판정 재승인 필요 건 확인</div></section>`;}
-let proUntil=0;function proEnter(why){const go=()=>{proUntil=Date.now()+6e5;showToast('SEN 진학프로그램(전문시스템)으로 이동 · 열람 사유 기록: '+why);};if(Date.now()<proUntil){go();return;}(authMode()==='B'&&window.SEN_AUTH?SEN_AUTH.stepUp('전문시스템 진입 — '+why):confirmAdmin('전문시스템 진입')).then(go);}
+/* SEN 진학프로그램(전문시스템) : 이 목업에서는 별도 화면 대신 교사공간 탭·업무시스템으로 연결한다 (2026-10-14 통합 구성 결정) */
+const PRO_MENU=[['susi','수시 진학지도','6장 구성 · 최저 · 서류 점검 · 판정 생성'],['jeongsi','정시 진학지도','환산점 원장 · 군별 모의 배치'],['hitl','판정 승인 (HITL)','H0 대기 큐 · 항목 검토 · 확정·전달'],['class','데이터 적재 · 반 관리','NEIS 적재 현황 · 보관 위치 · 학생 매핑'],['compare','비교·분석','슬롯 A·B·배경 조립 · 열람 목적 기록'],['stats','진학통계','보고서 빌더 · 졸업생 진학결과'],['ops-ai.html','AI 서비스 관리 (업무시스템)','AI 모듈 · 학습데이터 · 적용 단계 · 정보원 관리자 전용']];
+function proMenu(why){let m=document.getElementById('proModal');if(!m){m=document.createElement('div');m.id='proModal';m.className='lmodal';m.setAttribute('role','dialog');m.setAttribute('aria-modal','true');m.setAttribute('aria-labelledby','proTitle');document.body.appendChild(m);m.addEventListener('click',e=>{if(e.target===m||e.target.closest('[data-x]'))m.classList.remove('is-on');const g=e.target.closest('[data-go]');if(!g)return;const k=g.dataset.go;m.classList.remove('is-on');if(/\.html$/.test(k)){location.href=k;return;}view=k;localStorage.setItem('sen-teacher-view',view);renderAll();window.scrollTo({top:0});showToast('전문시스템 · '+g.querySelector('b').textContent+' (교사공간 탭으로 연결)');});document.addEventListener('keydown',e=>{if(e.key==='Escape')m.classList.remove('is-on');});}
+  m.innerHTML=`<div class="lmodal__p" style="width:min(640px,100%)"><button type="button" data-x aria-label="닫기" style="position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;background:var(--surface);border:0;font-size:16px">✕</button><h2 id="proTitle" style="margin:0;font-size:20px">SEN 진학프로그램 <small style="font-weight:700;color:var(--navy)">전문시스템</small></h2><p style="margin:0;font-size:13.5px;color:var(--ink-3)">2단계 인증 완료 · 열람 사유 「${h(why)}」가 감사로그에 기록됐어요. 이 목업에서는 전문시스템 기능을 교사공간 탭과 업무시스템으로 연결합니다.</p><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px">${PRO_MENU.map(([k,t,d])=>`<button type="button" data-go="${k}" style="text-align:left;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:var(--surface);cursor:pointer"><b style="display:block;font-size:15px;margin-bottom:4px">${t}${/\.html$/.test(k)?' ↗':''}</b><span style="font-size:13px;color:var(--ink-2)">${d}</span></button>`).join('')}</div><p style="margin:0;font-size:12.5px;color:var(--ink-3)">학생 식별 정보가 표시되는 화면입니다 · 세션 30분 · 태블릿을 학생에게 돌릴 때는 학생상담모드를 쓰세요</p></div>`;
+  m.classList.add('is-on');}
+let proUntil=0;function proEnter(why){const go=()=>{proUntil=Date.now()+6e5;proMenu(why);};if(Date.now()<proUntil){go();return;}(authMode()==='B'&&window.SEN_AUTH?SEN_AUTH.stepUp('전문시스템 진입 — '+why):confirmAdmin('전문시스템 진입')).then(go);}
 let tfaUntil=0;function hitlConfirm(){if(Date.now()<tfaUntil)return Promise.resolve(true);return (authMode()==='B'&&window.SEN_AUTH?SEN_AUTH.stepUp('판정 승인(HITL)'):confirmAdmin('판정 승인')).then(r=>{tfaUntil=Date.now()+6e5;return r;});}
 
 function bindExtra(){
@@ -514,7 +519,7 @@ function renderMain(){
   ?`<article><div class="ico">🗓️</div><h3>정보원 상담시스템</h3><p>배정 상담 · 방문·화상 상담 운영 (정보원 상담교사)</p><button class="btn btn--line" data-toast="정보원 상담시스템으로 이동 (SSO)">열기 ›</button></article>`
   :`<article class="off"><div class="ico">🗓️</div><h3>정보원 상담시스템</h3><p>배정 상담 · 방문·화상 상담 운영 — 정보원 상담교사 역할에만 열립니다</p><button class="btn btn--line" disabled style="cursor:default">정보원 상담교사 전용</button></article>`;
  const z3=`<div class="sys">
-  <article class="is-navy"><div class="ico">🖥️</div><h3>SEN 진학프로그램 <small style="font-weight:700;color:var(--navy)">전문시스템</small></h3><p>수시·정시 진학지도 · 판정 승인(HITL) · 데이터 적재 · AI 서비스</p><button class="btn btn--navy" data-toast="전문시스템으로 이동 (SSO) · 진입이 감사로그에 기록됩니다">SEN 진학프로그램 열기 ›</button></article>
+  <article class="is-navy"><div class="ico">🖥️</div><h3>SEN 진학프로그램 <small style="font-weight:700;color:var(--navy)">전문시스템</small></h3><p>수시·정시 진학지도 · 판정 승인(HITL) · 데이터 적재 · AI 서비스</p><button class="btn btn--navy" data-pro="SEN 진학프로그램 열기">SEN 진학프로그램 열기 ›</button></article>
   ${sysCard2}
   <article><div class="ico">💾</div><h3>기존 교사용 쎈진학 <small style="font-weight:700;color:var(--ink-3)">전환 기간</small></h3><p>2027학년도까지 사용한 설치형 프로그램 · 새 창</p><button class="btn btn--line" data-toast="설치형 쎈진학은 학교 PC에서 실행 · 전환 기간 중 데이터는 「선생님 PC 보관」 규격으로 통제">바로가기 ↗</button></article>
  </div>
@@ -599,7 +604,7 @@ function renderMain(){
    <dl class="kv2">${Object.entries(s.detail).map(([k,v])=>`<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
     <a class="btn btn--line" href="cns.html" style="padding:9px 16px;font-size:13.5px">상담 브리프 보기</a>
-    <button class="btn btn--line" style="padding:9px 16px;font-size:13.5px" data-toast="성적·판정은 전문시스템에서 열립니다 (2FA)">전문시스템에서 열기 ›</button>
+    <button class="btn btn--line" style="padding:9px 16px;font-size:13.5px" data-pro="${h(s.name||s.n||'학생')} 성적·판정 열람">전문시스템에서 열기 ›</button>
    </div>`;
  }
  document.querySelectorAll('[data-share]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-share]').forEach(x=>x.classList.remove('is-on'));b.classList.add('is-on');showShare(+b.dataset.share);}));
