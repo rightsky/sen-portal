@@ -58,9 +58,11 @@ function renderAdm(){
   const now=new Date(),dl=new Date(now.getFullYear(),11,10);if(dl<now)dl.setFullYear(dl.getFullYear()+1);
   $('dday').textContent='D-'+Math.ceil((dl-now)/864e5);
 }
+/* ── 10-30 (R01 R02) 로그인 학년에 맞춘 첫 화면 : 고등학생은 주소 없이 들어오면 과목 탐색으로 ── */
+(function(){try{const g=A.logged()&&A.session&&A.session.person&&A.session.person.grade;if(!location.hash&&g&&/^고/.test(g)&&!sessionStorage.getItem('sen-se-stay')){sessionStorage.setItem('sen-se-stay','1');location.replace('subject-explore.html#subjects');}}catch(e){}})();
 /* ── 탭 ── */
 let tab='types';const L3={types:'고교 유형 알아보기',schools:'학교 찾기·비교',admission:'고입 전형·일정'};
-function rerender(){({types:renderTypes,schools:renderSchools,admission:renderAdm})[tab]();$('loginNote').innerHTML=A.logged()?'✅ 김서울 님 · 거주지 <b>종로구</b> 기준으로 통학 시간과 학교군을 보여드려요':'로그인하면 관심 고교를 저장하고, 우리 집 기준 통학 시간과 학교군을 볼 수 있어요 <a class="link" href="#" data-loginopen>로그인 ›</a>';}
+function rerender(){({types:renderTypes,schools:renderSchools,admission:renderAdm})[tab]();$('loginNote').innerHTML=A.logged()?'✅ '+(A.name||'김서울')+' 님 · 거주지 <b>종로구</b> 기준으로 통학 시간과 학교군을 보여드려요':'로그인하면 관심 고교를 저장하고, 우리 집 기준 통학 시간과 학교군을 볼 수 있어요 <a class="link" href="#" data-loginopen>로그인 ›</a>';}
 function setTab(){tab=(location.hash||'#types').slice(1);if(!L3[tab])tab='types';
   document.querySelectorAll('.ptab').forEach(t=>t.classList.toggle('is-on',t.dataset.tab===tab));
   document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('is-on',p.id==='pane-'+tab));
