@@ -3,7 +3,7 @@
    - 학교(업무망)에서는 우리 반 상담을 100% 하고, 집(인터넷)에서는 학생 개인정보 없이 그 상담의 기초 작업을 한다.
    - 이 화면의 응답에는 학생 이름·학번·번호+성적 조합이 없다. 집계는 5명 미만 칸을 보여 주지 않는다.
    - 집에서 쓴 메모는 작업 번호로만 남기고, 학교 모드에서 학생과 연결한다.
-   C(상담·설명회 준비) 5개 업무의 묶음은 장표 문구로만 정해져 원본 「교사_집모드_업무정의_v1」 확인 전까지 설계 가정이다. */
+   C(상담·설명회 준비) 5개는 장표 5.3(논의자료 v1.1·v1.2)의 항목을 C-1~C-5로 나눈 것이다. */
 (function () {
   var MK = 'sen-prep-memo-v1';
   var memos = function () { try { return JSON.parse(sessionStorage.getItem(MK) || '[]'); } catch (e) { return []; } };
@@ -47,12 +47,13 @@
         : (m.stu ? '<span class="badge badge--gray">학교에서 연결됨</span>' : '<span class="pnote">학교에서 연결해요</span>')) + '</td></tr>';
     }).join('') + '</table>' : '<p class="pnote">아직 메모가 없어요</p>';
     var C = sec('c', 'C', '상담·설명회 준비', 5,
-      '<div class="pgrid2"><div class="pbox"><b>이번 주 상담 일정 (학생 이름 없음)</b><table class="btable"><tr><th>요일</th><th>건수</th><th>시간</th></tr><tr><td>9.6(월)</td><td>2건</td><td>15:00 · 16:30</td></tr><tr><td>9.8(수)</td><td>1건</td><td>15:00</td></tr><tr><td>9.9(목)</td><td>3건</td><td>14:00 · 15:00 · 16:30</td></tr></table><p class="pnote">위촉 상담 선생님 스케줄 1·2순위 조정도 이름 없이 시간으로만</p></div>'
+      '<ol class="pck" style="margin:0 0 10px;padding-left:20px"><li>C-1 상담 일정·건수 관리</li><li>C-2 위촉 상담 선생님 스케줄 1·2순위 조정 (학생 이름 없이)</li><li>C-3 상담 질문 템플릿 · 전형 안내 자료 · 체크리스트</li><li>C-4 설명회 자료 · 학부모 안내문 초안</li><li>C-5 전략 메모 (작업 번호에 글만 · 학교에서 학생과 연결)</li></ol>'
+      + '<div class="pgrid2"><div class="pbox"><b>이번 주 상담 일정 (학생 이름 없음)</b><table class="btable"><tr><th>요일</th><th>건수</th><th>시간</th></tr><tr><td>9.6(월)</td><td>2건</td><td>15:00 · 16:30</td></tr><tr><td>9.8(수)</td><td>1건</td><td>15:00</td></tr><tr><td>9.9(목)</td><td>3건</td><td>14:00 · 15:00 · 16:30</td></tr></table><p class="pnote">위촉 상담 선생님 스케줄 1·2순위 조정도 이름 없이 시간으로만</p></div>'
       + '<div class="pbox"><b>상담 질문지 · 체크리스트</b><ul class="pck"><li>수시 6장 구성에서 가장 고민되는 한 장은?</li><li>수능 최저를 몇 개 영역으로 맞출 수 있을까?</li><li>희망 학과 권장과목을 얼마나 이수했나?</li><li>학부모와 합의한 지원 원칙은?</li></ul><p class="pnote">설명회 자료 · 학부모 안내문 초안도 여기서 써요</p></div></div>'
       + '<div class="pbox"><b>전략 메모 (작업 번호)</b> <span class="pnote">학생 이름 없이 작업 번호로만 써요 · 학교 업무망에서 학생과 연결하면 상담에 바로 쓰여요 · 이 탭을 닫으면 지워져요</span>'
       + '<div class="pmemo"><input class="xsel" id="prepMemo" placeholder="예 : 교과 위주 6장, 최저 2합 5 가능성 확인 필요" maxlength="120"><button type="button" class="btn btn--primary" data-memo-add>메모 추가</button></div>'
       + '<p class="pnote" data-memo-warn style="display:none;color:var(--warn)">학생 이름·학번처럼 보이는 글자가 있어요. 작업 번호로만 써 주세요</p>' + memoRows + '</div>',
-      '장표 5.3 C · 5개 묶음은 설계 가정(원본 업무정의 확인 전)');
+      '장표 5.3 C (논의자료 v1.1·v1.2 같은 내용) : C-1 상담 일정·건수 · C-2 위촉 상담 스케줄 1·2순위 조정 · C-3 질문 템플릿·전형 안내·체크리스트 · C-4 설명회 자료·학부모 안내문 · C-5 전략 메모');
     var D = sec('d', 'D', '교사 협업', 4, '<ul class="plinks"><li><a href="library.html#teacher">교사 공유 자료 열람·작성</a></li><li><a href="news.html#policy">2028 브리핑</a></li><li><a href="library.html">교사 Q&A 게시판 (학생 사례는 비식별로)</a></li><li><a href="#" data-toast="위촉 상담 교사 풀 등록 요청을 보냈어요 (정보원 승인 후 반영)">위촉 상담 교사 풀 등록·승인 요청</a></li></ul>');
     var E = sec('e', 'E', '집계 보고서', 3, '<ul class="plinks"><li><a href="#" data-view="stats">학급 진학 현황 보고서 초안</a></li><li><a href="#" data-view="stats">학년·학교 집계 보고 (학생 단위 표 없음)</a></li><li>운영 대시보드 : 상담 진행률 64% · 과제 완료율 71% · 설명회 참석률 58% · 만족도 회신율 43%</li></ul>');
     var RULES = '<div class="prules"><div><b data-mk="home" data-mk-note="장표 5.4 집·학교 데이터 경계">집에서 볼 수 있는 것</b><ul><li>공개 정보 : 대학·전형·입결·산출식·일정</li><li>집계값 : 학급·학년 단위, 5명 미만 칸은 비표시</li><li>교사 자료 : 내 문서·템플릿·가상 조건 계산</li><li>작업 번호 + 메모 글</li></ul></div><div><b data-mk="school" data-mk-note="장표 5.4 · 학교 모드 전용">학교에서만 (집에서는 안 나와요)</b><ul><li>학생 이름·학번·출석번호·연락처·보호자</li><li>학생별 성적·학생부·희망 대학·상담 기록</li><li>학급 + 등급 + 희망 대학처럼 학생을 특정할 수 있는 조합</li><li>내려받기·인쇄·복사 (서버가 막아요)</li></ul></div></div>';
