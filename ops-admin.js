@@ -134,7 +134,7 @@ function vAcct(el){
   const escT=gt([{l:'승격'},{l:'절차'},{l:'승인 Role'}],D.esc.map(r=>({c:[`<b>${r[0]}</b>`,r[1],chipC(r[2],'navy')]})),{tpl:'170px 2fr 120px'});
   let am='B';try{am=localStorage.getItem('sen-authmode')||'B';}catch(e){}
   el.innerHTML=`<div class="cns">${desc('acct')}<div class="cg2"><section class="cc"><div class="cc__hd"><span>승인 대기 큐</span>${chipC(D.members.pending.filter(r=>!S.pend[r[0]]).length+' 종류','link')}</div><div class="cc__bd np">${pend}</div>${S.acctMsg?`<div class="cc__bd">${ok(S.acctMsg)}</div>`:''}<div class="cc__ft">교사 가입 승인은 학교관리자(교사공간 「학교 관리 ① 승인함」)가 1차, 여기서는 정체·지연 건 일괄 처리 · 학교관리자 지정만 교육청 승인(2FA)</div></section>
-  <section class="cc"><div class="cc__hd">인증 체계 — 통합 로그인 (포털 1단계)</div>${idp}<div class="cc__bd">${kv([['기본 방식','B안 교육디지털원패스 + Step-up 2FA · A안 GPKI는 비교용 스위치 (현재 <b>'+am+'안</b> · 교사공간 학교 관리에서 전환)'],['업무시스템 진입','원패스 L3 + 정보원 Role + 2단계 인증 · 관리자 세션 15분'],['회원가입','4단계 · 동의 2종 · 학생은 원패스 1순위 + 소셜 재로그인 · 교사·교육청은 원패스만']],100,1)}</div></section></div>
+  <section class="cc"><div class="cc__hd">인증 체계 — 통합 로그인 (포털 1단계)</div>${idp}<div class="cc__bd">${kv([['교사 인증','교육디지털원패스만 + 2단계 인증(네이버·카카오 등 간편인증 또는 휴대폰) · GPKI 비교안 폐지 (10-30 결정 D5)'],['업무시스템 진입','원패스 L3 + 정보원 Role + 2단계 인증 · 관리자 세션 15분'],['회원가입','4단계 · 동의 2종 · 학생은 원패스 1순위 + 소셜 재로그인 · 교사·교육청은 원패스만']],100,1)}</div></section></div>
   <section class="cc"><div class="cc__hd">역할 승격 3종 (ESC)</div>${escT}<div class="cc__ft">인증 ≠ 계정 ≠ 역할 ≠ 관계 · 모든 역할에 임기(RoleTerm) · 겸직(교사 = 학부모)은 역할 2개 · 자녀 건 자동 제외</div></section></div>`;
 }
 /* ─────────────── 보안·인증 정책 10종 ─────────────── */

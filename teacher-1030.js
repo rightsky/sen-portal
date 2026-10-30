@@ -41,7 +41,7 @@
     var sub = G && G.views && G.views.length > 1 ? '<div class="tsub" role="tablist" aria-label="' + G.t + ' 하위 메뉴">' + G.views.map(function (v) {
       return '<a href="#" role="tab" aria-selected="' + (v === view) + '" data-view="' + v + '" class="' + (v === view ? 'is-on' : '') + '"' + chips(v) + '>' + VNAME[v] + '</a>';
     }).join('') + '</div>' : '';
-    g.innerHTML = '<div class="container">' + top + '<span class="tnet" data-mk="up1030" data-mk-note="§6-2 · 학교 모드 / 집 모드 (설계 검토용 전환 · 실제로는 접속 경로로 자동 결정)"><button type="button" data-net="school" class="' + (net() === 'school' ? 'is-on' : '') + '">학교 업무망</button><button type="button" data-net="home" class="' + (net() === 'home' ? 'is-on' : '') + '">집 인터넷</button></span></div>' + (sub ? '<div class="container">' + sub + '</div>' : '');
+    g.innerHTML = '<div class="container">' + top + '<span class="tnet" data-mk="up1030 decide" data-mk-note="[의사결정] D4 교사공간 구조 : 10-19 두 쪽 일원화 ↔ 학교·집 모드 재정의 · §6-2 · 학교 모드 / 집 모드 (설계 검토용 전환 · 실제로는 접속 경로로 자동 결정)"><button type="button" data-net="school" class="' + (net() === 'school' ? 'is-on' : '') + '">학교 업무망</button><button type="button" data-net="home" class="' + (net() === 'home' ? 'is-on' : '') + '">집 인터넷</button></span></div>' + (sub ? '<div class="container">' + sub + '</div>' : '');
   }
   document.addEventListener('click', function (e) {
     var b = e.target.closest && e.target.closest('[data-net]'); if (!b) return;
@@ -97,7 +97,7 @@
 
   /* ── 반 실데이터 보관 위치 : 교육청 저장소 고정 (결정 2 · R03) ── */
   window.storeHtml = storeHtml = function () {
-    return '<h3 style="margin:20px 0 8px;font-size:15px" data-mk="up1030" data-mk-note="결정 2 제안값 · 보관 위치 선택 없앰 (R03)">우리 반 자료 보관 · 접근 기록</h3>'
+    return '<h3 style="margin:20px 0 8px;font-size:15px" data-mk="up1030 decide" data-mk-note="[의사결정] D3 보관 위치 : 담임 선택(R01 R05 R07 · 10-14 결정) ↔ 교육청 통일(R02 R03 R08) · 지금은 교육청">우리 반 자료 보관 · 접근 기록</h3>'
       + '<div class="card" style="padding:16px 18px"><p style="margin:0 0 6px">우리 반 학생 원본은 <b>교육청 저장소(S존)</b>에만 있어요. 「이름·반·번호」와 「성적·내용」을 나눠 저장하고, 선생님 PC나 집 PC에는 내려받지 않아요.</p>'
       + '<ul class="rules" style="margin:0"><li>조회할 때마다 접근 기록이 남고, 학생·학부모에게 월간 열람 이력이 안내돼요</li><li>담당 학생은 「상담 준비」 사유가 자동으로 기록돼요(따로 고르지 않아요)</li><li>학년도 전환(3.1) 때 담당 범위가 자동으로 바뀌어요</li></ul></div>';
   };
@@ -128,7 +128,7 @@
     var todo = names.filter(function (k) { return !H3[k]; }), done = names.filter(function (k) { return H3[k]; });
     return '<section class="section"><h2 class="t" data-mk="school up1030" data-mk-note="결정 3 제안값 · 3단 + 한 번 확정 (R04 R06 R10 R09)">판정 확인 <span class="badge badge--wait">' + pendingHitl() + '명 대기</span></h2>'
       + '<p class="s">① AI 조언(근거만, 확률 숫자 없음) → ② 선생님 확인·수정(사유 선택 + 의견) → ③ 상담을 마칠 때 학생별로 한 번 확정하면 학생에게 [선생님 의견]으로 전달돼요 · 대학별로 따로 승인하지 않아요 · 승인은 담임이 해요</p>'
-      + '<div class="share__notice">학생 화면에는 확률 숫자와 「AI」 표시가 가지 않아요 · 교과 신호등은 선생님 화면에만, 판정 기준을 함께 보여요 · AI와 방향이 다른 확정은 진학부장에게 참고 표시(필수 검토 아님)</div>'
+      + '<div class="share__notice" data-mk="decide" data-mk-note="[의사결정] D1 학생 화면 신호등 : 지금은 선생님 화면에만">학생 화면에는 확률 숫자와 「AI」 표시가 가지 않아요 · 교과 신호등은 선생님 화면에만, 판정 기준을 함께 보여요 · AI와 방향이 다른 확정은 진학부장에게 참고 표시(필수 검토 아님)</div>'
       + '<h3 style="margin:16px 0 8px;font-size:15px">확인할 학생 <small style="color:var(--ink-3)">' + todo.length + '명</small></h3><div style="display:grid;gap:10px">' + (todo.length ? todo.map(card).join('') : '<p class="caption">확인할 학생이 없어요</p>') + '</div>'
       + '<h3 style="margin:22px 0 8px;font-size:15px">확정·전달 <small style="color:var(--ink-3)">' + done.length + '명</small></h3><div style="display:grid;gap:10px">' + (done.length ? done.map(card).join('') : '<p class="caption">아직 확정한 학생이 없어요</p>') + '</div></section>';
   };
@@ -183,8 +183,8 @@
     + '@media (max-width:768px){.tnet{margin-left:8px}}';
   document.head.appendChild(st);
 
-  /* 교사 인증 기본값 : GPKI (결정 10 제안값) */
-  try { if (!localStorage.getItem('sen-authmode')) localStorage.setItem('sen-authmode', 'A'); } catch (e) {}
+  /* 교사 인증 : 교육디지털원패스만 + 2단계 인증 (10-30 사용자 결정 D5 · GPKI 쓰지 않음) */
+  try { localStorage.setItem('sen-authmode', 'B'); } catch (e) {}
   if (['class', 'history'].indexOf(view) < 0 && !NETOF[view]) view = 'home';
   renderAll();
 })();

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <script src="privacy-store.js?v=1"></script>
-<script src="sen-ledger.js?v=20261030"></script><script src="sen-marks.js?v=20261030c" defer></script>
+<script src="sen-ledger.js?v=20261030"></script><script src="sen-marks.js?v=20261030d" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>서울 진로진학 통합플랫폼 | 메인</title>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
@@ -802,7 +802,7 @@ themeBtn.addEventListener('click',()=>{const r=document.documentElement; const d
 /* 퀵 스트립 D-day : 2028 전형일정(부록 B)에서 오늘 이후 가장 가까운 공식 일정 1개 */
 (function(){const S=[['2027-09-20','2028 수시 원서접수'],['2027-12-21','수시 합격자 발표'],['2028-01-03','정시 원서접수'],['2028-02-10','정시 합격자 발표'],['2028-02-22','추가모집']];const t=new Date((window.SEN_LEDGER&&SEN_LEDGER.demoToday)||'2027-09-01');t.setHours(0,0,0,0);const n=S.find(s=>new Date(s[0])>=t);const el=document.getElementById('ddayNext');if(n&&el){const d=Math.round((new Date(n[0]+'T00:00')-t)/864e5);el.textContent=n[1]+' D-'+d;el.title=n[0].replace(/-/g,'.')+' · 대교협 2028 시행계획';}})();
 </script>
-<script src="auth.js?v=20271014c"></script>
+<script src="auth.js?v=20261030d"></script>
 <script src="gnb.js?v=20261017a"></script>
 <script src="sen-ai.js?v=20261030b"></script>
 <script>
