@@ -246,3 +246,16 @@
 .flf label:last-child{grid-column:1/-1}
 .flf input{font:inherit;font-weight:400;padding:9px 10px;border:1px solid #cfd6e4;border-radius:8px;min-height:40px}
 @media (max-width:520px){.flf{grid-template-columns:1fr}}
+
+/* 10-30 (R13) 상담일정표 월~일 달력 · 날짜에 상담 선생님·상태 */
+.cal7{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.cal7 .wd{font-size:11px;font-weight:800;color:#6b7690;text-align:center;padding:2px 0}
+.cal7 .c7{min-height:74px;display:flex;flex-direction:column;align-items:stretch;gap:2px;padding:4px;border:1px solid #e3e8f0;border-radius:7px;background:#fff;text-align:left;font:inherit;cursor:pointer;overflow:hidden}
+.cal7 .c7 b{font-size:12px;color:#16386f}.cal7 .c7.is-we b{color:#c03535}.cal7 .c7.is-on{border-color:#1f4fa3;box-shadow:0 0 0 2px #c8d8f2}
+.cal7 .c7.is-out{background:#f7f9fc;border-style:dashed;cursor:default}
+.c7e{font-size:10.5px;line-height:1.25;padding:1px 4px;border-radius:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.c7e--ok{background:#e6f4ea;color:#157f3d}.c7e--done{background:#e9edf4;color:#5b6680}.c7e--bd{background:#fdf1de;color:#7a5410}
+.c7m{font-size:10.5px;color:#8a94ac}
+.cns input[type=date],.cns input[type=number]{font:inherit;padding:5px 8px;border:1px solid #cfd6e4;border-radius:6px;min-height:30px}
+.cns textarea#smsTx{width:100%;min-height:96px;font:inherit;padding:9px 10px;border:1px solid #cfd6e4;border-radius:8px}
+@media (max-width:640px){.cal7 .c7e{display:none}.cal7 .c7{min-height:46px}}
