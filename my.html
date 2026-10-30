@@ -209,6 +209,7 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 <link rel="stylesheet" href="counsel.css">
 <link rel="stylesheet" href="my.css">
 <style>.footer__rel{border-top:1px solid rgba(255,255,255,.12);margin-top:22px;padding-top:18px}.footer__rel b{display:block;font-size:13px;margin-bottom:8px;opacity:.8}.footer__rel nav{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;opacity:.8}.footer__rel a::after{content:" ↗";font-size:11px}</style>
+<style>.pfgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.pfcard{display:flex;flex-direction:column;gap:4px;padding:16px;border:1px solid var(--line);border-radius:14px;background:#fff;text-decoration:none;color:inherit;min-height:120px}.pfcard:hover{border-color:var(--brand)}.pfcard b{font-size:16px}.pfcard span{color:var(--ink-3);font-size:13.5px}.pfcard em{margin-top:auto;font-style:normal;color:var(--brand);font-weight:700;font-size:13px}.pfic{font-size:22px}@media (max-width:900px){.pfgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}</style>
 </head>
 <body>
 
@@ -237,13 +238,14 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 
 <main>
   <section class="phero"><div class="container">
-    <p class="phero__crumb"><a href="main-everland-style.html">홈</a> › 나의 진로진학 › <span id="crumbL2"></span> › <strong id="crumbL3">현재 단계</strong></p>
+    <p class="phero__crumb"><a href="main-everland-style.html">홈</a> › 나의 포트폴리오 › <span id="crumbL2"></span> › <strong id="crumbL3">한눈에 보기</strong></p>
     <h1 id="h1"></h1><p id="hdesc"></p>
   </div></section>
-  <nav id="lnb" data-l1="나의 진로진학" data-current="현재 단계"></nav>
+  <nav id="lnb" data-l1="나의 진로진학" data-current="한눈에 보기"></nav>
   <section class="ptabs"><div class="container"><nav class="ptabs__in" id="ptabs" aria-label="하위 메뉴"></nav></div></section>
   <section class="section" style="padding-top:28px"><div class="container">
     <div id="gateBox"></div>
+    <div class="pane" id="pane-pf"><div id="pfBody"></div></div>
     <div class="pane" id="pane-stage"><div id="stageBody"></div></div>
     <div class="pane" id="pane-roadmap"><div id="roadmapBody"></div></div>
     <div class="pane" id="pane-month"><div id="monthBody"></div></div>
@@ -294,8 +296,8 @@ btnTheme.addEventListener('click',()=>{const cur=document.documentElement.datase
 <script src="univ-data.js"></script>
 <script src="school-data.js"></script>
 <script src="roadmap-data.js"></script>
-<script src="my.js"></script>
-<script src="gnb.js?v=20261017a"></script>
+<script src="my.js?v=20261030f"></script>
+<script src="gnb.js?v=20261030f"></script>
 <script src="sen-ai.js?v=20261030b"></script>
 <script src="footer-sys.js"></script>
 </body>
