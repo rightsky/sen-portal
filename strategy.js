@@ -8,7 +8,7 @@ const AREAS=['국어','수학','영어','탐구1','탐구2'];const MOCKS=['2026-
 /* 예시 성적 (처음 로그인 시 채움) */
 if(!P.seeded){P.grades={'1-1':{국어:2,수학:3,영어:2,사회:2,과학:3},'1-2':{국어:2,수학:2,영어:2,사회:3,과학:2},'2-1':{국어:1,수학:2,영어:2,사회:2,과학:2}};P.mock={'2026-06':{국어:2,수학:3,영어:2,탐구1:2,탐구2:3},'2026-09':{국어:2,수학:2,영어:1,탐구1:2,탐구2:2}};P.rec={club:true,explore:true,volunteer:false,reading:true,award:false,career:true};P.seeded=true;save();}
 const GROUP={grades:'r',record:'r',analysis:'r',convert:'c',result:'c',possible:'c',cmp:'p',plan:'p',check:'p',interview:'i',aiint:'i',exam:'i'};
-const L3={grades:'내신·모의고사',record:'학생부 관련 정보',analysis:'성적·기록 분석',convert:'대학별 성적 환산',result:'입시결과 비교',possible:'지원가능성 참고분석',cmp:'관심 전형 비교',plan:'나의 지원계획',check:'지원전략 점검',interview:'면접 준비',aiint:'AI 면접 연습',exam:'대학별고사 자료'};
+const L3={grades:'내신·모의고사',record:'학생부 관련 정보',analysis:'성적·기록 분석',convert:'대학별 성적 환산',result:'입시결과 비교',/* possible 삭제 : 10-30 결정 4 ★(나) 학생 화면은 입시결과까지 (R02 R11) */cmp:'관심 전형 비교',plan:'나의 지원계획',check:'지원전략 점검',interview:'면접 준비',aiint:'AI 면접 연습',exam:'대학별고사 자료'};
 const L2={r:'나의 성적·기록',c:'대학별 분석',p:'지원계획',i:'면접·대학별고사'};
 const OPEN=new Set(['interview','exam']);
 const avg=o=>{const v=Object.values(o).filter(x=>x);return v.length?+(v.reduce((a,b)=>a+b,0)/v.length).toFixed(2):null;};
@@ -73,7 +73,7 @@ function renderResult(){const ov=overall(),mine=S_adms().filter(a=>a.season==='�
     <div class="ctable-w"><table class="ctable utbl"><thead><tr><th>학년도</th><th>모집인원</th><th>경쟁률</th><th>충원율</th><th>50% 컷</th><th>70% 컷</th></tr></thead><tbody>${Y.map(([y,v],i)=>`<tr${i===2?' style="font-weight:700"':''}><th>${y}</th><td>${v.q}명</td><td>${v.comp}:1</td><td>${v.fill}%</td><td>${v.c50}</td><td>${v.c70}</td></tr>`).join('')}</tbody></table></div>
     <p style="margin:0;color:var(--ink-2);font-size:14px">3개년 70% 컷 평균 <b>${avg70}</b> · 직전 연도는 평균${last.c70<avg70?'보다 높아요 (컷이 올라감)':last.c70>avg70?'보다 낮아요 (컷이 내려감)':'과 비슷해요'}${d!=null?` · 내 평균과의 거리 <b>${d<=0?'컷 안쪽':'컷보다 '+d+'등급 아래'}</b> (참고)`:''}</p>
     ${gapW?'<p class="hint" style="margin:0">50%·70% 컷 간격이 전보다 벌어졌어요. 합격선이 출렁였을 수 있으니 한 해 수치로 판단하지 말고 상담에서 확인하세요. (간격 기준 ±0.3은 설정값이에요)</p>':''}</div>`;}).join(''):'<div class="empty-r"><b>관심 전형이 없어요</b>전형정보에서 🤍를 눌러 저장하면 3개년 결과를 나란히 보여드려요.</div>'}
-  <div class="notice" style="margin-top:20px"><div class="notice__icon">⚠️</div><div><h3>입결은 합격을 예언하는 점수가 아니에요</h3><p>최소 3개년의 모집인원·충원율·경쟁률·컷을 함께 봐야 해요. 학종 입결은 여러 고교 유형이 섞인 수치라 그대로 내게 적용하면 오류가 생기고, 소수 모집단위의 한 해 최저점을 안정 기준으로 쓰면 안 돼요. 지원 여부는 반드시 상담에서 정하세요.</p></div></div>`;}
+  <div class="notice" style="margin-top:20px"><div class="notice__icon">⚠️</div><div><h3 data-mk="up1030" data-mk-note="§9 행 19 · 결정 4 · 지원가능성 참고분석·상담 참고 범위는 학생 화면에서 뺌 (R02 R11)">입결은 합격을 예언하는 점수가 아니에요</h3><p>최소 3개년의 모집인원·충원율·경쟁률·컷을 함께 봐야 해요. 학종 입결은 여러 고교 유형이 섞인 수치라 그대로 내게 적용하면 오류가 생기고, 소수 모집단위의 한 해 최저점을 안정 기준으로 쓰면 안 돼요. 지원 여부는 반드시 상담에서 정하세요.</p></div></div>`;}
 /* ── 지원가능성 참고분석 (선생님 상담 결과만 표시) ── */
 function renderPossible(){const st=P.consult;
   $('psBody').innerHTML=st==='done'?`<div class="uhead" style="align-items:center"><div><small>2026.09.30 · 이진로 선생님 상담 결과</small><h2 style="font-size:22px">상담에서 정리한 참고 범위</h2><p style="margin:0;color:var(--ink-2)">선생님이 성적·학생부·요강을 함께 보고 정리해 준 내용이에요. 합격을 보장하는 판정이 아니라, 지원 계획을 세울 때 참고하는 범위입니다.</p></div><button class="btn btn--ghost btn--pill" href="my.html#counsel">상담 기록 보기</button></div>

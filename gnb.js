@@ -10,6 +10,22 @@ const MENU={
 '나의 진로진학':[['나의 대시보드',['현재 단계','이번 달 할 일','다음 추천 행동']],['나의 목표·관심',['관심 직업·학과','관심 고교','관심 대학·전형']],['나의 계획·기록',['진로검사·활동','학업설계','성적·상담·지원기록']],['일정·알림',['나의 진로진학 일정','마감 알림','상담 일정']],['공유·권한',['학부모 연결','교사 공유','개인정보·AI 설정']]],
 '자료·소식':[['맞춤 자료실',['중학생 자료','고1·2 자료','고3·졸업생 자료','진학지도 자료집·발간도서']],['영상·설명회 자료',['진로 영상','진학 설명회','교사 추천 자료']],['일정·소식',['입시 주요 일정','정책·전형 변화','공지사항']],['이용안내',['서비스 이용안내','진로진학센터 안내','FAQ']]]
 };
+/* 10-30 메뉴 재편 (§9 행 14·15 · R02 R03 R04 R11 R12) : 이름은 「탐색」으로 통일, 1차 개방형은 5개 대분류,
+   지원전략·나의 포트폴리오는 로그인 뒤(2차)에만, 대분류당 소메뉴 6개 이하, 이용안내는 푸터로 */
+const RENAME={'미래탐색':'진로탐색','학교·과목설계':'학교·과목탐색','나의 진로진학':'나의 포트폴리오'};
+const MENU2={
+'진로탐색':[['나 이해하기',['진로·심리검사','나의 진로특성','검사·관심 변화보기']],['직업 탐색',['직업 찾기','직업 비교·관심저장']],['전공·학과 탐색',['학과 찾기','직업-학과 연결보기','학과 비교·관심저장']]],
+'학교·과목탐색':MENU['학교·과목설계'],
+'대학·전형탐색':[['대학·학과 탐색',['조건으로 대학 찾기','대학·학과 상세','대학·학과 비교']],['전형 탐색',['수시 전형','정시 전형','나에게 맞는 전형 탐색']],['대입 이해하기',['대입제도·용어','학년도별 변화','모집요강·전형자료','대학별고사 자료']]],
+'지원전략':[['나의 성적',['내신·모의고사','학생부 관련 정보','성적·기록 분석']],['대학별 분석',['대학별 성적 환산','입시결과 비교']],['지원계획',['관심 전형 비교','나의 지원계획','지원전략 점검']],['면접',['면접 준비','AI 면접 연습']]],
+'상담·체험':[['1:1 상담',['상담 안내','상담 예약·사전질문','상담결과·후속과제']],['체험·설명회',['진로체험','진학설명회','신청·예약']]],
+'나의 포트폴리오':[['나의 포트폴리오',['진로검사·활동','관심 직업·학과','관심 대학·전형','학업설계','성적·상담·지원기록']],['학년별 로드맵',['현재 단계']],['캘린더',['이번 달 할 일','다음 추천 행동','마감 알림']],['공유 설정',['교사 공유','학부모 연결','AI 권한 설정']]],
+'자료·소식':[['맞춤 자료실',['중학생 자료','고1·2 자료','고3·졸업생 자료','진학지도 자료집·발간도서']],['영상·설명회 자료',['진로 영상','진학 설명회','교사 추천 자료']],['일정·소식',['입시 주요 일정','정책·전형 변화','공지사항']]]
+};
+Object.assign(PAGES,{'진로·심리검사':'jinro-test.html','상담 안내':'counsel.html#guide','AI 권한 설정':'my.html#privacy','대학별고사 자료':'univ.html#exam','진로탐색':'jinro-test.html','학교·과목탐색':'school-explore.html','나의 포트폴리오':'my.html'});
+Object.keys(MENU).forEach(k=>delete MENU[k]);Object.assign(MENU,MENU2);
+const LOGIN_ONLY={'지원전략':1,'나의 포트폴리오':1};
+window.SEN_MENU_RENAME=RENAME;
 window.SEN_PAGES=PAGES;
 /* 폰 하단 탭바 5 (홈·검색·MY·상담·전체) · 768px 이하 */
 (function(){const isMain=/main-everland-style\.html$|\/$/.test(location.pathname);const ic=p=>'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+p+'</svg>';
@@ -57,7 +73,10 @@ if(header&&gnb){
     gnb.querySelectorAll('a').forEach(x=>x.classList.toggle('is-hover',x===a));drop.classList.add('is-on');};
   const hide=()=>{t=setTimeout(()=>{drop.classList.remove('is-on');gnb.querySelectorAll('a').forEach(x=>x.classList.remove('is-hover'));},120);};
   // 대분류를 누르면(터치 포함) 그 분류의 대표 화면으로 이동 : href="#"인 경우만 채운다
-  const TOP={'미래탐색':'jinro-test.html','학교·과목설계':'school-explore.html','대학·전형탐색':'univ.html','지원전략':'strategy.html','상담·체험':'counsel.html','나의 진로진학':'my.html','자료·소식':'library.html'};
+  const TOP={'진로탐색':'jinro-test.html','학교·과목탐색':'school-explore.html','대학·전형탐색':'univ.html','지원전략':'strategy.html','상담·체험':'counsel.html','나의 포트폴리오':'my.html','자료·소식':'library.html'};
+  gnb.querySelectorAll('a').forEach(a=>{const k=a.textContent.trim();if(RENAME[k])a.textContent=RENAME[k];});
+  const gate=()=>{const on=!!(window.SEN_AUTH&&SEN_AUTH.logged&&SEN_AUTH.logged());gnb.querySelectorAll('a').forEach(a=>{if(LOGIN_ONLY[a.textContent.trim()])a.hidden=!on;});};
+  gate();document.addEventListener('sen-auth',gate);
   gnb.querySelectorAll('a').forEach(a=>{const k=a.textContent.trim();if((a.getAttribute('href')||'#')==='#'&&TOP[k])a.setAttribute('href',TOP[k]);});
   gnb.querySelectorAll('a').forEach(a=>{a.addEventListener('mouseenter',()=>show(a));a.addEventListener('focus',()=>show(a));});
   header.addEventListener('mouseleave',hide);
@@ -67,7 +86,7 @@ if(header&&gnb){
   const s=document.createElement('style');s.textContent='.gnb a.is-hover::after{transform:scaleX(1)}';document.head.appendChild(s);
 }
 const lnb=document.getElementById('lnb');
-if(lnb){const l1=lnb.dataset.l1,c=lnb.dataset.current;lnb.className='lnb';lnb.setAttribute('aria-label',l1+' 하부 메뉴');
+if(lnb){if(RENAME[lnb.dataset.l1])lnb.dataset.l1=RENAME[lnb.dataset.l1];if(lnb.dataset.current==='진로검사')lnb.dataset.current='진로·심리검사';const l1=lnb.dataset.l1,c=lnb.dataset.current;lnb.className='lnb';lnb.setAttribute('aria-label',l1+' 하부 메뉴');
   lnb.innerHTML=`<div class="lnb__in">${MENU[l1].map(([l2,l3])=>`<div class="lnb__grp"><b>${l2}</b>${l3.map(x=>link(x,l1,l2,c)).join('')}</div>`).join('')}</div>`;
   const on=lnb.querySelector('.is-cur'),inn=lnb.querySelector('.lnb__in');if(on&&inn.scrollWidth>inn.clientWidth){const grp=on.closest('.lnb__grp');inn.scrollLeft=grp.offsetLeft-inn.offsetLeft;}}
 })();

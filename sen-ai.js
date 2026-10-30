@@ -21,9 +21,10 @@ const css=`.senai-fab{position:fixed;right:22px;bottom:22px;z-index:90;display:i
 .senai-c--cns b{color:#9A5500}.senai-c--cns .lock{font-size:12px;font-weight:800;color:#9A5500;background:#FDF3E7;border-radius:999px;padding:2px 9px;align-self:flex-start}
 .senai-note{margin:14px 0 0;font-size:12.5px;color:var(--ink-3,#777);text-align:center}
 @media (max-width:640px){.senai-cards{grid-template-columns:1fr}.senai-fab{right:14px;bottom:14px}}
+@media (max-width:768px){.senai-fab{bottom:calc(84px + env(safe-area-inset-bottom));padding:11px 16px;font-size:14px}} /* 10-30 : 폰 하단 탭바를 가리지 않게 (R01 R02 R07) */
 @media (prefers-reduced-motion:reduce){.senai-p,.senai-sheet,.senai-fab{transition:none}}`;
 const st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
-const fab=document.createElement('button');fab.className='senai-fab';fab.innerHTML='✦ AI PoC';fab.setAttribute('aria-haspopup','dialog');document.body.appendChild(fab);
+const fab=document.createElement('button');fab.className='senai-fab';fab.innerHTML='✦ AI에게 묻기';fab.title='AI에게 묻기 (AI PoC : 공개 요강 질문하기 · 학생부 읽기 예시) · 10-30 노출명 변경';fab.setAttribute('aria-haspopup','dialog');document.body.appendChild(fab);
 const sh=document.createElement('div');sh.className='senai-sheet';sh.innerHTML=`<div class="senai-p" role="dialog" aria-modal="true" aria-label="AI PoC 서비스 선택">
 <button class="senai-x" data-x aria-label="닫기">✕</button>
 <h2>어떤 서비스를 이용하시겠어요?</h2><p>AI PoC 네 기능 : 모두 근거와 기준일을 함께 보여주는 참고 도구예요.</p><a class="senai-priv" href="sen-ai-poc.html#priv">처음이시면 개인정보 원칙부터 읽어 주세요 →</a>

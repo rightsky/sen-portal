@@ -327,7 +327,7 @@ a.kpi:hover{transform:translateY(-3px);box-shadow:var(--shadow-1);color:inherit}
   .hamburger{display:grid}
   .hero{padding:12px 0 0}
   .hero__slider{aspect-ratio:4/5;border-radius:var(--radius-lg);min-height:0}
-  .hero__copy{left:20px;right:20px;bottom:24px}
+  .hero__copy{left:20px;right:20px;bottom:76px}
   .hero__title{font-size:28px}
   .hero__desc{font-size:15px}
   .hero__nav{right:14px;bottom:14px}
@@ -341,6 +341,13 @@ a.kpi:hover{transform:translateY(-3px);box-shadow:var(--shadow-1);color:inherit}
   .notice-list{grid-template-columns:1fr}
   .band{flex-direction:column;align-items:flex-start;padding:32px 24px}
 }
+.explore3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.ex3{display:flex;flex-direction:column;gap:6px;padding:24px;border-radius:20px;background:var(--surface,#f4f6fb);border:1px solid var(--line,#e3e7ef);color:inherit}
+.ex3 b{font-size:22px;font-weight:900}.ex3 span:not(.ex3__ic){font-size:15px;color:var(--ink-2,#4a5163)}.ex3__ic{font-size:28px}
+.ex3:hover,.ex3:focus-visible{border-color:var(--brand,#1E5EFF)}
+.cguide{display:flex;flex-wrap:wrap;gap:16px 24px;align-items:center;justify-content:space-between;padding:24px;border-radius:20px;border:1px solid var(--line,#e3e7ef)}
+.cguide__act{display:flex;flex-wrap:wrap;gap:8px}
+@media (max-width:768px){.explore3{grid-template-columns:1fr}.ex3 b{font-size:19px}}
 </style>
 </head>
 <body>
@@ -365,7 +372,7 @@ a.kpi:hover{transform:translateY(-3px);box-shadow:var(--shadow-1);color:inherit}
     </nav>
     <div class="header__actions">
       <button class="icon-btn" id="btnSearch" aria-label="검색">🔍</button>
-      <button class="btn btn--ghost btn--pill" id="btnBook">상담 예약</button>
+      <button class="btn btn--ghost btn--pill" id="btnBook">상담 안내</button>
       <button class="icon-btn" id="btnMega" aria-label="전체메뉴" style="display:grid">☰</button>
     </div>
   </div>
@@ -381,15 +388,15 @@ a.kpi:hover{transform:translateY(-3px);box-shadow:var(--shadow-1);color:inherit}
             <span class="hero__eyebrow">무엇을 준비하고 있나요?</span>
             <h1 class="hero__title">진로부터 대입까지,<br>하나의 여정으로</h1>
             <p class="hero__desc">진로검사·학과 탐색·과목 설계·지원전략·상담을 한 곳에서 이어갑니다</p>
-            <a class="btn btn--primary btn--pill" href="my.html#stage">나의 진로진학 시작하기</a>
+            <a class="btn btn--primary btn--pill" href="jinro-trait.html">진로 탐색 시작하기</a>
           </div>
         </div>
         <div class="hero__slide" style="background-image:linear-gradient(135deg,#3FB6FF,#2563EB)">
           <div class="hero__copy">
             <span class="hero__eyebrow">2028학년도 대입</span>
-            <h2 class="hero__title">성적 분석과<br>지원가능대학 조회</h2>
-            <p class="hero__desc">내신 5등급제·통합형 수능 첫 세대. 교과군 평균 등급만 간단히 입력하면 성적 흐름을 보여주고, 지원 가능 범위는 상담에서 선생님과 함께 봅니다</p>
-            <a class="btn btn--primary btn--pill" href="strategy.html#grades">성적 입력하러 가기</a>
+            <h2 class="hero__title">2028 대입,<br>무엇이 달라지나요</h2>
+            <p class="hero__desc">내신 5등급제·통합형 수능 첫 세대. 모집인원·전형 변화와 3개년 입시결과를 대학·전형 탐색에서 확인하세요. 합격 가능성은 다루지 않아요</p>
+            <a class="btn btn--primary btn--pill" href="univ.html#changes">대학·전형 탐색하기</a>
           </div>
         </div>
         <div class="hero__slide" style="background-image:linear-gradient(135deg,#2ECC8A,#149E72)">
@@ -414,7 +421,7 @@ a.kpi:hover{transform:translateY(-3px);box-shadow:var(--shadow-1);color:inherit}
   <section class="status">
     <div class="container">
       <div class="status__card">
-        <div class="status__item"><div class="status__icon">🕙</div><div><div class="status__label">1:1 상담 예약</div><div class="status__value"><span class="dot"></span>오늘 예약 가능</div></div></div>
+        <div class="status__item"><div class="status__icon">🕙</div><div><div class="status__label">상담 안내</div><div class="status__value"><a href="counsel.html#guide" style="color:inherit">방문·화상·게시판 40분</a></div></div></div>
         <div class="status__item"><div class="status__icon">☀️</div><div><div class="status__label">가장 가까운 2028 대입 일정</div><div class="status__value" id="ddayNext">2028 수시 원서접수</div></div></div>
         <div class="status__item"><div class="status__icon">👥</div><div><div class="status__label">접수 중인 설명회·체험</div><div class="status__value">중학교 설명회 접수 중</div></div></div>
         <div class="status__item"><div class="status__icon">📣</div><div><div class="status__label">새 공지</div><div class="status__value">이번 주 5건</div></div></div>
@@ -423,7 +430,7 @@ a.kpi:hover{transform:translateY(-3px);box-shadow:var(--shadow-1);color:inherit}
   </section>
 
   <!-- 역할 카드 3분기 (로그인 전) -->
-  <section class="section" id="roleCards" style="padding:40px 0 0">
+  <section class="section" id="roleCards" style="padding:40px 0 0" data-mk-sec>
     <div class="container">
       <div class="roles">
         <a class="role" href="my.html#stage" style="--rc:#2A6BF3"><span class="role__ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></span><span class="role__who">학생</span><b>내 진로 찾기</b><span>빠른 모바일 상담 · 관심 저장 · 나의 단계</span></a>
@@ -436,11 +443,18 @@ a.kpi:hover{transform:translateY(-3px);box-shadow:var(--shadow-1);color:inherit}
   <!-- 로그인 후: 나의 진로진학 요약 -->
   <section class="section" id="meStrip" style="display:none;padding:40px 0 0">
     <div class="container">
-      <div class="me">
-        <a class="me__c me__c--main" href="my.html#stage"><small>나의 현재 단계</small><b>고2 · 진로 구체화</b><span>할 일 6/7 완료 · 다음은 고3 지원 전략</span></a>
-        <a class="me__c" href="my.html#month"><small>이번 달 할 일</small><b>4개</b><span>상담 1 · 마감 1 · 후속 과제 2</span></a>
-        <a class="me__c" href="my.html#jobs"><small>관심 저장</small><b>직업 3 · 학과 3</b><span>대학·전형은 저장 후 비교</span></a>
-        <a class="me__c" href="counsel.html#result"><small>최근 상담</small><b>9.30 센터 상담</b><span>후속 과제 2개 남음</span></a>
+      <div class="me" id="meRole"></div>
+    </div>
+  </section>
+
+  <!-- 탐색 3칸 고정 (10-30 §9 행 9 · R02 R04 R11 R12) -->
+  <section class="section" style="padding:40px 0 0">
+    <div class="container">
+      <div class="section__head"><div><h2 class="section__title" data-mk="6open up1030" data-mk-note="§9 행 9 · 메인 블록 축소, 탐색 3칸 고정 (R02 R04 R11 R12)">무엇을 찾아볼까요?</h2><p class="section__sub">로그인 없이 바로 볼 수 있어요</p></div></div>
+      <div class="explore3">
+        <a class="ex3" href="jinro-trait.html"><span class="ex3__ic">🧭</span><b>진로탐색</b><span>진로검사 안내 · 직업 · 학과</span></a>
+        <a class="ex3" href="school-explore.html"><span class="ex3__ic">🏫</span><b>학교·과목탐색</b><span>고교 유형 · 선택과목 · 공동교육과정</span></a>
+        <a class="ex3" href="univ.html"><span class="ex3__ic">🎓</span><b>대학·전형탐색</b><span>대학·학과 · 전형 · 3개년 입시결과 · 2028 대입 변화</span></a>
       </div>
     </div>
   </section>
@@ -458,8 +472,19 @@ a.kpi:hover{transform:translateY(-3px);box-shadow:var(--shadow-1);color:inherit}
     </div>
   </section>
 
-  <!-- 2028 대입 한눈에 · 원천: 대교협 2028 시행계획 -->
+  <!-- 상담 안내 (1차 : 안내 + 기존 상담 사이트 연결, 신청은 2차) -->
   <section class="section" style="padding-top:0">
+    <div class="container">
+      <div class="cguide">
+        <div><h2 class="section__title" data-mk="6open up1030" data-mk-note="§9 행 9·11·24 · 1차는 안내, 신청·예약은 2차">상담 안내</h2>
+        <p class="section__sub" style="margin:6px 0 0">방문·화상 40분 · 온라인 게시판은 교사 배정 후 24시간 안에 답변 · 학기당 1회(학부모 신청 포함)</p></div>
+        <div class="cguide__act"><a class="btn btn--primary btn--pill" href="counsel.html#guide">상담 안내 보기</a><a class="btn btn--ghost btn--pill" href="https://sangdam.sen.go.kr" target="_blank" rel="noopener">기존 상담 사이트에서 신청 ↗</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2028 대입 한눈에 · 원천: 대교협 2028 시행계획 -->
+  <section hidden data-removed="10-30 메인 축소" class="section" style="padding-top:0">
     <div class="container">
       <div class="section__head"><div><h2 class="section__title">2028 대입 한눈에</h2><p class="section__sub">2028학년도 대학입학전형시행계획 주요 수치입니다. 대학별 반영 방식은 최종 모집요강을 확인하세요</p></div><a class="section__more" href="univ.html#changes">학년도별 변화 더 보기 →</a></div>
       <div class="kpis">
@@ -472,25 +497,8 @@ a.kpi:hover{transform:translateY(-3px);box-shadow:var(--shadow-1);color:inherit}
   </section>
 
 
-  <!-- 퀵메뉴 -->
-  <section class="section section--gray">
-    <div class="container">
-      <div class="quick">
-        <a class="quick__item" href="jinro-test.html"><span class="quick__icon">🧭</span><span class="quick__label">진로검사</span></a>
-        <a class="quick__item" href="jinro-major.html#find"><span class="quick__icon">🎓</span><span class="quick__label">학과 찾기</span></a>
-        <a class="quick__item" href="school-explore.html#schools"><span class="quick__icon">🏫</span><span class="quick__label">고교 비교</span></a>
-        <a class="quick__item" href="study-plan.html#sim"><span class="quick__icon">📚</span><span class="quick__label">과목 선택</span></a>
-        <a class="quick__item" href="univ.html#find"><span class="quick__icon">🔍</span><span class="quick__label">대학·전형 검색</span></a>
-        <a class="quick__item" href="strategy.html#analysis"><span class="quick__icon">📊</span><span class="quick__label">성적 분석</span></a>
-        <a class="quick__item" href="counsel.html#book"><span class="quick__icon">💬</span><span class="quick__label">상담 예약</span></a>
-        <a class="quick__item" href="#"><span class="quick__icon">⋯</span><span class="quick__label">전체 메뉴</span></a>
-      </div>
-    </div>
-  </section>
-
-
   <!-- 추천 카드 레일 -->
-  <section class="section">
+  <section hidden data-removed="10-30 메인 축소" class="section">
     <div class="container">
       <div class="section__head">
         <div><h2 class="section__title">무엇을 준비하고 있나요?</h2><p class="section__sub">메뉴가 아니라 지금의 고민에서 바로 시작하세요</p></div>
@@ -505,7 +513,7 @@ a.kpi:hover{transform:translateY(-3px);box-shadow:var(--shadow-1);color:inherit}
   </section>
 
   <!-- 진로진학 도구 모음 -->
-  <section class="section section--blue">
+  <section hidden data-removed="10-30 메인 축소" class="section section--blue">
     <div class="container">
       <div class="section__head">
         <div><h2 class="section__title">진로진학 도구 모음</h2><p class="section__sub">쎈(SEN)진학 나침판과 서울진로진학정보센터의 기능을 한곳에 모았습니다</p></div>
@@ -516,7 +524,7 @@ a.kpi:hover{transform:translateY(-3px);box-shadow:var(--shadow-1);color:inherit}
   </section>
 
   <!-- 영상 · SNS -->
-  <section class="section">
+  <section hidden data-removed="10-30 메인 축소" class="section">
     <div class="container">
       <div class="section__head"><h2 class="section__title">영상·설명회 자료</h2><div style="display:flex;gap:18px;flex-wrap:wrap"><a class="section__more" href="library.html#briefing">진학 설명회 →</a><a class="section__more" href="library.html#video">진로 영상 전체 →</a></div></div>
       <div class="media">
@@ -527,7 +535,7 @@ a.kpi:hover{transform:translateY(-3px);box-shadow:var(--shadow-1);color:inherit}
   </section>
 
   <!-- 프로모션 배너 -->
-  <section class="section">
+  <section hidden data-removed="10-30 메인 축소" class="section">
     <div class="container">
       <div class="promo">
         <a class="promo__item promo__item--pink" href="news.html#guide"><span class="promo__tag">학부모 가이드</span><h3 class="promo__title">자녀의 진로진학, 함께 준비해요</h3><p class="promo__desc">중1부터 고3 원서까지, 학년별로 지금 할 일 하나</p><span class="gsteps"><i>중1</i><i>중2</i><i>중3</i><i>고1</i><i>고2</i><i>고3</i><i>원서</i></span><span class="btn btn--pill">학년별 가이드 보기</span></a>
@@ -540,7 +548,7 @@ a.kpi:hover{transform:translateY(-3px);box-shadow:var(--shadow-1);color:inherit}
 
   
   <!-- CTA 밴드 -->
-  <section class="section">
+  <section hidden data-removed="10-30 메인 축소" class="section">
     <div class="container">
       <div class="band2">
         <div class="band">
@@ -554,6 +562,23 @@ a.kpi:hover{transform:translateY(-3px);box-shadow:var(--shadow-1);color:inherit}
       </div>
     </div>
   </section>
+  <!-- 퀵메뉴 -->
+  <section class="section section--gray">
+    <div class="container">
+      <div class="quick">
+        <a class="quick__item" href="jinro-test.html"><span class="quick__icon">🧭</span><span class="quick__label">진로검사</span></a>
+        <a class="quick__item" href="jinro-major.html#find"><span class="quick__icon">🎓</span><span class="quick__label">학과 찾기</span></a>
+        <a class="quick__item" href="school-explore.html#schools"><span class="quick__icon">🏫</span><span class="quick__label">고교 비교</span></a>
+        <a class="quick__item" href="study-plan.html#sim"><span class="quick__icon">📚</span><span class="quick__label">과목 선택</span></a>
+        <a class="quick__item" href="univ.html#find"><span class="quick__icon">🔍</span><span class="quick__label">대학·전형 탐색</span></a>
+        <a class="quick__item" href="news.html"><span class="quick__icon">🗓️</span><span class="quick__label">입시 일정</span></a>
+        <a class="quick__item" href="counsel.html#guide"><span class="quick__icon">💬</span><span class="quick__label">상담 안내</span></a>
+        <a class="quick__item" href="#" data-megaopen><span class="quick__icon">⋯</span><span class="quick__label">전체 메뉴</span></a>
+      </div>
+    </div>
+  </section>
+
+
 </main>
 
 <footer class="footer">
@@ -710,16 +735,17 @@ chipsEl.addEventListener('click',e=>{const c=e.target.closest('.chip'); if(c) op
 resEl.addEventListener('click',e=>{if(e.target.id==='searchToBook'){e.preventDefault();closeOv();openBook();}});
 
 const PAGES={'진로검사':'jinro-test.html','심리·스트레스·학습자유형 검사':'jinro-test.html#tests','대학별 평가요소':'strategy.html#record','합불사례':'strategy.html#result','진학지도 자료집·발간도서':'library.html','나의 진로특성':'jinro-trait.html','검사·관심 변화보기':'jinro-change.html','직업 찾기':'jinro-job.html#find','나에게 맞는 직업':'jinro-job.html#match','직업 비교·관심저장':'jinro-job.html#compare','학과 찾기':'jinro-major.html#find','직업-학과 연결보기':'jinro-major.html#link','학과 비교·관심저장':'jinro-major.html#compare','고교 유형 알아보기':'school-explore.html#types','학교 찾기·비교':'school-explore.html#schools','고입 전형·일정':'school-explore.html#admission','선택과목 알아보기':'subject-explore.html#subjects','진로·전공별 관련 과목':'subject-explore.html#bymajor','우리 학교 개설과목':'subject-explore.html#myschool','과목 선택 시뮬레이션':'study-plan.html#sim','학년별 이수계획':'study-plan.html#plan','계획 점검·교사와 상담':'study-plan.html#check','중학생 자료':'library.html#mid','고1·2 자료':'library.html#hs12','고3·졸업생 자료':'library.html#hs3','진로 영상':'library.html#video','진학 설명회':'library.html#briefing','교사 추천 자료':'library.html#teacher','입시 주요 일정':'news.html#schedule','정책·전형 변화':'news.html#policy','공지사항':'news.html#notice','서비스 이용안내':'news.html#guide','진로진학센터 안내':'news.html#center','FAQ':'news.html#faq','조건으로 대학 찾기':'univ.html#find','대학·학과 상세':'univ.html#majorinfo','대학·학과 비교':'univ.html#compare','수시 전형':'univ.html#susi','정시 전형':'univ.html#jeongsi','나에게 맞는 전형 탐색':'univ.html#fit','대입제도·용어':'univ.html#terms','학년도별 변화':'univ.html#changes','모집요강·전형자료':'univ.html#docs','내신·모의고사':'strategy.html#grades','학생부 관련 정보':'strategy.html#record','성적·기록 분석':'strategy.html#analysis','대학별 성적 환산':'strategy.html#convert','입시결과 비교':'strategy.html#result','지원가능성 참고분석':'strategy.html#possible','관심 전형 비교':'strategy.html#cmp','나의 지원계획':'strategy.html#plan','지원전략 점검':'strategy.html#check','면접 준비':'strategy.html#interview','AI 면접 연습':'strategy.html#aiint','대학별고사 자료':'strategy.html#exam','진로 질문':'counsel.html#career','대입 질문':'counsel.html#admission','내 정보로 질문하기':'counsel.html#mine','상담 유형 선택':'counsel.html#type','상담 예약·사전질문':'counsel.html#book','상담결과·후속과제':'counsel.html#result','진로체험':'counsel.html#exp','진학설명회':'counsel.html#brief','신청·예약':'counsel.html#apply','현재 단계':'my.html#stage','이번 달 할 일':'my.html#month','다음 추천 행동':'my.html#next','관심 직업·학과':'my.html#jobs','관심 고교':'my.html#schools','관심 대학·전형':'my.html#unis','진로검사·활동':'my.html#tests','학업설계':'my.html#plan','성적·상담·지원기록':'my.html#records','나의 진로진학 일정':'my.html#cal','마감 알림':'my.html#deadline','상담 일정':'my.html#counsel','학부모 연결':'my.html#parent','교사 공유':'my.html#teacher','개인정보·AI 설정':'my.html#privacy'};
+Object.assign(PAGES,{'진로·심리검사':'jinro-test.html','상담 안내':'counsel.html#guide','AI 권한 설정':'my.html#privacy','대학별고사 자료':'univ.html#exam'}); /* 10-30 메뉴 재편 */
 /* ===== IA: L1 7 × L2 25 × L3 79 (검토본 v0.3 부록 D 확정) · 1차 오픈 2027.5 기준 잠금 표시 ===== */
-const OPEN_AT={}; /* 잠금 해제: 전 메뉴 오픈 상태 */
+const OPEN_AT={'지원전략':'로그인 후 · 2차','나의 포트폴리오':'로그인 후 · 2차'}; /* 10-30 : 1차 개방형은 5개 대분류 */
 const IA={
-'미래탐색':{def:'나를 이해하고, 어울리는 직업과 학과를 찾아보는 공간입니다',l2:[{n:'나 이해하기',l3:['진로검사','심리·스트레스·학습자유형 검사','나의 진로특성','검사·관심 변화보기']},{n:'직업 탐색',l3:['직업 찾기','나에게 맞는 직업','직업 비교·관심저장']},{n:'전공·학과 탐색',l3:['학과 찾기','직업-학과 연결보기','학과 비교·관심저장']}],ai:'<b>AI 진로분석</b>: 검사·관심·활동을 설명하고 가능한 탐색방향을 제안합니다',from:['진로종합검사 (센터)','진로심리·스트레스·학습자 유형 검사 (센터)','직업정보·진로자료실 (센터·커리어넷)','진로체험망 꼿길 (센터)','진로검사 (쎈진학)'],next:[['관심 직업·학과 저장','save'],['직업-학과 연결보기','search'],['진로상담 신청','book']]},
-'학교·과목설계':{def:'고교 선택부터 3년 치 과목 계획까지, 선택을 계획으로 바꿉니다',l2:[{n:'고교 탐색',l3:['고교 유형 알아보기','학교 찾기·비교','고입 전형·일정']},{n:'과목 탐색',l3:['선택과목 알아보기','진로·전공별 관련 과목','우리 학교 개설과목']},{n:'나의 학업설계',l3:['과목 선택 시뮬레이션','학년별 이수계획','계획 점검·교사와 상담']}],ai:'<b>AI 학업설계</b>: 목표에 따른 과목 후보와 이유, 대안경로, 누락·충돌 점검을 제시하고 교사 상담으로 연결합니다',from:['고교정보: 일반고·자사고·특성화고·특목고 (센터)','고입정보·고등학교 입학 안내 (센터)','선택과목 추천·안내 2015/2022 (쎈진학)','계열별 학과 안내·개설학과 검색 (쎈진학)','학교알리미 연계'],next:[['학교 비교 후 관심고교 저장','save'],['과목 선택 시뮬레이션','search'],['계획 점검·교사와 상담','book']]},
-'대학·전형탐색':{def:'대학·학과·전형 정보를 찾아보는 공간입니다',l2:[{n:'대학·학과 찾기',l3:['조건으로 대학 찾기','대학·학과 상세','대학·학과 비교']},{n:'전형 찾기',l3:['수시 전형','정시 전형','나에게 맞는 전형 탐색']},{n:'대입 이해하기',l3:['대입제도·용어','학년도별 변화','모집요강·전형자료']}],ai:'<b>RAG 대입상담</b>: 질문에 답하고 근거 출처·학년도·기준일을 표시하며 관련 화면으로 바로 연결합니다',from:['대학별 검색·대학 제공자료 (쎈진학)','대학/학과정보·대학별 전공 안내 (센터)','수시/정시 모집요강·대입전형 시행계획 (센터)','대입 기본사항·입시 용어 FAQ (쎈진학)','대입정보포털 어디가 연계'],next:[['관심 대학·전형 저장','save'],['대학·학과 비교','search'],['내 성적으로 환산 (지원전략)','menu:지원전략']]},
-'지원전략':{def:'내 성적과 기록으로 판단을 돕는 도구입니다. 선생님 상담과 함께 활용하세요',l2:[{n:'나의 성적·기록',l3:['내신·모의고사','학생부 관련 정보','대학별 평가요소','성적·기록 분석']},{n:'대학별 분석',l3:['대학별 성적 환산','입시결과 비교','합불사례','지원가능성 참고분석']},{n:'지원계획',l3:['관심 전형 비교','나의 지원계획','지원전략 점검']},{n:'면접·대학별고사',l3:['면접 준비','AI 면접 연습','대학별고사 자료']}],ai:'<b>AI 학생부 분석</b> · <b>AI 지원가능성</b> · <b>AI 면접</b>: 합격 여부를 단정하지 않고 구간·가정·데이터 연도·불확실성을 함께 보여줍니다 (출처 보기 제공)',from:['성적 입력·성적 분석 리포트 (쎈진학)','지원가능대학 조회 (쎈진학)','대학별 평가요소·나의 학종 준비도 (쎈진학)','수시/정시 합불사례 (쎈진학)','논술·구술/면접 자료 (센터)'],next:[['지원가능성 참고분석','search'],['관심 전형 비교','save'],['교사상담 후 전략 확정','book']]},
-'상담·체험':{def:'고민될 때 언제든, 어느 화면에서든 한 번에 상담으로 연결됩니다',l2:[{n:'AI 진로진학 안내',l3:['진로 질문','대입 질문','내 정보로 질문하기']},{n:'1:1 상담',l3:['상담 유형 선택','상담 예약·사전질문','상담결과·후속과제']},{n:'체험·설명회',l3:['진로체험','진학설명회','신청·예약']}],ai:'<b>AI 상담요약</b>: AI 대화와 분석 결과를 전문상담 전 사전자료로 변환합니다',from:['1:1 상담신청 (쎈진학)','온라인(게시판) 상담 (센터)','방문·화상 상담 (센터)','진학설명회·교원연수 (센터)','진로체험망 꼿길 (센터)'],next:[['상담 예약하기','book'],['진학설명회 신청','save'],['AI에게 먼저 물어보기','search']]},
-'나의 진로진학':{def:'중학생부터 졸업까지, 내가 저장하고 계획하고 기록한 것이 쌓이는 공간입니다',l2:[{n:'나의 대시보드',l3:['현재 단계','이번 달 할 일','다음 추천 행동']},{n:'나의 목표·관심',l3:['관심 직업·학과','관심 고교','관심 대학·전형']},{n:'나의 계획·기록',l3:['진로검사·활동','학업설계','성적·상담·지원기록']},{n:'일정·알림',l3:['나의 진로진학 일정','마감 알림','상담 일정']},{n:'공유·권한',l3:['학부모 연결','교사 공유','개인정보·AI 설정']}],ai:'<b>개인정보·AI 설정</b>: AI 대화 저장 여부, 개인데이터 사용범위, 학부모·교사 공유, 삭제를 직접 통제합니다. 잠긴 항목은 “자녀 동의 필요”로 이유를 안내합니다',from:['관심대학 학과관리 (쎈진학)','MY쎈진학 성적·검사·상담 기록 (쎈진학)','중복 즐겨찾기 통합 (신규)','학부모 연결·교사 공유 (신규)'],next:[['현재 단계 확인','search'],['이번 달 할 일 보기','save'],['상담 일정 잡기','book']]},
-'자료·소식':{def:'학년과 시기에 맞춘 자료, 일정, 이용안내입니다',l2:[{n:'맞춤 자료실',l3:['중학생 자료','고1·2 자료','고3·졸업생 자료','진학지도 자료집·발간도서']},{n:'영상·설명회 자료',l3:['진로 영상','진학 설명회','교사 추천 자료']},{n:'일정·소식',l3:['입시 주요 일정','정책·전형 변화','공지사항']},{n:'이용안내',l3:['서비스 이용안내','진로진학센터 안내','FAQ']}],ai:'<b>맞춤 추천</b>: 학년을 선택하면 중학생 / 고1·2 / 고3·졸업생 자료를 우선 보여줍니다',from:['고3 학년초·수시·정시 자료 (센터)','고1·2 대입 자료·선택과목 안내서 (센터)','학생부 종합전형 가이드북 (센터)','쎈진학TV·진학 새소식 (쎈진학)','매거진/보도자료 (센터)'],next:[['학년별 자료 보기','search'],['입시 주요 일정','save'],['FAQ 보기','search']]}
+'진로탐색':{def:'나를 이해하고, 어울리는 직업과 학과를 찾아보는 공간입니다',l2:[{n:'나 이해하기',l3:['진로·심리검사','나의 진로특성','검사·관심 변화보기']},{n:'직업 탐색',l3:['직업 찾기','직업 비교·관심저장']},{n:'전공·학과 탐색',l3:['학과 찾기','직업-학과 연결보기','학과 비교·관심저장']}],ai:'<b>AI 진로분석</b>: 검사·관심·활동을 설명하고 가능한 탐색방향을 제안합니다',from:['진로종합검사 (센터)','진로심리·스트레스·학습자 유형 검사 (센터)','직업정보·진로자료실 (센터·커리어넷)','진로체험망 꼿길 (센터)','진로검사 (쎈진학)'],next:[['관심 직업·학과 저장','save'],['직업-학과 연결보기','search'],['진로상담 신청','book']]},
+'학교·과목탐색':{def:'고교 선택부터 3년 치 과목 계획까지, 선택을 계획으로 바꿉니다',l2:[{n:'고교 탐색',l3:['고교 유형 알아보기','학교 찾기·비교','고입 전형·일정']},{n:'과목 탐색',l3:['선택과목 알아보기','진로·전공별 관련 과목','우리 학교 개설과목']},{n:'나의 학업설계',l3:['과목 선택 시뮬레이션','학년별 이수계획','계획 점검·교사와 상담']}],ai:'<b>AI 학업설계</b>: 목표에 따른 과목 후보와 이유, 대안경로, 누락·충돌 점검을 제시하고 교사 상담으로 연결합니다',from:['고교정보: 일반고·자사고·특성화고·특목고 (센터)','고입정보·고등학교 입학 안내 (센터)','선택과목 추천·안내 2015/2022 (쎈진학)','계열별 학과 안내·개설학과 검색 (쎈진학)','학교알리미 연계'],next:[['학교 비교 후 관심고교 저장','save'],['과목 선택 시뮬레이션','search'],['계획 점검·교사와 상담','book']]},
+'대학·전형탐색':{def:'대학·학과·전형 정보를 찾아보는 공간입니다',l2:[{n:'대학·학과 탐색',l3:['조건으로 대학 찾기','대학·학과 상세','대학·학과 비교']},{n:'전형 탐색',l3:['수시 전형','정시 전형','나에게 맞는 전형 탐색']},{n:'대입 이해하기',l3:['대입제도·용어','학년도별 변화','모집요강·전형자료','대학별고사 자료']}],ai:'<b>RAG 대입상담</b>: 질문에 답하고 근거 출처·학년도·기준일을 표시하며 관련 화면으로 바로 연결합니다',from:['대학별 검색·대학 제공자료 (쎈진학)','대학/학과정보·대학별 전공 안내 (센터)','수시/정시 모집요강·대입전형 시행계획 (센터)','대입 기본사항·입시 용어 FAQ (쎈진학)','대입정보포털 어디가 연계'],next:[['관심 대학·전형 저장','save'],['대학·학과 비교','search'],['2028 대입 변화','search']]},
+'지원전략':{def:'내 성적과 기록으로 판단을 돕는 도구입니다. 선생님 상담과 함께 활용하세요',l2:[{n:'나의 성적',l3:['내신·모의고사','학생부 관련 정보','성적·기록 분석']},{n:'대학별 분석',l3:['대학별 성적 환산','입시결과 비교']},{n:'지원계획',l3:['관심 전형 비교','나의 지원계획','지원전략 점검']},{n:'면접',l3:['면접 준비','AI 면접 연습']}],ai:'<b>AI 학생부 분석</b> · <b>AI 면접</b>: 합격 여부를 단정하지 않고 구간·가정·데이터 연도·불확실성을 함께 보여줍니다 (출처 보기 제공)',from:['성적 입력·성적 분석 리포트 (쎈진학)','지원가능대학 조회 (쎈진학)','대학별 평가요소·나의 학종 준비도 (쎈진학)','수시/정시 합불사례 (쎈진학)','논술·구술/면접 자료 (센터)'],next:[['입시결과 비교','search'],['관심 전형 비교','save'],['교사상담 후 전략 확정','book']]},
+'상담·체험':{def:'고민될 때 언제든, 어느 화면에서든 한 번에 상담으로 연결됩니다',l2:[{n:'1:1 상담',l3:['상담 안내','상담 예약·사전질문','상담결과·후속과제']},{n:'체험·설명회',l3:['진로체험','진학설명회','신청·예약']}],ai:'<b>AI 상담요약</b>: AI 대화와 분석 결과를 전문상담 전 사전자료로 변환합니다',from:['1:1 상담신청 (쎈진학)','온라인(게시판) 상담 (센터)','방문·화상 상담 (센터)','진학설명회·교원연수 (센터)','진로체험망 꼿길 (센터)'],next:[['상담 예약하기','book'],['진학설명회 신청','save'],['입시 일정 보기','search']]},
+'나의 포트폴리오':{def:'중학생부터 졸업까지, 내가 저장하고 계획하고 기록한 것이 쌓이는 공간입니다',l2:[{n:'나의 포트폴리오',l3:['진로검사·활동','관심 직업·학과','관심 대학·전형','학업설계','성적·상담·지원기록']},{n:'학년별 로드맵',l3:['현재 단계']},{n:'캘린더',l3:['이번 달 할 일','다음 추천 행동','마감 알림']},{n:'공유 설정',l3:['교사 공유','학부모 연결','AI 권한 설정']}],ai:'<b>개인정보·AI 설정</b>: AI 대화 저장 여부, 개인데이터 사용범위, 학부모·교사 공유, 삭제를 직접 통제합니다. 잠긴 항목은 “자녀 동의 필요”로 이유를 안내합니다',from:['관심대학 학과관리 (쎈진학)','MY쎈진학 성적·검사·상담 기록 (쎈진학)','중복 즐겨찾기 통합 (신규)','학부모 연결·교사 공유 (신규)'],next:[['현재 단계 확인','search'],['이번 달 할 일 보기','save'],['상담 일정 잡기','book']]},
+'자료·소식':{def:'학년과 시기에 맞춘 자료, 일정, 이용안내입니다',l2:[{n:'맞춤 자료실',l3:['중학생 자료','고1·2 자료','고3·졸업생 자료','진학지도 자료집·발간도서']},{n:'영상·설명회 자료',l3:['진로 영상','진학 설명회','교사 추천 자료']},{n:'일정·소식',l3:['입시 주요 일정','정책·전형 변화','공지사항']}],ai:'<b>맞춤 추천</b>: 학년을 선택하면 중학생 / 고1·2 / 고3·졸업생 자료를 우선 보여줍니다',from:['고3 학년초·수시·정시 자료 (센터)','고1·2 대입 자료·선택과목 안내서 (센터)','학생부 종합전형 가이드북 (센터)','쎈진학TV·진학 새소식 (쎈진학)','매거진/보도자료 (센터)'],next:[['학년별 자료 보기','search'],['입시 주요 일정','save'],['FAQ 보기','search']]}
 };
 const mdTitle=document.getElementById('mdTitle'),mdDef=document.getElementById('mdDef'),mdGrid=document.getElementById('mdGrid'),mdNext=document.getElementById('mdNext');
 function openMenu(name){
@@ -735,6 +761,7 @@ mdNext.addEventListener('click',e=>{const b=e.target.closest('[data-act]'); if(!
 document.getElementById('megaGrid').innerHTML=Object.entries(IA).map(([l1,m])=>`<div><h3 class="mega__l1"><a href="${PAGES[m.l2[0].l3[0]]||'#'}">${l1}</a>${OPEN_AT[l1]?`<span class="lockb">${OPEN_AT[l1]}</span>`:''}</h3>${m.l2.map(s=>`<p class="mega__l2h">${s.n}</p><ul class="mega__l2">${s.l3.map(x=>`<li><a href="${PAGES[x]||'#'}"${PAGES[x]?'':` data-toast="'${x}' 화면은 다음 단계에서 설계합니다"`}>${x}</a></li>`).join('')}</ul>`).join('')}</div>`).join('');
 document.getElementById('megaGrid').addEventListener('click',e=>{const a=e.target.closest('[data-menu]'); if(a){e.preventDefault(); openMenu(a.dataset.menu);}});
 document.getElementById('btnMega').addEventListener('click',()=>openOv('ovMega'));
+document.querySelectorAll('[data-megaopen]').forEach(x=>x.addEventListener('click',e=>{e.preventDefault();openOv('ovMega');}));
 document.querySelectorAll('.gnb a').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();openMenu(a.textContent.trim());}));
 /* 도구 모음 (실제 기능 → 새 메뉴 매핑) */
 const TOOLS={
@@ -752,7 +779,7 @@ toolTabs.addEventListener('click',e=>{const b=e.target.closest('.tab'); if(b) re
 toolGrid.addEventListener('click',e=>{const t=e.target.closest('.tool'); if(!t)return; if(t.dataset.lock){showToast(`${t.dataset.lock} 예정 기능이에요 · 지금은 미리보기로 열립니다`);setTimeout(()=>{if(t.dataset.href)location.href=t.dataset.href;},900);return;}if(t.dataset.href){location.href=t.dataset.href;return;} const d=t.dataset.dest; if(d==='book') openBook(); else openMenu(d);});
 
 /* ===== 상담 예약: 상담·체험 > 상담 예약·사전질문(4단계)으로 통일 ===== */
-function openBook(){location.href='counsel.html#book';}
+function openBook(){location.href="counsel.html#guide";}
 document.getElementById('btnBook').addEventListener('click',openBook);
 
 /* ===== 카드 레일 화살표 + 카드/퀵메뉴 연결 ===== */
@@ -773,7 +800,7 @@ themeBtn.addEventListener('click',()=>{const r=document.documentElement; const d
 </script>
 <script>
 /* 퀵 스트립 D-day : 2028 전형일정(부록 B)에서 오늘 이후 가장 가까운 공식 일정 1개 */
-(function(){const S=[['2027-09-20','2028 수시 원서접수'],['2027-12-21','수시 합격자 발표'],['2028-01-03','정시 원서접수'],['2028-02-10','정시 합격자 발표'],['2028-02-22','추가모집']];const t=new Date();t.setHours(0,0,0,0);const n=S.find(s=>new Date(s[0])>=t);const el=document.getElementById('ddayNext');if(n&&el){const d=Math.round((new Date(n[0]+'T00:00')-t)/864e5);el.textContent=n[1]+' D-'+d;el.title=n[0].replace(/-/g,'.')+' · 대교협 2028 시행계획';}})();
+(function(){const S=[['2027-09-20','2028 수시 원서접수'],['2027-12-21','수시 합격자 발표'],['2028-01-03','정시 원서접수'],['2028-02-10','정시 합격자 발표'],['2028-02-22','추가모집']];const t=new Date((window.SEN_LEDGER&&SEN_LEDGER.demoToday)||'2027-09-01');t.setHours(0,0,0,0);const n=S.find(s=>new Date(s[0])>=t);const el=document.getElementById('ddayNext');if(n&&el){const d=Math.round((new Date(n[0]+'T00:00')-t)/864e5);el.textContent=n[1]+' D-'+d;el.title=n[0].replace(/-/g,'.')+' · 대교협 2028 시행계획';}})();
 </script>
 <script src="auth.js?v=20271014c"></script>
 <script src="gnb.js?v=20261017a"></script>
@@ -781,17 +808,19 @@ themeBtn.addEventListener('click',()=>{const r=document.documentElement; const d
 <script>
 /* 로그인 상태·역할에 따른 메인 개인화 */
 (function(){const A=window.SEN_AUTH;if(!A)return;const band=document.querySelector('.band'),strip=document.getElementById('meStrip');
-const MSG={student:['김서울 님, 지금은 고2 · 진로 구체화 단계예요','이번 달 할 일 4개 · 다음 추천 행동: 관심 전형 저장해 비교하기','나의 진로진학으로 →','my.html#stage'],
- student2:['비재학 학생 트랙이에요','성적을 응시연도 기준으로 직접 입력하면 지원가능대학과 정시 전략이 이어져요','성적 입력하러 가기 →','strategy.html#grades'],
+const MSG={student:[(A.name||'학생')+' 님, 나의 진로진학으로 가요','이번 달 할 일 4개 · 다음 추천 행동: 관심 전형 저장해 비교하기','나의 진로진학으로 →','my.html#stage'],
+ student2:['비재학 학생 트랙이에요','성적을 응시연도 기준으로 직접 입력하면 입시결과 비교와 정시 준비가 이어져요','성적 입력하러 가기 →','strategy.html#grades'],
  parent:['자녀 진학 가이드로 가요','자녀가 동의한 항목만 열람하고, 학년별 지금 할 일 하나를 확인해요','학부모 서비스로 →','parent.html'],
  teacher:['교사공간으로 가요','담당 학생 공유 자료, 상담 요청, 2028 브리핑. 판정·적재는 전문시스템에서','교사공간으로 →','teacher.html'],
  counselor:['상담교사 워크스페이스로 가요','배정 요청함과 오늘 상담. 역할 전환 시 2단계 인증','교사공간으로 →','teacher.html'],
  schooladmin:['학교 관리로 가요','교사 승인함, 교사 등록, 담당 학생 매핑','교사공간으로 →','teacher.html'],
- office:['운영 콘솔은 이 목업에 없어요','정보원·교육청 화면은 선생님 검토 범위 밖이라 포함하지 않았어요','교사공간 보기 →','teacher.html'],
+ office:['업무시스템으로 가요','정보원 담당자 역할에 맞는 업무시스템이 열려요','업무시스템으로 →','ops-counsel.html'],
  guest:['일반 사용자로 로그인했어요','열람·알림·관심 저장은 되지만, 학적 연동이나 자녀 연결을 하려면 교육디지털원패스·디지털원패스를 연결해요','인증 수단 연결 →','#']};
 function apply(){const on=A.logged(),role=on?A.role:'guest',m=MSG[role]||MSG.guest,r=A.roleObj;
  if(band){band.querySelector('.band__title').textContent=on?(r&&r.status==='pending'?`${A.name} 님, 승인 대기 중이에요`:m[0]):'지금 나의 단계를 확인해 보세요';band.querySelector('.band__desc').textContent=on?(r&&r.status==='pending'?'학교 담당자(관리자)가 승인하면 담당 학생 범위가 붙어요. 그때까지 학생 정보는 볼 수 없어요':m[1]):'로그인하면 학년과 관심분야에 맞는 다음 행동을 알려드립니다';const b=band.querySelector('.btn');b.style.whiteSpace='nowrap';b.textContent=on?m[2]:'로그인하고 시작하기';b.setAttribute('href',on?m[3]:'#');if(!on||role==='guest'&&m[3]==='#'){b.setAttribute('data-loginopen','');}else b.removeAttribute('data-loginopen');}
- if(strip){strip.style.display=on&&role==='student'?'':'none';}const rc=document.getElementById('roleCards');if(rc)rc.style.display=on?'none':'';}
+ if(strip){strip.style.display=on?'':'none';const mr=document.getElementById('meRole');
+  /* 10-30 §9 행 10 (2차) : 로그인하면 역할별 시작 화면 하나로 안내 (R02 R04 R07 R11 R12) */
+  if(mr&&on){const href=role==='office'&&A.home?A.home():m[3];mr.innerHTML=`<a class="me__c me__c--main" href="${href}" style="grid-column:1/-1"><small data-mk="up1030" data-mk-note="§9 행 10 · 2차 · 로그인하면 역할별 화면으로">${A.name} 님 · ${A.roleLabel?A.roleLabel(role):role}</small><b>${r&&r.status==='pending'?'승인 대기 중이에요':m[0]}</b><span>${m[1]}</span><span style="font-weight:800">${m[2]}</span></a>`;}}const rc=document.getElementById('roleCards');if(rc)rc.style.display=on?'none':'';}
 apply();document.addEventListener('sen-auth',apply);})();
 </script>
 <script src="footer-sys.js"></script>

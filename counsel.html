@@ -200,6 +200,7 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
   .code__letters span{width:68px;height:80px;font-size:38px}
 }
 @media (max-width:600px){.recs{grid-template-columns:1fr}.profile__stats{gap:16px}}
+.cgd{display:grid;gap:18px}.cgd__lead{font-size:17px;line-height:1.7;margin:0}.cgd__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.cgd__grid section{padding:18px;border:1px solid var(--line);border-radius:16px}.cgd__grid h3{margin:0 0 6px;font-size:17px}.cgd__grid p{margin:0;color:var(--ink-2);line-height:1.6}.cgd__h{margin:6px 0 0;font-size:17px}.cgd__list{margin:0;padding-left:20px;line-height:1.9}.cgd__act{display:flex;flex-wrap:wrap;gap:8px}@media (max-width:768px){.cgd__grid{grid-template-columns:1fr}}
 </style>
 <link rel="stylesheet" href="explore.css">
 <link rel="stylesheet" href="school.css">
@@ -229,7 +230,7 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
     </nav>
     <div class="header__actions">
       <a class="btn btn--ghost btn--pill" href="main-everland-style.html">← 메인으로</a>
-      <a class="btn btn--primary btn--pill" href="counsel.html#book">상담 예약</a>
+      <a class="btn btn--primary btn--pill" href="counsel.html#guide">상담 안내</a>
     </div>
   </div>
 </header>
@@ -239,10 +240,11 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
     <p class="phero__crumb"><a href="main-everland-style.html">홈</a> › 상담·체험 › <span id="crumbL2"></span> › <strong id="crumbL3">진로 질문</strong></p>
     <h1 id="h1"></h1><p id="hdesc"></p>
   </div></section>
-  <nav id="lnb" data-l1="상담·체험" data-current="진로 질문"></nav>
+  <nav id="lnb" data-l1="상담·체험" data-current="상담 안내"></nav>
   <section class="ptabs"><div class="container"><nav class="ptabs__in" id="ptabs" aria-label="하위 메뉴"></nav></div></section>
   <section class="section" style="padding-top:28px"><div class="container">
     <div id="gateBox"></div>
+    <div class="pane" id="pane-guide"><div id="guideBody"></div></div>
     <div class="pane" id="pane-chat">
       <div class="chat"><div class="chat__src" id="chatSrc"></div><div class="chat__log" id="chatLog"></div><div class="chat__sug" id="chatSug"></div>
         <div class="chat__in"><input id="chatIn" type="text" placeholder="궁금한 것을 물어보세요" aria-label="질문 입력"><button class="btn btn--primary btn--pill" id="chatSend">보내기</button></div>

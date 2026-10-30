@@ -1,10 +1,10 @@
 (function(){
 const {adm,uni}=UD;const {major,drawer,store}=EX;const A=SEN_AUTH;const $=id=>document.getElementById(id);
 const K='sen-counsel-v1';let P=JSON.parse(localStorage.getItem(K)||'null')||{chats:{career:[],admission:[],mine:[]},booking:null,history:[],tasks:{},apps:[]};const save=()=>localStorage.setItem(K,JSON.stringify(P));
-const GROUP={career:'ai',admission:'ai',mine:'ai',type:'c',book:'c',result:'c',exp:'e',brief:'e',apply:'e'};
-const L3={career:'진로 질문',admission:'대입 질문',mine:'내 정보로 질문하기',type:'상담 유형 선택',book:'상담 예약·사전질문',result:'상담결과·후속과제',exp:'진로체험',brief:'진학설명회',apply:'신청·예약'};
+const GROUP={career:'ai',admission:'ai',mine:'ai',guide:'c',type:'c',book:'c',result:'c',exp:'e',brief:'e',apply:'e'};
+const L3={guide:'상담 안내',type:'상담 유형 선택',book:'상담 예약·사전질문',result:'상담결과·후속과제',exp:'진로체험',brief:'진학설명회',apply:'신청·예약'};
 const L2={ai:'AI 진로진학 안내',c:'1:1 상담',e:'체험·설명회'};
-const OPEN=new Set(['career','admission','type','exp','brief']);
+const OPEN=new Set(['guide','career','admission','type','exp','brief']);
 /* ── AI 안내: 근거·기준일 표시, 판정 금지, 상담 연결 ── */
 const SRC={career:['커리어넷 직업백과','커리어넷 학과정보','서울진로진학정보센터 진로검사 안내'],admission:['2027학년도 대학입학전형시행계획 (대교협, 2025.05)','2028 대입제도 개편 확정안 (교육부, 2023.12)','서울진로진학정보센터 고3 진학지도 자료집 (2025.02)'],mine:['내 진로검사 결과 (2027.09.28)','내 관심 직업·학과·전형','내가 저장한 성적 (2027.10.02)']};
 const SUG={career:['생명과학에 관심 있는데 어떤 직업이 있나요?','디자인과 과학을 둘 다 좋아하면?','UX 디자이너가 되려면 무슨 과를 가야 하나요?','진로검사 결과는 어떻게 읽어요?'],admission:['수시와 정시 차이가 뭐예요?','수능최저가 뭔가요?','2028 대입은 뭐가 달라지나요?','학생부종합전형은 뭘 보나요?'],mine:['내 흥미 유형에 맞는 학과는?','내 관심 전형 중 면접 있는 건?','내 성적 흐름을 설명해 줘','상담 전에 뭘 준비하면 좋을까?']};
@@ -43,7 +43,7 @@ function ask(q){if(!q.trim())return;(P.chats[mode]=P.chats[mode]||[]).push({role
 /* ── 상담 유형 선택 ── */
 const TYPES=[
  {id:'teacher',name:'학교 선생님 상담',who:'담임·진로진학 선생님',how:'학교에서 대면',when:'학교 일정에 따라',good:'내 학생부와 성적을 가장 잘 아는 분과 이야기할 때',note:'학교 선생님은 NEIS에서 내 자료를 직접 봅니다',icon:'🏫'},
- {id:'visit',name:'센터 방문 상담',who:'정보원 위촉 상담 선생님 (현직 진로진학 교사)',how:'센터 방문 · 50분',when:'평일 09:00~17:00',good:'전형 선택, 지원 전략, 진로 고민을 깊이 이야기할 때',note:'내가 동의한 범위의 자료와 직접 가져온 자료로 상담해요',icon:'🗣️'},
+ {id:'visit',name:'센터 방문 상담',who:'정보원 위촉 상담 선생님 (현직 진로진학 교사)',how:'센터 방문 · 40분',when:'평일 09:00~17:00',good:'전형 선택, 지원 전략, 진로 고민을 깊이 이야기할 때',note:'내가 동의한 범위의 자료와 직접 가져온 자료로 상담해요',icon:'🗣️'},
  {id:'video',name:'화상 상담',who:'정보원 위촉 상담 선생님 (현직 진로진학 교사)',how:'온라인 화상 · 40분 · 개별 링크',when:'평일 저녁 시간대 포함',good:'센터가 멀거나 보호자와 함께 참여하고 싶을 때',note:'학부모 동반 가능',icon:'💻'},
  {id:'board',name:'온라인(게시판) 상담',who:'정보원 위촉 상담 선생님 답변',how:'글로 질문 · 48시간 내 답변',when:'언제든',good:'간단한 질문, 자료 안내가 필요할 때',note:'비공개 글로 작성, 개인정보는 최소한으로',icon:'✉️'}
 ];
@@ -55,21 +55,21 @@ function renderType(){const i=qa.length;
   else{const sc={};qa.forEach((a,qi)=>Q[qi][1][a][1].forEach((t,r)=>sc[t]=(sc[t]||0)+(3-r)));const top=Object.entries(sc).sort((a,b)=>b[1]-a[1]).slice(0,2).map(x=>TYPES.find(t=>t.id===x[0]));
     $('typeQuiz').innerHTML=`<div class="qz__prog">${Q.map(()=>'<i class="on"></i>').join('')}<span>결과</span></div><h3>이런 상담이 맞을 것 같아요</h3><div class="qz__res">${top.map((t,k)=>`<div class="qz__card${k?'':' is-1'}"><small>${k?'이것도 좋아요':'추천'}</small><b>${t.icon} ${t.name}</b><p>${t.good}</p><a class="btn ${k?'btn--ghost':'btn--primary'} btn--pill" href="#book" data-pick="${t.id}">예약하기</a></div>`).join('')}</div><button class="link" data-qreset>다시 해보기 ↺</button>`;}}
 /* ── 상담 예약·사전질문 (4단계) ── */
-let B={step:0,type:null,date:null,slot:null,slotK:null,topics:new Set(),q:'',share:{test:true,saved:true,grades:true,plan:true,chat:false},parent:false,c:{c1:false,c2:false,c3:false}};
+let B={step:0,type:null,date:null,slot:null,slotK:null,topics:new Set(),q:'',share:{test:true,saved:true,grades:false,plan:true,chat:false},parent:false,c:{c1:false,c2:false,c3:false}};
 /* ── 통합 적용 4단계: 신청자 맥락(학생 본인/학부모 대리)·학기 1회 한도·동의 3종 ── */
 const CTX=()=>{const r=A.logged()?A.role:'guest';const ro=A.roleObj;return {role:r,parent:r==='parent',linked:r==='parent'&&ro&&ro.status==='active',kid:'김서울',minor:r!=='student2',adultStu:r==='student2'};};
 const SEM={label:'2027학년도 2학기',limit:1};
 const used=()=>(P.booking&&['visit','video'].includes(P.booking.type))?1:0;
 const CONSENTS=[['c1','개인정보 제3자 제공 동의 (필수)','위에서 고른 사전자료를 정보원 위촉 상담 선생님에게 제공합니다 · 상담 종료 후 30일 보관 뒤 파기'],
  ['c2','상담 기록 보관·연계 동의 (필수)','상담 요약·후속 과제를 내 상담 원장에 기록합니다 · 학교 선생님과의 공유는 MY › 공유·권한에서 따로 정해요'],
- ['c4','녹취·STT 동의 (화상 · 선택)','화상 상담을 녹취하고 음성을 글로 옮겨 상담 회의록 초안을 만드는 데 동의해요 · 상담 선생님도 동의해야 녹취돼요(상호 동의) · 보존 90일 후 자동 파기 · 동의하지 않아도 상담은 똑같이 진행돼요'],
+ ['c4','녹취 동의 (화상 · 선택 · 기본 꺼짐)','양쪽(신청자·상담 선생님)이 모두 동의할 때만 녹취해요 · 음성을 글로 옮기는 회의록(STT)은 운영하지 않아요 · 동의하지 않아도 상담은 똑같이 진행돼요 · 녹취하지 않으면 선생님이 상담 화면 메모장에 기록해요'],
  ['c3','보호자 동의 (미성년자 필수)','만 18세 미만은 보호자 동의가 있어야 센터 상담이 확정돼요 · 연결된 보호자에게 동의 요청 알림을 보내거나, 보호자 동반 체크 시 현장 확인']];
 function ctxBar(){const c=CTX();if(c.parent)return c.linked?`<div class="notice" style="padding:12px 16px;margin-bottom:12px"><div class="notice__icon" style="width:32px;height:32px;font-size:15px">👪</div><div><p style="font-size:13.5px"><b>학부모 대리 신청</b> · 자녀 <b>${c.kid}</b> 대신 신청해요. 자녀에게 알림이 가고 <b>자녀가 동의해야 확정</b>됩니다 (성인 자녀는 본인 신청만). 사전자료는 자녀가 공유를 허용한 범위만 전달돼요.</p></div></div>`:`<div class="notice" style="padding:12px 16px;margin-bottom:12px"><div class="notice__icon" style="width:32px;height:32px;font-size:15px">🔗</div><div><p style="font-size:13.5px">자녀 연결 전이라 대리 신청을 할 수 없어요. <a class="link" href="parent.html">학부모 공간에서 자녀를 연결</a>한 뒤 신청하세요 (초대코드 · 나이스 보호자 확인 · 학교 확인).</p></div></div>`;
  return '';}
 const admMode=()=>{try{return (JSON.parse(localStorage.getItem('sen-ops-admin-v1')||'null')||{}).mode||'norm';}catch(e){return 'norm';}};
 function limitBar(){const u=used();if(admMode()==='special')return `<div class="bsum" style="margin-bottom:12px;border-color:#7030a0"><b>특별진학상담 기간</b><span>센터 방문·화상 상담의 학기 한도가 잠시 풀려요 (교사 추천 경로) · 지원단 전원 편성 · 사용 ${u}/${SEM.limit}</span></div>`;return `<div class="bsum" style="margin-bottom:12px"><b>센터 상담 한도</b><span>방문·화상 상담은 <b>${SEM.label} ${SEM.limit}회</b> (학생 단위 합산 · 학부모 대리 포함) · 사용 ${u}/${SEM.limit}${u>=SEM.limit?' · <b style="color:var(--warn)">한도 소진</b> — 추가 상담은 담임 선생님 추천(교사 추천 경로)으로 신청해요':''}</span><span>게시판 상담·학교 선생님 상담은 횟수 제한이 없어요</span></div>`;}
 
-const DATES=[['10.6 (화)',true],['10.7 (수)',true],['10.8 (목)',false],['10.13 (화)',true],['10.14 (수)',true],['10.15 (목)',true]];/* 슬롯 : k ok=확정 가능(바로 확정) · prov=예비(선생님 수락 후 확정) · off=마감 · 상담시스템 T-02 등록값과 같은 구분 */
+const DATES=[['9.6 (월)',true],['9.7 (화)',true],['9.8 (수)',false],['9.13 (월)',true],['9.14 (화)',true],['9.15 (수)',true]]; /* 10-30 : 2027.9 달력 *//* 슬롯 : k ok=확정 가능(바로 확정) · prov=예비(선생님 수락 후 확정) · off=마감 · 상담시스템 T-02 등록값과 같은 구분 */
 const SLOTS=[{t:'10:00',k:'ok'},{t:'11:00',k:'off'},{t:'13:00',k:'ok'},{t:'14:00',k:'prov'},{t:'15:00',k:'off'},{t:'16:00',k:'prov'},{t:'19:00',k:'ok',video:true}];
 const SLOTK={ok:'확정 가능',prov:'예비',off:'마감'};
 const slotTxt=b=>b.slot+(b.prov&&!b.accepted?' (예비)':'');
@@ -79,11 +79,11 @@ function renderBook(){
   const isBoard=B.type==='board';const steps=['상담 유형',isBoard?'날짜·시간 (생략)':'날짜·시간','사전질문','공유 범위 확인'];
   let body='';
   if(B.step===0)body=`${ctxBar()}${limitBar()}<div class="pick-grid">${TYPES.map(t=>{const over=['visit','video'].includes(t.id)&&used()>=SEM.limit&&admMode()!=='special';return `<button class="pick${B.type===t.id?' is-sel':''}" data-bt="${t.id}"${over?' disabled':''}>${t.icon} ${t.name}<small>${over?'학기 한도 소진':t.how}</small></button>`;}).join('')}</div>`;
-  if(B.step===1)body=`<p class="blab">날짜</p><div class="pick-grid">${DATES.map(([d,ok])=>`<button class="pick${B.date===d?' is-sel':''}" data-bd="${d}"${ok?'':' disabled'}>${d}${ok?'':'<small>마감</small>'}</button>`).join('')}</div><p class="blab">시간</p><div class="pick-grid pick-grid--7">${SLOTS.map(s=>{const off=s.k==='off'||(s.video&&B.type!=='video');return `<button class="pick pick--${s.k}${B.slot===s.t?' is-sel':''}" data-bs="${s.t}" data-bk="${s.k}"${off?' disabled':''} aria-label="${s.t} ${off?'마감':SLOTK[s.k]}">${s.t}<small>${off?'마감':SLOTK[s.k]}</small></button>`;}).join('')}</div><p class="hint" style="margin:8px 0 0"><span class="lg lg--ok">●</span> 확정 가능 : 바로 확정 · <span class="lg lg--prov">◐</span> 예비 : 선생님 수락 후 확정 (보통 하루 안에 답변)</p>${B.type==='video'?'':'<p class="hint">19:00는 화상 상담만 가능해요</p>'}<label class="cbx" style="min-width:0"><input type="checkbox" data-bp${B.parent?' checked':''}><span>보호자와 함께 참여해요</span></label>`;
+  if(B.step===1)body=`<p class="blab">날짜</p><div class="pick-grid">${DATES.map(([d,ok])=>`<button class="pick${B.date===d?' is-sel':''}" data-bd="${d}"${ok?'':' disabled'}>${d}${ok?'':'<small>마감</small>'}</button>`).join('')}</div><p class="blab">시간</p><div class="pick-grid pick-grid--7">${SLOTS.map(s=>{const off=s.k==='off'||(s.video&&B.type!=='video');return `<button class="pick pick--${s.k}${B.slot===s.t?' is-sel':''}" data-bs="${s.t}" data-bk="${s.k}"${off?' disabled':''} aria-label="${s.t} ${off?'마감':SLOTK[s.k]}">${s.t}<small>${off?'마감':SLOTK[s.k]}</small></button>`;}).join('')}</div><p class="hint" style="margin:8px 0 0"><span class="lg lg--ok">●</span> 확정 가능 : 센터 관리자가 상담 선생님 배정을 확인한 뒤 확정 (보통 당일) · <span class="lg lg--prov">◐</span> 예비 : 선생님 수락 후 확정 (보통 하루 안에 답변)</p>${B.type==='video'?'':'<p class="hint">19:00는 화상 상담만 가능해요</p>'}<label class="cbx" style="min-width:0"><input type="checkbox" data-bp${B.parent?' checked':''}><span>보호자와 함께 참여해요</span></label>`;
   if(B.step===2)body=`${isBoard?'<div class="notice" style="padding:12px 16px;margin-bottom:6px"><div class="notice__icon" style="width:32px;height:32px;font-size:15px">✉️</div><div><p style="font-size:13.5px">게시판 상담은 날짜를 고르지 않아요. 질문을 남기면 <b>48시간 안에</b> 위촉 상담 선생님가 비공개로 답변해요. 질문은 꼭 적어주세요.</p></div></div>':''}<p class="blab">이야기하고 싶은 주제 (여러 개 가능)</p><div class="fchips">${TOPICS.map(t=>`<button class="fchip${B.topics.has(t)?' is-on':''}" data-btp="${t}">${t}</button>`).join('')}</div><p class="blab">${isBoard?'질문 (필수)':'선생님께 미리 남길 질문'}</p><textarea class="memo" id="bq" placeholder="예: 통계학과와 컴퓨터공학과 중 어디가 저와 더 맞을지, 과목 선택은 어떻게 할지 궁금해요">${B.q}</textarea><p class="hint" style="margin:0">미리 적어두면 상담 시간을 더 알차게 쓸 수 있어요</p>`;
   if(B.step===3){const items=[['test','진로검사 결과','흥미 IA · 적성·가치 상위 3'],['saved','관심 직업·학과·대학·전형','저장한 목록'],['grades','내가 입력한 성적','교과군 평균·모의고사 등급 (2027.10.02 저장)'],['plan','과목 계획·지원계획','학업설계 시뮬레이션·수시/정시 카드'],['chat','AI 안내 대화 기록','내 정보로 질문하기 대화']];
     body=`<p class="blab">상담 선생님께 전달할 내 자료를 고르세요</p><div class="reclist">${items.map(([k,n,d])=>`<label class="cbx${B.share[k]?' is-on':''}" style="min-width:0;align-items:flex-start"><input type="checkbox" data-bsh="${k}"${B.share[k]?' checked':''}><span><b style="display:block">${n}</b><small style="color:var(--ink-3)">${d}</small></span></label>`).join('')}</div><div class="notice" style="padding:14px 16px;margin-top:12px"><div class="notice__icon" style="width:32px;height:32px;font-size:15px">🔒</div><div><p style="font-size:13.5px">학생부·성적 원문은 여기서 전달되지 않아요. 센터 상담에서 필요하면 <b>내가(미성년자는 보호자도) 동의</b>한 뒤 제공되거나, 내가 직접 가져온 자료로 봅니다. 공유 범위는 언제든 바꿀 수 있어요.</p></div></div>
-    <p class="blab" style="margin-top:14px">동의 (상담 확정에 필요해요)</p><div class="reclist">${CONSENTS.filter(([k])=>(k!=='c3'||(!isBoard&&CTX().minor&&!CTX().parent))&&(k!=='c4'||B.type==='video')).map(([k,n,d])=>`<label class="cbx${B.c[k]?' is-on':''}" style="min-width:0;align-items:flex-start"><input type="checkbox" data-bc="${k}"${B.c[k]?' checked':''}><span><b style="display:block">${n}</b><small style="color:var(--ink-3)">${d}</small></span></label>`).join('')}</div>${CTX().parent?'<p class="hint">보호자 동의는 대리 신청자(학부모) 본인의 동의로 갈음돼요 · 자녀 동의는 신청 후 자녀 화면에서 받습니다</p>':''}
+    <p class="blab" style="margin-top:14px">동의 (상담 확정에 필요해요)</p><div class="reclist">${CONSENTS.filter(([k])=>(k!=='c3'||(!isBoard&&CTX().minor&&!CTX().parent))&&(k!=='c4'||B.type==='video')).map(([k,n,d])=>k==='c3'?`<div class="cbx${B.c[k]?' is-on':''}" style="min-width:0;align-items:flex-start;gap:12px" data-mk="up1030" data-mk-note="§9 행 25 · 보호자 동의는 학생이 체크하지 않고 요청을 보냄 (R01)"><span style="flex:1"><b style="display:block">${n}</b><small style="color:var(--ink-3)">${d}</small></span><button type="button" class="btn btn--line btn--sm" data-bparentreq${B.c[k]?' disabled':''}>${B.c[k]?'요청 보냄 ✓':'보호자에게 요청 보내기'}</button></div>`:`<label class="cbx${B.c[k]?' is-on':''}" style="min-width:0;align-items:flex-start"><input type="checkbox" data-bc="${k}"${B.c[k]?' checked':''}><span><b style="display:block">${n}</b><small style="color:var(--ink-3)">${d}</small></span></label>`).join('')}</div>${CTX().parent?'<p class="hint">보호자 동의는 대리 신청자(학부모) 본인의 동의로 갈음돼요 · 자녀 동의는 신청 후 자녀 화면에서 받습니다</p>':''}
     <div class="bsum"><b>예약 내용</b><span>${TYPES.find(t=>t.id===B.type)?.name||'–'} · ${isBoard?'2~3일 내 답변':(B.date||'–')+' '+(B.slot||'')+(B.slotK==='prov'?' (예비 · 선생님 수락 후 확정)':'')}${B.parent?' · 보호자 동반':''}</span><span>주제: ${[...B.topics].join(', ')||'–'}</span>${B.q?`<span>질문: ${B.q.slice(0,60)}${B.q.length>60?'…':''}</span>`:''}</div>`;}
   const needC3=!isBoard&&CTX().minor&&!CTX().parent;const ok=B.step===0?!!B.type:B.step===1?!!(B.date&&B.slot):B.step===2&&isBoard?!!B.q.trim():B.step===3?(B.c.c1&&B.c.c2&&(!needC3||B.c.c3)):true;
   $('bookBody').innerHTML=`<div class="steps">${steps.map((s,i)=>`<span class="step${i===B.step?' is-on':''}${i<B.step||(isBoard&&i===1)?' is-done':''}${isBoard&&i===1?' is-skip':''}">${i+1}. ${s}</span>`).join('')}</div>${body}<div class="modal-foot" style="margin-top:18px">${B.step?'<button class="btn btn--ghost btn--pill" data-bprev>← 이전</button>':'<span></span>'}<button class="btn btn--primary btn--pill" data-bnext${ok?'':' disabled'}>${B.step===3?(isBoard?'질문 등록':'이 내용으로 예약'):'다음 →'}</button></div>`;}
@@ -109,8 +109,28 @@ function renderApply(){const apps=P.apps.map(id=>EXP.find(x=>x.id===id)).filter(
   <div class="panel-c" style="margin-top:20px;border:1px solid var(--line);box-shadow:none"><div class="panel-c__head"><h3>예약한 상담</h3></div>${P.booking?`<div class="arow" style="cursor:default"><span class="tb tb--1">상담</span><div><b>${TYPES.find(t=>t.id===P.booking.type).name}</b><span>${P.booking.type==='board'?'2~3일 내 답변 예정':P.booking.date+' '+slotTxt(P.booking)}${P.booking.parent?' · 보호자 동반':''}</span></div><a class="mini" href="#book" style="flex:none">자세히</a></div>`:'<p class="hint" style="margin:0">예약한 상담이 없어요. <a class="link" href="#book">상담 예약 ›</a></p>'}</div>
   <p class="hint">신청·예약 내역은 나의 진로진학 > 일정·알림에도 함께 표시되고, 하루 전 알림을 보내드려요</p>`;}
 /* ── 탭 ── */
-let tab='career';
-const R={career:renderChat,admission:renderChat,mine:renderChat,type:renderType,book:renderBook,result:renderResult,exp:renderExp,brief:renderBrief,apply:renderApply};
+let tab='guide';
+/* 10-30 §9 행 11·24 : 1차 개방형(2027.6)은 상담 「안내」만, 신청·예약은 기존 상담 사이트에서. 2차에 이 포털에서 신청 */
+function renderGuide(){const L=window.SEN_LEDGER||{counsel:{visitMin:40,videoMin:40,boardReplyHours:24}};
+ $('guideBody').innerHTML=`<div class="cgd">
+  <p class="cgd__lead" data-mk="6open up1030" data-mk-note="§9 행 24 · 1차는 안내, 신청·예약은 2차 (R01 R02 R10 R11 R12)">서울진로진학정보센터의 1:1 상담을 안내해요. <b>2027년 6월에는 상담 신청을 기존 상담 사이트에서 받고</b>, 이 포털에서 바로 신청하는 기능은 순차적으로 열려요.</p>
+  <div class="cgd__grid">
+   <section><h3>🗣️ 센터 방문 상담</h3><p>${L.counsel.visitMin}분 · 평일 09:00~17:00 · 정보원 위촉 상담 선생님(현직 진로진학 교사)</p></section>
+   <section><h3>🎥 화상 상담</h3><p>${L.counsel.videoMin}분 · 평일 저녁 19:00 가능 · 예약 완료 화면과 문자로 입장 링크를 보내요</p></section>
+   <section><h3>✍️ 온라인 게시판 상담</h3><p>주말에도 질문할 수 있어요 · 상담 선생님이 배정되면 ${L.counsel.boardReplyHours}시간 안에 답변해요</p></section>
+  </div>
+  <h3 class="cgd__h">꼭 알아 두세요</h3>
+  <ul class="cgd__list">
+   <li>방문·화상 상담은 <b>학기당 1회</b>예요(학부모 신청 포함).</li>
+   <li>날짜를 바꾸려면 <b>취소한 뒤 다시 신청</b>해요. 취소할 때 사유를 남길 수 있어요.</li>
+   <li>상담 전날 18시 이후 취소나 불참은 노쇼로 기록되고 3개월간 센터 상담 예약이 제한돼요.</li>
+   <li>같은 학교 선생님은 상담 선생님으로 배정되지 않아요.</li>
+   <li>만 18세 미만은 보호자 동의가 필요해요.</li>
+  </ul>
+  <div class="cgd__act"><a class="btn btn--primary btn--pill" href="https://sangdam.sen.go.kr" target="_blank" rel="noopener">기존 상담 사이트에서 신청 ↗</a><a class="btn btn--ghost btn--pill" href="#type">상담 유형 비교</a><a class="btn btn--ghost btn--pill" href="#exp">체험·설명회 안내</a></div>
+  <p class="hint" style="margin-top:10px">센터 : 서울 중구 소파로 46 서울시교육청교육연구정보원 · ☎ (02)3111-362</p>
+ </div>`;}
+const R={guide:renderGuide,career:renderChat,admission:renderChat,mine:renderChat,type:renderType,book:renderBook,result:renderResult,exp:renderExp,brief:renderBrief,apply:renderApply};
 function rerender(){const g=GROUP[tab];
   $('ptabs').innerHTML=Object.keys(L3).filter(k=>GROUP[k]===g).map(k=>`<a class="ptab${k===tab?' is-on':''}" href="#${k}">${L3[k]}</a>`).join('');
   $('crumbL2').textContent=L2[g];$('crumbL3').textContent=L3[tab];$('h1').textContent=L2[g];
@@ -120,11 +140,12 @@ function rerender(){const g=GROUP[tab];
   document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('is-on',!gated&&!pGate&&p.id==='pane-'+(['career','admission','mine'].includes(tab)?'chat':tab)));
   if(['career','admission','mine'].includes(tab))mode=tab;
   if(!gated&&!pGate)R[tab]();}
-function setTab(){tab=(location.hash||'#career').slice(1);if(!L3[tab])tab='career';document.querySelectorAll('#lnb a').forEach(a=>a.classList.toggle('is-cur',a.getAttribute('href')==='counsel.html#'+tab));document.title=L3[tab]+' | 서울 진로진학 통합플랫폼';rerender();}
-$('lnb').dataset.current=L3[(location.hash||'#career').slice(1)]||L3.career;
+function setTab(){tab=(location.hash||'#guide').slice(1);if(!L3[tab])tab='guide';document.querySelectorAll('#lnb a').forEach(a=>a.classList.toggle('is-cur',a.getAttribute('href')==='counsel.html#'+tab));document.title=L3[tab]+' | 서울 진로진학 통합플랫폼';rerender();}
+$('lnb').dataset.current=L3[(location.hash||'#guide').slice(1)]||L3.guide;
 addEventListener('hashchange',()=>{setTab();scrollTo({top:document.querySelector('.ptabs').offsetTop-90,behavior:'smooth'});});
 document.addEventListener('sen-auth',rerender);
 document.addEventListener('click',e=>{const c=x=>e.target.closest(x);let b;
+  if(c('[data-bparentreq]')){B.c.c3=true;renderBook();showToast('연결된 보호자에게 동의 요청을 보냈어요 · 보호자가 동의하면 상담이 확정돼요');return;}
   if(b=c('[data-sug]')){ask(b.dataset.sug);return;}
   if(c('#chatSend')){const i=$('chatIn');ask(i.value);i.value='';return;}
   if(c('#chatClear')){P.chats[mode]=[];save();renderChat();return;}
@@ -139,7 +160,7 @@ document.addEventListener('click',e=>{const c=x=>e.target.closest(x);let b;
   if(b=c('[data-btp]')){const t=b.dataset.btp;B.topics.has(t)?B.topics.delete(t):B.topics.add(t);renderBook();return;}
   if(c('[data-bprev]')){if($('bq'))B.q=$('bq').value;B.step-=(B.type==='board'&&B.step===2)?2:1;renderBook();return;}
   if(c('[data-bnext]')){if($('bq'))B.q=$('bq').value;if(B.step<3){B.step+=(B.type==='board'&&B.step===0)?2:1;renderBook();}else{const cx=CTX();P.booking={type:B.type,date:B.date,slot:B.slot,prov:B.slotK==='prov',accepted:false,topics:[...B.topics],q:B.q,share:{...B.share},parent:B.parent,proxy:cx.parent,kid:cx.kid,minor:cx.minor&&!cx.parent&&B.type!=='board'&&!B.parent,consent:{...B.c,at:new Date().toISOString().slice(0,10)}};save();B.step=0;renderBook();showToast(B.type==='board'?'질문을 등록했어요 · 답변이 오면 알려드려요':cx.parent?'대리 신청 완료 · 자녀 동의 후 확정돼요':B.slotK==='prov'?'예비 신청을 보냈어요 · 선생님 수락 후 확정 · 사전자료는 수락 뒤 전달':'상담을 예약했어요 · 사전자료가 선생님께 전달됩니다');}return;}
-  if(c('[data-bcancel]')){const pend=P.booking&&P.booking.prov&&!P.booking.accepted;const late=!pend&&P.booking&&['visit','video'].includes(P.booking.type);P.booking=null;save();B={step:0,type:null,date:null,slot:null,slotK:null,topics:new Set(),q:'',share:{test:true,saved:true,grades:true,plan:true,chat:false},parent:false,c:{c1:false,c2:false,c3:false}};renderBook();showToast(pend?'예비 신청을 취소했어요 · 수락 전 취소는 기록되지 않아요':late?'예약을 취소했어요 · 상담 전날 18시 이후 취소는 노쇼로 기록돼 3개월간 센터 상담 예약이 제한돼요':'예약을 취소했어요');return;}
+  if(c('[data-bcancel]')){const pend=P.booking&&P.booking.prov&&!P.booking.accepted;const late=!pend&&P.booking&&['visit','video'].includes(P.booking.type);P.booking=null;save();B={step:0,type:null,date:null,slot:null,slotK:null,topics:new Set(),q:'',share:{test:true,saved:true,grades:false,plan:true,chat:false},parent:false,c:{c1:false,c2:false,c3:false}};renderBook();showToast(pend?'예비 신청을 취소했어요 · 수락 전 취소는 기록되지 않아요':late?'예약을 취소했어요 · 상담 전날 18시 이후 취소는 노쇼로 기록돼 3개월간 센터 상담 예약이 제한돼요':'예약을 취소했어요');return;}
   if(b=c('[data-xc]')){xf.cat=b.dataset.xc;renderExp();return;}
   if(c('#xMine')){xf.mine=!xf.mine;renderExp();return;}
   if(b=c('[data-xapply]')){if(!A.logged()){showToast('체험 신청은 로그인 후 이용할 수 있어요');A.open();return;}const x=EXP.find(y=>y.id===b.dataset.xapply);P.apps.push(x.id);x.app++;save();renderExp();showToast(`'${x.t}' 신청 완료 · 하루 전 알림을 보내드려요`);return;}

@@ -4,7 +4,7 @@ const K='sen-univ-v1';let S=JSON.parse(localStorage.getItem(K)||'{"saved":[],"cm
 const needLogin=m=>{if(A.logged())return false;showToast(m);A.open();return true;};
 const GROUP={find:'u',detail:'u',majorinfo:'u',compare:'u',susi:'a',jeongsi:'a',fit:'a',terms:'i',changes:'i',docs:'i'};
 const L3={find:'대학정보',detail:'대학 상세',majorinfo:'학과정보',compare:'대학·전형 비교',susi:'수시 전형',jeongsi:'정시 전형',fit:'나에게 맞는 전형 탐색',terms:'대입제도·용어',changes:'학년도별 변화',docs:'모집요강·전형자료'};
-const L2={u:'대학·학과 찾기',a:'전형 찾기',i:'대입 이해하기'};
+const L2={u:'대학·학과 탐색',a:'전형 탐색',i:'대입 이해하기'};
 const myMajors=()=>store.list('majors');
 /* ══ 대학정보 (어디가 '대학정보' 방식 + 개선) ══ */
 const f={region:new Set(),type:'',size:new Set(),cat:'',major:'',q:'',mine:false,view:'card',sort:'name'};

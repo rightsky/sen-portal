@@ -17,6 +17,7 @@
     },
     counsel: { visitMin: 40, videoMin: 40, boardReplyHours: 24, boardReplyBasis: '교사 배정 후' },
     conv: { version: 'v2.1', state: '확정', stateCode: 'CONFIRMED', basis: '2027.8.31 대학 공개 요강 기준' },
+    demoToday: '2027-09-01',   /* 시연 기준일 : 화면의 D-day·달력은 이 날을 오늘로 계산 */
     source: '2028학년도 대학입학전형 시행계획(대교협)'
   };
   L.fmt = {

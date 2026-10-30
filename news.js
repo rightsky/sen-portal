@@ -5,9 +5,9 @@ const GROUP={schedule:'news',policy:'news',notice:'news',guide:'help',center:'he
 const L3={schedule:'입시 주요 일정',policy:'정책·전형 변화',notice:'공지사항',guide:'서비스 이용안내',center:'진로진학센터 안내',faq:'FAQ'};
 const L2={news:'일정·소식',help:'이용안내'};
 const TC={'중3':'a','고1·2':'b','고3':'c'};
-const today=new Date(2026,9,2);
+const today=new Date((window.SEN_LEDGER&&SEN_LEDGER.demoToday)||'2027-09-01'); /* 10-30 : 시연 기준일 */
 /* ── 일정 ── */
-let ym=[2026,9],tg=A.logged()?'고1·2':'전체',selDay=null;
+let ym=[today.getFullYear(),today.getMonth()],tg=A.logged()?'고1·2':'전체',selDay=null;
 function renderSched(){
   $('sTg').innerHTML=['전체','중3','고1·2','고3'].map(t=>`<button class="fchip${tg===t?' is-on':''}" data-tg="${t}">${t}${A.logged()&&t==='고1·2'?' (내 학년)':''}</button>`).join('');
   const [y,m]=ym,first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate();

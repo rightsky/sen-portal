@@ -725,7 +725,7 @@ function renderMain(){
  bindExtra();
  document.querySelectorAll('[data-promo]').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.promo==='apply'){ADM.apply='applied';admSave();showToast('위촉 신청을 보냈어요 · 정보원 심사 뒤 알림');renderAll();}else{ADM.apply='approved';admSave();if(window.SEN_AUTH&&SEN_AUTH.logged())SEN_AUTH.addRole({k:'counselor',status:'active',scope:'배정 건',term:'2027.4.1~2028.3.31'});showToast('위촉 승인 · 역할 스위처에 「상담교사」가 추가됐어요');renderAll();}}));
  const dd=document.getElementById('dday1');
- if(dd){const diff=Math.ceil((new Date('2027-09-20')-new Date())/864e5);dd.textContent='D-'+diff;}
+ if(dd){const diff=Math.ceil((new Date('2027-09-20')-new Date((window.SEN_LEDGER&&SEN_LEDGER.demoToday)||'2027-09-01'))/864e5);dd.textContent='D-'+diff;}
 }
 
 /* ===== 상태 바 ===== */
