@@ -141,7 +141,7 @@ function bindHitl(){
 
 /* ═══════════ B. 비교·분석 : 열람 목적 → 슬롯 A·B·배경 → 비교표 → HITL 근거 칩 · 워터마크 ═══════════ */
 const CK='sen-compare-v1';
-let CS=Object.assign({purpose:'prep',a:'s:강지우',b:'u:국민대',bg:'dist',target:''},lsGet(CK,{}));
+let CS=Object.assign({purpose:'prep',a:'s:강지우',b:'u:국민대',bg:'dist',target:'',ax:'grade',ay:'pct'},lsGet(CK,{}));
 const csSave=()=>lsSet(CK,CS);
 const PURPOSE={prep:'상담 준비',ev:'판정 근거',cls:'학급 지도'};
 /* 학생 (우리 반 7명 · CLASS 보강) · 등급대는 bn(막대용)으로만 쓰고 숫자는 화면에 내지 않음 */
@@ -160,6 +160,19 @@ function slotObj(v){if(!v)return null;const [k,n]=v.split(':');
  const u=UNIS.find(x=>x.k===n);if(!u)return null;return Object.assign({label:u.t},u);}
 function slotSel(name,val){return `<select class="xsel" data-cslot="${name}" aria-label="슬롯 ${name.toUpperCase()}"><optgroup label="학생 (우리 반)">${CLASS.map(c=>`<option value="s:${c.n}"${val==='s:'+c.n?' selected':''}>${c.n} · ${c.band}</option>`).join('')}</optgroup><optgroup label="대학 · 전형 (가상)">${UNIS.map(u=>`<option value="u:${u.k}"${val==='u:'+u.k?' selected':''}>${u.t}</option>`).join('')}</optgroup></select>`;}
 const bar=(v,max,inv)=>{const w=Math.max(4,Math.min(100,(inv?(max-v)/max:v/max)*100));return `<span style="display:block;height:10px;background:var(--surface-2);border-radius:999px;overflow:hidden;margin-top:4px"><i style="display:block;height:10px;width:${w}%;border-radius:999px;background:var(--t-strong)"></i></span>`;};
+/* 10-30 (R10) 위치 보기 : X축 내신 · Y축 수능 기본 · 축은 필터에서 고름 */
+const AXX={grade:['내신 등급 (5등급제)',x=>x.bn,1,5,true],conv:['교과환산점 (1000점)',x=>Math.round(1000-x.bn*60),700,1000,false],ach:['성취도 A 비율 (%)',x=>Math.round(100-x.bn*18),0,100,false]};
+const AXY={pct:['수능 백분위 (국·수·탐 평균)',x=>Math.round(98-x.bn*9),50,100,false],grade:['수능 등급 (국·수·탐 평균)',x=>+(x.bn*1.2).toFixed(1),1,9,true],conv:['대학별 환산점 (1000점)',x=>Math.round(990-x.bn*55),700,1000,false]};
+function axisHtml(){const X=AXX[CS.ax]||AXX.grade,Y=AXY[CS.ay]||AXY.pct,W=520,H=300,pl=64,pb=40,pt=14,pr=16;
+ const sx=v=>{const t=(v-X[2])/(X[3]-X[2]);return pl+(X[4]?1-t:t)*(W-pl-pr);},sy=v=>{const t=(v-Y[2])/(Y[3]-Y[2]);return H-pb-(Y[4]?1-t:t)*(H-pb-pt);};
+ const A=CS.a&&CS.a.startsWith('s:')?CS.a.slice(2):'';
+ const pts=Object.entries(STU_X).map(([n,x],i)=>{const cx=sx(X[1](x)),cy=sy(Y[1](x)),on=n===A,dy=i%2?-9:14;return `<g><circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${on?8:6}" fill="${on?'var(--brand,#2457d6)':'#9fb3d9'}" stroke="#fff" stroke-width="2"><title>${n} · ${X[0]} ${X[1](x)} · ${Y[0]} ${Y[1](x)} · 최저 ${x.min}</title></circle><text x="${(cx+9).toFixed(1)}" y="${(cy+dy).toFixed(1)}" font-size="11" fill="#3b4660">${n}</text></g>`;}).join('');
+ const tk=(a,b,n,f)=>Array.from({length:n+1},(_,i)=>a+(b-a)*i/n).map(f).join('');
+ const svg=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="${X[0]} 대 ${Y[0]} 산점도" style="max-width:640px;background:#fff;border:1px solid var(--line);border-radius:12px"><line x1="${pl}" y1="${H-pb}" x2="${W-pr}" y2="${H-pb}" stroke="#c3cad8"/><line x1="${pl}" y1="${pt}" x2="${pl}" y2="${H-pb}" stroke="#c3cad8"/>${tk(X[2],X[3],4,v=>`<text x="${sx(v).toFixed(1)}" y="${H-pb+16}" font-size="10" text-anchor="middle" fill="#6b7690">${+v.toFixed(1)}</text>`)}${tk(Y[2],Y[3],4,v=>`<text x="${pl-6}" y="${(sy(v)+3).toFixed(1)}" font-size="10" text-anchor="end" fill="#6b7690">${+v.toFixed(1)}</text>`)}<text x="${(pl+W-pr)/2}" y="${H-6}" font-size="11" text-anchor="middle" fill="#3b4660">${X[0]} → 좋음</text><text x="14" y="${(pt+H-pb)/2}" font-size="11" text-anchor="middle" fill="#3b4660" transform="rotate(-90 14 ${(pt+H-pb)/2})">${Y[0]} → 좋음</text>${pts}</svg>`;
+ const sel=(k,O,v)=>`<select class="xsel" style="width:auto" data-cax="${k}" aria-label="${k==='ax'?'X축':'Y축'}">${Object.entries(O).map(([kk,o])=>`<option value="${kk}"${v===kk?' selected':''}>${o[0]}</option>`).join('')}</select>`;
+ return `<h3 style="margin:22px 0 8px;font-size:15px" data-mk="up1030" data-mk-note="R10 : X축 내신 · Y축 수능 기본값, 축은 필터에서 선택 · 최저·권장과목 함께">④ 우리 반 위치 보기 <span class="badge badge--gray">합성</span></h3>
+ <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px"><b style="font-size:13px">X축</b>${sel('ax',AXX,CS.ax)}<b style="font-size:13px">Y축</b>${sel('ay',AXY,CS.ay)}<span class="caption" style="margin:0">오른쪽 위로 갈수록 좋아요 · 슬롯 A 학생은 진하게</span></div>${svg}
+ <div class="xscroll" style="margin-top:10px"><table class="btable"><tr><th>학생</th><th>수능 최저 충족 가능성</th><th>권장과목 충족</th></tr>${Object.entries(STU_X).map(([n,x])=>{const c=CLASS.find(z=>z.n===n);return `<tr><td>${n}</td><td>${x.min}</td><td>${c?c.plan:'-'}</td></tr>`;}).join('')}</table></div>`;}
 window.compareHtml=function(){
  if(state==='counselor')return gate('비교·분석은 학교 교사 역할에서만','상담교사 역할은 배정 건만 열람해요. 헤더에서 교사 역할로 전환하세요.');
  const ro=state==='subject';const A=slotObj(CS.a),B=slotObj(CS.b),G=BGS[CS.bg]||BGS.dist;
@@ -179,11 +192,13 @@ window.compareHtml=function(){
  <div class="cmp-res" data-wm="${esc(wm)}">${tbl}</div>
  <p class="caption">막대는 등급대·활동 수를 상대적으로 보여줄 뿐, 합격 가능성 숫자가 아니에요 · 원문·개인 판정은 전문시스템</p>
  ${send}
+ ${axisHtml()}
  <p class="caption">화면 캡처·재배포 금지 · 열람 기록은 감사로그와 학생 「내 정보를 본 기록」에 남아요</p></section>`;};
 function bindCompare(){
  document.querySelectorAll('[data-cpurpose]').forEach(b=>b.addEventListener('click',()=>{CS.purpose=b.dataset.cpurpose;csSave();hlog(`비교·분석 열람 · 목적 ${PURPOSE[CS.purpose]}`);showToast('열람 목적 기록 · 감사로그');renderAll();}));
  document.querySelectorAll('[data-cslot]').forEach(s=>s.addEventListener('change',()=>{CS[s.dataset.cslot]=s.value;csSave();renderAll();}));
  document.querySelectorAll('[data-cbg]').forEach(s=>s.addEventListener('change',()=>{CS.bg=s.value;csSave();renderAll();}));
+ document.querySelectorAll('[data-cax]').forEach(s=>s.addEventListener('change',()=>{CS[s.dataset.cax]=s.value;csSave();renderAll();}));
  document.querySelectorAll('[data-ctarget]').forEach(s=>s.addEventListener('change',()=>{CS.target=s.value;csSave();}));
  document.querySelectorAll('[data-csend]').forEach(b=>b.addEventListener('click',()=>{const sel=document.querySelector('[data-ctarget]');const id=sel&&sel.value;if(!id)return;const A=slotObj(CS.a),B=slotObj(CS.b),G=BGS[CS.bg];
   const chip=`${A.label} vs ${B.label} · 내신 ${A.band} / ${B.band} · 배경 ${G.t}`;const ev=Array.isArray(HS[id+'_ev'])?HS[id+'_ev']:[];if(!ev.includes(chip))ev.push(chip);HS[id+'_ev']=ev;hsSave();hlog(`비교·분석 근거 칩 → ${hById(id).stu} 판정 대기 건`);showToast('HITL 근거 칩으로 보냈어요 · 판정 승인 H0·H2 카드에 표시');}));}
