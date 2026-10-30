@@ -7,7 +7,7 @@ const D=window.CNS,esc=SEN_OPS.esc,KEY='sen-ops-counsel-v1';
 const DEF={cd1View:'cal',cd1D:2,cd2St:{},cd2Ap:{},cd3Q:{},cd4Rm:false,copPay:0,cd5Pd:'m',cd5Qs:{3:true},cd5Ms:{8:true},cd5Xl:false,cd5By:'ch',
  grid:null,bkRm:{},olX:{},copAppr:{},copCoh:'all',rkSub:null,rkNo:false,fixed:{},
  mgT:0,mgSel:{},mgSent:null,mgDet:null,liveOv:{},detG:null,detHo:null,detSaved:false,vacSel:{},vacSent:null,
- olT:'all',olSel:null,olAct:null,olAi:null,olMs:{},olBulk:null,olSatRm:false,
+ olT:'all',olSel:null,olAct:null,olAi:null,olMs:{},olBulk:null,olSatRm:false,olF:{},olEd:false,olRe:false,desig:{},dsG:[],first:null,firstDraft:null,firstOpen:false,
  vcT:'all',vcSel:null,vcAct:null,vcPv:null,vcPdf:null,wvT:'all',wvSel:null,wvAct:null,wvPv:null,wvPdf:null,
  rpT:'all',rpSel:null,rpAct:null,rpX:{},stCh:'all',stDir:'asc',stFu:{},stRm:{},stBl:false,pyT:'all',pySel:{},pyDet:null,pyDl:null,
  esOff:window.innerWidth<1600,esW:400,esTab:'main',aiUse:false,
@@ -136,24 +136,24 @@ const liveOf=(tab,i,no)=>tab===2?'후보':(S.liveOv[tab+'-'+no]||D.LIVE[i%6]);
 const mgRows=()=>D.MGD[S.mgT];
 function vMg(el){
   const tab=S.mgT,rows=mgRows();const selN=rows.filter(r=>S.mgSel[tab+'-'+r[0]]).length,allOn=selN===rows.length;
-  const tbl=gt([{l:'',cls:'c'},{l:'No.'},{l:'학교급'},{l:'상담분류'},{l:'이름 (ID)'},{l:'학교명',cls:'el'},{l:'이메일',cls:'el'},{l:'가입일'},{l:'상태'}],rows.map((r,i)=>{const k=tab+'-'+r[0],st=liveOf(tab,i,r[0]);return {cls:S.mgDet===r[0]?'is-sel':'',c:[`<button type="button" class="ck" data-act="mgSel" data-arg="${k}" aria-label="선택">${ck(!!S.mgSel[k])}</button>`,r[0],r[1],r[2],`<button type="button" class="nm" data-act="mgDet" data-arg="${r[0]}">${r[3]} (${r[4]})</button>`,r[5],r[6],r[7],chipP(st,D.SC[st])]};}),{tpl:'26px 40px 68px 76px 1.1fr 1.2fr 1.1fr 82px 60px'});
+  const tbl=gt([{l:'',cls:'c'},{l:'No.'},{l:'학교급'},{l:'상담분류'},{l:'이름 (ID)'},{l:'학교명',cls:'el'},{l:'이메일',cls:'el'},{l:'가입일'},{l:'상태'}],rows.map((r,i)=>{const k=tab+'-'+r[0],st=liveOf(tab,i,r[0]);return {cls:S.mgDet===r[0]?'is-sel':'',c:[`<button type="button" class="ck" data-act="mgSel" data-arg="${k}" aria-label="선택">${ck(!!S.mgSel[k])}</button>`,r[0],r[1],r[2],`<button type="button" class="nm" data-act="mgDet" data-arg="${r[0]}">${r[3]} (${r[4]})</button>`,r[5],r[6],r[7],(tab===2&&S.desig['p'+r[0]]?chipC('지정됨','purple'):chipP(st,D.SC[st]))]};}),{tpl:'26px 40px 68px 76px 1.1fr 1.2fr 1.1fr 82px 60px'});
   const hdCk=`<div class="gt__hd" style="grid-template-columns:26px 1fr;padding:0 14px;border:0;height:0;overflow:hidden"></div>`;
-  const foot=tab===2?'선생님 = 교원 인증 개인회원(위촉 전 후보 풀) — 관리자 지정이 아니라 공고·신청·심사로 위촉 (⑪)':'상태 = 오늘 기준 실시간 — [상담중] 사전 일정(슬롯) 동기화 · [수업중] 시간표 · [휴식중] 공강 — 대체 상담 투입 가능, 그날그날 본인 설정 · [휴가중] 본인 설정 · [휴면중] 기간 신청 → 실무사 승인 · 이름 클릭 → 상세';
+  const foot=tab===2?'교사 회원 = 포털에 가입한 교원 인증 회원 · 공고·심사로 선발된 선생님은 이름을 눌러 「상담 선생님으로 지정」':'상태 = 오늘 기준 실시간 — [상담중] 사전 일정(슬롯) 동기화 · [수업중] 시간표 · [휴식중] 공강 — 대체 상담 투입 가능, 그날그날 본인 설정 · [휴가중] 본인 설정 · [휴면중] 기간 신청 → 실무사 승인 · 이름 클릭 → 상세';
   let det='';const dr=rows.find(r=>r[0]===S.mgDet);
-  if(dr){const i=rows.indexOf(dr),k=tab+'-'+dr[0],st=liveOf(tab,i,dr[0]),g=S.detG||(tab===0?'진로상담교사단':tab===1?'대학진학지도지원단':null);
+  if(dr){const i=rows.indexOf(dr),k=tab+'-'+dr[0],st=liveOf(tab,i,dr[0]),g=S.detG||(tab<2?[D.GRP[tab]]:[]);
    const ho=S.detHo;const hoL=ho==='ok'?chipC('✓ 승인됨 — 기간 중 배정 자동 제외','green'):ho==='rej'?chipC('반려됨 — 사유 통지 · 이전 상태 유지','red'):chipC('승인 대기','amber');
    det=`<div class="dh">${chipC('상세','navy')}<span>${dr[3]} (${dr[4]})</span>${chipP(st,D.SC[st])}<span class="sp"></span>${btn('수정 저장','detSave',null,'cbtn--xs')}<button type="button" class="xbt" data-act="mgDetClose" aria-label="닫기">✕</button></div>
    ${S.detSaved?`<div style="padding:8px 14px 0">${ok('✓ 수정 저장됨 — 변경 이력 기록 (감사 로그) · 위촉·상태 변경은 본인에게 자동 통지')}</div>`:''}
    <div class="cg2" style="padding:14px"><div class="box"><h4>선생님 정보 (기본 — 교원 인증 회원)</h4>${kv([['아이디',dr[4]],['이름',dr[3]],['이메일 ① 업무',dr[6]],['이메일 ② 상담 전용',dr[4]+'@counsel.sen.go.kr'],['학교 내선','02-2*4-6**3 (내선 2**)'],['휴대폰','010-****-*682 (비식별 — C-02 발신은 센터 번호)'],['학교명',dr[5]],['학교급',dr[1]],['가입일',dr[7]]],118,1)}${ft('이메일 2개 관리(K11) — 배정·리마인드는 상담 전용, 교원연수 등은 업무 메일 · 연락처는 비식별 표시, 원본은 통지 시스템만 사용')}</div>
-   <div class="box"><h4>상담자 정보</h4><h5>교사구분</h5><div class="tgs">${['진로상담교사단','대학진학지도지원단'].map(x=>tgl(g===x,(g===x?'☑ ':'☐ ')+x,'detG',x,'is-soft')).join('')}</div>
+   ${tab===2?desigBox(dr):''}<div class="box"${tab===2?' hidden':''}><h4>상담자 정보</h4><h5>교사구분 (중복 가능)</h5><div class="tgs">${D.GRP.map(x=>tgl(g.includes(x),(g.includes(x)?'☑ ':'☐ ')+x,'detG',x,'is-soft')).join('')}</div>
     <h5>오늘 상태 (상담 관점 — 목록 칩과 실시간 연동)</h5><div class="tgs">${['상담중','수업중','휴식중','휴가중','휴면중'].map(x=>{const on=st===x;return `<button type="button" class="tg" style="${on?`color:${D.SC[x][0]};background:${D.SC[x][1]};border-color:${D.SC[x][0]}`:'color:#8a94ac'}" data-act="detSt" data-arg="${x}" aria-pressed="${on}">${on?'● ':'○ '}${x}</button>`;}).join('')}</div>
     ${ft('[상담중] 일정 동기화 · [수업중] 시간표 · [휴식중] 공강 — 대체 상담 가능, 그날그날 본인 설정 · [휴가중] 본인 설정 · [휴면중] 선택 시 아래 승인 절차')}
-    <p class="nt" style="margin-top:8px">상담분류(전문 계열) — <b>${dr[2]}</b> · 태그 다중화 예정<br>채널 — 화상·방문 (한 풀이 전 채널, Q2)</p>
+    <p class="nt" style="margin-top:8px">전문계열 — ${specOf(dr)}<br>채널 — 화상·방문·게시판 (한 사람이 전 채널 담당)</p>
     ${ho?`<h5>휴면 신청 — 선생님이 기간 지정 → 실무사 승인</h5><div class="lr" style="padding:6px 0;border:0;flex-wrap:wrap"><span class="sp">9.20 ~ 10.4 · 사유: 학교 업무 집중 (2학기 수행평가)</span>${hoL}${ho==='pending'?btn('승인','detHoAp',null,'cbtn--xs cbtn--green')+btn('반려','detHoRj',null,'cbtn--xs cbtn--line cbtn--red'):''}</div>${ft('승인 시 기간 중 상태 [휴면중] · 자동 배정 제외 · 기존 확정 건은 플랜B 자동 제시 · 종료일 익일 자동 복귀')}`:''}</div>
    <div class="box"><h4>위촉 정보 (⑪ 수명주기)</h4><p class="nt">${tab===2?'위촉 전 — 후보 풀. 모집 공고 신청 시 심사 대상 (⑪ 수명주기: 공고 → 신청 → 심사 → 위촉)':'위촉 기간 2027.4.1 ~ 2028.3.31 · 연 단위 재승인 · 3월 공문 선발 (경쟁률 약 2:1, K16) · 만료 시 권한 자동 회수'}</p></div>
    <div class="box"><h4>교사 이력 원장 (⑪ 재위촉 심사 참고 — 페널티 아님)</h4>${(()=>{const h=tchRisk(dr[3]);return h.length?`<p class="nt">취소·미수락 <b>${h.length}건</b> — 사유 코드 자동 기입</p>${h.map(x=>`<div class="lr" style="padding:5px 0">${chip(x[1],x[2],x[3],'ch--sq')}<span class="sp" style="font-size:12px">${x[4]}</span></div>`).join('')}`:'<p class="nt">취소·미수락 0건 — 화상·방문 상담 「일정 변경·어긋남」에서 교사 사유 건이 처리되면 여기에 자동 기입됩니다</p>';})()}${ft('기록은 연 단위 재위촉 심사 참고용 · 학생 사유(노쇼·당일취소)는 학생 측 3개월 제한 이력으로 별도 관리')}</div>
-   <div class="box"><h4>계좌 정보 (⑫ — 마스킹)</h4><p class="nt">예금주 강*영 · 거래은행 국민 · 계좌 ****-**-**4821 · 통장사본 S존 · 검증 ✓</p>${ft('전체 조회는 정산 담당 Role만 (열람 사유 로그) · 등록·수정은 교사 본인 T-01에서 — 현행 관리자 직접 입력(F3) 폐지')}</div></div>`;}
-  el.innerHTML=`<div class="cns"><section class="cc"><div class="cc__hd"><span>상담자관리</span><span class="path">홈 &gt; 상담관리 &gt; 상담자관리</span><span class="sp"></span>${chipC('위촉 100명 · 후보 풀 412','gray')}</div>
+   <div class="box"${tab===2?' hidden':''}><h4>계좌 정보 (⑫ — 마스킹)</h4><p class="nt">예금주 강*영 · 거래은행 국민 · 계좌 ****-**-**4821 · 통장사본 S존 · 검증 ✓</p>${ft('전체 조회는 정산 담당 Role만 (열람 사유 로그) · 등록·수정은 교사 본인 T-01에서 — 현행 관리자 직접 입력(F3) 폐지')}</div></div>`;}
+  el.innerHTML=`<div class="cns"><section class="cc"><div class="cc__hd"><span>상담자관리</span><span class="path">홈 &gt; 상담관리 &gt; 상담자관리</span><span class="sp"></span>${chipC('위촉 100명 · 교사 회원 412','gray')}</div>
    ${ctabs(D.MGTABS.map((l,i)=>[i,l]),tab,'mgT')}
    <div class="tbar"><span class="sel">학교급 ▾</span><span class="sel">상담분류 ▾</span><input type="search" placeholder="이름 · ID · 이메일 검색" aria-label="이름 · ID · 이메일 검색"><button type="button" class="cbtn cbtn--xs" data-act="noop" data-arg="검색 결과는 목업 목록과 동일합니다">검색</button><span class="sp"></span>${btn('단체문자 보내기'+(selN?` (${selN}명)`:''),'mgSend',null,selN?'':'cbtn--off')}</div>
    ${S.mgSent?`<div style="padding:8px 14px 0">${ok(`✓ 단체문자 ${S.mgSent}명 발송 완료 — 발신: 센터 대표번호 (C-02 마스킹 채널 · 개인 연락처 미노출) · 알림톡 → 실패 시 문자 폴백 · 발송 로그 기록`)}</div>`:''}
@@ -162,10 +162,59 @@ function vMg(el){
 }
 /* ─────────────── 콘솔 : 리스크 관리 ─────────────── */
 const vacPool=()=>{const out=[];[0,1].forEach(tab=>D.MGD[tab].forEach((r,i)=>{if(liveOf(tab,i,r[0])==='휴식중')out.push({tab,i,r});}));return out;};
+/* ─── 10-30 (R13) 게시판 답변 흐름 : 미배정 → 교사 작성 → 관리자 승인 → 신청자 공개 ─── */
+const olFlow=r=>{const base=D.OLF0[r[0]]||{st:r[8]&&r[8]!=='—'?'wait':'none',tch:r[8]&&r[8]!=='—'?r[8]:null};return Object.assign({},base,S.olF[r[0]]||{});};
+const olStChip=r=>{if(r[7]!=='진행중')return chipP(r[7],D.STC[r[7]]);const f=olFlow(r);return f.st==='none'?chipC('미배정','amber'):f.st==='sub'?chipC('승인 대기','purple'):f.st==='pub'?chipC('답변 공개','green'):f.st==='adm'?chipC('관리자 작성 중','blue'):chipP('진행중',D.STC['진행중']);};
+const OL_TCH_TXT='수학 선택은 희망 학과에 따라 달라요. 통계·경제 계열이면 확률과 통계를, 공학 계열이면 미적분Ⅱ와 기하를 함께 보는 대학이 많아요. 관심 대학 두세 곳의 권장과목을 같이 확인해 보고, 다음 학기 시간표가 나오면 다시 질문해 주세요.';
+function olFlowHtml(r){
+  const F=olFlow(r),sch=D.OLSCH[r[0]]||'미기재',ex=D.CNSL.filter(c=>c[1]===sch),cands=D.CNSL.filter(c=>c[1]!==sch);
+  const steps=[['① 배정',F.st!=='none'],['② 답변 작성',['sub','pub'].includes(F.st)],['③ 관리자 승인',F.st==='pub'],['④ 신청자 공개',F.st==='pub']];
+  let h=`<div class="tgs" style="margin-bottom:10px">${steps.map(([l,on])=>chipP(l,on?C.green:C.off)).join('<span style="color:#c3cad8">›</span>')}</div>`;
+  const exNote=ex.length?`<p class="ft" data-mk="up1030" data-mk-note="R13 : 신청자와 같은 학교 선생님은 배정 목록에서 자동 제외">신청자 학교(${sch})와 같은 학교 선생님 ${ex.length}명(${ex.map(c=>c[0]).join(', ')})은 목록에서 자동으로 빠졌어요</p>`:`<p class="ft">신청자 학교(${sch})와 같은 학교 선생님은 없어요</p>`;
+  if(F.st==='none'||S.olRe){
+    h+=`<div class="box bl"><h4 data-mk="up1030" data-mk-note="R13 : 신청 글에서 바로 배정 (분류변경 탭으로 이동하지 않음)">담당 선생님 배정 · 이 화면에서 바로</h4>${cands.map(c=>`<div class="lr" style="padding:7px 0;flex-wrap:wrap"><b style="width:64px">${c[0]}</b><span class="sp" style="font-size:12px">${c[2]} · ${c[3]} · ${c[1]}</span>${btn(F.tch===c[0]?'현재 담당':'배정','olFA',c[0],F.tch===c[0]?'cbtn--xs cbtn--off':'cbtn--xs')}</div>`).join('')}${exNote}
+    <div class="acts">${F.st==='none'?btn('센터 관리자가 직접 답변','olFAdm',null,'cbtn--xs cbtn--line'):btn('바꾸지 않음','olFReX',null,'cbtn--xs cbtn--line')}</div>${ft('배정하면 선생님께 자동 문자가 가고, 배정 시각부터 24시간 안에 답변해요')}</div>`;
+  }else if(F.tch&&F.by!=='adm'){
+    h+=`<div class="lr" style="padding:6px 0;border:0;flex-wrap:wrap"><span style="font-size:12.5px"><b>담당 선생님</b> ${F.tch} · 배정 문자 발송 09.02 10:12 · 답변 기한 09.03 10:12 (배정 후 24시간)</span><span class="sp"></span>${F.st!=='pub'?btn('다른 선생님으로 바꾸기','olFRe',null,'cbtn--xs cbtn--line'):''}</div>`;
+  }
+  if(F.st==='wait'){const X=D.OLX[r[0]];
+    h+=`<div class="box"><h4>교사 답변 작성 중</h4><p class="nt">${F.back?'관리자가 보완을 요청해 선생님이 다시 쓰고 있어요':'선생님이 답변을 쓰고 있어요. 제출되면 이 화면에 「승인 대기」로 올라와요'}${X&&X[0]==='sla'?' · <b style="color:#c03535">24시간 지남</b> · 선생님께 리마인드 문자 1회 발송 (신청자에게 지연 문자는 보내지 않아요)':''}</p>
+    <div class="acts">${btn('(시연) 선생님이 답변 제출','olFSub',null,'cbtn--xs')}${btn('센터 관리자가 직접 답변','olFAdm',null,'cbtn--xs cbtn--line')}</div></div>`;}
+  if(F.st==='adm'){
+    h+=`<div class="box"><h4 data-mk="up1030" data-mk-note="R13 : 센터 관리자도 답변 작성">센터 관리자 답변 작성</h4>${S.olAi?'':`<div class="acts" style="margin:0 0 6px">${btn('AI 예상답변 넣기 (근거 링크 포함 · 고쳐서 쓰세요)','olAi',null,'cbtn--xs cbtn--line')}</div>`}
+    <textarea id="olTa" aria-label="관리자 답변 내용" placeholder="신청자에게 보낼 답변을 쓰세요">${S.olAi?'문의하신 전형은 서류평가에서 학생부 세부능력 및 특기사항을 중심으로 평가해요. 2028 모집요강 34쪽을 함께 확인해 보세요.':''}</textarea>
+    <div class="acts">${btn('관리자 답변 공개','olFAdmPub',null,'cbtn--xs')}${btn('취소','olFAdmX',null,'cbtn--xs cbtn--line')}</div>${ft('관리자가 쓴 답변은 승인 단계 없이 바로 공개 · 작성자·시각 기록')}</div>`;}
+  if(F.st==='sub'){
+    h+=`<div class="box" style="border-color:#e3d5f2"><h4 data-mk="up1030" data-mk-note="R13 : 교사 답변은 관리자 승인 후 신청자 열람 · 관리자 수정 권한">${F.tch} 선생님 답변 · 관리자 승인 대기</h4>
+    ${S.olEd?`<textarea id="olTa" aria-label="답변 수정">${esc(F.text||'')}</textarea>`:`<p class="nt" style="white-space:pre-wrap;background:#faf7fd;padding:10px;border-radius:8px">${esc(F.text||'')}</p>`}
+    <div class="acts">${btn(S.olEd?'고친 내용으로 승인 · 공개':'승인 · 신청자에게 공개','olFOk',null,'cbtn--xs cbtn--green')}${btn(S.olEd?'수정 취소':'관리자 수정','olFEd',null,'cbtn--xs cbtn--line')}${btn('보완 요청 (선생님께 돌려보내기)','olFBack',null,'cbtn--xs cbtn--line cbtn--red')}</div>
+    ${ft('승인 전에는 신청자에게 보이지 않아요 · 관리자가 고치면 수정 전·후가 이력에 남고 선생님께 알림이 가요')}</div>`;}
+  if(F.st==='pub'){
+    h+=ok(`✓ 신청자에게 공개됨 · ${F.by==='adm'?'센터 관리자 답변':F.tch+' 선생님 답변 · 관리자 승인'}${F.edited?' (관리자가 고친 뒤 승인 · 선생님께 수정 내용 알림)':''} · 신청자에게 답변 알림 발송`)+`<div class="box"><h4>공개된 답변</h4><p class="nt" style="white-space:pre-wrap">${esc(F.text||'')}</p>${ft('학생이 답변을 열람하고 만족도를 입력하면 종결 · 만족도 리마인드는 1회만')}</div>`;}
+  h+=`<div class="acts">${btn('목록','olList',null,'cbtn--line')}${btn('분류변경','olCat',null,'cbtn--line')}<span class="sp"></span>${btn('삭제','olDel',null,'cbtn--line cbtn--red')}</div>`;
+  return h;}
+const olSetF=patch=>{const r=D.OLR.find(x=>x[0]===S.olSel);if(!r)return;const o=Object.assign({},S.olF);o[r[0]]=Object.assign(olFlow(r),patch);set({olF:o,olRe:false,olEd:false});};
+const olTa=()=>{const t=document.getElementById('olTa');return t?t.value.trim():'';};
+/* ─── 10-30 (R13 · R09) 상담 선생님 지정 상자 · 첫 로그인 창 ─── */
+function desigBox(dr){const k='p'+dr[0],d=S.desig[k];
+  if(!d)return `<div class="box bl"><h4 data-mk="up1030" data-mk-note="R13 · R09 : 관리자가 권한 부여(지원단·설계단·중복) → 첫 로그인 때 전문계열 확인">상담 선생님으로 지정 (권한 부여)</h4><p class="nt">공고·심사로 선발된 선생님을 여기서 지정해요. 지정하면 상담 권한이 생기고, 선생님이 처음 로그인할 때 전문계열·연락처·소속 학교를 직접 확인하는 창이 떠요.</p>
+   <h5>교사구분 (둘 다 고르면 중복 지정)</h5><div class="tgs">${D.GRP.map(x=>tgl(S.dsG.includes(x),(S.dsG.includes(x)?'☑ ':'☐ ')+x,'dsG',x,'is-soft')).join('')}</div>
+   <h5>위촉 기간</h5><p class="nt">2027.4.1 ~ 2028.3.31 (연 단위 재승인 · 만료 시 상담 권한만 자동 회수)</p><div class="acts">${btn('지정 · 권한 부여','dsGo',null,'cbtn--xs')}</div></div>`;
+  return `<div class="box bl"><h4>상담 선생님 지정됨</h4>${ok(`✓ ${d.g.join(' + ')} · ${d.at} 지정 · 선생님께 안내 문자 발송`)}${kv([['첫 로그인','대기 · 처음 로그인할 때 전문계열·연락처·소속 학교 확인 창이 떠요'],['위촉 기간','2027.4.1 ~ 2028.3.31']],80,1)}<div class="acts">${btn('지정 취소','dsX',null,'cbtn--xs cbtn--line cbtn--red')}</div></div>`;}
+const specOf=dr=>{const me=ctx&&ctx.auth?ctx.auth.name:'';return (dr[3]===me||dr[3]==='박선영')&&S.first?`<b>${S.first.spec.join(' · ')}</b> <span style="color:#157f3d">(선생님이 직접 입력 ✓)</span>`:`<b>${dr[2]}</b> <span style="color:#8a94ac">(첫 로그인 때 선생님이 확인)</span>`;};
+function firstModal(){const me=ctx&&ctx.auth?ctx.auth.name:'박선영';const c=D.CNSL.find(x=>x[0]===me)||D.CNSL[0];const f=S.firstDraft||S.first||{spec:[],mail:'',phone:'',school:c[1]};
+  return `<div class="flov" role="dialog" aria-modal="true" aria-labelledby="flT"><div class="flmd" data-mk="up1030" data-mk-note="R13 · R09 : 지정된 선생님의 첫 로그인 확인 창"><h3 id="flT">${S.first?'내 상담 정보 수정':'상담 선생님으로 지정되었어요'}</h3><p class="nt">${S.first?'바꾼 내용은 다음 배정부터 반영돼요.':'처음 한 번만 확인해 주세요. 고른 전문계열에 맞춰 상담이 배정돼요.'}</p>
+  ${kv([['교사구분',c[3]+' <span style="color:#8a94ac">(센터 지정 · 바꾸려면 센터에 요청)</span>'],['위촉 기간','2027.4.1 ~ 2028.3.31']],70,1)}
+  <h5>상담할 수 있는 전문계열 (여러 개 고를 수 있어요)</h5><div class="tgs">${D.SPEC.map(x=>tgl(f.spec.includes(x),(f.spec.includes(x)?'☑ ':'☐ ')+x,'flSpec',x,'is-soft')).join('')}</div>
+  <div class="flf"><label>상담 연락용 이메일<input id="flMail" type="email" value="${esc(f.mail)}" placeholder="예 : name@sen.go.kr" autocomplete="email"></label><label>휴대폰<input id="flPhone" type="tel" value="${esc(f.phone)}" placeholder="010-0000-0000" autocomplete="tel"></label><label>소속 학교<input id="flSch" value="${esc(f.school)}"></label></div>
+  <p class="ft">소속 학교와 같은 학교 학생의 상담은 자동으로 배정되지 않아요 · 휴대폰 번호는 배정 문자에만 쓰고 신청자에게는 보이지 않아요</p>
+  <div class="acts" style="justify-content:flex-end">${S.first?btn('닫기','flClose',null,'cbtn--line'):btn('다음에 하기','flLater',null,'cbtn--line')}${btn(S.first?'저장':'저장하고 시작','flSave')}</div></div></div>`;}
+let flLater=false;
+const flRead=()=>{const g=id=>{const t=document.getElementById(id);return t?t.value.trim():'';};const cur=S.firstDraft||S.first||{spec:[]};return {spec:cur.spec.slice(),mail:g('flMail'),phone:g('flPhone'),school:g('flSch')};};
 /* ─────────────── 콘솔 : 온라인 게시판 상담 ─────────────── */
 function vOl(el){
   const rows=D.OLR.filter(r=>S.olT==='all'||r[7]===S.olT);const msN=rows.filter(r=>S.olMs[r[0]]).length,allOn=msN===rows.length&&rows.length>0;
-  const tbl=gt([{l:'',cls:'c'},{l:'번호'},{l:'학교급'},{l:'상담분류'},{l:'제목',cls:'el'},{l:'작성자'},{l:'등록일자'},{l:'답변일자'},{l:'상태'},{l:'상담선생님'}],rows.map(r=>({cls:S.olSel===r[0]?'is-sel':'',c:[`<button type="button" class="ck" data-act="olMs" data-arg="${r[0]}" aria-label="선택">${ck(!!S.olMs[r[0]])}</button>`,`<button type="button" class="nm" data-act="olSel" data-arg="${r[0]}">${r[0]}</button>`,r[1],r[2],`<button type="button" class="nm el" style="max-width:100%" data-act="olSel" data-arg="${r[0]}">${r[3]}</button>`,r[4],r[5],r[6],`<span class="tgs" style="gap:3px">${chipP(r[7],D.STC[r[7]])}${D.OLX[r[0]]&&!S.olX[r[0]]?chipC(D.OLX[r[0]][1],'red'):''}</span>`,r[8]]})),{tpl:'26px 46px 104px 76px 1fr 108px 86px 86px 96px 82px'});
+  const tbl=gt([{l:'',cls:'c'},{l:'번호'},{l:'학교급'},{l:'상담분류'},{l:'제목',cls:'el'},{l:'작성자 · 학교'},{l:'등록일자'},{l:'답변일자'},{l:'상태'},{l:'상담선생님'}],rows.map(r=>({cls:S.olSel===r[0]?'is-sel':'',c:[`<button type="button" class="ck" data-act="olMs" data-arg="${r[0]}" aria-label="선택">${ck(!!S.olMs[r[0]])}</button>`,`<button type="button" class="nm" data-act="olSel" data-arg="${r[0]}">${r[0]}</button>`,r[1],r[2],`<button type="button" class="nm el" style="max-width:100%" data-act="olSel" data-arg="${r[0]}">${r[3]}</button>`,`${r[4]}<div class="ds">${D.OLSCH[r[0]]||'미기재'}</div>`,r[5],r[6],`<span class="tgs" style="gap:3px">${olStChip(r)}${D.OLX[r[0]]&&D.OLX[r[0]][0]==='rej'&&!S.olX[r[0]]?chipC(D.OLX[r[0]][1],'red'):''}</span>`,(r[7]==='진행중'?olFlow(r).tch:r[8])||'—']})),{tpl:'26px 46px 104px 76px 1fr 108px 86px 86px 96px 82px'});
   let det='';const r=D.OLR.find(x=>x[0]===S.olSel);
   if(r){const st=r[7],act=S.olAct,tch=r[8],vw=r[10],sa=r[11];
    const base=kv([['제목',r[3]],['작성자',r[4]],['학교급',r[1]],['상담분류',r[2]],['작성일',r[5]],['조회수',r[9]]],72);
@@ -174,14 +223,7 @@ function vOl(el){
    const X=D.OLX[r[0]],xd=S.olX[r[0]];let xb='';
    if(X&&X[0]==='un'){xb=xd?ok(`✓ 수동 배정 — ${xd} 선생님 · 배정 통지 · 맥락 카드 전달 · 열람 권한 부여 · 이력 기록`):`<div class="box rd" style="margin-bottom:8px"><h4 style="color:#c03535">예외 — ${X[1]}</h4><p class="nt" style="font-size:12px">${X[2]}</p><div class="tgs" style="margin-top:6px"><span class="ft" style="margin:0">매칭 후보에서 수동 배정</span>${D.OLXCAND.map(c=>btn(c,'olxAssign',c,'cbtn--xs')).join('')}</div></div>`;}
    if(X&&X[0]==='sla'){xb=xd?ok('✓ 에스컬레이션 — 담당 교사 + 지원단장 통지 · 대체 교사 매칭 후보 제시 · 신청자 지연 안내 · 이력 기록'):`<div class="box rd" style="margin-bottom:8px"><h4 style="color:#c03535">예외 — ${X[1]}</h4><p class="nt" style="font-size:12px">${X[2]}</p><div class="acts" style="margin-top:6px">${btn('에스컬레이션 — 지원단장 통지 · 대체 교사 제시','olxEsc',null,'cbtn--xs cbtn--red')}<span class="ft" style="margin:0">실무사는 대리 답변 불가 — 재배정·에스컬레이션만</span></div></div>`;}
-   if(st==='진행중'&&act!=='cat'&&act!=='catOk'){body=`${xb}<div class="box"><h4>답변작성</h4><p class="nt"><b>담당선생님</b> — ${xd&&X&&X[0]==='un'?xd+' 선생님 (수동 배정됨)':tch==='—'?'미지정 — 학교급×상담분류 매칭 후보에서 선택':tch+' 선생님 (배정됨)'}</p>
-    <div class="box ai" style="margin:8px 0"><div class="tgs" style="margin-bottom:6px">${chipC('[AI 예상답변] RAG','purple')}<span class="ft" style="margin:0">신청 글 + 연결한 내 정보(동의) 기반 · 근거 없으면 '모른다'</span></div>
-    <p class="nt">"학종 자소서는 2027 대입에서 대부분 폐지되었으나, 문의하신 전형은 서류평가에서 학생부 세특 중심으로 평가합니다. 연결된 성적(내신 2.55) 기준으로는 ○○ 전형 지원 시…" (초안 전문 3문단)</p>
-    <div class="tgs" style="margin:6px 0">${chipC('근거 ① 2027 모집요강 p.34','link')}${chipC('근거 ② FAQ #212','link')}${chipC('근거 ③ 확정 답변 #3540 (가명)','link')}</div>
-    ${S.olAi?ok('✓ 답변창에 반영됨 — 게시는 배정 교사 [확정] 후에만 (HITL) · 반영·수정 이력 기록'):btn('예상답변을 답변창에 반영','olAi',null,'cbtn--xs')}</div>
-    <textarea aria-label="상담 답변 내용" placeholder="상담 답변 내용을 입력하세요 — 에디터 (교사 작성 원칙 · 실무사 대리 답변 불가, 긴급 허용은 [PROVISIONAL])">${S.olAi?'학종 자소서는 2027 대입에서 대부분 폐지되었으나, 문의하신 전형은 서류평가에서 학생부 세특 중심으로 평가합니다. (AI 예상답변 반영 — 교사 확정 전)':''}</textarea>
-    ${ft('[AI 초안] 배정 교사 화면에는 RAG 초안 + 근거 링크 제공 — 교사 [확정] 전 게시 불가')}</div>
-    <div class="acts">${btn('취소','olList',null,'cbtn--line')}${btn('분류변경','olCat',null,'cbtn--line')}${btn('답변','olAns')}<span class="sp"></span>${btn('삭제','olDel',null,'cbtn--line cbtn--red')}${btn('수정','noop','목업 — 수정은 작성 교사 화면에서','cbtn--line')}</div>`;}
+   if(st==='진행중'&&act!=='cat'&&act!=='catOk'){body=olFlowHtml(r);}
    if(st==='완료'){body=`<div class="cg2"><div class="box"><h4>답변내용</h4>${kv([['담당선생님',tch+' 선생님'],['답변작성일',r[6]],['답변내용','(교사 확정 답변 본문) — 확정본만 게시·통지']],76,1)}</div>
     <div class="box"><h4>종결 조건 — 학생 확인 + 만족도 입력</h4><p class="nt" style="font-size:12px">답변 게시만으로 끝나지 않습니다 — 학생이 답변을 확인(열람)하고 만족도를 입력해야 프로세스가 종결됩니다</p>
     <div class="stack" style="gap:6px;margin-top:8px"><div class="lr" style="padding:0;border:0;flex-wrap:wrap"><span style="font-size:12px;width:150px">① 학생 답변 확인 (열람)</span>${vw?chipC('✓ 확인 완료 — 09.01 20:14 (열람 로그)','green'):chipC('대기 — 게시 통지·딥링크 발송됨','amber')}</div>
@@ -194,12 +236,12 @@ function vOl(el){
    if(st==='미등록'){body=`<div class="box"><h4>미등록 (임시저장)</h4><p class="nt">신청자가 임시저장한 건 — [확인] 시 저장(등록)되어 [진행중]에서 조회, [임시저장]은 미등록 유지 · 신청자 마이페이지 &gt; 온라인상담내역에 "미등록"으로 표시</p></div><div class="acts">${btn('목록','olList',null,'cbtn--line')}${btn('확인','noop','목업 — 등록 처리는 신청자 화면 기준')}${btn('임시저장','noop','목업 — 미등록 유지','cbtn--line')}</div>`;}
    const msg={ansOk:'✓ 답변 저장 — [탭] 완료에서 조회 · 답변 게시 통지(딥링크) 발송 · 만족도 요청',catOk:'✓ 담당선생님 변경 완료 — 변경 이력 기록 · 신·구 교사 양측 알림 · 열람 권한 이전',delOk:'삭제 처리 — 입력한 삭제사유로 처리·삭제일자 업데이트 (소프트 삭제 — 실질 DB 삭제는 되지 않음) · 사유 통지',rest:'✓ 복원 완료 — 해당 학교급·상담분류 목록에서 조회됩니다'}[act];
    det=`<div class="dh">${chipC('상담 신청 조회','navy')}<span class="sp"></span>${btn('목록','olList',null,'cbtn--xs cbtn--line')}</div><div class="cc__bd">${base}<p class="nt" style="margin:10px 0"><b>상담내용</b> — ${content}</p>${body}${msg?ok(msg):''}</div>`;}
-  el.innerHTML=`<div class="cns"><section class="cc"><div class="cc__hd"><span>온라인 게시판 상담</span><span class="path">홈 &gt; 상담관리 &gt; 온라인 게시판 상담</span><span class="sp"></span>${(()=>{const x=olxOpen();return x.total?chipC(`예외 ${x.total}건 — 미배정 ${x.un} · SLA 초과 ${x.sla} · 반려 대기 ${x.rej}`,'red'):chipC('예외 0건','green');})()}${chipC('누적 17,574건 · SLA 24h','gray')}</div>
+  el.innerHTML=`<div class="cns"><section class="cc"><div class="cc__hd"><span>온라인 게시판 상담</span><span class="path">홈 &gt; 상담관리 &gt; 온라인 게시판 상담</span><span class="sp"></span>${(()=>{const R=D.OLR.filter(x=>x[7]==='진행중').map(olFlow);const un=R.filter(f=>f.st==='none').length,sb=R.filter(f=>f.st==='sub').length;return chipC(`미배정 ${un}건`,un?'amber':'green')+chipC(`관리자 승인 대기 ${sb}건`,sb?'purple':'green');})()}${chipC('누적 17,574건 · SLA 24h','gray')}</div>
    ${ctabs(D.OLTABS,S.olT,'olT')}
    <div class="tbar"><span class="sel">2027-08-01</span>~<span class="sel">2027-09-02</span><span class="sel">학교급 ▾</span><span class="sel">상담분류 ▾</span><span class="sel">제목 ▾</span><input type="search" placeholder="검색어" aria-label="검색어"><button type="button" class="cbtn cbtn--xs" data-act="noop" data-arg="검색 결과는 목업 목록과 동일합니다">검색</button><button type="button" class="cbtn cbtn--xs cbtn--line" data-act="noop" data-arg="엑셀 — 개인정보 제외 · 출력 이력 기록">엑셀</button><span class="sp"></span>${btn('일괄 분류변경'+(msN?` (${msN})`:''),'olBulkCat',null,'cbtn--xs'+(msN?'':' cbtn--off'))}${btn('일괄 삭제'+(msN?` (${msN})`:''),'olBulkDel',null,'cbtn--xs '+(msN?'cbtn--red':'cbtn--off'))}</div>
    ${S.olBulk?`<div style="padding:8px 14px 0">${ok('✓ '+S.olBulk)}</div>`:''}
    <div class="gt"><div class="gt__hd" style="grid-template-columns:26px 1fr"><div><button type="button" class="ck" data-act="olAll" aria-label="전체 선택">${ck(allOn,msN>0&&!allOn)}</button></div><div style="font-size:11px;color:#8a94ac;font-weight:600">전체 선택 · 번호·제목 클릭 → 하단 상세</div></div></div>${tbl}
-   <div class="cc__ft">행(제목) 클릭 → 하단 상세 · 답변일자 없는 진행중 건은 SLA 24h 관리(24h 교사 리마인드) · 예외(미배정 2h·SLA 24h 초과·반려 대기)는 행에 빨간 배지로 표시, 상세에서 수동 배정·에스컬레이션·반려로 처리 — 정상 건은 실무사 개입 없음 · 누적 17,574건 — 교사 확정 답변만 가명화 후 RAG 소스</div>${det}</section></div>`;
+   <div class="cc__ft" data-mk="up1030" data-mk-note="R13 : 바로 배정 · 관리자 답변·수정 · 승인 후 공개 · 같은 학교 제외 · 지연 문자 없음">행(제목) 클릭 → 하단 상세에서 바로 배정 · 배정되면 선생님께 자동 문자, 24시간 안에 답변 · 교사 답변은 센터 관리자 승인 뒤에만 신청자에게 공개 · 관리자는 직접 답변하거나 교사 답변을 고칠 수 있음(수정 이력 기록) · 신청자와 같은 학교 선생님은 배정 목록에서 자동 제외 · 신청자에게 지연 문자는 보내지 않음 · 누적 17,574건 · 승인된 답변만 가명화 후 AI 예상답변 자료로 사용</div>${det}</section></div>`;
 }
 /* ─────────────── 콘솔 : 온라인(화상) · 방문 (공통 구조) ─────────────── */
 const CC={진행중:C.blue,완료:C.green,일정변경:C.amber};
@@ -211,7 +253,7 @@ function vcwv(el,kind){
   const lkChip=r=>r[F.lk]==='카톡'?chipC(isV?'카톡 링크':'카톡 안내','kakao'):chipC(isV?'이메일 링크':'이메일 안내','link');
   const roleChip=r=>chipC(r[F.role],r[F.role]==='학생'?'teal':'purple');
   const cols=isV?[{l:'번호'},{l:'학교급'},{l:'상담분류'},{l:'제목',cls:'el'},{l:'신청자 · 링크'},{l:'희망(확정) 일시'},{l:'연결한 내 정보'},{l:'상태'},{l:'선생님'}]:[{l:'번호'},{l:'학교급'},{l:'상담분류'},{l:'제목',cls:'el'},{l:'신청자 · 안내'},{l:'희망(확정) 일시'},{l:'상담실'},{l:'연결한 내 정보'},{l:'상태'},{l:'선생님'}];
-  const tbl=gt(cols,rows.map(r=>{const c=[r[0],r[F.sch],r[F.cate],`<b style="color:#1f4fa3">${r[F.t]}</b>`,`<span class="tgs" style="gap:3px">${r[F.wr]} ${roleChip(r)}${lkChip(r)}</span>`,r[F.want]];if(!isV)c.push(r[F.room]);c.push(`<span style="font-size:11.5px">${r[F.info]}</span>`,S.fixed[kind+r[0]]?chipC('재확정 ✓','green'):chipP(r[F.st],CC[r[F.st]]),r[F.tch]);return {cls:S[P.sel]===r[0]?'is-sel':'',click:P.sel,arg:r[0],c};}),{tpl:isV?'40px 100px 72px 1fr 208px 158px 140px 62px 62px':'40px 100px 72px 1fr 208px 158px 64px 140px 62px 62px'});
+  const tbl=gt(cols,rows.map(r=>{const c=[r[0],r[F.sch],r[F.cate],`<b style="color:#1f4fa3">${r[F.t]}</b>`,`<span class="tgs" style="gap:3px">${r[F.wr]} ${roleChip(r)}${lkChip(r)}</span><div class="ds">${D.SCHOF(kind,r[0])}</div>`,r[F.want]];if(!isV)c.push(r[F.room]);c.push(`<span style="font-size:11.5px">${r[F.info]}</span>`,S.fixed[kind+r[0]]?chipC('재확정 ✓','green'):chipP(r[F.st],CC[r[F.st]]),r[F.tch]);return {cls:S[P.sel]===r[0]?'is-sel':'',click:P.sel,arg:r[0],c};}),{tpl:isV?'40px 100px 72px 1fr 208px 158px 140px 62px 62px':'40px 100px 72px 1fr 208px 158px 64px 140px 62px 62px'});
   /* 일정 변경·어긋남 (플랜B) — 이 채널의 리스크 건 + 목록의 일정변경 건 */
   const chg=DATA.filter(x=>x[F.st]==='일정변경');const rkOpen=D.RK.filter(x=>x[6]===kind&&!S.cd3Q[x[0]]).length+chg.filter(x=>!S.fixed[kind+x[0]]).length;
   const chgRows=chg.map(x=>`<div class="lr">${chipC('신청자 변경 요청','amber','ch--sq')}<span class="sp">#${x[0]} ${x[F.t]} · ${x[F.wr]} · ${x[F.want]} · ${x[F.tch]} T<div class="ds">플랜B 옵션(대체 교사 / 다른 날) 제시됨 — 재확정 대기 · <button type="button" class="nm" data-act="${P.sel}" data-arg="${x[0]}" style="font-size:11px">상세 →</button></div></span>${S.fixed[kind+x[0]]?`<button type="button" class="cbtn cbtn--done" disabled>✓ 재확정 — 양측 통지</button>`:btn('대체 일정 확정 (플랜B)','fixed',kind+x[0])}</div>`).join('');
@@ -219,7 +261,7 @@ function vcwv(el,kind){
   if(isV){const vac=vacPool();const svN=vac.filter(v=>S.vacSel[v.tab+'-'+v.r[0]]).length;const sub=S.rkSub;const steps=[['① 대체 요청 문자',true],['② 이정민 T 승인',sub!==null],['③ 대체 확정',sub==='fix'],['④ 맥락 카드 전달',sub==='fix']];
    rkExtra=`<div class="cg2" style="padding:12px 14px 0"><div class="box"><h4><span class="sp">휴식중(공강) 선생님 ${chipC(vac.length+'명','gray')}</span>${btn('대체 요청 문자'+(svN?` (${svN}명)`:''),'vacSend',null,'cbtn--xs'+(svN?'':' cbtn--off'))}</h4>
     ${S.vacSent?ok(`✓ 대체 상담 요청 문자 ${S.vacSent}명 발송 — 발신: 센터 대표번호 (C-02) · 수락 시 해당 건에 대체 교사로 배정 · 발송 로그 기록`):''}
-    ${vac.length?vac.map((v,i)=>{const k=v.tab+'-'+v.r[0],pr=D.PR[i%3];return `<div class="lr" style="padding:7px 0;align-items:flex-start"><button type="button" class="ck" style="font-size:15px;background:none;border:0;padding:0;cursor:pointer" data-act="vacSel" data-arg="${k}" aria-label="선택">${ck(!!S.vacSel[k])}</button><div class="sp"><b style="color:#1f4fa3">${v.r[3]} (${v.r[4]})</b><div class="ds">${v.tab===0?'진로상담교사단':'대학진학지도지원단'} · ${v.r[5]} · ${pr[0]} · <b style="color:#157f3d">${pr[1]}</b></div></div></div>`;}).join(''):'<p class="ft">현재 휴식중(공강) 선생님 없음 — 상담자관리 상세에서 오늘 상태를 바꾸면 여기에 표시됩니다</p>'}
+    ${vac.length?vac.map((v,i)=>{const k=v.tab+'-'+v.r[0],pr=D.PR[i%3];return `<div class="lr" style="padding:7px 0;align-items:flex-start"><button type="button" class="ck" style="font-size:15px;background:none;border:0;padding:0;cursor:pointer" data-act="vacSel" data-arg="${k}" aria-label="선택">${ck(!!S.vacSel[k])}</button><div class="sp"><b style="color:#1f4fa3">${v.r[3]} (${v.r[4]})</b><div class="ds">${v.tab===0?'서울진로진학학업설계지원단':'대학진학지도지원단'} · ${v.r[5]} · ${pr[0]} · <b style="color:#157f3d">${pr[1]}</b></div></div></div>`;}).join(''):'<p class="ft">현재 휴식중(공강) 선생님 없음 — 상담자관리 상세에서 오늘 상태를 바꾸면 여기에 표시됩니다</p>'}
     ${ft('휴식중 = 공강 시간에 대신 상담 가능한 상태, 선생님이 그날그날 직접 설정 · 상담자관리 오늘 상태와 실시간 연동 · 교사 취소 건(9/3 박선영 T)의 대체 교사 풀')}</div>
    <div class="box"><h4>대체 확정 플로우 — 9/3 15:00 교사 취소 건</h4><div class="tgs" style="margin-bottom:8px">${steps.map(([l,on])=>chipP(l,on?C.green:C.off)).join('')}</div>
     ${sub===null?`<p class="nt" style="font-size:12px">이정민 선생님이 대체 요청 문자를 받고 <b>[승인]</b>을 누르면 → 실무사 화면에 [대체 확정] 버튼 생성</p>${btn('이정민 T — 문자 수신 → 승인 (수락 시뮬레이션)','rkAcc',null,'cbtn--xs cbtn--line')}`:''}
@@ -232,8 +274,8 @@ function vcwv(el,kind){
   if(r){const st=r[F.st],rec=r[F.rec],role=r[F.role],tch=r[F.tch],act=S[P.act],done=st==='완료';
    const want='1차 '+r[F.want].replace(/ \(1차\)| \(2차\)| → 변경 요청| \(완료\)/g,'')+' · 2차 동일일 오후 4시';
    const lk=(r[F.lk]==='카톡'?'카카오톡 kt*** (본인 인증)':'이메일 test***@gm***.com')+(isV?' — 신청 시 본인이 사전 설정 · 참석자별 개별 개별 링크를 회의 30분 전 자동 발송':' — 신청 시 본인이 사전 설정 · 방문 안내·방문 안내 문자 D-1 자동 발송');
-   const KV=isV?[['신청자',`${r[F.wr]} — ${role}`],['링크 수신 채널',lk],['화상회의 참석자',`${r[F.att]} — 입장·퇴장 로그 기록, 3자 상담은 각자 동의(⑩) · 학생·학부모 외 제3자(선생님·친구·친척) 참석은 신청 시 사전 고지 필수, 미고지 참석자는 입장 제한`],['동의 3종 (사전)',`제3자 제공 ✓ (신청 시) · 기록 연계 ✓ · 보호자 ${role==='학부모'?'✓ (학부모 신청)':'✓'} · 화상 추가 동의 : 녹취·STT ${rec?'동의 ✓ — 상호 동의 건만 S존 저장 · 90일 후 자동 파기':'미동의 ✗ — 녹취 없이 진행, 교사 메모 기반 요약'} · 항목별 철회 가능`],['학교급',r[F.sch]],['상담분류',r[F.cate]],['희망상담일시',want],['연락처','010-****-**37 (비식별 — 발신은 C-02 센터 번호)'],['이메일','test***@gm***.com'],['연결한 내 정보',r[F.info]+' — 신청자가 항목별 동의·연결'],['제목',r[F.t]]]
-    :[['신청자',`${r[F.wr]} — ${role}`],['안내 수신 채널',lk],['방문 참석자',`${r[F.att]} — 체크인 로그 기록 · 학생·학부모 외 제3자(선생님·친구·친척)는 사전 고지 필수`],['동의 3종 (사전)',`제3자 제공 ✓ (신청 시) · 기록 연계 ✓ · 보호자 ${role==='학부모'?'✓ (학부모 신청)':'✓'} · 방문 추가 동의 : 녹취 ${rec?'동의 ✓ — 상담실 녹음기기 · S존 저장 · 90일 후 자동 파기':'미동의 ✗ — 교사 메모 기반 요약'}`],['학교급',r[F.sch]],['상담분류',r[F.cate]],['희망상담일시',want],['상담실',r[F.room]+' (센터 방문 — 방문은 센터만)'],['연락처','010-****-**37 (비식별 — 발신은 C-02 센터 번호)'],['연결한 내 정보',r[F.info]+' — 신청자가 항목별 동의·연결'],['제목',r[F.t]]];
+   const KV=isV?[['신청자',`${r[F.wr]} — ${role} · ${D.SCHOF(kind,r[0])}`],['링크 수신 채널',lk],['화상회의 참석자',`${r[F.att]} — 입장·퇴장 로그 기록, 3자 상담은 각자 동의(⑩) · 학생·학부모 외 제3자(선생님·친구·친척) 참석은 신청 시 사전 고지 필수, 미고지 참석자는 입장 제한`],['동의 3종 (사전)',`제3자 제공 ✓ (신청 시) · 기록 연계 ✓ · 보호자 ${role==='학부모'?'✓ (학부모 신청)':'✓'} · 화상 추가 동의 : 녹취·STT ${rec?'동의 ✓ — 상호 동의 건만 S존 저장 · 90일 후 자동 파기':'미동의 ✗ — 녹취 없이 진행, 교사 메모 기반 요약'} · 항목별 철회 가능`],['학교급',r[F.sch]],['상담분류',r[F.cate]],['희망상담일시',want],['연락처','010-****-**37 (비식별 — 발신은 C-02 센터 번호)'],['이메일','test***@gm***.com'],['연결한 내 정보',r[F.info]+' — 신청자가 항목별 동의·연결'],['제목',r[F.t]]]
+    :[['신청자',`${r[F.wr]} — ${role} · ${D.SCHOF(kind,r[0])}`],['안내 수신 채널',lk],['방문 참석자',`${r[F.att]} — 체크인 로그 기록 · 학생·학부모 외 제3자(선생님·친구·친척)는 사전 고지 필수`],['동의 3종 (사전)',`제3자 제공 ✓ (신청 시) · 기록 연계 ✓ · 보호자 ${role==='학부모'?'✓ (학부모 신청)':'✓'} · 방문 추가 동의 : 녹취 ${rec?'동의 ✓ — 상담실 녹음기기 · S존 저장 · 90일 후 자동 파기':'미동의 ✗ — 교사 메모 기반 요약'}`],['학교급',r[F.sch]],['상담분류',r[F.cate]],['희망상담일시',want],['상담실',r[F.room]+' (센터 방문 — 방문은 센터만)'],['연락처','010-****-**37 (비식별 — 발신은 C-02 센터 번호)'],['연결한 내 정보',r[F.info]+' — 신청자가 항목별 동의·연결'],['제목',r[F.t]]];
    const preQ=isV?'(사전 질문 — 신청자 입력) 상담 전에 검토 부탁드립니다: ① 현재 성적 기준 지원 가능 범위 ② 남은 기간 우선순위. (본문 비공개 — 본인·배정교사·실무사만 열람)':'(사전 질문 — 신청자 입력) 방문 전에 검토 부탁드립니다: ① 지참 자료(학생부·성적표) 적정 여부 ② 상담에서 우선 다룰 항목. (본문 비공개)';
    const info=isV?{진행중:'화상회의 진행중 — 링크 자동 발송 14:30 (회의 30분 전 · 설정 채널로) · 화상 상담실 입장 15:02 · 신청자 입장 확인 · 녹취 동의 ✓ (S존)',완료:'완료 — 상담 종료 후 결과보고서 확정(교사) ✓ · 학생 열람본 게시 ✓ · 만족도 응답 ✓ 까지 완료된 건',일정변경:'화상회의 일정변경 — 신청자 변경 요청 접수 → 플랜B 옵션(대체 교사 / 다른 날) 제시, 재확정 대기'}[st]
     :{진행중:`방문 상담 진행중 — 방문 확인 14:02 (${r[F.room]}) · 시작 기록 = 수당 집계 근거 · ${rec?'대면 녹취 동의 ✓ (녹음기기 · S존)':'녹취 미동의 — 메모 기반'}`,완료:'완료 — 상담 종료 후 결과보고서 확정(교사) ✓ · 학생 열람본 게시 ✓ · 만족도 응답 ✓ 까지 완료된 건',일정변경:'방문 일정변경 — 신청자 변경 요청 접수 → 플랜B 옵션(대체 교사 / 다른 날) 제시, 재확정 대기 · 당일 취소는 3개월 제한'}[st];
@@ -315,7 +357,7 @@ function vPy(el){
   const rateNote=`<div class="hilite" style="margin-bottom:10px">단가표 마스터 <b>v${ADM().unit||3}</b> — 온라인 15,000 · 화상 <b>${vcRate().toLocaleString()}</b> · 방문 50,000 · 전화 0 (플랫폼관리 「상담시스템 관리」에서 발행 · 이전 조서는 발행 당시 버전 고정)</div>`;
   const dl=S.pyDl;const dlL=dl==='x'?'✓ 엑셀 다운로드 — 검색 조건(구분·기간) 기준 통계 결과 · 계좌는 마스킹 상태로 출력':dl==='j'?'✓ 기간 전체 조서 작성 — 2027.8.1~8.31 완료 건 전원(6명 · 52건) 일괄 조서 생성 · 결재 상신 → 승인 후 에듀파인 업로드 파일 (수동 재입력 금지)':dl?`✓ 선택 조서 작성 — 선택한 ${dl.slice(1)}명 조서 생성 (부분 조서 — 추가 지급·정정분) · 결재 상신 → 에듀파인 파일 · 작성 이력 기록`:'';
   let det='';const r=D.PYD.find(x=>x[1]===S.pyDet);
-  if(r){const p=payCalc(r),c=p.c,v1=Math.ceil(c*.5),v2=Math.floor(c*.25),v3=c-v1-v2,grp=['이정민','최수아','한승우'].includes(r[1])?'진로상담교사단':'대학진학지도지원단';
+  if(r){const p=payCalc(r),c=p.c,v1=Math.ceil(c*.5),v2=Math.floor(c*.25),v3=c-v1-v2,grp=['이정민','최수아','한승우'].includes(r[1])?'서울진로진학학업설계지원단':'대학진학지도지원단';
    let tc=0,ta=0,a8=0;const mon=[4,5,6,7,8].map((m,i)=>{const cc=Math.max(1,c-4+i),w1=Math.ceil(cc*.5),w2=Math.floor(cc*.25),w3=cc-w1-w2,amt=w1*40000+w2*50000+w3*15000;tc+=cc;ta+=amt;if(m===8)a8=amt;return {c:[`2027.0${m}`,cc+'건',`게시판 ${w3} · 온라인 ${w1} · 방문 ${w2}`,bar(Math.round(cc*100/c)),`<b>${won(amt)}원</b>`,m<8?chipC('지급완료','green'):chipC('미지급 (결재 대기)','amber')]};});
    det=`<div class="dh">${chipC('상세','navy')}<span>${r[1]} 선생님 — ${grp}</span><span class="sp"></span><button type="button" class="xbt" data-act="pyDetClose" aria-label="닫기">✕</button></div><div class="cc__bd">${kv([['소속학교',r[0]],['위촉 기간','2027.4.1 ~ 2028.3.31 (연 단위 재승인)'],['8월 상담건수',`${c}건 — 화상 ${v1} · 방문 ${v2} · 게시판 답변 ${v3} (전 채널 합산 · 완료 기준 K13)`],['만족도 평균',D.SAT[r[1]][0]+' — 익명 집계'],['보고서 리드타임',D.SAT[r[1]][1]+' 제출'],['노쇼·취소 관련',(()=>{const h=tchRisk(r[1]);return h.length?`${h.length}건 — ${h.map(x=>x[1]).join(' · ')} (교사 이력 원장 · 수당 차감 없음, 정책값)`:'0건 (교사 사유 취소 이력 없음)';})()],['8월 수당',`${won(p.amt)}원 · 세액 ${won(p.sum)}원 · 차인 ${won(p.net)}원`],['지급 이력','7월 지급완료 · 6월 지급완료 (에듀파인 전송분)'],['이의 제기','0건 — T-06에서 본인 실적·수당 조회·이의 제기 가능'],['계좌',`${r[4]} ${r[5]} — 마스킹 · 전체 조회는 정산 담당 Role만`]],96)}
    <div class="box" style="margin-top:12px;padding:0;overflow:hidden"><h4 style="padding:10px 13px 0">월별 수당 통계 — 위촉 이후</h4>${gt([{l:'월'},{l:'건수'},{l:'구분 (게시판·온라인·방문)'},{l:''},{l:'금액',cls:'num'},{l:'지급 상태'}],mon,{tpl:'76px 56px 170px 1fr 110px 130px'})}<p class="ft" style="padding:8px 13px 10px;margin:0">위촉(2027.4.1) 이후 누적 — ${tc}건 · ${won(ta)}원 (지급완료 ${won(ta-a8)}원 · 미지급 ${won(a8)}원) · 금액 = 채널별 단가(화상 ${(vcRate()/10000).toFixed(1)} · 방문 5.0 · 게시판 1.5만) 합산</p></div></div>`;}
@@ -357,7 +399,7 @@ function esHtml(){
   if(tab==='main'&&!isVc){const pay=S.copPay||0;
    body=`<div class="ekp"><div><b>94%</b><span>자동 배정률 (실무사 개입 0 목표)</span></div><div><b>3%</b><span>실무사 개입 건 비율 — 예외만</span></div><div><b>63%</b><span>만족도 응답률 (현행 11%)</span></div><div><b>0건</b><span>학생부 이메일 전달 · 발송 누락</span></div></div>
    <p class="ft" style="margin:0">예외는 별도 큐 없이 프로세스 안에서 처리 — 게시판 상담(미배정·SLA·반려) · 화상·방문 상담(일정 변경·어긋남 플랜B) 화면의 빨간 배지</p>
-   <div class="ec"><h4>O-01 위촉 명부·승인 — 수명주기 (핵심 ⑪)</h4><p>풀(교원 인증 412명) → <b>3월 공문 모집</b> → 심사·선발(경쟁률 약 2:1, K16) → <b>4.1 위촉</b>(역할 승격·기간 등록) → 활동/보류 → <b>익년 3.31 자동 만료·회수</b> · 연 단위 재승인 — 현행 "상담중/보류" 1비트 대체</p>${D.APR.map(a=>`<div class="qrow"><div class="sp"><b>${a[1]}</b><div class="ds">${a[2]}</div></div>${dbtn(S.copAppr[a[0]],'심사 → 승인','✓ 위촉 승인','copAppr',a[0],'cbtn--xs')}</div>`).join('')}<div class="soft" style="margin-top:8px;background:#fdf1de;color:#7a5410">만료 예정 — 전원 2028.3.31 자동 회수 (연 1회 주기) · 풀 현황 히트맵(O-08): 진로상담교사단 38 · 대학진학지도지원단 62 · 한 풀이 전 채널 담당(Q2)</div></div>
+   <div class="ec"><h4>O-01 위촉 명부·승인 — 수명주기 (핵심 ⑪)</h4><p>풀(교원 인증 412명) → <b>3월 공문 모집</b> → 심사·선발(경쟁률 약 2:1, K16) → <b>4.1 위촉</b>(역할 승격·기간 등록) → 활동/보류 → <b>익년 3.31 자동 만료·회수</b> · 연 단위 재승인 — 현행 "상담중/보류" 1비트 대체</p>${D.APR.map(a=>`<div class="qrow"><div class="sp"><b>${a[1]}</b><div class="ds">${a[2]}</div></div>${dbtn(S.copAppr[a[0]],'심사 → 승인','✓ 위촉 승인','copAppr',a[0],'cbtn--xs')}</div>`).join('')}<div class="soft" style="margin-top:8px;background:#fdf1de;color:#7a5410">만료 예정 — 전원 2028.3.31 자동 회수 (연 1회 주기) · 풀 현황 히트맵(O-08): 서울진로진학학업설계지원단 38 · 대학진학지도지원단 62 · 한 풀이 전 채널 담당(Q2)</div></div>
    <div class="ec"><h4>O-06 수당 산정·조서 — 8월 (핵심 ⑨)</h4><p>화상 812건 × ${vcRate().toLocaleString()} = ${(812*vcRate()).toLocaleString()}<br>방문 391건 × 50,000 = 19,550,000<br>온라인 답변 81건 × 15,000 = 1,215,000</p><p style="font-weight:800;color:#16386f">계 1,284건 · ${(812*vcRate()+19550000+1215000).toLocaleString()}원 — 단가표 마스터 v${ADM().unit||3} (플랫폼관리 발행)</p>${payStages(pay)}${payBtn(pay,'cbtn--block cbtn--xs')}<p class="ft">채널별 완료 기준(K13) — 온라인: 답변 등록 교사만 · 방문/화상: 보고서 확정 · 전화: 실적만 집계, 수당 0 · 취소·노쇼는 정책값 · 단가 손입력·수동 재입력 폐지 · 교사는 T-06에서 본인 실적·이의 제기</p></div>
    <div class="ec"><h4>O-04·O-05 실적·과거 이관 (핵심 ⑧)</h4><p>상담 원장 1개(온라인·방문·화상·전화·현장) + 코드 2축(유형×계열) — 창구 3곳 통계 불일치 0 목표</p><div class="tgs">${[['all','전체'],['A','A 완전 71%'],['B','B 부분 22%'],['C','C 추정 7%']].map(([k,l])=>tgl(S.copCoh===k,l,'copCoh',k)).join('')}</div><div class="soft" style="margin-top:8px">${D.COH[S.copCoh]}</div></div>
    <div class="ec"><h4>O-09 정산 개인정보 (핵심 ⑫)</h4><p>박선영 — 국민 ****-**-**4821 · 검증 ✓ · 통장사본 S존<br>김도현 — 신한 ****-**-**0937 · 검증 대기</p><p class="ft">현행 평문 VARCHAR·화면 노출 → 암호화 저장 · 끝 4자리 마스킹 · 정산 담당 Role만 · 열람 사유 로그 · 위촉 만료 후 N년 파기</p></div>`;}
@@ -460,6 +502,24 @@ function vTdash(el){
 /* ─────────────── 액션 ─────────────── */
 const toast=m=>window.showToast&&showToast(m);
 const ACT={
+ /* 10-30 게시판 흐름 · 지정 · 첫 로그인 */
+ olFA:a=>{olSetF({st:'wait',tch:a,by:'tch',back:false});toast(a+' 선생님 배정 · 자동 문자 발송 · 24시간 안에 답변');},
+ olFRe:()=>set({olRe:true}),olFReX:()=>set({olRe:false}),
+ olFAdm:()=>{olSetF({st:'adm',prev:olFlow(D.OLR.find(x=>x[0]===S.olSel)).st});S.olAi=null;save();},
+ olFAdmX:()=>{const r=D.OLR.find(x=>x[0]===S.olSel);olSetF({st:olFlow(r).prev||'none'});},
+ olFAdmPub:()=>{const v=olTa();if(!v)return toast('답변 내용을 먼저 쓰세요');olSetF({st:'pub',by:'adm',text:v});toast('관리자 답변을 공개했어요 · 신청자에게 알림');},
+ olFSub:()=>{olSetF({st:'sub',by:'tch',text:OL_TCH_TXT});toast('선생님 답변 제출 · 관리자 승인 대기');},
+ olFEd:()=>set({olEd:!S.olEd}),
+ olFOk:()=>{const r=D.OLR.find(x=>x[0]===S.olSel);const f=olFlow(r);let p={st:'pub'};if(S.olEd){const v=olTa();if(!v)return toast('답변 내용이 비어 있어요');if(v!==f.text)p.edited=true;p.text=v;}olSetF(p);toast('승인했어요 · 신청자에게 답변 공개 · 알림 발송');},
+ olFBack:()=>{olSetF({st:'wait',back:true});toast('보완 요청 · 선생님께 사유와 함께 돌려보냈어요');},
+ dsG:a=>{const n=S.dsG.includes(a)?S.dsG.filter(x=>x!==a):S.dsG.concat(a);set({dsG:n});},
+ dsGo:()=>{if(!S.dsG.length)return toast('교사구분을 하나 이상 고르세요');const o=Object.assign({},S.desig);o['p'+S.mgDet]={g:S.dsG.slice(),at:'2027.09.02'};set({desig:o,dsG:[]});toast('상담 선생님으로 지정 · 권한 부여 · 안내 문자 발송');},
+ dsX:()=>{const o=Object.assign({},S.desig);delete o['p'+S.mgDet];set({desig:o});toast('지정을 취소했어요 · 권한 회수');},
+ flSpec:a=>{const d=flRead();d.spec=d.spec.includes(a)?d.spec.filter(x=>x!==a):d.spec.concat(a);set({firstDraft:d});},
+ flSave:()=>{const d=flRead();if(!d.spec.length)return toast('전문계열을 하나 이상 고르세요');if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.mail))return toast('이메일을 확인해 주세요');if(!/^01[0-9]-?\d{3,4}-?\d{4}$/.test(d.phone))return toast('휴대폰 번호를 확인해 주세요');if(!d.school)return toast('소속 학교를 적어 주세요');d.at='2027.09.02';set({first:d,firstDraft:null,firstOpen:false});toast('저장했어요 · 다음 배정부터 반영돼요');},
+ flLater:()=>{flLater=true;S.firstDraft=null;draw();toast('다음 로그인 때 다시 물어볼게요');},
+ flClose:()=>set({firstOpen:false,firstDraft:null}),flOpen:()=>set({firstOpen:true}),
+ detG:a=>{const cur=S.detG||(S.mgT<2?[D.GRP[S.mgT]]:[]);const n=cur.includes(a)?cur.filter(x=>x!==a):cur.concat(a);if(!n.length)return toast('교사구분은 하나 이상이어야 해요');set({detG:n,detSaved:false});},
  noop:(a)=>toast(a||'목업 — 이 조작은 시연용입니다'),
  reset:()=>{localStorage.removeItem(KEY);S=clone(DEF);draw();toast('데모 상태를 초기화했어요');},
  cd1View:a=>set({cd1View:a}),cd1D:a=>set({cd1D:+a}),cd2St:a=>{const i=+a;setK('cd2St',i,!(S.cd2St[i]??(i===2)));},cd2Ap:a=>{setK('cd2Ap',a,true);toast('잔여 위촉 기간(~2028.3.31)으로 위촉했어요 · 역할 승격 + 위촉 등록');},
@@ -473,7 +533,7 @@ const ACT={
  mgAll:()=>{const rows=mgRows(),tab=S.mgT,all=rows.every(r=>S.mgSel[tab+'-'+r[0]]);const o=Object.assign({},S.mgSel);rows.forEach(r=>o[tab+'-'+r[0]]=!all);set({mgSel:o,mgSent:null});},
  mgSend:()=>{const rows=mgRows(),tab=S.mgT,n=rows.filter(r=>S.mgSel[tab+'-'+r[0]]).length;if(!n)return toast('먼저 선생님을 선택하세요');const o=Object.assign({},S.mgSel);rows.forEach(r=>delete o[tab+'-'+r[0]]);set({mgSel:o,mgSent:n});toast(`단체문자 ${n}명 발송 — 센터 대표번호(C-02)`);},
  mgDet:a=>set({mgDet:+a,detG:null,detSaved:false,detHo:null}),mgDetClose:()=>set({mgDet:null,detG:null,detSaved:false,detHo:null}),detSave:()=>{set({detSaved:true});toast('수정 저장 — 변경 이력 기록');},
- detG:a=>set({detG:a,detSaved:false}),
+
  detSt:a=>{const k=S.mgT+'-'+S.mgDet;if(a==='휴면중')return set({detHo:'pending'});setK('liveOv',k,a);S.detHo=null;S.detSaved=false;save();draw();toast(`오늘 상태 [${a}] — 목록·리스크 풀에 즉시 반영`);},
  detHoAp:()=>{const k=S.mgT+'-'+S.mgDet;const o=Object.assign({},S.liveOv);o[k]='휴면중';set({liveOv:o,detHo:'ok'});toast('휴면 승인 — 기간 중 배정 자동 제외');},detHoRj:()=>{set({detHo:'rej'});toast('휴면 신청 반려 — 사유 통지');},
  /* 리스크 */
@@ -485,7 +545,7 @@ const ACT={
  olAll:()=>{const rows=D.OLR.filter(r=>S.olT==='all'||r[7]===S.olT),all=rows.every(r=>S.olMs[r[0]]);const o=Object.assign({},S.olMs);rows.forEach(r=>o[r[0]]=!all);set({olMs:o,olBulk:null});},
  olBulkCat:()=>{const n=Object.keys(S.olMs).filter(k=>S.olMs[k]).length;if(!n)return toast('먼저 건을 선택하세요');set({olMs:{},olBulk:`분류변경 ${n}건 — 학교급·상담분류·담당선생님 일괄 변경 · 변경 이력 기록 · 양측 알림`});},
  olBulkDel:()=>{const n=Object.keys(S.olMs).filter(k=>S.olMs[k]).length;if(!n)return toast('먼저 건을 선택하세요');set({olMs:{},olBulk:`삭제요청 ${n}건 — 사유 코드 일괄 지정 · 소프트 삭제(복원 가능) · 신청자 통지`});},
- olSel:a=>set({olSel:+a,olAct:null,olAi:null}),olList:()=>set({olSel:null,olAct:null}),olAi:()=>set({olAi:true}),olCat:()=>set({olAct:'cat'}),olCatPick:()=>{set({olAct:'catOk'});toast('담당선생님 변경 — 신·구 교사 양측 알림');},
+ olSel:a=>set({olSel:+a,olAct:null,olAi:null,olEd:false,olRe:false}),olList:()=>set({olSel:null,olAct:null}),olAi:()=>set({olAi:true}),olCat:()=>set({olAct:'cat'}),olCatPick:()=>{set({olAct:'catOk'});toast('담당선생님 변경 — 신·구 교사 양측 알림');},
  olAns:()=>{set({olAct:'ansOk'});toast('답변 저장 — 게시 통지(딥링크) 발송');},olDel:()=>{set({olAct:'delOk'});toast('삭제 처리 — 소프트 삭제 · 사유 통지');},olRest:()=>{set({olAct:'rest'});toast('복원했어요');},olSatRm:()=>{set({olSatRm:true});toast('만족도 리마인드 발송 (C-02)');},
  /* 화상 · 방문 */
  vcT:a=>set({vcT:a,vcSel:null,vcAct:null,vcPv:null,vcPdf:null}),vcSel:a=>set({vcSel:+a,vcAct:null,vcPv:null,vcPdf:null}),vcSelClose:()=>set({vcSel:null,vcAct:null,vcPv:null,vcPdf:null}),vcAct:a=>{if(a==='fix')S.fixed=Object.assign({},S.fixed,{['vc'+S.vcSel]:true});set({vcAct:a});toast(a==='fix'?'대체 일정 확정 — 양측 통지 · URL 유지':'문자 발송 — 센터 대표번호(C-02)');},vcPvTg:()=>set({vcPv:!S.vcPv}),vcPdf:()=>{set({vcPdf:true});toast('워터마크 PDF 발송 — 발송 로그 기록');},
@@ -518,7 +578,7 @@ const ACT={
 document.addEventListener('click',e=>{const t=e.target.closest('[data-act],[data-click]');if(!t||!t.closest('#opsView,#cnsEs,#cnsRail'))return;const name=t.dataset.act||t.dataset.click;const fn=ACT[name];if(!fn)return;if(t.tagName==='A')e.preventDefault();fn(t.dataset.arg,t);});
 document.addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;const t=e.target.closest('[role="button"][data-act]');if(t&&t.closest('#opsView,#cnsRail')){e.preventDefault();ACT[t.dataset.act](t.dataset.arg,t);}});
 /* ─────────────── 렌더 · 메뉴 · 초기화 ─────────────── */
-const VIEWS={home:vHome,mg:vMg,ol:vOl,vc:el=>vcwv(el,'vc'),wv:el=>vcwv(el,'wv'),rp:vRp,st:vSt,py:vPy,book:vBook,tdash:vTdash};
+const VIEWS={home:vHome,mg:vMg,ol:vOl,vc:el=>vcwv(el,'vc'),wv:el=>vcwv(el,'wv'),rp:vRp,st:vSt,py:vPy,book:vBook,tdash:el=>{vTdash(el);el.insertAdjacentHTML('afterbegin',`<div class="flband" data-mk="up1030" data-mk-note="R13 · R09 : 첫 로그인 때 고른 전문계열"><span>내 전문계열 : <b>${S.first?S.first.spec.join(' · '):'아직 고르지 않았어요'}</b></span>${btn(S.first?'내 상담 정보 수정':'지금 입력하기','flOpen',null,'cbtn--xs cbtn--line')}</div>`);if((!S.first&&!flLater)||S.firstOpen)el.insertAdjacentHTML('beforeend',firstModal());}};
 function draw(){const el=document.getElementById('opsView');if(!el||!cur||!VIEWS[cur])return;const y=window.scrollY;VIEWS[cur](el);renderEs();syncBadges();window.scrollTo(0,y);}
 function badges(){const r=window.SEN_AUTH&&SEN_AUTH.roleObj;if(r&&r.k==='counselor')return {tdash:D.RQ.filter(x=>!S.ctRq[x[0]]).length+D.REP2.filter(p=>!S.ctRp[p[0]]).length};
  const rk=ch=>D.RK.filter(x=>x[6]===ch&&!S.cd3Q[x[0]]).length;return {vc:rk('vc')+D.VCR.filter(x=>x[11]==='일정변경'&&!S.fixed['vc'+x[0]]).length,wv:rk('wv')+D.WVR.filter(x=>x[12]==='일정변경'&&!S.fixed['wv'+x[0]]).length,ol:olxOpen().total,rp:2};}
