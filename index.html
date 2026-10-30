@@ -767,7 +767,7 @@ document.querySelectorAll('.gnb a').forEach(a=>a.addEventListener('click',e=>{e.
 const TOOLS={
  'MY쎈진학':[['성적 입력','내신·모의고사 성적을 단계별로 입력','지원전략','쎈진학','strategy.html#grades'],['성적 분석 리포트','교과·영역별 변화와 강·약점 분석','지원전략','쎈진학','strategy.html#analysis'],['지원가능대학 조회','내 성적 기준 지원 가능 범위 참고분석','지원전략','쎈진학','strategy.html#possible'],['관심대학 학과관리','저장한 대학·학과를 한곳에서 관리','나의 진로진학','쎈진학','my.html#unis'],['진로검사','검사 결과를 직업·학과 탐색으로 연결','미래탐색','쎈진학','jinro-trait.html'],['1:1 상담신청','교사·위촉 상담 선생님을 예약하고 후속과제 받기','book','쎈진학']],
  '진로검사 (센터)':[['진로종합검사','흥미·적성·가치관을 종합 진단','미래탐색','센터','jinro-test.html'],['진로심리검사','커리어넷 연계 심리검사','미래탐색','센터','jinro-test.html#tests'],['스트레스 검사','학업 스트레스 점검','미래탐색','센터'],['학습자 유형 검사','나에게 맞는 학습 방법 찾기','미래탐색','센터']],
- '과목·학종':[['대학별 평가요소','대학이 학생부에서 보는 항목 정리','지원전략','쎈진학','strategy.html#record'],['생기부 자가진단','3대 역량 · 7항목 스스로 점검','지원전략','통합 신규','strategy.html#record'],['합불사례','수시·정시 합격·불합격 사례','지원전략','쎈진학','strategy.html#result'],['진학지도 자료집','수시·정시·고3 학년초·선택과목 안내서','자료·소식','센터','library.html'],['선택과목 추천 (2022 개정)','관심 학과별 선택과목 추천','학교·과목설계','쎈진학','subject-explore.html#bymajor'],['계열별 학과 안내','계열→학과→과목 연결보기','학교·과목설계','쎈진학','jinro-major.html#link'],['개설학과 검색','대학별 개설학과 찾기','학교·과목설계','쎈진학','jinro-major.html#find'],['대학별 평가요소','학종 중심 대학별 평가 기준','지원전략','쎈진학'],['나의 학종 준비도','역량별 나의 준비 체크','지원전략','쎈진학'],['수시/정시 합불사례','실제 합격·불합격 사례 검색','지원전략','쎈진학']]
+ '과목·학종':[['대학별 평가요소','대학이 학생부에서 보는 항목 정리','지원전략','쎈진학','strategy.html#record'],['학생부 자가진단','3대 역량 · 7항목 스스로 점검','지원전략','통합 신규','strategy.html#record'],['합불사례','수시·정시 합격·불합격 사례','지원전략','쎈진학','strategy.html#result'],['진학지도 자료집','수시·정시·고3 학년초·선택과목 안내서','자료·소식','센터','library.html'],['선택과목 추천 (2022 개정)','관심 학과별 선택과목 추천','학교·과목설계','쎈진학','subject-explore.html#bymajor'],['계열별 학과 안내','계열→학과→과목 연결보기','학교·과목설계','쎈진학','jinro-major.html#link'],['개설학과 검색','대학별 개설학과 찾기','학교·과목설계','쎈진학','jinro-major.html#find'],['대학별 평가요소','학종 중심 대학별 평가 기준','지원전략','쎈진학'],['나의 학종 준비도','역량별 나의 준비 체크','지원전략','쎈진학'],['수시/정시 합불사례','실제 합격·불합격 사례 검색','지원전략','쎈진학']]
 };
 const toolTabs=document.getElementById('toolTabs'),toolGrid=document.getElementById('toolGrid');
 function renderTools(tab){
@@ -804,7 +804,7 @@ themeBtn.addEventListener('click',()=>{const r=document.documentElement; const d
 </script>
 <script src="auth.js?v=20271014c"></script>
 <script src="gnb.js?v=20261017a"></script>
-<script src="sen-ai.js?v=20261016c"></script>
+<script src="sen-ai.js?v=20261030b"></script>
 <script>
 /* 로그인 상태·역할에 따른 메인 개인화 */
 (function(){const A=window.SEN_AUTH;if(!A)return;const band=document.querySelector('.band'),strip=document.getElementById('meStrip');

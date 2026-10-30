@@ -54,24 +54,24 @@ function profile(d,s){
   const comp3=`<div class="rules" style="margin-top:8px">${C3.map(([n2,hit,tot])=>`<div class="rrow"><b>${n2}</b><span>근거 키워드 ${hit}/${tot}개 확인 · ${hit>=3?'기록 흐름이 보임':hit>=1?'근거 적음 — 상담에서 확인':'근거 부족 — 상담에서 확인'}</span></div>`).join('')}${rep>=4?`<div class="rrow" style="border-color:#C43B3B"><b style="color:#C43B3B">⚠ 키워드 반복</b><span>'${hope}' 관련 키워드가 세특 ${rep}과목에 반복됩니다. 모든 과목에 전공 키워드가 붙으면 연결성이 아니라 인위성으로 읽힐 수 있어요 (참고용 · 판단은 교사 확정)</span></div>`:''}<p class="hint2" style="margin:6px 0 0">세 역량 점검·반복 키워드 찾기는 단순 키워드 규칙이에요. 합성 데이터 200명에서 검증 중이며, 결과는 교사 확정 뒤에만 출처와 함께 공유됩니다.</p></div>`;
   const rec=(arr,cls)=>arr.map((c,i)=>`<div class="rec-item" data-rec="${cls}:${i}">${c.학년?`<b>${c.학년}학년 ${c.영역}${c.희망분야?' · 희망 '+c.희망분야:''}</b>`:c.학년과목?`<b>${c.학년과목}</b>`:`<b>${(i+1)}학년 행동특성</b>`}<p>${c.내용||c}</p></div>`).join('');
   return `<p class="reason">열람 사유: 담임 진로 상담 준비 (자동 기록)</p>
-  <h3 class="blk-h">진로 경로 타임라인 <span class="src src--syn">생기부</span></h3><div class="tl">${tl}</div>
-  <h3 class="blk-h">교과 등급 추이 <span class="src src--syn">생기부</span></h3>${grades}
+  <h3 class="blk-h">진로 경로 타임라인 <span class="src src--syn">학생부</span></h3><div class="tl">${tl}</div>
+  <h3 class="blk-h">교과 등급 추이 <span class="src src--syn">학생부</span></h3>${grades}
   <h3 class="blk-h">진로검사 6종 요약 <span class="src src--syn">커리어넷 형식 검사</span></h3>
   <div class="tcards">${cards.map((c,i)=>`<div class="tcard"><div class="tcard__h"><b>${c[0]}</b><button class="mini" data-exp="${i}" aria-expanded="false">펼치기</button></div><p>${c[1]}</p><div class="tcard__d" id="td${i}" hidden>${c[2]}</div><small>커리어넷 형식 · 합성 척도 · 검사일 ${t.검사일}</small></div>`).join('')}</div>
   <h3 class="blk-h">정합성 체크 <span class="src src--rule">규칙</span></h3><div class="rules">${rules}</div>
   <h3 class="blk-h">세 역량 점검표 · 반복 키워드 <span class="src src--rule">규칙</span></h3>${comp3}
-  <h3 class="blk-h"><button class="blk-tg" data-tg="rawBlk" aria-expanded="false">생기부 원문 (펼치기) <span class="src src--syn">생기부</span></button></h3>
+  <h3 class="blk-h"><button class="blk-tg" data-tg="rawBlk" aria-expanded="false">학생부 원문 (펼치기) <span class="src src--syn">학생부</span></button></h3>
   <div id="rawBlk" hidden><h4 class="raw-h">창의적 체험활동</h4><div id="rawC">${rec(d.창체,'c')}</div><h4 class="raw-h">3학년 세부능력·특기사항</h4><div id="rawS">${rec(d.세특,'s')}</div><h4 class="raw-h">행동특성 및 종합의견</h4><div id="rawH">${rec(d.행특,'h')}</div></div>`;
 }
 /* C2b · 사전 입력서 (마스터 플랜 한 장) */
 function masterPlan(d,s){
   const g=y=>{const o=d.학년별등급[y],v=G.map(k=>o[k]).filter(x=>x!=null);return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(1):'–';};
-  return `<p class="reason">학생이 상담 예약 시 미리 채운 사전 입력서입니다 · 내신·모의·최저·생기부 자가진단·카드를 한 장에 <span class="src src--syn">학생 작성</span></p>
+  return `<p class="reason">학생이 상담 예약 시 미리 채운 사전 입력서입니다 · 내신·모의·최저·학생부 자가진단·카드를 한 장에 <span class="src src--syn">학생 작성</span></p>
   <div class="ctable-w"><table class="ctbl"><tbody>
   <tr><th style="width:160px">내신 흐름</th><td>1학년 ${g('1학년')} → 2학년 ${g('2학년')} → 3학년 ${g('3학년')}</td></tr>
   <tr><th>모의고사</th><td>최근 3회 평균·편차는 학생 MY '정시 안정도'에서 동의 시 공유됩니다</td></tr>
   <tr><th>수능최저 자가평가</th><td>"2합 5는 가능, 3합 7은 빠듯해요" (학생 작성)</td></tr>
-  <tr><th>생기부 자가진단</th><td>세 문장 점검 — 수업 속 질문 ○ · 내 역할 ○ · 생각의 변화 △ (학생 작성)</td></tr>
+  <tr><th>학생부 자가진단</th><td>세 문장 점검 — 수업 속 질문 ○ · 내 역할 ○ · 생각의 변화 △ (학생 작성)</td></tr>
   <tr><th>핵심 탐구 활동</th><td>${d.세특[0]?((d.세특[0].내용||'').slice(0,70)+'…'):'–'}</td></tr>
   <tr><th>희망 수시 카드</th><td>${s.희망[2]||'–'} 계열 중심 4~6장 구상 · 탈락 원인 분산 여부 점검 요청</td></tr>
   <tr><th>상담에서 묻고 싶은 것</th><td>"최저 없는 카드를 하나 더 넣는 게 좋을까요?"</td></tr></tbody></table></div>

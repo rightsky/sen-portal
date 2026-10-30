@@ -1,4 +1,4 @@
-/* 우하단 고정 AI PoC 버튼 + 서비스 선택 시트 (07 PoC 명세 · 2026.10.16 재정리 : 개인정보 원칙 · md 변환기 · 지식저장소 · RAG 어시스턴트 · 생기부 AI 활용) : 모든 화면 공통 */
+/* 우하단 고정 AI PoC 버튼 + 서비스 선택 시트 (07 PoC 명세 · 2026.10.16 재정리 : 개인정보 원칙 · md 변환기 · 지식저장소 · RAG 어시스턴트 · 학생부 AI 활용) : 모든 화면 공통 */
 (function(){
 const css=`.senai-fab{position:fixed;right:22px;bottom:22px;z-index:90;display:inline-flex;align-items:center;gap:8px;padding:14px 20px;border-radius:999px;background:#2FA39B;color:#fff;font-weight:800;font-size:15px;box-shadow:0 8px 24px rgba(0,0,0,.22);transition:transform .2s}
 .senai-fab:hover{transform:translateY(-2px)}
@@ -24,7 +24,7 @@ const css=`.senai-fab{position:fixed;right:22px;bottom:22px;z-index:90;display:i
 @media (max-width:768px){.senai-fab{bottom:calc(84px + env(safe-area-inset-bottom));padding:11px 16px;font-size:14px}} /* 10-30 : 폰 하단 탭바를 가리지 않게 (R01 R02 R07) */
 @media (prefers-reduced-motion:reduce){.senai-p,.senai-sheet,.senai-fab{transition:none}}`;
 const st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
-const fab=document.createElement('button');fab.className='senai-fab';fab.innerHTML='✦ AI에게 묻기';fab.title='AI에게 묻기 (AI PoC : 공개 요강 질문하기 · 학생부 읽기 예시) · 10-30 노출명 변경';fab.setAttribute('aria-haspopup','dialog');document.body.appendChild(fab);
+const fab=document.createElement('button');fab.className='senai-fab';fab.innerHTML='✦ 진로진학 AI 챗봇';fab.title='진로진학 AI 챗봇 (AI PoC : 공개 요강 질문하기 · 학생부 읽기 예시) · 10-30 노출명 변경';fab.setAttribute('aria-haspopup','dialog');document.body.appendChild(fab);
 const sh=document.createElement('div');sh.className='senai-sheet';sh.innerHTML=`<div class="senai-p" role="dialog" aria-modal="true" aria-label="AI PoC 서비스 선택">
 <button class="senai-x" data-x aria-label="닫기">✕</button>
 <h2>어떤 서비스를 이용하시겠어요?</h2><p>AI PoC 네 기능 : 모두 근거와 기준일을 함께 보여주는 참고 도구예요.</p><a class="senai-priv" href="sen-ai-poc.html#priv">처음이시면 개인정보 원칙부터 읽어 주세요 →</a>
@@ -32,14 +32,14 @@ const sh=document.createElement('div');sh.className='senai-sheet';sh.innerHTML=`
 <a class="senai-c senai-c--md" href="sen-ai-poc.html#kb"><b>1. md 변환기</b><span>요강·자료집·보고서(hwp·docx·pdf)를 md로 변환합니다 · 변환 미리보기 · md 내려받기 · 지식저장소에 저장</span></a>
 <a class="senai-c senai-c--store" href="sen-ai-poc.html#store"><b>2. 지식저장소<span class="new">신규</span></b><span>md 변환기에서 저장한 문서를 모아 RAG가 검색하는 지식DB로 만듭니다 · 분류 · 정보 수정 · 내보내기·불러오기</span></a>
 <a class="senai-c senai-c--rag" href="sen-ai-poc.html#rag"><b>3. RAG 어시스턴트 (챗봇)</b><span>등록된 md 지식DB를 검색해 2028 대입 시행계획·제도 변화·학년별 준비를 출처와 함께 답합니다 · 모른다 카드</span></a>
-<div class="senai-c senai-c--rec"><a href="sen-ai-poc.html#rec" style="color:#fff;display:flex;flex-direction:column;gap:6px"><b>4. 생기부 AI 활용</b><span>세특·창체 기록을 비식별 처리해 가명·합성 데이터로 만든 뒤 학업·진로·공동체 역량으로 분석합니다</span></a><a class="sub" href="cns.html" data-cns>교사 로그인 · 선생님 상담 준비(우리 반 생기부 + 진로검사 브리프) →</a></div>
+<div class="senai-c senai-c--rec"><a href="sen-ai-poc.html#rec" style="color:#fff;display:flex;flex-direction:column;gap:6px"><b>4. 학생부 AI 활용</b><span>세특·창체 기록을 비식별 처리해 가명·합성 데이터로 만든 뒤 학업·진로·공동체 역량으로 분석합니다</span></a><a class="sub" href="cns.html" data-cns>교사 로그인 · 선생님 상담 준비(우리 반 학생부 + 진로검사 브리프) →</a></div>
 </div><p class="senai-note">AI 응답은 참고 자료이며 선생님 확정 뒤에만 판단이 됩니다.</p></div>`;
 document.body.appendChild(sh);
 /* 10-30 §9 행 53 (R02 R01 R07) : 학생·학부모·비로그인에게는 「질문하기 · 학생부 읽기(예시)」 2개만, md 변환·지식저장소는 교사·위원용 */
 const audience=()=>{const A=window.SEN_AUTH,r=A&&A.logged&&A.logged()?A.role:'guest';return ['teacher','counselor','schooladmin','office'].includes(r)?'staff':'public';};
 const tidy=()=>{const pub=audience()==='public';sh.querySelectorAll('.senai-c--md,.senai-c--store').forEach(c=>c.hidden=pub);
  const rag=sh.querySelector('.senai-c--rag b');if(rag)rag.textContent=pub?'질문하기 (공개 요강)':'3. RAG 어시스턴트 (챗봇)';
- const rec=sh.querySelector('.senai-c--rec b');if(rec)rec.textContent=pub?'학생부 읽기 (예시로 체험)':'4. 생기부 AI 활용';
+ const rec=sh.querySelector('.senai-c--rec b');if(rec)rec.textContent=pub?'학생부 읽기 (예시로 체험)':'4. 학생부 AI 활용';
  const h=sh.querySelector('h2+p');if(h)h.textContent=pub?'공개 요강으로 답하는 질문하기와, 예시 학생부로 해 보는 학생부 읽기예요 · 실제 학생부 입력은 순차 오픈 뒤에':'AI PoC 네 기능 : 모두 근거와 기준일을 함께 보여주는 참고 도구예요.';};
 const open=()=>{tidy();sh.classList.add('is-on');const f=sh.querySelector('.senai-c a,.senai-c');if(f)f.focus();};
 const close=()=>{sh.classList.remove('is-on');fab.focus();};
