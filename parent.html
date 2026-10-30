@@ -189,7 +189,7 @@ let kid=0;
 
 /* ===== 데이터 (합성) ===== */
 const KIDS=[
- {name:'강지우',grade:'고3',cls:'서울한빛고 3-2',stage:'지원 전략',next:'수시 원서접수 2027.9.20(월) 시작',gen2028:false},
+ {name:'강지우',grade:'고3',cls:'서울한빛고 3-2',stage:'지원 전략',next:'수시 원서접수 2027.9.20(월) 시작',gen2028:true},
  {name:'김규민',grade:'고1',cls:'서울○○고 1-5',stage:'기초 설계',next:'2학기 선택과목 수요조사 10.15(금) 마감',gen2028:true}
 ];
 /* 잠금 3종: stage(단계 잠금·오픈 시점) / consent(동의 잠금·요청 버튼) / policy(정책 잠금·버튼 없음) */
@@ -212,7 +212,7 @@ const GUIDE={
  '고2':{stage:'구체화',core:['계열 선택은 과목 이수 계획과 함께 봐야 합니다.','활동은 개수가 아니라 연결이 중요합니다.','7월 3학년 선택 과목 최종 확정 전에, 희망 대학 권장과목과 수능 응시 과목을 자녀와 함께 확인해요.'],
   q:['지금 과목 중에 제일 너답다고 느끼는 건?','관심 학과에서 뭘 배우는지 찾아봤어?','이번 학기 활동 중 하나만 깊게 간다면?'],
   no:['전공을 지금 확정하라고 요구하지 않기','성적 하나로 계열을 바꾸자고 하지 않기']},
- '고1':{stage:'기초 설계',core:['내신 5등급제 · 통합형 수능 첫 세대 — 비교 기준이 다릅니다.','선택과목 설계가 1학년 겨울의 가장 큰 결정입니다.','6~7월 2학년 선택 과목 최종 신청이 1학년의 가장 중요한 시기예요. 학교 설명회(5월)에 참석해 두세요.'],
+ '고1':{stage:'기초 설계',core:['내신 5등급제 · 통합형 수능 세대 : 옛 기준과 비교하지 마세요.','선택과목 설계가 1학년 겨울의 가장 큰 결정입니다.','6~7월 2학년 선택 과목 최종 신청이 1학년의 가장 중요한 시기예요. 학교 설명회(5월)에 참석해 두세요.'],
   q:['어떤 수업 시간이 제일 빨리 가?','내년에 꼭 들어보고 싶은 과목 있어?','진로검사 결과에서 의외였던 건 뭐야?'],
   no:['옛 9등급제 기준으로 등급을 해석하지 않기','1학년 성적으로 가능/불가능을 단정하지 않기']}
 };
@@ -306,10 +306,10 @@ function renderMain(){
  </section>
 
  <section class="section card">
-  <h2>상담</h2>
-  <p class="sub">동석은 자녀·선생님 동의 시 확정 · 방문·화상 한도는 학기당 1회(자녀 단위 합산) · 잔여 1회</p>
-  <div class="crow"><b>자녀 상담 동석</b><span>9.8(월) 15:00 · 수시 지원 전략 · 담임 선생님</span><span class="badge badge--wait">자녀 동의 대기</span><span class="sp"></span><button class="btn btn--line" style="padding:8px 16px;font-size:.78rem" data-toast="동석 요청을 취소했어요">요청 취소</button></div>
-  <div class="crow"><b>심층 상담 (학부모 단독)</b><span>신청 내역 없음</span><span class="sp"></span><button class="btn btn--primary" data-toast="심층 상담 신청 — 유형·일시 선택 화면은 상담 예약 흐름(06 명세)을 따릅니다">심층 상담 신청 (방문·화상)</button></div>
+  <h2 data-mk="up1030" data-mk-note="§9 행 27·30 · 동석 요청 삭제, 센터·학교 상담 구분 (R11 R07)">상담</h2>
+  <p class="sub">센터 상담 방문·화상은 학기당 1회(자녀 단위 합산) · 잔여 1회 · 학교 선생님 상담은 학교 일정에 따라요</p>
+  <div class="crow"><b>학교 선생님 상담</b><span>담임 김민정 선생님 · 학교 상담 주간 9.13~9.17</span><span class="sp"></span><button class="btn btn--line" style="padding:8px 16px;font-size:.78rem" data-toast="학교 상담은 학교 안내에 따라 신청해요 · 상담 결과는 선생님이 확정한 요약만 보여요">학교 상담 안내</button></div>
+  <div class="crow"><b>센터 상담 (학부모)</b><span>신청 내역 없음</span><span class="sp"></span><button class="btn btn--primary" data-toast="심층 상담 신청 — 유형·일시 선택 화면은 상담 예약 흐름(06 명세)을 따릅니다">심층 상담 신청 (방문·화상)</button></div>
   <p style="margin:6px 0 0;font-size:.76rem;color:var(--ink-3)">확정되면 알림으로 안내해 드려요 · 상담 결과는 선생님이 확정한 요약본만 표시됩니다</p>
  </section>
 
@@ -377,7 +377,7 @@ function briefHtml(){
  <p class="sub">교사·학생 화면과 같은 데이터를 낮은 밀도로 — 숫자보다 의미를 먼저</p>
  <div class="brief">
   <div class="bcard"><span>전체 모집인원</span><b>348,789명</b><p>작년보다 +3,072명. 모집 규모는 줄지 않았어요.</p></div>
-  <div class="bcard"><span>수시 · 정시</span><b>80.8% · 19.2%</b><p>10명 중 8명은 수시로 선발 — 학교생활 기록이 그만큼 중요해요.</p></div>
+  <div class="bcard"><span>수시 · 정시</span><b>80.8% · 19.2%</b><p>2028학년도 전체 모집인원의 80.8%를 수시로 뽑아요 · 학교생활 기록이 그만큼 중요해요.</p></div>
   <div class="bcard"><span>학생부종합</span><b>+2,773명</b><p>종합전형이 늘었어요. 활동의 연결이 평가의 중심입니다.</p></div>
  </div>
  <p style="margin:12px 0 0;font-size:.76rem;color:var(--ink-3)">제도 설명은 교육부 확정안 기준 · 대학별 반영 방식은 최종 모집요강을 확인하세요</p>`;

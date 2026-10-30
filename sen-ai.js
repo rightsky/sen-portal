@@ -35,7 +35,13 @@ const sh=document.createElement('div');sh.className='senai-sheet';sh.innerHTML=`
 <div class="senai-c senai-c--rec"><a href="sen-ai-poc.html#rec" style="color:#fff;display:flex;flex-direction:column;gap:6px"><b>4. 생기부 AI 활용</b><span>세특·창체 기록을 비식별 처리해 가명·합성 데이터로 만든 뒤 학업·진로·공동체 역량으로 분석합니다</span></a><a class="sub" href="cns.html" data-cns>교사 로그인 · 선생님 상담 준비(우리 반 생기부 + 진로검사 브리프) →</a></div>
 </div><p class="senai-note">AI 응답은 참고 자료이며 선생님 확정 뒤에만 판단이 됩니다.</p></div>`;
 document.body.appendChild(sh);
-const open=()=>{sh.classList.add('is-on');const f=sh.querySelector('.senai-c a,.senai-c');if(f)f.focus();};
+/* 10-30 §9 행 53 (R02 R01 R07) : 학생·학부모·비로그인에게는 「질문하기 · 학생부 읽기(예시)」 2개만, md 변환·지식저장소는 교사·위원용 */
+const audience=()=>{const A=window.SEN_AUTH,r=A&&A.logged&&A.logged()?A.role:'guest';return ['teacher','counselor','schooladmin','office'].includes(r)?'staff':'public';};
+const tidy=()=>{const pub=audience()==='public';sh.querySelectorAll('.senai-c--md,.senai-c--store').forEach(c=>c.hidden=pub);
+ const rag=sh.querySelector('.senai-c--rag b');if(rag)rag.textContent=pub?'질문하기 (공개 요강)':'3. RAG 어시스턴트 (챗봇)';
+ const rec=sh.querySelector('.senai-c--rec b');if(rec)rec.textContent=pub?'학생부 읽기 (예시로 체험)':'4. 생기부 AI 활용';
+ const h=sh.querySelector('h2+p');if(h)h.textContent=pub?'공개 요강으로 답하는 질문하기와, 예시 학생부로 해 보는 학생부 읽기예요 · 실제 학생부 입력은 순차 오픈 뒤에':'AI PoC 네 기능 : 모두 근거와 기준일을 함께 보여주는 참고 도구예요.';};
+const open=()=>{tidy();sh.classList.add('is-on');const f=sh.querySelector('.senai-c a,.senai-c');if(f)f.focus();};
 const close=()=>{sh.classList.remove('is-on');fab.focus();};
 fab.addEventListener('click',open);
 sh.addEventListener('click',e=>{if(e.target===sh||e.target.closest('[data-x]'))close();});
