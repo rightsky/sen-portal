@@ -295,11 +295,11 @@ const TODO=[
 ];
 const SHARES=[
  {who:'김서연',cls:'3-2',what:'진로검사 결과 · 과목 설계',when:'9.5 공유',badge:'학생 승인',kind:'설계',
-  detail:{'진로검사':'직업가치관검사 상위: 사회봉사 · 자율성 (2027.8 실시)','희망 경로':'사회과학 → 심리학과 · 사회학과 비교 중','과목 설계':'3-1 사회·문화 / 3-2 심화 국어 선택 · 확률과 통계 유지','사전 메모':'상담 시 "지원 대학 수준이 맞는지" 질문 예정'}},
+  detail:{'진로검사':'직업가치관검사 상위: 사회봉사 · 자율성 (2027.8 실시)','희망 경로':'사회과학 → 심리학과 · 사회학과 비교 중','과목 설계':'3-1 사회와 문화 / 3-2 심화 국어 선택 · 확률과 통계 유지','사전 메모':'상담 시 "지원 대학 수준이 맞는지" 질문 예정'}},
  {who:'윤태양',cls:'3-2',what:'진로 경로(자연 계열 미정)',when:'9.4 공유',badge:'학생 승인',kind:'진로',
   detail:{'희망 경로':'자연 계열 미정 · 화학/생명 사이에서 탐색 중','진로검사':'흥미검사 RIA형 (2027.5 실시)','최근 활동':'활동 성장 노트 2건 작성 (탐구 1 · 독서 1)'}},
  {who:'강지우',cls:'3-2',what:'과목 설계 · 상담 한정 공유',when:'9.3 공유 · 상담 종결 30일 후 만료',badge:'상담 한정',kind:'설계',
-  detail:{'공유 범위':'이번 상담 1건 한정 (수시 지원 전략)','과목 설계':'미적분 · 물리학Ⅱ 선택','사전 질문':'"최저 3합 7 가능할까요" — 전문시스템 사전정보에 병합됨'}}
+  detail:{'공유 범위':'이번 상담 1건 한정 (수시 지원 전략)','과목 설계':'미적분Ⅱ · 역학과 에너지 선택','사전 질문':'"최저 3합 7 가능할까요" — 전문시스템 사전정보에 병합됨'}}
 ];
 const RES=[
  {t:'2028 진학지도 자료집',p:'대교협 주요사항 + 서울 주요대 변동 정리 · 교사 인증 열람분 전문(全文)',a:'내려받기',href:'library.html'},
@@ -326,7 +326,7 @@ const REQS=[
  {id:'r2',who:'최유진',role:'진로전담 교사 신청',scope:'진로 상담실',when:'8.18',src:'학교 관리자 편성',note:'교원 확인 ✓ · 담당 범위는 관리자가 지정'},
  {id:'r3',who:'이정민',role:'담임교사 신청 (자기 선언)',scope:'2학년 3반',when:'9.2',src:'편성표 불일치',note:'나이스 편성표에 2-3 담임은 다른 교사 · 사유 확인 뒤 반려 또는 범위 수정'}];
 const TEACHERS=[
- {n:'김민정',kind:'반 담임',scope:'3학년 1반',perm:'담당 반 학생만'},
+ {n:'김민정',kind:'반 담임',scope:'3학년 2반',perm:'담당 반 학생만'},
  {n:'박성호',kind:'반 담임',scope:'3학년 4반',perm:'담당 반 학생만'},
  {n:'최유진',kind:'과목 교사',scope:'수학 · 3학년 1·2·4반',perm:'담당 과목 수강생만'},
  {n:'이재원',kind:'진학부장',scope:'학급명단 전체보기',perm:'전체 · 사유 기록',full:true}];
@@ -351,7 +351,7 @@ function adminHtml(){const mode=authMode();
   <div style="display:flex;flex-direction:column;gap:20px">
    <div class="card"><h2>② 교사 등록</h2><p class="sub">기본값은 담당 학생만 보임 · 전체보기는 여기서만 설정 · UI·DB·API 3중 권한 동일 적용</p>${tbl}<div style="margin-top:10px"><button class="btn btn--line" style="padding:8px 14px;font-size:13px" data-toast="교사 추가: 교육디지털원패스로 가입한 교원 중에서 고릅니다 (새 계정 생성 없음)">+ 교사 추가</button></div></div>
    <div class="card"><h2>③ 학생 등록 · 권한 매핑</h2><p class="sub">학년·반 명단을 일괄 등록하면 담임별로 자동 배정 · 교사는 매핑된 담당 학생만 조회 · 모든 열람은 누가·언제·누구를 기록</p>
-    <div class="kpis" style="grid-template-columns:repeat(3,1fr)"><div class="kpi"><span>3학년 1반</span><b>32명</b><span class="d">담임 김민정 매핑</span></div><div class="kpi"><span>미배정 학생</span><b>0명</b><span class="d">전 학급 매핑 완료</span></div><div class="kpi"><span>NEIS 자료</span><b>적재 완료</b><span class="d">무결성 게이트 통과 · 9.1</span></div></div>
+    <div class="kpis" style="grid-template-columns:repeat(3,1fr)"><div class="kpi"><span>3학년 2반</span><b>25명</b><span class="d">담임 김민정 매핑</span></div><div class="kpi"><span>미배정 학생</span><b>0명</b><span class="d">전 학급 매핑 완료</span></div><div class="kpi"><span>NEIS 자료</span><b>적재 완료</b><span class="d">무결성 게이트 통과 · 9.1</span></div></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="btn btn--line" style="padding:8px 14px;font-size:13px" data-toast="학년·반 명단 일괄 등록(xlsx) → 담임 자동 배정 · 목업">명단 일괄 등록</button><button class="btn btn--line" style="padding:8px 14px;font-size:13px" data-toast="학생부·비교과·중간고사 적재는 전문시스템(SEN 진학프로그램)에서 · 전송 건별 감사로그">NEIS 자료 등록 (전문시스템) ›</button></div></div>
   </div>
  </div></section>`;}
@@ -384,7 +384,7 @@ function classHtml(){const masked=false;
  const rows=CLASS.map(c=>`<tr><td>${c.no}</td><td><b>${c.n}</b></td><td>${c.band}</td><td>${/누락|오류/.test(c.load)?`<span class="badge badge--warn">${c.load}</span>`:c.load}</td><td>${c.last}</td><td>${/✓/.test(c.plan)?`<span style="color:var(--ok);font-weight:700">${c.plan}</span>`:c.plan}</td><td>${/대기/.test(c.judge)?`<a href="#" data-view="hitl" style="color:var(--brand);font-weight:700">${c.judge}</a>`:c.judge}</td><td><a class="btn btn--line" href="cns.html#student" style="padding:5px 10px;font-size:12px">브리프</a> <button class="btn btn--line" style="padding:5px 10px;font-size:12px" data-toast="성적 원문·판정 결과는 전문시스템에서 (2FA · 사유 기록)">전문시스템 ›</button></td></tr>`).join('');
  return `<section class="section"><h2 class="t">반 관리 <span class="badge badge--teach">담당 학생만</span></h2><p class="s">${state==='head'?'진학부장 전체보기 승인 상태 · 담당 반 밖 학생 열람은 사유 입력이 필수':'담임 반 32명 중 공유·상담 이력이 있는 학생 7명 표시 (예시)'} · 내신은 등급대만, 판정은 상태만 보여요. 원문과 판정 결과는 전문시스템에서</p>
  <div class="share__notice">이 목록의 모든 조회·열람은 암호화 감사로그에 자동 기록됩니다 (누가·언제·누구를) · 학년도 전환(3.1) 시 담당 범위가 자동으로 바뀌어요</div>
- <div class="kpis" style="grid-template-columns:repeat(4,1fr);margin:14px 0"><div class="kpi"><span>담당 학생</span><b>32명</b><span class="d">3학년 2반</span></div><div class="kpi"><span>적재 이상</span><b>2명</b><span class="d">누락 1 · 격리 1</span></div><div class="kpi"><span>판정 승인 대기</span><b>${pendingHitl()}건</b><span class="d">HITL 탭에서 검토</span></div><div class="kpi"><span>과목 계획 미작성</span><b>1명</b><span class="d">권장과목 미충족 3명</span></div></div>
+ <div class="kpis" style="grid-template-columns:repeat(4,1fr);margin:14px 0"><div class="kpi"><span>담당 학생</span><b>25명</b><span class="d">3학년 2반</span></div><div class="kpi"><span>적재 이상</span><b>2명</b><span class="d">누락 1 · 격리 1</span></div><div class="kpi"><span>판정 승인 대기</span><b>${pendingHitl()}건</b><span class="d">HITL 탭에서 검토</span></div><div class="kpi"><span>과목 계획 미작성</span><b>1명</b><span class="d">권장과목 미충족 3명</span></div></div>
  <table class="btable"><tr><th>번호</th><th>이름</th><th>내신(등급대)</th><th>자료 적재</th><th>최근 상담</th><th>과목 계획</th><th>판정 상태</th><th></th></tr>${rows}</table>
  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"><button class="btn btn--line" style="padding:8px 14px;font-size:13px" data-toast="NEIS 자료 등록(Plan A : NEIS 다운로드 → 표준 템플릿 업로드 · 무결성 게이트)은 전문시스템에서 · 담임 또는 학교관리자">NEIS 자료 등록 ›</button><button class="btn btn--line" style="padding:8px 14px;font-size:13px" data-toast="진급 처리는 학년도 전환(3.1) 때 학교관리자가 일괄 처리">진급 처리</button><a class="btn btn--line" href="study-plan.html#check" style="padding:8px 14px;font-size:13px">학생 학업설계 점검 화면 보기</a></div>
  <p class="caption">과목 계획 열은 학생이 학업설계에서 공유 승인한 계획과 희망 학과 권장과목을 대조한 결과예요 (학교 지정 과목 제외)</p>
@@ -508,7 +508,7 @@ function bindExtra(){
   if(k==='done'){const t=document.querySelector(`[data-asgt="${id}"]`);if(!t||!t.value.trim()){showToast('답변을 입력해 주세요');return;}AS[id]='done';AS[id+'_t']=t.value.trim();asSave();showToast('답변을 전달했어요 · [상담 선생님 답변]으로 표시 · 상담 원장 기록');renderAll();return;}
   if(k==='rej'){AS[id]='rej';asSave();showToast('반려 · 정보원 운영 담당자가 재배정해요 (사유 기록)');renderAll();return;}
   asgConfirm().then(()=>{AS[id]='acc';asSave();showToast('배정을 수락했어요 · 사전자료·질문이 열렸어요 (열람 기록)');renderAll();});}));
- document.querySelectorAll('[data-asgai]').forEach(b=>b.addEventListener('click',()=>{const t=document.querySelector(`[data-asgt="${b.dataset.asgai}"]`);if(t&&!t.value.trim())t.value='안녕하세요. 보내주신 검사 결과와 관심 학과를 함께 봤어요.\n\n1) 두 학과 모두 수학 기반이 중요해요. 통계학과는 확률과 통계·미적분, 컴퓨터공학과는 미적분·정보 과목이 권장과목으로 자주 제시됩니다.\n2) 2학년 2학기에 미적분Ⅰ·확률과 통계를 넣는 선택은 두 학과 모두에 열려 있는 구성이에요.\n3) 다음 상담 전까지: 학업설계 시뮬레이션에서 권장과목 충족을 확인하고, 두 학과 전공 체험 중 하나에 참여해 보세요.\n\n(초안 · 상담교사 검토 후 전달)';}));
+ document.querySelectorAll('[data-asgai]').forEach(b=>b.addEventListener('click',()=>{const t=document.querySelector(`[data-asgt="${b.dataset.asgai}"]`);if(t&&!t.value.trim())t.value='안녕하세요. 보내주신 검사 결과와 관심 학과를 함께 봤어요.\n\n1) 두 학과 모두 수학 기반이 중요해요. 통계학과는 확률과 통계·미적분Ⅱ, 컴퓨터공학과는 미적분Ⅱ·정보 과목이 권장과목으로 자주 제시됩니다.\n2) 2학년 2학기에 미적분Ⅰ·확률과 통계를 넣는 선택은 두 학과 모두에 열려 있는 구성이에요.\n3) 다음 상담 전까지: 학업설계 시뮬레이션에서 권장과목 충족을 확인하고, 두 학과 전공 체험 중 하나에 참여해 보세요.\n\n(초안 · 상담교사 검토 후 전달)';}));
  document.querySelectorAll('[data-done]').forEach(b=>{if(b.dataset.bound)return;b.dataset.bound='1';if(b.textContent==='답변')b.addEventListener('click',()=>{view='assign';localStorage.setItem('sen-teacher-view',view);renderAll();});});
  document.querySelectorAll('[data-deliver]').forEach(c=>c.addEventListener('change',()=>{HS[c.dataset.deliver+'_d']=c.checked;hsSave();showToast(c.checked?'학생에게 전달 · [선생님 의견]으로 표시 · 상담 원장 기록':'전달을 취소했어요');}));
  document.querySelectorAll('[data-done]').forEach(b=>{if(b.dataset.bound)return;b.dataset.bound='1';if(b.textContent==='검토')b.addEventListener('click',()=>{if(PRO_SPLIT){proEnter('판정 승인(HITL) 검토');return;}view='hitl';localStorage.setItem('sen-teacher-view',view);renderAll();});});
@@ -519,12 +519,12 @@ function renderZ1(){
  if(state==='guest'){z1.hidden=true;gnb.hidden=true;return;}
  z1.hidden=false;gnb.hidden=false;
  const role={pending:'교사(재직 확인) · 학교 승인 대기',homeroom:'담임교사',subject:'과목교사(사회)',head:'진학부장',counselor:'정보원 상담교사(위촉)',expired:'정보원 상담교사(위촉)',schooladmin:'학교관리자(센진학 담당자)'}[state];
- const scope={pending:'기본 모드 · 학생 공유 데이터',homeroom:'서울○○고 3학년 2반',subject:'서울○○고 사회·문화 수강생',head:'서울○○고 3학년 전체(전체보기 승인)',counselor:'서울진로진학정보센터 배정',expired:'—',schooladmin:'서울○○고 전체 · 승인·등록·매핑'}[state];
+ const scope={pending:'기본 모드 · 학생 공유 데이터',homeroom:'서울한빛고 3학년 2반',subject:'서울한빛고 사회와 문화 수강생',head:'서울한빛고 3학년 전체(전체보기 승인)',counselor:'서울진로진학정보센터 배정',expired:'—',schooladmin:'서울한빛고 전체 · 승인·등록·매핑'}[state];
  let badges=authMode()==='A'?`<span class="badge badge--ok">GPKI 인증서 ✓</span><span class="badge badge--ok">관리자 승인 ✓</span><span class="badge badge--gray" data-sess-left>세션 ${sessLeft()}</span>`:`<span class="badge badge--ok">교육디지털원패스 ✓</span><span class="badge badge--ok">관리자 승인 ✓</span><span class="badge badge--gray">2FA 승인·식별 화면 진입 시</span><span class="badge badge--gray" data-sess-left>세션 ${sessLeft()}</span>`;
  if(state==='schooladmin')badges+=`<span class="badge badge--ok">승인권</span>`;
  if(state==='counselor')badges+=`<span class="badge badge--wait">위촉 2028.3.31까지</span>`;
  if(state==='expired')badges=`<span class="badge badge--warn">권한이 회수되었습니다 · 재위촉 후 이용</span>`;
- body.innerHTML=`<b>${(window.SEN_AUTH&&SEN_AUTH.logged()&&SEN_AUTH.name)||'박선우'} 선생님</b><span class="sep">|</span><span>${scope}</span><span class="sep">|</span><span class="badge badge--teach">${role}</span>${badges}`;
+ body.innerHTML=`<b>${(window.SEN_AUTH&&SEN_AUTH.logged()&&SEN_AUTH.name)||'김민정'} 선생님</b><span class="sep">|</span><span>${scope}</span><span class="sep">|</span><span class="badge badge--teach">${role}</span>${badges}`;
 }
 
 /* ===== 본문 ===== */

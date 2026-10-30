@@ -189,7 +189,7 @@ let kid=0;
 
 /* ===== 데이터 (합성) ===== */
 const KIDS=[
- {name:'김규리',grade:'고3',cls:'서울○○고 3-2',stage:'지원 전략',next:'수시 원서접수 2027.9.20(월) 시작',gen2028:false},
+ {name:'강지우',grade:'고3',cls:'서울한빛고 3-2',stage:'지원 전략',next:'수시 원서접수 2027.9.20(월) 시작',gen2028:false},
  {name:'김규민',grade:'고1',cls:'서울○○고 1-5',stage:'기초 설계',next:'2학기 선택과목 수요조사 10.15(금) 마감',gen2028:true}
 ];
 /* 잠금 3종: stage(단계 잠금·오픈 시점) / consent(동의 잠금·요청 버튼) / policy(정책 잠금·버튼 없음) */
@@ -230,7 +230,7 @@ function renderMain(){
  if(state==='before'||state==='waiting'||state==='unlinked'){
   const head=state==='waiting'
    ?(linkPath==='school'?`<h2>학교 확인을 기다리고 있어요</h2><p>담임 선생님이 보호자 관계를 확인한 뒤 학교관리자가 연결을 승인합니다 (1~3일).<br>승인되면 자녀에게도 연결 알림이 가요.</p><div class="badge badge--wait" style="margin-bottom:18px">요청 보냄 · 담임 확인 대기 → 학교관리자 승인</div><div><button class="btn btn--line" data-toast="요청을 취소했어요" data-lpreset>요청 취소</button></div>`
-   :linkPath==='neis'?`<h2>자녀 동의를 기다리고 있어요</h2><p>나이스 보호자 정보와 일치해 자녀 <b>김서울</b>에게 연결 알림을 보냈습니다.<br>열람 범위는 자녀가 정해요 · 48시간 내 응답이 없으면 다시 요청할 수 있어요.</p><div class="badge badge--wait" style="margin-bottom:18px">나이스 대조 ✓ · 자녀 동의 대기</div><div><button class="btn btn--line" data-toast="자녀에게 알림을 다시 보냈어요">알림 다시 보내기</button></div>`
+   :linkPath==='neis'?`<h2>자녀 동의를 기다리고 있어요</h2><p>나이스 보호자 정보와 일치해 자녀 <b>강지우</b>에게 연결 알림을 보냈습니다.<br>열람 범위는 자녀가 정해요 · 48시간 내 응답이 없으면 다시 요청할 수 있어요.</p><div class="badge badge--wait" style="margin-bottom:18px">나이스 대조 ✓ · 자녀 동의 대기</div><div><button class="btn btn--line" data-toast="자녀에게 알림을 다시 보냈어요">알림 다시 보내기</button></div>`
    :`<h2>자녀 승인을 기다리고 있어요</h2><p>자녀 화면에 연결 요청 알림을 보냈습니다.<br>24시간 내 승인이 없으면 코드를 재발급해 주세요.</p><div class="badge badge--wait" style="margin-bottom:18px">요청 보냄 9.6 20:30 · 자녀 응답 대기</div><div><button class="btn btn--line" data-toast="초대코드를 재발급했어요 · 유효 24시간">코드 재발급</button></div>`)
    :state==='unlinked'
    ?`<h2>자녀가 연결을 해제했어요</h2><p>자녀가 직접 연결을 해제했습니다. 다시 보려면 자녀에게 새 초대코드를 받아 연결해 주세요.</p>${gateForm()}`
@@ -365,7 +365,7 @@ function bindGate(){
  if(n)n.addEventListener('click',()=>{const A=window.SEN_AUTH;
   if(!A||!A.logged()){A&&A.open();showToast('먼저 로그인하세요 (교육디지털원패스)');return;}
   if(!A.need(3,'나이스 보호자 확인'))return;
-  A.stepUp('나이스 보호자 정보 대조').then(()=>go('나이스 보호자 정보와 일치 · 자녀 김서울(서울한빛고 2)에게 연결 알림 · 자녀 동의 대기'));});
+  A.stepUp('나이스 보호자 정보 대조').then(()=>go('나이스 보호자 정보와 일치 · 자녀 강지우(서울한빛고 3-2)에게 연결 알림 · 자녀 동의 대기'));});
  const sc=document.getElementById('btnSchool');
  if(sc)sc.addEventListener('click',()=>{
   if(!document.getElementById('scSchool').value.trim()||!document.getElementById('scKid').value.trim()){showToast('자녀 학교와 이름을 입력하세요');return;}

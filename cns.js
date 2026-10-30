@@ -3,7 +3,7 @@
 const D=window.CNS_DATA;const $=id=>document.getElementById(id);
 const K='sen-cns-v1';let P=JSON.parse(localStorage.getItem(K)||'{"dec":{},"share":{},"edit":{}}');const save=()=>localStorage.setItem(K,JSON.stringify(P));
 const DETAIL=Object.fromEntries(D.상세.map(d=>[d.id,d]));
-const CLS3=D.학생.filter(s=>s.반===3).sort((a,b)=>a.번호-b.번호);
+const CLS3=D.학생.filter(s=>s.반===2).sort((a,b)=>a.번호-b.번호);
 let role='담임',evalMode=false,selId=CLS3.slice().sort((a,b)=>b.우선점수-a.우선점수)[0].id,tab='프로파일',sort='priority',filter='';
 const T=['프로파일','사전 입력서','상담 브리프','공유'];
 const stBadge=st=>({'초안':['초안','st--draft'],'검토 중':['검토 중','st--rev'],'확정':['확정','st--ok2'],'학생 공유':['학생 공유','st--share']}[st]||[st,'st--draft']);

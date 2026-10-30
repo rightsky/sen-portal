@@ -11,7 +11,7 @@ const policy=()=>lsGet('sen-ops-admin-v1',{})||{};
 const twoFA=why=>(authMode()==='B'&&window.SEN_AUTH?SEN_AUTH.stepUp(why):confirmAdmin(why));
 const pad=n=>String(n).padStart(2,'0');
 const now=()=>{const d=new Date();return `${d.getMonth()+1}.${d.getDate()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;};
-const teacherName=()=>(window.SEN_AUTH&&SEN_AUTH.logged()&&SEN_AUTH.name)||'박선우';
+const teacherName=()=>(window.SEN_AUTH&&SEN_AUTH.logged()&&SEN_AUTH.name)||'김민정';
 const gate=(t,p)=>`<div class="gate"><h2>${t}</h2><p>${p}</p></div>`;
 
 /* ── 스타일 (6단계 전용 · 모바일 1열 · 터치 44px) ── */
@@ -147,9 +147,9 @@ const PURPOSE={prep:'상담 준비',ev:'판정 근거',cls:'학급 지도'};
 /* 학생 (우리 반 7명 · CLASS 보강) · 등급대는 bn(막대용)으로만 쓰고 숫자는 화면에 내지 않음 */
 const STU_X={강지우:{bn:2.3,min:'충족 가능성 보통 (2합 5)',act:3},김서연:{bn:3.2,min:'해당 없음 (최저 없는 전형 위주)',act:2},박서준:{bn:2.1,min:'충족 가능성 낮음 (2합 5) · 점검',act:2},윤태양:{bn:4.1,min:'점검 필요 (지원계획 미작성)',act:1},이하은:{bn:1.4,min:'충족 가능성 높음 (3합 6)',act:4},정우진:{bn:3.3,min:'점검 필요 (적재 오류)',act:1},최민준:{bn:2.2,min:'충족 가능성 높음 (2합 4)',act:3}};
 const UNIS=[
- {k:'한국대',t:'한국대 · 학생부종합',band:'1~2등급대',bn:1.8,min:'최저 없음',act:2,actT:'전공 연계 활동 2건 이상 권장',req:'권장과목 : 미적분 · 확률과 통계',judge:'김하늘 적정 (겸직 제한 건)'},
- {k:'국민대',t:'국민대 · 학생부종합(학교생활우수자)',band:'2등급대 중앙',bn:2.3,min:'최저 없음',act:3,actT:'전공 연계 활동 3건 안팎',req:'권장과목 : 사회·문화 · 확률과 통계',judge:'강지우 AI 초안 「적정」'},
- {k:'한강대',t:'한강대 · 학생부교과',band:'전년 70%컷 1.9',bn:1.9,min:'2합 5',act:0,actT:'비교과 미반영',req:'권장과목 : 미적분',judge:'박서준 AI 초안 「소신」'},
+ {k:'한국대',t:'한국대 · 학생부종합',band:'1~2등급대',bn:1.8,min:'최저 없음',act:2,actT:'전공 연계 활동 2건 이상 권장',req:'권장과목 : 미적분Ⅱ · 확률과 통계',judge:'김하늘 적정 (겸직 제한 건)'},
+ {k:'국민대',t:'국민대 · 학생부종합(학교생활우수자)',band:'2등급대 중앙',bn:2.3,min:'최저 없음',act:3,actT:'전공 연계 활동 3건 안팎',req:'권장과목 : 사회와 문화 · 확률과 통계',judge:'강지우 AI 초안 「적정」'},
+ {k:'한강대',t:'한강대 · 학생부교과',band:'전년 70%컷 1.9',bn:1.9,min:'2합 5',act:0,actT:'비교과 미반영',req:'권장과목 : 미적분Ⅱ',judge:'박서준 AI 초안 「소신」'},
  {k:'서울미래대',t:'서울미래대 · 논술',band:'논술 상위 15% 수준',bn:2.5,min:'3합 6',act:2,actT:'논술 모의 2회 이상',req:'해당 없음',judge:'이하은 AI 초안 「안정」'},
  {k:'서울과기대',t:'서울과기대 · 정시(수능위주)',band:'환산점 v2.1 기준',bn:2.4,min:'해당 없음 (수능 100%)',act:0,actT:'비교과 미반영',req:'해당 없음',judge:'정우진 AI 초안 「보류」'}];
 const BGS={dist:{t:'3개년 합격자 분포 (합성 · 순도 0.6)',band:'2등급대 중앙',bn:2.2,min:'전형별 상이',act:2.6,actT:'평균 2.6건',req:'평균 4/5',judge:'해당 없음'},
@@ -192,7 +192,7 @@ function bindCompare(){
 const SK='sen-stats-v1';
 let ST=Object.assign({scope:null,blocks:['apply','rate'],period:'2',to:'principal',preview:false},lsGet(SK,{}));
 const stSave=()=>lsSet(SK,ST);
-const SCOPES={cls:{t:'우리 반',sub:'3학년 2반 · 2027.2 졸업 32명',roles:['homeroom','head','schooladmin']},grade:{t:'학년 (반 간 비교)',sub:'3학년 8학급 · 2027.2 졸업 312명',roles:['head','schooladmin']},school:{t:'학교',sub:'서울○○고 · 2027.2 졸업 312명 · 계열별',roles:['head','schooladmin']}};
+const SCOPES={cls:{t:'우리 반',sub:'3학년 2반 · 재학 25명 (졸업생 결과는 2027.2 졸업반)',roles:['homeroom','head','schooladmin']},grade:{t:'학년 (반 간 비교)',sub:'3학년 8학급 · 2027.2 졸업 312명',roles:['head','schooladmin']},school:{t:'학교',sub:'서울한빛고 · 2027.2 졸업 312명 · 계열별',roles:['head','schooladmin']}};
 const defScope=()=>state==='homeroom'?'cls':state==='head'?'grade':'school';
 const GRAD={cls:{type:[['학생부교과',21,6,4],['학생부종합',38,9,5],['논술',12,2,1],['정시(수능위주)',17,8,7]],line:[['인문',41,12,8],['자연',43,12,8],['예체능',4,1,1]]},
  grade:{type:[['학생부교과',205,58,41],['학생부종합',372,91,55],['논술',118,14,9],['정시(수능위주)',166,77,63]],line:[['인문',402,118,82],['자연',431,117,84],['예체능',28,5,2]],cls:[['1반',31,20],['2반',25,17],['3반',29,22],['4반',27,19],['5반',30,21],['6반',22,16],['7반',31,24],['8반',45,29]]},
