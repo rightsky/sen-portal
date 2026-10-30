@@ -17,6 +17,7 @@ date: 2026-10-14T03:15:00Z
 - 메인·index 역할 카드 링크 연결 · backup/2026-10-06-v1.6-roles/ 스냅샷
 
 ## Sync history
+- 2026-10-30: 실무 의견 반영 1~7단계를 main에 직접 커밋(Claude 세션) · 작업 전 복구 지점 a115f59(backup/20261030-before-major, restore-point/before-20261030) · 로컬 폴더는 `git pull`로 맞출 것 · 상세 docs/2026-10-30-작업정리.md
 - 2026-10-14T12:15+09:00: 로컬 개발 폴더를 main(8593a42)으로 동기화(Claude 세션, 데스크톱 연결) · 병합 끝난 원격 브랜치 3개 확인(삭제는 GitHub 화면에서)
 - 2026-10-14: 저장소 main에 직접 커밋(Claude 세션) — 로컬 원본은 사용자가 zip으로 동기화
 - 2026-10-06T00:00:00+09:00: 저장소 연결 등록, index.html·README.md 생성
