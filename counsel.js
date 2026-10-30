@@ -116,7 +116,7 @@ function rerender(){const g=GROUP[tab];
   $('crumbL2').textContent=L2[g];$('crumbL3').textContent=L3[tab];$('h1').textContent=L2[g];
   $('hdesc').textContent={ai:'궁금한 것을 쉽게 설명하는 AI 안내입니다. 답변마다 참고 자료와 기준일을 표시하고, 합격 가능성 같은 판단은 하지 않아요.',c:'고민될 때 언제든 선생님·위촉 상담 선생님와 만납니다. 내가 저장해 둔 것이 사전자료로 전달되어 상담이 더 알차져요.',e:'직접 해보고 들어보는 시간입니다. 내 흥미와 맞는 체험을 찾아 신청하세요.'}[g];
   const gated=!OPEN.has(tab)&&!A.logged();const pGate=tab==='book'&&A.logged()&&A.role==='parent'&&A.roleObj&&A.roleObj.status!=='active';
-  $('gateBox').innerHTML=pGate?'<div class="gatebox"><div class="gatebox__ic">🔗</div><div><h3>자녀 연결 후 대리 신청할 수 있어요</h3><p>학부모 계정은 자녀 연결(초대코드 · 나이스 보호자 확인 · 학교 확인) 뒤 자녀 대신 상담을 신청할 수 있어요.</p></div><a class="btn btn--pill" href="parent.html">학부모 공간에서 연결하기 →</a></div>':gated?A.gate('🔒',L3[tab]+'은(는) 로그인 후 이용할 수 있어요',tab==='mine'?'내 검사 결과·관심 목록·성적을 바탕으로 답하는 기능이라 본인 확인이 필요합니다.':'예약과 기록은 본인 계정에 저장됩니다. 학부모 계정은 자녀 연결 후 함께 예약할 수 있어요.'):'';
+  $('gateBox').innerHTML=pGate?'<div class="gatebox"><div class="gatebox__ic">🔗</div><div><h3>자녀 연결 후 대리 신청할 수 있어요</h3><p>학부모 계정은 자녀 연결(초대코드 · 나이스 보호자 확인 · 학교 확인) 뒤 자녀 대신 상담을 신청할 수 있어요.</p></div><a class="btn btn--pill" href="parent.html">학부모 공간에서 연결하기 →</a></div>':gated?A.gate('🔒',window.JOSA(L3[tab],'은는')+' 로그인 후 이용할 수 있어요',tab==='mine'?'내 검사 결과·관심 목록·성적을 바탕으로 답하는 기능이라 본인 확인이 필요합니다.':'예약과 기록은 본인 계정에 저장됩니다. 학부모 계정은 자녀 연결 후 함께 예약할 수 있어요.'):'';
   document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('is-on',!gated&&!pGate&&p.id==='pane-'+(['career','admission','mine'].includes(tab)?'chat':tab)));
   if(['career','admission','mine'].includes(tab))mode=tab;
   if(!gated&&!pGate)R[tab]();}

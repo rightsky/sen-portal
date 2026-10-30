@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <script src="privacy-store.js?v=1"></script>
+<script src="sen-ledger.js?v=20261030"></script><script src="sen-marks.js?v=20261030" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>교사공간 | 서울 진로진학 통합플랫폼</title>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
@@ -444,8 +445,15 @@ const JS=[
  {n:'이하은',mock:'9월 학평 반영',ga:'한국대 의예 · 상향',na:'서울미래대 약학 · 소신',da:'국민대 생명 · 적정',st:'확정 3'},
  {n:'정우진',mock:'미반영 (적재 오류)',ga:'—',na:'—',da:'—',st:'환산 불가'},
  {n:'최민준',mock:'9월 학평 반영',ga:'한국대 컴공 · 적정',na:'서울과기대 전기 · 안정',da:'—',st:'확정 2 · 전달됨'}];
-const CAL={susi:[['9.8~9.12','수시 원서 접수 (6장)','완료'],['10.~11.','대학별 고사 (논술·면접) · 수능 전·후 일정 확인','진행'],['11.19','대학수학능력시험','예정'],['12.12','수시 합격자 발표 마감 · 12.15~17 등록','예정']],
- jeongsi:[['11.19','수능','예정'],['12.5','수능 성적 통지 · 정시 환산점 원장 확정(CONFIRMED)','예정'],['12.29~12.31','정시 원서 접수 (가·나·다군 1장씩)','예정'],['2.4','정시 합격자 발표 마감 · 추가 모집 2월 말','예정']]};
+const LG=window.SEN_LEDGER,LS=LG.schedule;
+/* 세션 타이머 (10-30 · §9 행 7) : 공통 원장 값(30분)에서 줄어들고, 5분 남으면 연장 안내 */
+const SESS_KEY='sen-tch-sess-start';
+const sessStart=()=>{let t=+sessionStorage.getItem(SESS_KEY);if(!t){t=Date.now();sessionStorage.setItem(SESS_KEY,t);}return t;};
+const sessLeft=()=>{const left=Math.max(0,sessStart()+LG.session.teacher*60000-Date.now());return Math.floor(left/60000)+':'+String(Math.floor(left%60000/1000)).padStart(2,'0');};
+setInterval(()=>{const left=sessStart()+LG.session.teacher*60000-Date.now();document.querySelectorAll('[data-sess-left]').forEach(b=>{b.textContent='세션 '+sessLeft();b.classList.toggle('badge--warn',left<LG.session.warnBefore*60000);});
+ if(left<LG.session.warnBefore*60000&&!document.getElementById('sessWarn')){const d=document.createElement('div');d.id='sessWarn';d.setAttribute('role','alert');d.style.cssText='position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:95;background:#1f2a44;color:#fff;padding:10px 14px;border-radius:12px;font-size:14px;display:flex;gap:10px;align-items:center;box-shadow:0 6px 20px rgba(0,0,0,.25)';d.innerHTML='세션이 곧 끝나요 <button type="button" style="min-height:32px;padding:0 12px;border-radius:8px;border:0;background:#fff;color:#1f2a44;font-weight:800;cursor:pointer">30분 연장</button>';d.querySelector('button').onclick=()=>{sessionStorage.setItem(SESS_KEY,Date.now());d.remove();};document.body.appendChild(d);}},1000);
+const CAL={susi:[[LS.susiApply.from.replace(/^2027\./,'')+'~'+LS.susiApply.to,'수시 원서 접수 (6장)','완료'],['10.~11.','대학별 고사 (논술·면접) · 수능 전·후 일정 확인','진행'],[LS.csat.date.replace(/^2027\./,''),'대학수학능력시험','예정'],[LS.susiResult.date.replace(/^2027\./,''),'수시 합격자 발표 마감','예정']],
+ jeongsi:[[LS.csat.date.replace(/^2027\./,''),'수능','예정'],[LS.csatScore.date.replace(/^2027\./,''),'수능 성적 통지 · 정시 환산점 원장 확정','예정'],[LS.jeongsiApply.from.replace(/^2028\./,'')+'~'+LS.jeongsiApply.to,'정시 원서 접수 (가·나·다군 1장씩)','예정'],['2.','정시 합격자 발표 · 추가 모집','예정']]};
 const calHtml=k=>`<div style="display:grid;gap:6px">${CAL[k].map(([d,t,st])=>`<div style="display:grid;grid-template-columns:96px 1fr auto;gap:10px;align-items:center;font-size:13.5px;padding:8px 12px;border:1px solid var(--line);border-radius:10px"><b>${d}</b><span>${t}</span><span class="badge ${st==='완료'?'badge--ok':st==='진행'?'badge--wait':'badge--gray'}">${st}</span></div>`).join('')}</div><p class="caption">일정은 예시(2027학년도 대입 기본사항 기준) · 확정 일정은 대교협·대학 공지로 갱신</p>`;
 const proNote=`<div class="share__notice">이 화면은 <b>상태·일정·점검</b>만 보여요. 학생 식별이 필요한 판정 생성·학생부 원문·성적 원문·데이터 적재는 <b>SEN 진학프로그램(전문시스템)</b>에서 — 진입 시 2단계 인증과 열람 사유 기록</div>`;
 function susiHtml(){const ro=state==='subject';
@@ -512,7 +520,7 @@ function renderZ1(){
  z1.hidden=false;gnb.hidden=false;
  const role={pending:'교사(재직 확인) · 학교 승인 대기',homeroom:'담임교사',subject:'과목교사(사회)',head:'진학부장',counselor:'정보원 상담교사(위촉)',expired:'정보원 상담교사(위촉)',schooladmin:'학교관리자(센진학 담당자)'}[state];
  const scope={pending:'기본 모드 · 학생 공유 데이터',homeroom:'서울○○고 3학년 2반',subject:'서울○○고 사회·문화 수강생',head:'서울○○고 3학년 전체(전체보기 승인)',counselor:'서울진로진학정보센터 배정',expired:'—',schooladmin:'서울○○고 전체 · 승인·등록·매핑'}[state];
- let badges=authMode()==='A'?`<span class="badge badge--ok">GPKI 인증서 ✓</span><span class="badge badge--ok">관리자 승인 ✓</span><span class="badge badge--gray">세션 ${state==='schooladmin'?'14:40':'29:40'}</span>`:`<span class="badge badge--ok">교육디지털원패스 ✓</span><span class="badge badge--ok">관리자 승인 ✓</span><span class="badge badge--gray">2FA 승인·식별 화면 진입 시</span><span class="badge badge--gray">세션 ${state==='schooladmin'?'14:40':'29:40'}</span>`;
+ let badges=authMode()==='A'?`<span class="badge badge--ok">GPKI 인증서 ✓</span><span class="badge badge--ok">관리자 승인 ✓</span><span class="badge badge--gray" data-sess-left>세션 ${sessLeft()}</span>`:`<span class="badge badge--ok">교육디지털원패스 ✓</span><span class="badge badge--ok">관리자 승인 ✓</span><span class="badge badge--gray">2FA 승인·식별 화면 진입 시</span><span class="badge badge--gray" data-sess-left>세션 ${sessLeft()}</span>`;
  if(state==='schooladmin')badges+=`<span class="badge badge--ok">승인권</span>`;
  if(state==='counselor')badges+=`<span class="badge badge--wait">위촉 2028.3.31까지</span>`;
  if(state==='expired')badges=`<span class="badge badge--warn">권한이 회수되었습니다 · 재위촉 후 이용</span>`;
@@ -611,7 +619,7 @@ function renderMain(){
  const sysCard2=isCoun
   ?`<article><div class="ico">🗓️</div><h3>정보원 상담시스템</h3><p>배정 상담 · 방문·화상 상담 운영 (정보원 상담교사)</p><button class="btn btn--line" data-toast="정보원 상담시스템으로 이동 (SSO)">열기 ›</button></article>`
   :`<article class="off"><div class="ico">🗓️</div><h3>정보원 상담시스템</h3><p>배정 상담 · 방문·화상 상담 운영 — 정보원 상담교사 역할에만 열립니다</p><button class="btn btn--line" disabled style="cursor:default">정보원 상담교사 전용</button></article>`;
- const proStatus=[['판정 승인 대기',`${pendingHitl()}건`,pendingHitl()?'warn':'ok'],['수시 원서접수','9.9(월)~9.13(금) · D-20','info'],['환산점 원장','v2.1 · 확정(CONFIRMED)','ok'],['NEIS 일괄 적재','99.2% · 격리 3행','ok']];
+ const proStatus=[['판정 승인 대기',`${pendingHitl()}건`,pendingHitl()?'warn':'ok'],['수시 원서접수',window.SEN_LEDGER.fmt.susiApply(),'info'],['환산점 원장','v2.1 · 확정(CONFIRMED)','ok'],['NEIS 일괄 적재','99.2% · 격리 3행','ok']];
  const ad=pcAdopt(),adL=PC_STATE[ad];
  const adoptBody=ad==='adopted'
   ?`<ul class="pro__st">${proStatus.map(([k,v,c])=>`<li class="st-${c}"><span>${k}</span><b>${v}</b></li>`).join('')}</ul><button class="btn btn--navy" data-pro="SEN 진학프로그램 열기">학교 연계 서비스 열기 ›</button>`

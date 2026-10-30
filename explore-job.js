@@ -80,7 +80,7 @@ function openJob(id){
   const j=job(id);if(!j)return;const sv=store.isSaved('jobs',id),cm=store.isCmp('jobs',id),f=fit(j);
   const hits=[...j.ria.filter(k=>meTop.includes(k)).map(k=>RIASEC[k]),...j.apt.filter(x=>ME.apt.includes(x)),...j.val.filter(x=>ME.val.includes(x))];
   drawer.open(`<div class="dh"><small>${j.cat} · 직업정보</small><h2>${j.name}</h2><p>${j.desc}</p></div>
-  <div class="fit"><span class="lv lv--${LEVEL(f)[1]}">${LEVEL(f)[0]}</span><span>${hits.length?hits.join(', ')+'이(가) 내 검사 결과와 겹쳐요':'내 검사 결과와 겹치는 항목은 없지만, 관심이 간다면 충분히 살펴볼 가치가 있어요'}</span></div>
+  <div class="fit"><span class="lv lv--${LEVEL(f)[1]}">${LEVEL(f)[0]}</span><span>${hits.length?window.JOSA(hits.join(', '),'이가')+' 내 검사 결과와 겹쳐요':'내 검사 결과와 겹치는 항목은 없지만, 관심이 간다면 충분히 살펴볼 가치가 있어요'}</span></div>
   <div class="dact"><button class="btn ${sv?'btn--ghost':'btn--primary'} btn--pill" data-save="${id}" data-redraw="${id}">${sv?'❤️ 저장됨':'🤍 관심 저장'}</button><button class="btn btn--ghost btn--pill" data-cmp="${id}" data-redraw="${id}">${cm?'✓ 비교함에 담김':'+ 비교함 담기'}</button></div>
   <div class="dsec"><h3>하는 일</h3><ul>${j.does.map(x=>`<li>${x}</li>`).join('')}</ul></div>
   <div class="dsec"><h3>직업 지표</h3><dl class="dgrid"><div><dt>평균연봉</dt><dd>${WAGE[j.wage]} ${dots(j.wage,4)}</dd></div><div><dt>직업전망</dt><dd>${OUTLOOK[j.outlook]} ${dots(j.outlook,4)}</dd></div><div><dt>일·가정 균형</dt><dd>${LV3[j.bal]} ${dots(j.bal,3)}</dd></div><div><dt>사회공헌</dt><dd>${LV3[j.con]} ${dots(j.con,3)}</dd></div></dl></div>

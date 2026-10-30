@@ -49,7 +49,7 @@ function renderSim(){
   const C=checks(),w=C.filter(c=>c[0]==='q').length;
   $('simChecks').innerHTML=`<div class="ck__sum"><b>${w?`선생님과 함께 살펴볼 점 ${w}개`:'함께 살펴볼 점이 정리되었어요'}</b><span>총 ${A_.length}과목 · ${cr(A_)}학점 (2·3학년 선택과목)</span></div>`+C.map(c=>`<div class="ck ck--${c[0]}"><i>${c[0]==='ok'?'✓':c[0]==='q'?'?':'i'}</i><div><b>${c[1]}</b>${c[2]?`<span>${c[2]}</span>`:''}</div></div>`).join('');
 }
-function add(n,k){k=k||active;if(all().includes(n)){showToast(`${n}은(는) 이미 ${SEM_LABEL[where(n)]}에 있어요`);return;}if(p.sem[k].length>=8){showToast('한 학기에 8과목까지 담을 수 있어요');return;}p.sem[k].push(n);p.submit=p.submit>=1?0:p.submit;save();renderSim();}
+function add(n,k){k=k||active;if(all().includes(n)){showToast(`${window.JOSA(n,'은는')} 이미 ${SEM_LABEL[where(n)]}에 있어요`);return;}if(p.sem[k].length>=8){showToast('한 학기에 8과목까지 담을 수 있어요');return;}p.sem[k].push(n);p.submit=p.submit>=1?0:p.submit;save();renderSim();}
 function move(n,from,to){if(from===to)return;p.sem[from]=p.sem[from].filter(x=>x!==n);p.sem[to].push(n);save();renderSim();}
 /* 이수계획 */
 function renderPlan(){const groups=[...new Set(SUBJECTS.map(s=>s.group))];const A_=all();const st=stats();

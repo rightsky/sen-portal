@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <script src="privacy-store.js?v=1"></script>
+<script src="sen-ledger.js?v=20261030"></script><script src="sen-marks.js?v=20261030" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>학부모 서비스 | 서울 진로진학 통합플랫폼</title>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
@@ -260,7 +261,7 @@ function renderMain(){
  const items=ITEMS.map(it=>{
   let open=!it.lock&&it.base&&!isAdult;
   if(extraOn&&(it.c==='S2'||it.c==='S5'))open=true;
-  if(open)return`<div class="item"><h3>${it.t} <span class="badge badge--ok">열람 가능</span></h3><p>${it.body}</p><div class="act"><button data-toast="열람했어요 — 자녀에게 '학부모(모)가 ${it.t}을(를) 열람했어요' 알림이 갑니다">요약 보기</button></div></div>`;
+  if(open)return`<div class="item"><h3>${it.t} <span class="badge badge--ok">열람 가능</span></h3><p>${it.body}</p><div class="act"><button data-toast="열람했어요 — 자녀에게 '학부모(모)가 ${window.JOSA(it.t,'을를')} 열람했어요' 알림이 갑니다">요약 보기</button></div></div>`;
   if(it.lock==='stage')return`<div class="item is-lock"><h3>🔒 ${it.t} <span class="badge badge--gray">${it.when}</span></h3><p>${it.body}</p></div>`;
   /* consent 잠금 (성인 자녀는 기본 항목도 여기로) */
   const reason=isAdult?'성인 자녀는 본인 동의가 우선이에요':'자녀 동의 필요';

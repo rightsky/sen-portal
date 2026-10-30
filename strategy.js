@@ -148,7 +148,7 @@ function rerender(){const g=GROUP[tab];
   $('crumbL2').textContent=L2[g];$('crumbL3').textContent=L3[tab];$('h1').textContent=L2[g];
   $('hdesc').textContent={r:'성적과 학교생활을 간단히 정리해 두는 곳입니다. 세부 분석은 상담에서 선생님이 내가 동의한 자료로 함께 봅니다.',c:'대학별 환산과 입시결과를 이해하는 곳입니다. 합격 가능성 판정은 하지 않고, 상담에서 정리한 참고 범위만 보여드립니다.',p:'관심 전형을 비교해 수시 6장·정시 3장 계획을 세우고, 살펴볼 점을 정리해 상담으로 가져갑니다.',i:'면접 유형을 이해하고 혼자 연습해 본 뒤, 모의 면접은 선생님과 합니다.'}[g];
   const gated=!OPEN.has(tab)&&!A.logged();
-  $('gateBox').innerHTML=gated?A.gate('🔒',L3[tab]+'은(는) 로그인 후 이용할 수 있어요','내 성적·관심 전형을 바탕으로 하는 기능이라 본인 확인이 필요합니다. 입력한 내용은 상담 사전자료로만 쓰이고, 공유 범위는 내가 정합니다.'):'';
+  $('gateBox').innerHTML=gated?A.gate('🔒',window.JOSA(L3[tab],'은는')+' 로그인 후 이용할 수 있어요','내 성적·관심 전형을 바탕으로 하는 기능이라 본인 확인이 필요합니다. 입력한 내용은 상담 사전자료로만 쓰이고, 공유 범위는 내가 정합니다.'):'';
   document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('is-on',!gated&&p.id==='pane-'+tab));
   if(!gated)R[tab]();}
 function setTab(){tab=(location.hash||'#grades').slice(1);if(!L3[tab])tab='grades';document.querySelectorAll('#lnb a').forEach(a=>a.classList.toggle('is-cur',a.getAttribute('href')==='strategy.html#'+tab));document.title=L3[tab]+' | 서울 진로진학 통합플랫폼';rerender();}

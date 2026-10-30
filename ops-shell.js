@@ -1,10 +1,11 @@
-/* SEN 업무시스템 공통 셸 : 관리자 게이트(원패스 L3 + Role + 2단계 인증) · 상단 바 · 사이드바 · 해시 라우팅 · 관리자 세션 15분 · 감사 문구
+/* SEN 업무시스템 공통 셸 : 관리자 게이트(원패스 L3 + Role + 2단계 인증) · 상단 바 · 사이드바 · 해시 라우팅 · 관리자 세션 30분(원장 값) · 감사 문구
    사용 : SEN_OPS.init({sys:'counsel', title:'상담시스템', desc:'…', menus:[{k,label,code,grp}], views:{k:(el,ctx)=>{}} , badges:()=>({k:n}) })
    권한 : SEN_AUTH.roleObj.ops 에 sys 가 들어 있어야 진입. 없으면 게이트. 진입 시 세션당 1회 2단계 인증(sessionStorage 'sen-ops-2fa').
    기본 기기 : PC (태블릿은 사이드바 접힘, 표는 카드로) */
 (function(){
 const SYS={counsel:{label:'상담시스템',file:'ops-counsel.html'},ai:{label:'AI 서비스 관리',file:'ops-ai.html'},admin:{label:'플랫폼관리',file:'ops-admin.html'}};
-const SESSION_MIN=15;
+const SESSION_MIN=(window.SEN_LEDGER&&SEN_LEDGER.session.ops)||30; /* 10-30 결정 23 : 15분 → 30분(R13) */
+const WARN_MS=((window.SEN_LEDGER&&SEN_LEDGER.session.warnBefore)||5)*60000;
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let cfg=null,cur=null,timer=null,sessEnd=0;
 const toastEl=()=>{let t=document.getElementById('toast');if(!t){t=document.createElement('div');t.className='toast';t.id='toast';t.setAttribute('role','status');document.body.appendChild(t);}return t;};
@@ -33,7 +34,7 @@ function who(){
   tick();
 }
 function tick(){const s=document.getElementById('opsSess');if(!s)return;clearInterval(timer);
-  const f=()=>{if(!twofa()){s.innerHTML='2단계 인증 전';return;}const left=Math.max(0,sessEnd-Date.now());const m=Math.floor(left/60000),sec=Math.floor(left%60000/1000);s.classList.toggle('is-warn',left<120000);
+  const f=()=>{if(!twofa()){s.innerHTML='2단계 인증 전';return;}const left=Math.max(0,sessEnd-Date.now());const m=Math.floor(left/60000),sec=Math.floor(left%60000/1000);s.classList.toggle('is-warn',left<WARN_MS);if(left<WARN_MS&&left>WARN_MS-1000)showToast('세션이 5분 남았어요. 「연장」을 누르면 '+SESSION_MIN+'분 늘어나요');
     s.innerHTML=`관리자 세션 <b>${m}:${String(sec).padStart(2,'0')}</b> <button class="btn btn--line btn--sm" data-extend>연장</button>`;
     if(left<=0){sessionStorage.removeItem('sen-ops-2fa');clearInterval(timer);render();showToast('관리자 세션이 끝났어요. 다시 2단계 인증을 해 주세요');}};
   f();timer=setInterval(f,1000);}
@@ -50,9 +51,9 @@ function gate(){
   if(!logged){why='<p>이 업무시스템은 교육연구정보원의 인가된 담당자만 씁니다. 교육디지털원패스(L3)로 로그인한 뒤, 부여된 Role에 따라 들어갈 수 있는 시스템이 정해집니다.</p>';acts='<button class="btn btn--primary" data-loginopen>관리자 로그인 (교육디지털원패스)</button>';}
   else if(!r||(r.k!=='office'&&!(cfg.extraRoles&&cfg.extraRoles.includes(r.k)))){const rs=a.session.roles||[];let i=rs.findIndex(x=>x.k==='office');let sl='정보원 담당자';if(i<0&&cfg.extraRoles){i=rs.findIndex(x=>cfg.extraRoles.includes(x.k));if(i>-1)sl=a.roleLabel(rs[i].k);}why=`<p><b>${esc(a.name)}</b> 님의 현재 역할은 <b>${esc(a.roleLabel(a.role))}</b>이라 ${esc(cfg.title)}에 들어갈 수 없습니다.${i>-1?` ${esc(sl)} 역할로 전환하면 들어갈 수 있어요.`:' 정보원 소속 Role이 부여된 계정으로 로그인하세요.'}</p>`;acts=i>-1?`<button class="btn btn--primary" data-opsswitch="${i}" data-opsswitchl="${esc(sl)}">${esc(sl)} 역할로 전환</button>`:'<button class="btn btn--primary" data-logout>다른 계정으로 로그인</button>';}
   else if(!allowed()){why=`<p><b>${esc(a.name)}</b> 님의 Role(<b>${esc(r.opsRole||'')}</b>)은 ${esc(cfg.title)} 권한이 없습니다. 들어갈 수 있는 시스템 : ${(r.ops||[]).map(k=>`<a class="badge badge--navy" href="${SYS[k].file}">${SYS[k].label}</a>`).join(' ')||'없음'}</p>`;acts='<a class="btn btn--line" href="index.html">포털로</a><button class="btn btn--line" data-logout>다른 계정으로</button>';}
-  else{why='<p>Role은 확인됐습니다. 업무시스템은 승인권·개인정보가 걸린 화면이라 들어갈 때 한 번 더 확인합니다(세션 15분, 연장 가능).</p>';acts='<button class="btn btn--primary" data-ops2fa>2단계 인증하고 들어가기</button>';}
+  else{why='<p>Role은 확인됐습니다. 업무시스템은 승인권·개인정보가 걸린 화면이라 들어갈 때 한 번 더 확인합니다(세션 '+SESSION_MIN+'분, 연장 가능).</p>';acts='<button class="btn btn--primary" data-ops2fa>2단계 인증하고 들어가기</button>';}
   return `<main class="ops-main" id="opsMain" style="max-width:none"><div class="ops-gate"><h1>${esc(cfg.title)} · 관리자 전용</h1>${why}
-  <ol><li>교육디지털원패스 로그인 (교원·공무원 L3)</li><li>정보원 내부 RBAC로 부여된 Role 확인 (콘텐츠 · 상담운영 · 정산 · 통계 · 시스템 · 데이터·AI)${cfg.extraRoles?' · 위촉 상담 선생님은 상담교사 역할로':''}</li><li>2단계 인증 (세션 15분, 5회 실패 시 잠금)</li></ol>
+  <ol><li>교육디지털원패스 로그인 (교원·공무원 L3)</li><li>정보원 내부 RBAC로 부여된 Role 확인 (콘텐츠 · 상담운영 · 정산 · 통계 · 시스템 · 데이터·AI)${cfg.extraRoles?' · 위촉 상담 선생님은 상담교사 역할로':''}</li><li>2단계 인증 (세션 ${SESSION_MIN}분, 5회 실패 시 잠금)</li></ol>
   <div class="acts">${acts}<a class="btn btn--line" href="index.html">포털로 돌아가기</a></div>
   <p class="hint" style="font-size:12.5px;color:var(--ink-3);margin:0">목업 : 로그인 창에서 교육디지털원패스 → 「정보원 담당자」 그룹의 데모 신원을 고르세요. 전자서명이 필요한 기능(수능 전송·정산 승인)은 GPKI 인증서를 추가로 요구합니다(인증 방식 비교 스위치는 교사공간과 같은 sen-authmode).</p></div></main>`;
 }
@@ -72,7 +73,7 @@ function render(){
 document.addEventListener('click',e=>{
   const sw=e.target.closest('[data-opsswitch]');if(sw){e.preventDefault();A().stepUp((sw.dataset.opsswitchl||'정보원 담당자')+' 역할로 전환').then(()=>{A().switchRole(+sw.dataset.opsswitch);});return;}
   const t=e.target.closest('[data-ops2fa]');if(t){e.preventDefault();A().stepUp(cfg.title+' 진입').then(()=>{setTwofa();render();showToast(cfg.title+'에 들어왔어요');});return;}
-  const x=e.target.closest('[data-extend]');if(x){e.preventDefault();setTwofa();tick();showToast('세션을 15분 연장했어요');return;}
+  const x=e.target.closest('[data-extend]');if(x){e.preventDefault();setTwofa();tick();showToast('세션을 '+SESSION_MIN+'분 연장했어요');return;}
   const ns=e.target.closest('[data-nosys]');if(ns){e.preventDefault();showToast(ns.dataset.nosys+' 권한이 없는 Role이에요');return;}
   const mb=e.target.closest('#opsMenuBtn');if(mb){const s=document.getElementById('opsSide');const on=s.classList.toggle('is-open');mb.setAttribute('aria-expanded',on);return;}
   const sl=e.target.closest('.ops-side a');if(sl){const s=document.getElementById('opsSide');s&&s.classList.remove('is-open');}

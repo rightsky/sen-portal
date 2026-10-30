@@ -203,7 +203,7 @@ const ACT={
  kTok:()=>{stepUp('토큰 전체 재발급').then(()=>{pushAudit('실행','S존 토큰 전체 재발급','KEY 유출·PC 분실 대응 시연','토큰 v1','토큰 v2 (DATA 열 교체)');set({kTok:true,kMsg:'계보 기록 · 담임 반 조인 서비스 재연결 · AI 서비스 관리 D7 통지 — 소요 40분(시연은 즉시)'});toast('토큰 전체 재발급 — 2단계 인증 · 감사로그');});},
  unit:()=>{stepUp('단가표 v4 발행').then(()=>{pushAudit('발행','단가표 마스터','화상 단가 개정 · 10.31 조서부터 적용','v3 화상 40,000','v4 화상 45,000');set({unit:4,consMsg:'✓ 단가표 v4 발행 — 상담시스템 수당관리(조서)에 다음 조서부터 적용 · 이전 조서는 v3 고정'});toast('단가표 v4 발행 — 2단계 인증');});},
  pendOk:a=>{const go=()=>{pushAudit('승인',a,'승인 대기 큐 일괄 처리','pending','active');setK('pend',a,true);set({acctMsg:`✓ ${a} 처리 — 대상자 통지 · 역할 상태 active · 감사로그`});toast(a+' 처리');};if(a==='학교관리자 지정')stepUp('학교관리자 지정 승인').then(go);else go();},
- secEdit:a=>{stepUp('보안 정책 변경').then(()=>{pushAudit('정책','SESS 세션 만료','관리자 세션 단축','관리자 15분','관리자 10분');setK('sec',a,'일반 30분 · 관리자 10분 · 학생상담모드 무입력 10분');set({secMsg:'✓ SESS 변경 — 업무시스템 3종 다음 진입부터 10분 · 변경 전후 값 감사로그'});toast('보안 정책 변경 — 2단계 인증');});},
+ secEdit:a=>{stepUp('보안 정책 변경').then(()=>{pushAudit('정책','SESS 세션 만료','업무시스템 세션 조정','관리자 15분','업무시스템 30분');setK('sec',a,'일반 30분 · 관리자 10분 · 학생상담모드 무입력 10분');set({secMsg:'✓ SESS 변경 — 업무시스템 3종 다음 진입부터 10분 · 변경 전후 값 감사로그'});toast('보안 정책 변경 — 2단계 인증');});},
  relOk:a=>{const r=D.rel.queue[+a];pushAudit(r[3]==='승인'?'승인':'검토','관계 · '+r[0],r[1],r[2],'이벤트 기록');setK('relOk',a,true);toast(`${r[0]} — ${r[3]} · append-only 이벤트`);},
  audAck:a=>{setK('audAck',a,true);toast('플래그 확인 — 사유 기록 · 종결');},
  reset:()=>{S=clone(DEF);save();draw();toast('데모 상태 초기화');},
