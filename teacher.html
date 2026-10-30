@@ -226,7 +226,7 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 
 <div class="roleband"><div class="container">
   <h1>교사공간 <span class="badge">교사·상담교사</span></h1>
-  <p>전국 어느 선생님이나 쓰는 기본 모드 : 공유 자료 · 상담 · 진학지도 메뉴를 학생 공유 데이터로 써 보고, 학교가 도입하면 같은 메뉴가 NEIS·반 전체의 학교 연계 서비스(PC)로 이어집니다</p>
+  <p>학교 업무망에서는 우리 반 상담·진학지도를 모두 하고, 집에서는 학생 개인정보 없이 상담 준비를 해요</p>
 </div></div>
 
 <div class="tband" id="z1" hidden><div class="container" id="z1Body"></div></div>
@@ -234,7 +234,7 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 <nav class="tgnb" id="tgnb" hidden aria-label="교사 메뉴"><div class="container">
   <a href="#" class="is-on" data-view="home">교사공간 홈</a>
   <a href="#" data-view="class">반 관리</a>
-  <span class="tgnb__grp" title="학생 공유 데이터로 써 보는 기본 모드 · 학교 연계(PC) 서비스와 같은 메뉴">진학지도 · 기본</span>
+  <span class="tgnb__grp">진학지도</span>
   <a href="#" data-view="susi">수시진학지도</a>
   <a href="#" data-view="jeongsi">정시진학지도</a>
   <a href="#" data-view="conv">교과환산점</a>
@@ -344,7 +344,7 @@ function adminHtml(){const mode=authMode();
  return `<section class="section" id="schoolAdmin"><h2 class="t">학교 관리 <span class="badge badge--teach">학교관리자 전용</span></h2><p class="s">모든 계정은 학교 센진학 담당자(관리자) 승인을 거쳐 활성화돼요 · 승인·반려·권한 변경은 승인권 확인(${mode==='B'?'2단계 인증':'GPKI 인증서'}) 뒤 암호화 감사로그에 남아요</p>
  ${sw}${alt}
  ${(function(){const ad=pcAdopt();const steps=[['학교 의사결정','학교장·진학부 협의',true],['도입 신청','학교관리자 → 교육청·정보원',ad!=='none'],['승인','교육청·정보원 심사(약 2주)',ad==='adopted'],['NEIS 일괄 적재','학교관리자가 편성표·성적 일괄 수신 → 무결성 게이트',ad==='adopted'],['교사 배포','담임별 반 데이터 배포 · 2단계 인증 뒤 PC 서비스 열림',ad==='adopted']];
- return `<div class="card" style="margin-top:14px"><div class="row" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h2 style="margin:0">학교 연계 서비스(PC) 도입 <span class="badge ${ad==='adopted'?'badge--ok':ad==='applied'?'badge--wait':'badge--gray'}">${PC_STATE[ad][0]}</span></h2>${ad==='none'?`<button class="btn btn--navy" style="padding:8px 14px;font-size:13px" data-pcadopt="applied">도입 신청</button>`:ad==='applied'?`<button class="btn btn--line" style="padding:8px 14px;font-size:13px" data-pcadopt="adopted">승인 처리 (설계 검토용)</button>`:`<button class="btn btn--line" style="padding:8px 14px;font-size:13px" data-toast="NEIS 편성표·성적을 학교 단위로 일괄 수신 → 무결성 게이트 통과 99.2% → 담임별 배포 (목업)">NEIS 일괄 적재 → 교사 배포</button>`}</div><p class="sub">플랫폼 기본 모드는 선생님 개인이 바로 쓰고, 학교 연계는 학교가 결정해 도입합니다 · NEIS 자료는 학교가 일괄 받아 배포</p>
+ return `<div class="card" style="margin-top:14px"><div class="row" style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h2 style="margin:0">학교 연계 서비스(PC) 도입 <span class="badge ${ad==='adopted'?'badge--ok':ad==='applied'?'badge--wait':'badge--gray'}">${PC_STATE[ad][0]}</span></h2>${ad==='none'?`<button class="btn btn--navy" style="padding:8px 14px;font-size:13px" data-pcadopt="applied">도입 신청</button>`:ad==='applied'?`<button class="btn btn--line" style="padding:8px 14px;font-size:13px" data-pcadopt="adopted">승인 처리 (설계 검토용)</button>`:`<button class="btn btn--line" style="padding:8px 14px;font-size:13px" data-toast="NEIS 편성표·성적을 학교 단위로 일괄 수신 → 무결성 게이트 통과 99.2% → 담임별 배포 (목업)">NEIS 일괄 적재 → 교사 배포</button>`}</div><p class="sub">플랫폼 교사공간은 선생님 개인이 바로 쓰고, 학교 연계는 학교가 결정해 도입합니다 · NEIS 자료는 학교가 일괄 받아 배포</p>
  <ol class="steps5">${steps.map(([t,d,on],i)=>`<li class="${on?'is-on':''}"><em>${i+1}</em><div><b>${t}</b><span>${d}</span></div></li>`).join('')}</ol></div>`;})()}
  <div class="grid" style="margin-top:14px">
   <div class="card"><h2>① 승인함 <span class="badge badge--wait">${pendingN}건 대기</span></h2><p class="sub">교원 확인이 끝난 신청만 올라와요. 담임은 나이스 편성표와 대조해 승인하고, 승인·반려 이력은 암호화 감사로그에 기록 · 담당 교체 시 기존 계정 자동 회수</p>${reqs}</div>
@@ -477,12 +477,12 @@ function jeongsiHtml(){const ro=state==='subject';
 /* SEN 진학프로그램(전문시스템) : 진학상담지원시스템 목업 ver2.1(sen-pro.html)을 새 창으로 연다.
    교과학력 평가분석 · 종합전형상담 · 요강검색 · 서류·면접(AI) · 정시예측 · 교과환산점 · 수시/정시 지원 결과분석 · 전년도 분석 · 졸업생 진학결과 */
 const PRO_URL='sen-pro.html';
-/* 영역 분리(2026-10-19) : 교사공간 = 공유·소통, 전문시스템 = 진학지도·판정. 되돌리려면 PRO_SPLIT=false */
-/* 2026-10-19 재정의 : 플랫폼 교사공간 = 「기본 모드」(전국 교사 개인 · 학생 공유 데이터), PC 서비스 = 「학교 연계」(서울 학교 단위 도입 · NEIS 일괄 적재). 메뉴는 PC와 같은 이름으로 일원화 */
+/* 영역 분리 스위치(2026-10-19) : PRO_SPLIT=true면 진학지도·판정 탭을 전문시스템으로 보냄. 현재 false(교사공간에서 직접 열림) */
+/* 2026-10-19 재정의 : 플랫폼 교사공간 = 「교사공간」(전국 교사 개인 · 학생 공유 데이터), PC 서비스 = 「학교 연계」(서울 학교 단위 도입 · NEIS 일괄 적재). 메뉴는 PC와 같은 이름으로 일원화 */
 const PRO_SPLIT=false;const PRO_VIEWS=['susi','jeongsi','conv','hitl','compare','stats'];
 const PC_ADOPT_KEY='sen-pc-adopt';function pcAdopt(){return localStorage.getItem(PC_ADOPT_KEY)||'adopted';}
 const PC_STATE={adopted:['도입 완료','ok'],applied:['신청 중 · 교육청 승인 대기','wait'],none:['미도입','gray']};
-function liteBand(fn){const shared=SHARES.length;const st=pcAdopt();return `<div class="lite"><b>기본 모드</b><span>학생이 공유한 성적·활동으로 ${fn} 기능을 써 봅니다 · 공유 동의 ${shared}명</span><span class="chip">NEIS 없음 · 참고용</span><span class="chip">학교 연계(PC) : 반 전체 · 공식 판정</span>${st==='adopted'?`<button class="btn btn--navy" data-pro="${fn} (학교 연계)">학교 연계 서비스에서 ›</button>`:`<button class="btn btn--line" data-view="home" data-pc-guide="1">학교 연계 안내 ›</button>`}</div>`;}
+function liteBand(fn){const shared=SHARES.length;const st=pcAdopt();return `<div class="lite"><b>교사공간</b><span>학생이 공유한 성적·활동으로 ${fn} 기능을 써 봅니다 · 공유 동의 ${shared}명</span><span class="chip">NEIS 없음 · 참고용</span><span class="chip">학교 연계(PC) : 반 전체 · 공식 판정</span>${st==='adopted'?`<button class="btn btn--navy" data-pro="${fn} (학교 연계)">학교 연계 서비스에서 ›</button>`:`<button class="btn btn--line" data-view="home" data-pc-guide="1">학교 연계 안내 ›</button>`}</div>`;}
 let proUntil=0;function proEnter(why){const go=()=>{proUntil=Date.now()+6e5;const w=window.open(PRO_URL,'senpro');showToast('SEN 진학프로그램(전문시스템)을 새 창에서 열었어요 · 열람 사유 기록: '+why);if(!w)location.href=PRO_URL;};if(Date.now()<proUntil){go();return;}(authMode()==='B'&&window.SEN_AUTH?SEN_AUTH.stepUp('전문시스템 진입 — '+why):confirmAdmin('전문시스템 진입')).then(go);}
 let tfaUntil=0;function hitlConfirm(){if(Date.now()<tfaUntil)return Promise.resolve(true);return (authMode()==='B'&&window.SEN_AUTH?SEN_AUTH.stepUp('판정 승인(HITL)'):confirmAdmin('판정 승인')).then(r=>{tfaUntil=Date.now()+6e5;return r;});}
 
@@ -519,7 +519,7 @@ function renderZ1(){
  if(state==='guest'){z1.hidden=true;gnb.hidden=true;return;}
  z1.hidden=false;gnb.hidden=false;
  const role={pending:'교사(재직 확인) · 학교 승인 대기',homeroom:'담임교사',subject:'과목교사(사회)',head:'진학부장',counselor:'정보원 상담교사(위촉)',expired:'정보원 상담교사(위촉)',schooladmin:'학교관리자(센진학 담당자)'}[state];
- const scope={pending:'기본 모드 · 학생 공유 데이터',homeroom:'서울한빛고 3학년 2반',subject:'서울한빛고 사회와 문화 수강생',head:'서울한빛고 3학년 전체(전체보기 승인)',counselor:'서울진로진학정보센터 배정',expired:'—',schooladmin:'서울한빛고 전체 · 승인·등록·매핑'}[state];
+ const scope={pending:'교사공간 · 학생 공유 데이터',homeroom:'서울한빛고 3학년 2반',subject:'서울한빛고 사회와 문화 수강생',head:'서울한빛고 3학년 전체(전체보기 승인)',counselor:'서울진로진학정보센터 배정',expired:'—',schooladmin:'서울한빛고 전체 · 승인·등록·매핑'}[state];
  let badges=authMode()==='A'?`<span class="badge badge--ok">GPKI 인증서 ✓</span><span class="badge badge--ok">관리자 승인 ✓</span><span class="badge badge--gray" data-sess-left>세션 ${sessLeft()}</span>`:`<span class="badge badge--ok">교육디지털원패스 ✓</span><span class="badge badge--ok">관리자 승인 ✓</span><span class="badge badge--gray">2FA 승인·식별 화면 진입 시</span><span class="badge badge--gray" data-sess-left>세션 ${sessLeft()}</span>`;
  if(state==='schooladmin')badges+=`<span class="badge badge--ok">승인권</span>`;
  if(state==='counselor')badges+=`<span class="badge badge--wait">위촉 2028.3.31까지</span>`;
@@ -530,8 +530,8 @@ function renderZ1(){
 /* ===== 본문 ===== */
 function h(s){return s.replace(/</g,'&lt;');}
 function liteInject(fn){const m=document.getElementById('main');const sec=m.querySelector('section .t')||m.querySelector('h2');if(!sec)return;const p=sec.nextElementSibling&&sec.nextElementSibling.classList.contains('s')?sec.nextElementSibling:sec;p.insertAdjacentHTML('afterend',liteBand(fn));}
-/* 교과환산점 (기본 모드) : 학생이 공유한 성적으로 대학별 환산점 샘플 */
-/* 기본 모드 「내 학생 자료 추가」 : 식별자 없이 · 기기 안 보관(세션) · 10명까지 · 학생·보호자 동의 확인 */
+/* 교과환산점 (교사공간) : 학생이 공유한 성적으로 대학별 환산점 샘플 */
+/* 교사공간 「내 학생 자료 추가」 : 식별자 없이 · 기기 안 보관(세션) · 10명까지 · 학생·보호자 동의 확인 */
 const LITE_KEY='sen-lite-import',LITE_MAX=10;
 function liteRows(){try{return JSON.parse(localStorage.getItem(LITE_KEY)||'[]');}catch(e){return[];}}
 function liteSave(r){localStorage.setItem(LITE_KEY,JSON.stringify(r));}
@@ -553,11 +553,11 @@ function liteParse(text){
 }
 function liteConv(cells,head){const g=k=>{const i=head.findIndex(h=>new RegExp(k).test(h));const v=i>=0?parseFloat(cells[i]):NaN;return isNaN(v)?3:v;};const sum=g('국')*1.2+g('수')*1.4+g('영')*1.0+((g('탐1')||g('탐'))+g('탐2'))/2*1.2;const base=Math.round((1000-sum*32)*10)/10;return [['서울시립대 가군',base],['국민대 나군',Math.round((base-9.6)*10)/10],['숭실대 다군',Math.round((base-4.1)*10)/10]];}
 function convHtml(){const rows=[['김서연','3-2','국 2 · 수 3 · 영 2 · 탐 2·3',[['서울시립대 가군','612.4','PROV'],['국민대 나군','598.1','PROV'],['숭실대 다군','604.7','PROV']]],['강지우','3-2','국 3 · 수 2 · 영 3 · 탐 2·2',[['서울시립대 가군','606.9','PROV'],['국민대 나군','603.3','PROV'],['숭실대 다군','599.0','PROV']]],['윤태양','3-2','국 2 · 수 2 · 영 1 · 탐 3·3',[['서울시립대 가군','618.2','PROV'],['국민대 나군','611.5','PROV'],['숭실대 다군','609.8','PROV']]]];
- return `<section class="section"><h2 class="t">교과환산점 <span class="badge badge--teach">기본 모드</span></h2><p class="s">학생이 공유한 학평·내신으로 대학별 환산점을 참고용으로 계산합니다 · 환산식 원장 v2.1(2027 기준) · 공식 판정과 학생 전달은 학교 연계 서비스에서</p>${liteBand('교과환산점')}
+ return `<section class="section"><h2 class="t">교과환산점 <span class="badge badge--teach">교사공간</span></h2><p class="s">학생이 공유한 학평·내신으로 대학별 환산점을 참고용으로 계산합니다 · 환산식 원장 v2.1(2027 기준) · 공식 판정과 학생 전달은 학교 연계 서비스에서</p>${liteBand('교과환산점')}
  <div class="card" style="margin-top:16px"><h2>대학별 환산점 (참고)</h2><p class="sub">PROV = 잠정(학평 기준) · 수능 성적 반영 전 · 값은 합성 데이터</p>
  <table class="btable"><tr><th>학생</th><th>공유 성적</th><th>대학·군</th><th>환산점</th><th>상태</th></tr>${rows.map(r=>r[3].map((u,i)=>`<tr>${i===0?`<td rowspan="3"><b>${r[0]}</b> <small style="color:var(--ink-3)">${r[1]}</small></td><td rowspan="3" style="font-size:13px">${r[2]}</td>`:''}<td>${u[0]}</td><td><b>${u[1]}</b> <small style="color:var(--ink-3)">/ 1000</small></td><td><span class="badge badge--wait">${u[2]}</span></td></tr>`).join('')).join('')}${liteRows().map(r=>liteConv(r.cells,r.head).map((u,i)=>`<tr class="is-lite">${i===0?`<td rowspan="3"><b>${h(r.cells[0])}</b> <span class="badge badge--src">직접 추가</span></td><td rowspan="3" style="font-size:13px">${h(r.head.slice(1).map((hd,i)=>[hd,r.cells[i+1]||'']).filter(([hd,c])=>c&&!/^\[/.test(c)).map(([hd,c])=>hd+' '+c).join(' · '))}</td>`:''}<td>${u[0]}</td><td><b>${u[1]}</b> <small style="color:var(--ink-3)">/ 1000</small></td><td><span class="badge badge--wait">PROV</span></td></tr>`).join('')).join('')}</table>
  <div class="note" style="margin-top:12px">학교 연계(PC)에서는 NEIS 일괄 적재로 반 전체 환산 · 군별 모의 배치 · 합격률지수 · P1~P7 환산식 원장 검수까지 이어집니다.</div></div>
- <div class="card lite-add" style="margin-top:16px"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap"><div><h2>내 학생 자료 추가 <span class="badge badge--teach">기본 모드</span></h2><p class="sub">학생이 공유하지 않은 자료를 선생님이 직접 넣어 환산점을 참고로 볼 수 있어요 · 지금 ${liteRows().length}명 / 최대 ${LITE_MAX}명</p></div>${liteRows().length?`<button class="btn btn--line" style="padding:8px 14px;font-size:13px" data-lite-clear>직접 추가 자료 모두 지우기</button>`:''}</div>
+ <div class="card lite-add" style="margin-top:16px"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap"><div><h2>내 학생 자료 추가 <span class="badge badge--teach">교사공간</span></h2><p class="sub">학생이 공유하지 않은 자료를 선생님이 직접 넣어 환산점을 참고로 볼 수 있어요 · 지금 ${liteRows().length}명 / 최대 ${LITE_MAX}명</p></div>${liteRows().length?`<button class="btn btn--line" style="padding:8px 14px;font-size:13px" data-lite-clear>직접 추가 자료 모두 지우기</button>`:''}</div>
   <ul class="lite-rules"><li><b>식별자 없이</b> 번호·별칭만 쓰고 이름·학번·연락처·학교명은 넣지 마세요. 들어오면 자동으로 가리고, 가려지지 않으면 넣지 않아요</li><li><b>이 기기 안에서만</b> 서버에 저장하지 않고 탭을 닫으면 지워져요</li><li><b>${LITE_MAX}명까지</b> 반 전체는 학교 연계 서비스(NEIS 일괄 적재)에서</li><li><b>동의 확인</b> 학생·보호자 동의를 받은 자료만</li></ul>
   <label for="liteText" style="font-size:13.5px;font-weight:700">붙여 넣기 (첫 줄 머리글 · 쉼표·탭·띄어쓰기 구분)</label>
   <textarea id="liteText" rows="5" placeholder="번호, 국, 수, 영, 탐1, 탐2&#10;7, 2, 3, 2, 2, 3&#10;15, 3, 2, 3, 2, 2"></textarea>
@@ -568,7 +568,7 @@ function renderMain(){
  if(state==='guest'){m.innerHTML=`
   <div class="gate">
    <h2>교사 신분 확인이 필요합니다</h2>
-   <p>재직 확인만 되면 전국 어느 학교 선생님이든 기본 모드(학생 공유 데이터 · 진학지도 메뉴)를 바로 씁니다. 학교 승인은 반 관리와 학교 연계 서비스(NEIS)에만 필요합니다.</p>
+   <p>재직 확인만 되면 전국 어느 학교 선생님이든 교사공간(학생 공유 데이터 · 진학지도 메뉴)를 바로 씁니다. 학교 승인은 반 관리와 학교 연계 서비스(NEIS)에만 필요합니다.</p>
    <ol>
     <li><em>1</em><div><b>재직 확인</b> — GPKI/EPKI 인증서 또는 나이스 교원 계정</div></li>
     <li><em>2</em><div><b>학교 승인 (선택)</b> : 반 관리·학생 매핑·학교 연계 서비스를 쓰려면 학교 담당자가 역할·담당 범위 승인</div></li>
@@ -577,8 +577,8 @@ function renderMain(){
    <button class="btn btn--primary" data-toast="GPKI 인증 화면은 다음 단계에서 설계합니다">GPKI로 신분 확인</button>
    <p class="tel">공개 자료실은 인증 없이 이용할 수 있습니다 · <a href="library.html" style="color:var(--brand)">자료실 바로가기</a><br>아이디·사용 문의 02-3111-362,363</p>
   </div>`;return;}
- if(state==='pending'&&view==='class'){m.innerHTML=`<div class="gate"><h2>반 관리는 학교 승인 뒤에 열립니다</h2><p>학교 담당자(관리자)가 역할·담당 반을 승인하면 명단 매핑·공유 승인·보관 위치를 설정할 수 있어요.</p><div class="badge badge--wait" style="margin-bottom:20px">신청 9.2 · 담당자 확인 중</div><p class="tel">그동안 기본 모드(진학지도 메뉴 · 학생 공유 자료)는 바로 쓸 수 있습니다</p></div>`;return;}
- const pendingNote=state==='pending'?`<div class="lite" style="margin:0 0 16px"><b>학교 승인 대기 중</b><span>재직 확인이 끝나 기본 모드는 바로 쓸 수 있어요 · 반 관리·학교 연계 서비스는 승인 뒤</span><span class="chip">신청 9.2</span></div>`:'';
+ if(state==='pending'&&view==='class'){m.innerHTML=`<div class="gate"><h2>반 관리는 학교 승인 뒤에 열립니다</h2><p>학교 담당자(관리자)가 역할·담당 반을 승인하면 명단 매핑·공유 승인·보관 위치를 설정할 수 있어요.</p><div class="badge badge--wait" style="margin-bottom:20px">신청 9.2 · 담당자 확인 중</div><p class="tel">그동안 교사공간(진학지도 메뉴 · 학생 공유 자료)는 바로 쓸 수 있습니다</p></div>`;return;}
+ const pendingNote=state==='pending'?`<div class="lite" style="margin:0 0 16px"><b>학교 승인 대기 중</b><span>재직 확인이 끝나 교사공간은 바로 쓸 수 있어요 · 반 관리·학교 연계 서비스는 승인 뒤</span><span class="chip">신청 9.2</span></div>`:'';
  if(state==='expired'){m.innerHTML=`
   <div class="gate">
    <h2>위촉 기간이 만료되었습니다</h2>
@@ -624,12 +624,12 @@ function renderMain(){
  const adoptBody=ad==='adopted'
   ?`<ul class="pro__st">${proStatus.map(([k,v,c])=>`<li class="st-${c}"><span>${k}</span><b>${v}</b></li>`).join('')}</ul><button class="btn btn--navy" data-pro="SEN 진학프로그램 열기">학교 연계 서비스 열기 ›</button>`
   :ad==='applied'
-  ?`<ul class="pro__st"><li><span>신청</span><b>9.2 · 학교관리자</b></li><li class="st-warn"><span>교육청·정보원 승인</span><b>대기 중</b></li><li><span>다음 단계</span><b>NEIS 일괄 적재 → 교사 배포</b></li></ul><p class="pro__note">승인되면 기본 모드에서 쓰던 설정(관심 대학·기준표)이 그대로 이어집니다.</p>`
-  :`<p class="pro__note">우리 학교는 아직 도입 전이에요. 학교가 도입을 결정하면 학교관리자가 신청하고, 교육청·정보원 승인 뒤 NEIS 자료를 학교에서 일괄 받아 선생님께 배포합니다. 그때까지는 기본 모드에서 학생 공유 데이터로 같은 기능을 써 볼 수 있어요.</p>${isAdm?`<button class="btn btn--navy" data-toast="학교 연계 서비스 도입 신청 → 교육청·정보원 승인 대기로 바뀝니다 (목업)">도입 신청 (학교관리자)</button>`:`<button class="btn btn--navy" data-toast="학교관리자에게 도입 요청을 보냈어요 (목업)">학교관리자에게 도입 요청</button>`}`;
+  ?`<ul class="pro__st"><li><span>신청</span><b>9.2 · 학교관리자</b></li><li class="st-warn"><span>교육청·정보원 승인</span><b>대기 중</b></li><li><span>다음 단계</span><b>NEIS 일괄 적재 → 교사 배포</b></li></ul><p class="pro__note">승인되면 교사공간에서 쓰던 설정(관심 대학·기준표)이 그대로 이어집니다.</p>`
+  :`<p class="pro__note">우리 학교는 아직 도입 전이에요. 학교가 도입을 결정하면 학교관리자가 신청하고, 교육청·정보원 승인 뒤 NEIS 자료를 학교에서 일괄 받아 선생님께 배포합니다. 그때까지는 교사공간에서 학생 공유 데이터로 같은 기능을 써 볼 수 있어요.</p>${isAdm?`<button class="btn btn--navy" data-toast="학교 연계 서비스 도입 신청 → 교육청·정보원 승인 대기로 바뀝니다 (목업)">도입 신청 (학교관리자)</button>`:`<button class="btn btn--navy" data-toast="학교관리자에게 도입 요청을 보냈어요 (목업)">학교관리자에게 도입 요청</button>`}`;
  const z3=`<div class="sys">
   <article class="is-navy pro"><div class="pro__head"><div class="ico">🖥️</div><div><h3>학교 연계 서비스 <small>SEN 진학프로그램 · PC</small></h3><p>서울 학교 단위로 도입 · NEIS 일괄 적재 · 반 전체 공식 판정 · 2단계 인증 뒤 새 창</p></div><span class="pro__adopt st-${adL[1]}">${adL[0]}</span></div>
    ${adoptBody}
-   <div class="pro__fn">데이터 적재 · 수시·정시 진학지도 · 판정·승인 HITL · 교과환산점 · 정시예측 · 지원 결과분석 · 비교·분석 · 진학통계 : 기본 모드와 같은 메뉴, NEIS·반 전체·공식 판정이 더해집니다</div>
+   <div class="pro__fn">데이터 적재 · 수시·정시 진학지도 · 판정·승인 HITL · 교과환산점 · 정시예측 · 지원 결과분석 · 비교·분석 · 진학통계 : 교사공간과 같은 메뉴, NEIS·반 전체·공식 판정이 더해집니다</div>
    <div class="pro__sw"><span>도입 상태 보기 (설계 검토용)</span>${['adopted','applied','none'].map(k=>`<button type="button" data-pcadopt="${k}" class="${k===ad?'is-on':''}">${PC_STATE[k][0].split(' ·')[0]}</button>`).join('')}</div></article>
   ${sysCard2}
   <article><div class="ico">💾</div><h3>기존 교사용 쎈진학 <small style="font-weight:700;color:var(--ink-3)">전환 기간</small></h3><p>2027학년도까지 사용한 설치형 프로그램 · 새 창</p><button class="btn btn--line" data-toast="설치형 쎈진학은 학교 PC에서 실행 · 전환 기간 중 데이터는 「선생님 PC 보관」 규격으로 통제">바로가기 ↗</button></article>
@@ -694,7 +694,7 @@ function renderMain(){
  <div class="grid">
   <div class="card"><h2>오늘 할 일</h2><p class="sub">건수 0이면 완료 · 잠긴 항목은 오픈 시점을 표시합니다</p>${z2}</div>
   <div style="display:flex;flex-direction:column;gap:20px">
-   <div class="card"><h2>학교 연계 서비스 (PC)</h2><p class="sub">여기 교사공간은 전국 어느 선생님이나 쓰는 기본 모드, 학교 연계 서비스는 학교가 도입을 결정한 뒤 열리는 정식 모드</p>${z3}</div>
+   <div class="card"><h2>학교 연계 서비스 (PC)</h2><p class="sub">학교 업무망에서 우리 반 전체를 다루는 전문 화면이에요. 학교가 도입하면 NEIS 자료가 반영돼요</p>${z3}</div>
    ${(state==='homeroom'||state==='subject'||state==='head')?promoHtml():''}
    ${z4}
   </div>
@@ -749,6 +749,7 @@ function syncAuth(){const A=window.SEN_AUTH;const hint=document.getElementById('
 document.addEventListener('sen-auth',syncAuth);syncAuth();
 renderAll();
 </script>
+<script src="teacher-1030.js?v=20261030"></script>
 <script src="footer-sys.js"></script>
 </body>
 </html>

@@ -4,7 +4,8 @@ const D=window.CNS_DATA;const $=id=>document.getElementById(id);
 const K='sen-cns-v1';let P=JSON.parse(localStorage.getItem(K)||'{"dec":{},"share":{},"edit":{}}');const save=()=>localStorage.setItem(K,JSON.stringify(P));
 const DETAIL=Object.fromEntries(D.상세.map(d=>[d.id,d]));
 const CLS3=D.학생.filter(s=>s.반===2).sort((a,b)=>a.번호-b.번호);
-let role='담임',evalMode=false,selId=CLS3.slice().sort((a,b)=>b.우선점수-a.우선점수)[0].id,tab='프로파일',sort='priority',filter='';
+let role='담임',evalMode=false,selId=CLS3.slice().sort((a,b)=>a.번호-b.번호)[0].id,tab='프로파일',sort='no',filter=''; /* 10-30 : 우선점수 정렬 삭제 */
+const FACT=s=>s.우선사유.filter(t=>!/진로개발자|탄력성|확인 필요|재실시/.test(t)); /* 목록에는 사실 문장만 (R02) */
 const T=['프로파일','사전 입력서','상담 브리프','공유'];
 const stBadge=st=>({'초안':['초안','st--draft'],'검토 중':['검토 중','st--rev'],'확정':['확정','st--ok2'],'학생 공유':['학생 공유','st--share']}[st]||[st,'st--draft']);
 const briefState=id=>{const d=DETAIL[id];if(!d||!d.브리프)return null;const ov=P.dec[id]||{};const n=d.브리프.항목.length,done=Object.keys(ov).length;
@@ -14,18 +15,18 @@ const briefState=id=>{const d=DETAIL[id];if(!d||!d.브리프)return null;const o
 function renderList(){
   const pri=CLS3.filter(s=>s.우선점수>=4).length,chk=CLS3.filter(s=>s.규칙.some(r=>r!=='R4')).length,re=CLS3.filter(s=>s.규칙.includes('R4')).length;
   const brDone=CLS3.filter(s=>['확정','학생 공유'].includes(briefState(s.id))).length;
-  $('kpis').innerHTML=[['상담 우선',pri+'명','우선점수 4 이상'],['검사 확인 필요',chk+'명','규칙 R1~R3 · R5~R7'],['재실시 필요',re+'명','응답 이상 (R4)'],['브리프 확정',brDone+' / '+CLS3.length,'교사 확정 기준']].map(x=>`<div class="ckpi"><span>${x[0]}</span><b>${x[1]}</b><small>${x[2]}</small></div>`).join('');
+  $('kpis').innerHTML=[['살펴볼 변화',CLS3.filter(s=>FACT(s).length).length+'명','희망분야 변경·내신 변화가 있는 학생'],['검사 결과 확인',chk+'명','검사와 희망이 서로 다른 학생'],['검사 다시 하기',re+'명','응답이 고르지 않은 학생'],['브리프 확정',brDone+' / '+CLS3.length,'교사 확정 기준']].map(x=>`<div class="ckpi"><span>${x[0]}</span><b>${x[1]}</b><small>${x[2]}</small></div>`).join('');
   const dist=(key,labels)=>{const c={};CLS3.forEach(s=>c[s[key]]=(c[s[key]]||0)+1);return labels.filter(l=>c[l]).map((l,i)=>`<div class="dist-r"><span>${l}</span><div class="dist-t"><i class="d${i}" style="width:${c[l]/CLS3.length*100}%"></i></div><b>${c[l]}</b></div>`).join('');};
   $('dists').innerHTML=`<div><h4>진로개발역량 유형</h4>${dist('개발역량유형',['자기주도 진로개발자','탐색 중 진로개발자','계획형 진로개발자','멈춰있는 진로개발자'])}</div><div><h4>진로실행력 증폭유형</h4>${dist('증폭유형',['상승형','유지형','성장필요형'])}</div>`;
   let L=CLS3.slice();
-  if(filter==='pri')L=L.filter(s=>s.우선점수>=4);
+  if(filter==='pri')L=L.filter(s=>FACT(s).length);
   if(filter==='chk')L=L.filter(s=>s.규칙.some(r=>r!=='R4'));
   if(filter==='re')L=L.filter(s=>s.규칙.includes('R4'));
   if(filter==='br')L=L.filter(s=>!['확정','학생 공유'].includes(briefState(s.id)));
-  if(sort==='priority')L.sort((a,b)=>b.우선점수-a.우선점수||a.번호-b.번호);
-  $('fchips').innerHTML=[['pri','상담 우선'],['chk','검사 확인 필요'],['re','재실시 필요'],['br','브리프 미확정']].map(([k,l])=>`<button class="fchip${filter===k?' is-on':''}" data-f="${k}" aria-pressed="${filter===k}">${l}</button>`).join('');
+  if(sort==='name')L.sort((a,b)=>a.이름.localeCompare(b.이름,'ko'));else L.sort((a,b)=>a.번호-b.번호);
+  $('fchips').innerHTML=[['pri','살펴볼 변화'],['chk','검사 결과 확인'],['re','검사 다시 하기'],['br','브리프 미확정']].map(([k,l])=>`<button class="fchip${filter===k?' is-on':''}" data-f="${k}" aria-pressed="${filter===k}">${l}</button>`).join('');
   $('cnt').textContent=L.length+'명';
-  $('list').innerHTML=L.map(s=>{const bs=briefState(s.id),[bl,bc]=stBadge(bs);const tags=s.우선사유.slice(0,2);
+  $('list').innerHTML=L.map(s=>{const bs=briefState(s.id),[bl,bc]=stBadge(bs);const tags=FACT(s).slice(0,2);
     return `<button class="srow${s.id===selId?' is-sel':''}" data-sid="${s.id}" aria-pressed="${s.id===selId}"><span class="srow__no">${s.번호}</span><span class="srow__m"><b>${s.이름}</b><small>${s.희망[2]||s.희망[1]||'–'}</small>${tags.length?`<span class="srow__tags">${tags.map(t=>`<i>${t}</i>`).join('')}${s.우선사유.length>2?`<i>외 ${s.우선사유.length-2}</i>`:''}</span>`:''}</span><span class="st ${bc}">${bl}</span></button>`;}).join('');
 }
 /* C2 */
@@ -45,7 +46,7 @@ function profile(d,s){
     ['직업가치관검사',`${t.가치관.유형} · 중요가치 ${t.가치관.중요가치.join(' · ')}`,`<dl class="mini-kv">${Object.entries(t.가치관.점수).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl><p class="hint2">점수 하위 3개: ${vals.join(', ')}</p>`],
     ['진로개발역량검사',`${t.개발역량.유형} · 설계 ${t.개발역량.설계} · 준비 ${t.개발역량.준비}`,`<dl class="mini-kv">${['자기이해','직업이해','진로탐색','진로계획','낙관성','지속성','호기심','유연성','도전성','의사소통'].map(k=>`<div><dt>${k}</dt><dd>${t.개발역량[k]}</dd></div>`).join('')}</dl>`],
     ['진로실행력검사',`종합 T ${t.실행력.종합} · 탄력성 반영 T ${t.실행력.탄력성반영} · ${t.실행력.증폭유형}`,`<dl class="mini-kv">${['계획수립력','행동실천력','실천지속력','진로탄력성'].map(k=>`<div><dt>${k}</dt><dd>T ${t.실행력[k]}</dd></div>`).join('')}<div><dt>동일응답비율</dt><dd>${t.실행력.동일응답비율}%</dd></div></dl>`]];
-  const rules=d.규칙결과.length?d.규칙결과.map(r=>`<div class="rrow"><b>${r.코드}</b><span>${r.설명}</span><button class="mini" data-rule="${r.코드}">관련 검사 보기</button></div>`).join(''):'<p class="ok-line">검사 결과끼리 크게 어긋나는 곳이 없습니다</p>';
+  const rules=d.규칙결과.length?d.규칙결과.map(r=>`<div class="rrow"><span>${r.설명}</span><button class="mini" data-rule="${r.코드}">관련 검사 보기</button></div>`).join(''):'<p class="ok-line">검사 결과끼리 크게 어긋나는 곳이 없습니다</p>';
   const allTxt=[...d.창체,...d.세특,...d.행특].map(x=>x.내용||x).join(' ');
   const C3=[['학업역량',['질문','탐구','분석','개념','발표','검증']],['진로역량',['진로','관심','전공','분야','희망']],['공동체역량',['협력','모둠','역할','조정','배려','소통','갈등']]].map(([n2,kws])=>[n2,kws.filter(k=>allTxt.includes(k)).length,kws.length]);
   const hope=(s.희망[2]||'').slice(0,2);
@@ -127,7 +128,7 @@ function renderDetail(){
   if(evalMode){$('detail').innerHTML=evalPane();$('dtabs').innerHTML='';$('dhead').innerHTML='<b>평가 모드</b><span class="src src--gray">파생 · 집계</span>';return;}
   if(!d){$('dhead').innerHTML=`<b>${s.이름}</b><span class="hint2">시연 범위 밖</span>`;$('dtabs').innerHTML='';$('detail').innerHTML='<div class="empty2"><b>시연 범위 밖 학생입니다</b><p>상세 데이터는 3학년 3반 25명에만 들어 있습니다.</p></div>';return;}
   const tabs=role==='과목교사'?['프로파일']:T;
-  $('dhead').innerHTML=`<b>${s.번호}번 ${s.이름}</b><span>${s.계열} · 3학년 희망: ${s.희망[2]||'–'} · 우선점수 ${s.우선점수}</span>${s.우선사유.map(t=>`<i class="ptag">${t}</i>`).join('')}`;
+  $('dhead').innerHTML=`<b>${s.번호}번 ${s.이름}</b><span>${s.계열} · 3학년 희망: ${s.희망[2]||'–'} </span>${s.우선사유.map(t=>`<i class="ptag">${t}</i>`).join('')}`;
   $('dtabs').innerHTML=tabs.map(t2=>`<button class="dtab${t2===tab?' is-on':''}" data-dt="${t2}" aria-selected="${t2===tab}">${t2}</button>`).join('');
   $('detail').innerHTML=tab==='프로파일'?profile(d,s):tab==='사전 입력서'?masterPlan(d,s):tab==='상담 브리프'?brief(d,s):sharePane(d,s);
 }
