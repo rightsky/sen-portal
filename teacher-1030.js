@@ -10,20 +10,20 @@
   var net = function () { try { return sessionStorage.getItem(NETK) || 'school'; } catch (e) { return 'school'; } };
   var setNet = function (v) { try { sessionStorage.setItem(NETK, v); } catch (e) {} };
   var GROUPS = [
-    { k: 'home', t: '홈', views: ['home'] },
+    { k: 'home', t: '홈', views: ['home', 'prep'] },
     { k: 'class', t: '우리 반', views: ['class'] },
     { k: 'guide', t: '진학지도', views: ['susi', 'jeongsi', 'conv', 'hitl', 'compare', 'stats', 'mode'] },
     { k: 'counsel', t: '상담', views: ['assign', 'history'] },
     { k: 'data', t: '자료', href: 'library.html' }
   ];
-  var VNAME = { home: '홈', class: '우리 반', susi: '수시', jeongsi: '정시', conv: '환산점', hitl: '판정 확인', compare: '비교', stats: '통계', mode: '학생상담모드', assign: '배정 답변', history: '상담 이력', prep: '상담 준비(집)' };
+  var VNAME = { home: '홈', class: '우리 반', susi: '수시', jeongsi: '정시', conv: '환산점', hitl: '판정 확인', compare: '비교', stats: '통계', mode: '학생상담모드', assign: '배정 답변', history: '상담 이력', prep: '상담 준비' };
   /* 화면별 접속 위치 : school = 학교 업무망 전용 · home = 집에서도 됨 · both = 집에서는 집계·배경만 */
   var NETOF = { home: 'both', class: 'school', susi: 'school', jeongsi: 'school', conv: 'school', hitl: 'school', compare: 'both', stats: 'home', mode: 'school', assign: 'both', history: 'school', prep: 'home' };
   var chips = function (v) {
     var n = NETOF[v];
     return n === 'school' ? ' data-mk="school"' : n === 'home' ? ' data-mk="home"' : ' data-mk="school home" data-mk-note="집에서는 집계·배경 정보만"';
   };
-  var groupOf = function (v) { for (var i = 0; i < GROUPS.length; i++) if (GROUPS[i].views && GROUPS[i].views.indexOf(v) > -1) return GROUPS[i].k; return v === 'prep' ? 'home' : 'home'; };
+  var groupOf = function (v) { for (var i = 0; i < GROUPS.length; i++) if (GROUPS[i].views && GROUPS[i].views.indexOf(v) > -1) return GROUPS[i].k; return 'home'; };
 
   /* ── 탭 ── */
   function nav() {
