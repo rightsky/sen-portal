@@ -15,7 +15,23 @@
     '6open':  { t: '6open',  d: '2027.6 1차 개방형 오픈 범위' },
     'up1030': { t: 'up1030', d: '10-30 실무 의견 검토로 바뀐 곳' },
     'school': { t: 'school', d: '학교 업무망에서만 (학생 단위 정보)' },
-    'home':   { t: 'home',   d: '집 인터넷에서도 가능 (학생 개인정보 없음)' }
+    'home':   { t: 'home',   d: '집 인터넷에서도 가능 (학생 개인정보 없음)' },
+    'decide': { t: '의사결정', d: '의견이 갈려 정해야 할 곳 (지금은 ★ 제안값)' }
+  };
+  /* 10-30 [의사결정] : 검토 문서 「[의사결정]」 표의 번호 · 화면별로 걸린 항목 */
+  var DEC = {
+    D1: '학생 화면 합격 가능성 신호등 (R11 보이자 ↔ R02 R08 빼자)', D2: '화상 녹취·STT (녹취 없음 4명 ↔ 상호 동의 3명 · R10 STT)',
+    D3: '반 실데이터 보관 위치 (담임 선택 3 ↔ 교육청 통일 3)', D4: '교사공간 메뉴 구조 (10-19 일원화 ↔ 학교·집 모드)',
+    D5: '교사 인증 (원패스 2 ↔ GPKI 5)', D6: '2단계 인증 시점 (식별 화면 3 ↔ 하루 1회 3)', D7: '예비 슬롯 수락 기한 (24시간 3 ↔ 48시간 3)',
+    D8: '판정 확인 (단순화 유지 ↔ R06 R09 재검토)', D9: '상담 우선점수 (삭제 4 ↔ 손질 3)', D10: '학생상담모드 종료 (20분 3 · 직접 3 · 10분 1)',
+    D11: '학부모 기본 공유 (성적 추이까지 4 ↔ 진로만 3)', D12: '진학부장 담당 외 열람 (기본 허용 4 ↔ 설정+사유 3)', D13: '상담 한정 공유 만료 (30일 4 ↔ 학년도 말 3)',
+    D14: '설치형 쎈진학 링크 (2027.12까지 5 ↔ 즉시 제거 2)', D15: '1차 미개통 기능 (잠금 카드 5 ↔ 숨김 2)', D16: '교과환산점 탭 (R07 필요 ↔ R06 효용 의문)',
+    D17: '비교·분석·진학통계 (유지 ↔ 축소)', D18: '2028 교사 브리핑 (유지 ↔ R07 삭제 고려)'
+  };
+  var DECP = {
+    'index.html': ['D15'], 'strategy.html': ['D1', 'D15'], 'my.html': ['D11', 'D13', 'D15'], 'parent.html': ['D11', 'D15'],
+    'counsel.html': ['D2', 'D7'], 'teacher.html': ['D3', 'D4', 'D5', 'D8', 'D10', 'D12', 'D14', 'D16', 'D17', 'D18'],
+    'cns.html': ['D9', 'D12'], 'ops-counsel.html': ['D2', 'D7', 'D5', 'D6'], 'ops-admin.html': ['D5', 'D6', 'D8'], 'ops-ai.html': ['D5', 'D6']
   };
   /* 화면 단위 표시 : 6open = 1차 개방형 포함 화면, 그 밖은 2차(S존 개통 후) */
   var PAGES = {
@@ -52,6 +68,8 @@
     + '.mk--up1030{color:#9a4a00;background:#fff1e0;border-color:#f3c088}'
     + '.mk--school{color:#173a7a;background:#e8eefb;border-color:#a9bde8}'
     + '.mk--home{color:#00676b;background:#e1f5f4;border-color:#93d3d0}'
+    + '.mk--decide{color:#a0153e;background:#fde8ef;border-color:#f0a3bb}'
+    + '.mkbar__dec{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center;flex-basis:100%}.mkbar__dec .dk{padding:1px 7px;border-radius:999px;background:#fff;border:1px solid #f0c3d1;color:#7a1030;font-weight:600;cursor:help}'
     + 'html.mk-off .mk,html.mk-off .mkbar{display:none!important}'
     + '.mkbar{position:relative;z-index:60;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:6px 16px;background:#fbfaf6;border-bottom:1px dashed #d9d4c4;font:600 12px/1.5 system-ui,-apple-system,"Pretendard","Noto Sans KR",sans-serif;color:#5b5648}'
     + '.mkbar b{color:#3a362c}.mkbar .mk{margin:0}.mkbar__legend{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center}'
@@ -132,7 +150,9 @@
     var b = document.createElement('div'); b.className = 'mkbar'; b.setAttribute('role', 'note');
     var legend = Object.keys(KINDS).map(function (k) { return '<span class="l"><span class="mk mk--' + k + '">' + KINDS[k].t + '</span><span class="d">' + KINDS[k].d + '</span></span>'; }).join('');
     var here = P.m.length ? P.m.map(function (k) { return '<span class="mk mk--' + k + '" title="' + KINDS[k].d + '">' + KINDS[k].t + '</span>'; }).join(' ') : '<span>2차(S존 개통 후)</span>';
-    b.innerHTML = '<b>설계 검토 표시</b><span>이 화면 : ' + here + (P.n ? ' <span class="d">· ' + P.n + '</span>' : '') + '</span>'
+    var dk = DECP[page] || [];
+    var dec = dk.length ? '<span class="mkbar__dec"><span class="mk mk--decide">의사결정</span>' + dk.map(function (k) { return '<span class="dk" title="' + DEC[k] + '">' + k + ' ' + DEC[k].split(' (')[0] + '</span>'; }).join('') + '</span>' : '';
+    b.innerHTML = '<b>설계 검토 표시</b><span>이 화면 : ' + here + (P.n ? ' <span class="d">· ' + P.n + '</span>' : '') + '</span>' + dec
       + '<span class="mkbar__legend">' + legend + '</span><button type="button" data-mk-toggle>표시 끄기</button>';
     document.body.insertBefore(b, document.body.firstChild);
     var on = document.createElement('button'); on.type = 'button'; on.className = 'mkon'; on.textContent = '검토 표시 켜기'; on.setAttribute('data-mk-toggle', '');
