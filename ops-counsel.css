@@ -259,3 +259,16 @@
 .cns input[type=date],.cns input[type=number]{font:inherit;padding:5px 8px;border:1px solid #cfd6e4;border-radius:6px;min-height:30px}
 .cns textarea#smsTx{width:100%;min-height:96px;font:inherit;padding:9px 10px;border:1px solid #cfd6e4;border-radius:8px}
 @media (max-width:640px){.cal7 .c7e{display:none}.cal7 .c7{min-height:46px}}
+/* 10-31 : 폰(태블릿 미만)에서 상담 선생님·실무사 화면 가로 넘침 없애기 */
+@media (max-width:760px){
+ .cns .cga,.cns .cgb,.cns .cgc,.cns .cgd,.cns .cg2,.cns .cg3,.cns .cg4,.cns .tiles,.cns .tiles.t3{grid-template-columns:minmax(0,1fr)!important}
+ .cns .tiles{gap:8px}
+ .cns .gt{overflow-x:auto;-webkit-overflow-scrolling:touch}
+ .cns .gt__hd,.cns .gt__r{min-width:640px}
+ .cns .sub,.cns .cc__hd,.cns .tbar,.cns h2.sec{flex-wrap:wrap}
+ .cns .seg{flex-wrap:wrap}
+ .cns .week{flex-direction:column;align-items:flex-start;gap:2px}
+ .cns .lr{flex-wrap:wrap}
+ .cns .pg{overflow-x:auto}
+ .cns .cal7{gap:2px}
+}
