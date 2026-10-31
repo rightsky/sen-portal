@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <script src="privacy-store.js?v=1"></script>
-<script src="sen-ledger.js?v=20261030"></script><script src="sen-marks.js?v=20261030d" defer></script>
+<script src="sen-ledger.js?v=20261031e"></script><script src="sen-marks.js?v=20261031e" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>지원전략 | 서울 진로진학 통합플랫폼</title>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
@@ -204,7 +204,7 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 <link rel="stylesheet" href="explore.css">
 <link rel="stylesheet" href="school.css">
 <link rel="stylesheet" href="news.css">
-<link rel="stylesheet" href="univ.css">
+<link rel="stylesheet" href="univ.css?v=20261031e">
 <link rel="stylesheet" href="strategy.css">
 <style>.footer__rel{border-top:1px solid rgba(255,255,255,.12);margin-top:22px;padding-top:18px}.footer__rel b{display:block;font-size:13px;margin-bottom:8px;opacity:.8}.footer__rel nav{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;opacity:.8}.footer__rel a::after{content:" ↗";font-size:11px}</style>
 </head>
@@ -213,7 +213,7 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 <div class="brandbar">
   <div class="container">
     <nav class="brandbar__sites" aria-label="패밀리 사이트">
-      <a class="is-active" href="main-everland-style.html">서울 진로진학 통합플랫폼</a>
+      <a class="is-active" href="index.html">서울 진로진학 통합플랫폼</a>
       <a href="https://www.sen.go.kr" target="_blank" rel="noopener" title="새 창">서울특별시교육청</a><a href="https://www.serii.re.kr" target="_blank" rel="noopener" title="새 창">서울특별시교육청교육연구정보원</a><a href="https://www.career.go.kr" target="_blank" rel="noopener" title="새 창">커리어넷</a><a href="https://www.adiga.kr" target="_blank" rel="noopener" title="새 창">대입정보포털 어디가</a>
     </nav>
     <div class="brandbar__util"><a href="#" data-toast="로그인 화면은 다음 단계에서 설계합니다">로그인</a><button id="btnTheme" aria-label="화면 모드 전환" style="font-size:13px;color:var(--ink-2)">🌙 다크</button></div>
@@ -222,12 +222,12 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 
 <header class="header">
   <div class="container">
-    <a class="logo" href="main-everland-style.html"><span class="logo__mark"></span>서울 진로진학 통합플랫폼</a>
+    <a class="logo" href="index.html"><span class="logo__mark"></span>서울 진로진학 통합플랫폼</a>
     <nav class="gnb" aria-label="주메뉴">
-      <a href="#">미래탐색</a><a href="#" >학교·과목설계</a><a href="#" >대학·전형탐색</a><a href="#" class="is-active">지원전략</a><a href="#">상담·체험</a><a href="#">나의 진로진학</a><a href="#" >자료·소식</a>
+      <a href="#">진로탐색</a><a href="#" >학교·과목탐색</a><a href="#" >대학·전형탐색</a><a href="#" class="is-active">지원전략</a><a href="#">상담·체험</a><a href="#">나의 진로진학</a><a href="#" >자료·소식</a>
     </nav>
     <div class="header__actions">
-      <a class="btn btn--ghost btn--pill" href="main-everland-style.html">← 메인으로</a>
+      <a class="btn btn--ghost btn--pill" href="index.html">← 메인으로</a>
       <a class="btn btn--primary btn--pill" href="counsel.html#guide">상담 안내</a>
     </div>
   </div>
@@ -235,7 +235,7 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 
 <main>
   <section class="phero"><div class="container">
-    <p class="phero__crumb"><a href="main-everland-style.html">홈</a> › 지원전략 › <span id="crumbL2"></span> › <strong id="crumbL3">내신·모의고사</strong></p>
+    <p class="phero__crumb"><a href="index.html">홈</a> › 지원전략 › <span id="crumbL2"></span> › <strong id="crumbL3">내신·모의고사</strong></p>
     <h1 id="h1"></h1><p id="hdesc"></p>
   </div></section>
   <nav id="lnb" data-l1="지원전략" data-current="내신·모의고사"></nav>
@@ -284,11 +284,11 @@ applyTheme(localStorage.getItem('sen-theme'));
 btnTheme.addEventListener('click',()=>{const cur=document.documentElement.dataset.theme==='dark'||(!document.documentElement.dataset.theme&&matchMedia('(prefers-color-scheme: dark)').matches);const next=cur?'light':'dark';localStorage.setItem('sen-theme',next);applyTheme(next);});
 </script>
 <script src="explore-data.js"></script>
-<script src="auth.js?v=20261031"></script>
+<script src="auth.js?v=20261031e"></script>
 <script src="univ-data.js"></script>
-<script src="strategy.js?v=20261031b"></script>
-<script src="gnb.js?v=20261031c"></script>
+<script src="strategy.js?v=20261031e"></script>
+<script src="gnb.js?v=20261031e"></script>
 <script src="sen-ai.js?v=20261030b"></script>
-<script src="footer-sys.js"></script>
+<script src="footer-sys.js?v=20261031e"></script>
 </body>
 </html>

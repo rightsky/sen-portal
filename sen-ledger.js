@@ -20,9 +20,14 @@
     demoToday: '2027-09-01',   /* 시연 기준일 : 화면의 D-day·달력은 이 날을 오늘로 계산 */
     source: '2028학년도 대학입학전형 시행계획(대교협)'
   };
+  L.todayDate = function () { var p = L.demoToday.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); };
   L.fmt = {
     susiApply: function () { var s = L.schedule.susiApply; return s.from + ' ~ ' + s.to; },
-    jeongsiApply: function () { var s = L.schedule.jeongsiApply; return s.from + ' ~ ' + s.to; }
+    jeongsiApply: function () { var s = L.schedule.jeongsiApply; return s.from + ' ~ ' + s.to; },
+    /* today('dot') → '2027.09.01' · today('short') → '9.1' · today('wd') → '9.1(수)' · today('ko') → '2027년 9월 1일' */
+    today: function (style) { var p = L.demoToday.split('-'), d = L.todayDate(), wd = ['일', '월', '화', '수', '목', '금', '토'][d.getDay()];
+      if (style === 'short') return (+p[1]) + '.' + (+p[2]); if (style === 'wd') return (+p[1]) + '.' + (+p[2]) + '(' + wd + ')';
+      if (style === 'ko') return p[0] + '년 ' + (+p[1]) + '월 ' + (+p[2]) + '일'; if (style === 'month') return p[0] + '년 ' + (+p[1]) + '월'; return p.join('.'); }
   };
   window.SEN_LEDGER = L;
 

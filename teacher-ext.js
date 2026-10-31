@@ -62,8 +62,8 @@ const st=document.createElement('style');st.textContent=css;document.head.append
 
 /* ═══════════ A. 판정 승인(HITL) : H1 세션 · H2 항목 검토 · H4 후속·인계 · F1 플라이휠 ═══════════ */
 const SESS=[
- {id:'S-2027-0905-01',at:'2027.9.5 09:12',items:['h1','h2','h3','h4'],src:'수시 판정 생성'},
- {id:'S-2027-0904-02',at:'2027.9.4 16:40',items:['h5'],src:'수시 판정 생성 (겸직 제한 건)'},
+ {id:'S-2027-0827-01',at:'2027.8.27 09:12',items:['h1','h2','h3','h4'],src:'수시 판정 생성'},
+ {id:'S-2027-0826-02',at:'2027.8.26 16:40',items:['h5'],src:'수시 판정 생성 (겸직 제한 건)'},
  {id:'S-2027-0828-01',at:'2027.8.28 10:05',items:[],fixed:{stu:'최민준',n:1,st:'확정 · 전달 완료 (8.30)'},src:'학업 설계 판정'}];
 const REASONS={R1:'근거 자료 오류 · RAG 품질',R2:'환산식 · 기준표',R3:'학생 사정 반영 (학습 제외)',R4:'표현 · 문구',R5:'기타 (수동 분류)'};
 const LABELS=['안정','적정','소신','상향','보류'];
@@ -106,7 +106,7 @@ function h2Html(){if(!hSess)hSess=(SESS.find(x=>x.items.some(i=>HS[i]==='sec'))|
   return `<div class="card" style="padding:16px 18px"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center"><div><b>${h.stu}</b> · ${h.uni}<div style="margin-top:4px;font-size:12.5px;color:var(--ink-3)">AI 초안 「${h.draft}」 · 근거 ${h.ev.length} · ${h.gate}</div></div>${act}</div>${hitlCardExtra(h)}${hEdit===id?editorHtml(h):''}</div>`;}).join('');
  return `<h3 id="h2" style="margin:22px 0 8px;font-size:15px">H2 · 판정 항목 검토 ${s?`<small style="color:var(--ink-3)">${s.id} · ${s.src}</small>`:''}</h3><div style="display:grid;gap:10px">${body}</div>`;}
 function h4Html(){const del=HITL.filter(h=>HS[h.id+'_d']);const L=lsGet(LOGK,[]);
- const rows=del.map(h=>`<tr><td><b>${h.stu}</b><br><small style="color:var(--ink-3)">${h.uni}</small></td><td><span class="badge badge--ok">[선생님 의견] 「${curLabel(h)}」</span></td><td><input type="date" class="xsel" style="width:auto;min-width:150px" value="${HS[h.id+'_f']||''}" data-hfollow="${h.id}" aria-label="${h.stu} 상담 예정일"></td><td>열람 9.7</td><td style="color:var(--ok);font-weight:700">✓ 기록</td></tr>`).join('');
+ const rows=del.map(h=>`<tr><td><b>${h.stu}</b><br><small style="color:var(--ink-3)">${h.uni}</small></td><td><span class="badge badge--ok">[선생님 의견] 「${curLabel(h)}」</span></td><td><input type="date" class="xsel" style="width:auto;min-width:150px" value="${HS[h.id+'_f']||''}" data-hfollow="${h.id}" aria-label="${h.stu} 상담 예정일"></td><td>열람 ${window.SEN_LEDGER?SEN_LEDGER.fmt.today('short'):'9.1'}</td><td style="color:var(--ok);font-weight:700">✓ 기록</td></tr>`).join('');
  return `<h3 id="h4" style="margin:22px 0 8px;font-size:15px">H4 · 후속·인계</h3>
  <div class="xgrid">
   <div class="card" style="padding:18px 20px"><h2 style="font-size:16px">전달된 판정 후속 <small style="color:var(--ink-3);font-weight:700">${del.length}건</small></h2><p class="sub">전달 뒤에는 상담 예정일 등록 → 학생 열람 → 상담 원장 기록 순으로 챙겨요</p>${del.length?`<div class="xscroll"><table class="btable"><tr><th>학생</th><th>전달 내용</th><th>상담 예정일</th><th>학생 열람</th><th>상담 원장</th></tr>${rows}</table></div>`:'<p class="caption">H3에서 「학생에게 전달」을 체크하면 여기에 쌓여요</p>'}</div>
@@ -187,7 +187,7 @@ window.compareHtml=function(){
  const tbl=`<div class="xscroll"><table class="btable"><tr><th>항목</th><th>A · ${A.label}</th><th>B · ${B.label}</th><th>배경 · ${G.t}</th></tr>${rows.map(([n,f])=>`<tr><td style="font-weight:700;color:var(--ink-2)">${n}</td><td>${f(A)}</td><td>${f(B)}</td><td style="color:var(--ink-2)">${f(G)}</td></tr>`).join('')}</table></div>`;
  const todo=HITL.filter(h=>!HS[h.id]&&!h.mine);
  const send=ro?'<p class="caption">과목교사 역할은 읽기 전용이라 근거 칩을 보낼 수 없어요</p>':`<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px"><select class="xsel" style="width:auto;min-width:220px" data-ctarget aria-label="근거를 보낼 판정 대기 건">${todo.length?todo.map(h=>`<option value="${h.id}"${CS.target===h.id?' selected':''}>${h.stu} · ${h.uni}</option>`).join(''):'<option value="">대기 건 없음</option>'}</select><button class="btn btn--primary xb" data-csend${todo.length?'':' disabled'}>HITL 근거 칩으로 보내기</button></div>`;
- const wm=`${teacherName()} · 2027.09.05 · 열람 목적: ${PURPOSE[CS.purpose]} · 재배포 금지`;
+ const wm=`${teacherName()} · ${window.SEN_LEDGER?SEN_LEDGER.fmt.today():'2027.09.01'} · 열람 목적: ${PURPOSE[CS.purpose]} · 재배포 금지`;
  return head+slots+`<h3 style="margin:20px 0 8px;font-size:15px">③ 결과 <span class="badge badge--gray">합성 · 실제 학생 아님</span></h3>
  <div class="cmp-res" data-wm="${esc(wm)}">${tbl}</div>
  <p class="caption">막대는 등급대·활동 수를 상대적으로 보여줄 뿐, 합격 가능성 숫자가 아니에요 · 원문·개인 판정은 전문시스템</p>
@@ -201,7 +201,7 @@ function bindCompare(){
  document.querySelectorAll('[data-cax]').forEach(s=>s.addEventListener('change',()=>{CS[s.dataset.cax]=s.value;csSave();renderAll();}));
  document.querySelectorAll('[data-ctarget]').forEach(s=>s.addEventListener('change',()=>{CS.target=s.value;csSave();}));
  document.querySelectorAll('[data-csend]').forEach(b=>b.addEventListener('click',()=>{const sel=document.querySelector('[data-ctarget]');const id=sel&&sel.value;if(!id)return;const A=slotObj(CS.a),B=slotObj(CS.b),G=BGS[CS.bg];
-  const chip=`${A.label} vs ${B.label} · 내신 ${A.band} / ${B.band} · 배경 ${G.t}`;const ev=Array.isArray(HS[id+'_ev'])?HS[id+'_ev']:[];if(!ev.includes(chip))ev.push(chip);HS[id+'_ev']=ev;hsSave();hlog(`비교·분석 근거 칩 → ${hById(id).stu} 판정 대기 건`);showToast('HITL 근거 칩으로 보냈어요 · 판정 승인 H0·H2 카드에 표시');}));}
+  const chip=`${A.label} vs ${B.label} · 내신 ${A.band} / ${B.band} · 배경 ${G.t}`;const ev=Array.isArray(HS[id+'_ev'])?HS[id+'_ev']:[];if(!ev.includes(chip))ev.push(chip);HS[id+'_ev']=ev;hsSave();hlog(`비교·분석 근거 칩 → ${hById(id).stu} 판정 대기 건`);showToast('판정 확인 근거로 보냈어요 · 「진학지도 › 판정 확인」 학생 카드에 표시');}));}
 
 /* ═══════════ C. 진학통계 : 역할 스위처(범위) · 졸업생 진학결과(소집단 억제) · 보고서 빌더 ═══════════ */
 const SK='sen-stats-v1';
@@ -244,7 +244,7 @@ function bindStats(){
  document.querySelectorAll('[data-spreview]').forEach(b=>b.addEventListener('click',()=>{ST.preview=true;stSave();renderAll();}));
  document.querySelectorAll('[data-spdf]').forEach(b=>b.addEventListener('click',()=>{hlog(`진학통계 PDF 내보내기 · ${SCOPES[ST.scope].t} · ${TOS[ST.to]}`);showToast('워터마크 PDF 생성 · 수신자·발송일시 표시 · 재배포 금지');}));}
 
-/* ═══════════ D. 학생상담모드 (준비 · 4단계 · 마무리) : 잠금 띠 · 타 학생 마스킹 · 무입력 10분 · 해제 PIN · 미러링 · 세션 → 요약 초안 → 상담 원장 ═══════════ */
+/* ═══════════ D. 학생상담모드 (준비 · 4단계 · 마무리) : 잠금 띠 · 타 학생 마스킹 · 무입력 20분 잠금 · 해제 PIN · 미러링 · 세션 → 요약 초안 → 상담 원장 ═══════════ */
 const MK='sen-cmode-v1',MLK='sen-cmode-log-v1',PIN='0000',IDLE=1200; /* 10-30 결정 8 제안값 : 자동 종료 없음 · 무입력 20분 화면 잠금 */
 let CM=lsGet(MK,null);const cmSave=()=>CM?lsSet(MK,CM):localStorage.removeItem(MK);
 const MTYPES=['진로','수시','정시','학업설계'];const MSTAGE=['공유 자료 함께 보기','살펴볼 점','선생님 의견','다음 행동 합의'];
@@ -271,8 +271,8 @@ function mDraft(){const c=CLASS.find(x=>x.n===CM.stu)||{};return {t:`${CM.stu} �
 function mSummary(e){return `${e.stu} · ${e.type} 상담 · ${e.min}분 (${e.reason==='early'?'중간 종료':'선생님이 종료'})\n함께 본 자료 : ${e.shared||'공유 자료 없음'}\n살펴본 점 : ${e.q.join(' / ')}\n선생님 의견 : ${e.opOk?e.op:'(확정하지 않음 · 학생에게 전달되지 않음)'}\n합의한 다음 행동 : ${e.acts.length?e.acts.join(' / '):'없음'}\n다음 상담 : ${e.next||'미정'}`;}
 function endMode(reason){if(!CM)return;const L=lsGet(MLK,[]);const shared=SHARES.filter(s=>s.who===CM.stu).map(s=>s.what).join(' · ');const acts=['권장과목 1개 다음 학기 반영','활동 성장 노트 1건 작성','다음 상담 전 질문 메모'].filter((_,i)=>CM.acts&&CM.acts[i]);
  const e={id:'CS-'+String(Date.now()).slice(-6),stu:CM.stu,type:CM.type,at:now(),min:Math.max(1,Math.round((Date.now()-CM.startedAt)/6e4)),reason,shared,q:mQuestions().map(x=>x[0]),op:CM.op||'',opOk:!!CM.opOk,acts,next:CM.next||'',confirmed:false};
- e.summary=mSummary(e);L.unshift(e);lsSet(MLK,L.slice(0,20));CM.stage=5;CM.logId=e.id;cmSave();cmodeSync();view='mode';localStorage.setItem('sen-teacher-view',view);renderAll();if(reason==='auto')showToast('무입력 10분 · 상담모드를 자동 종료했어요 · 요약 초안을 확인하세요');}
-setInterval(()=>{if(!cmActive())return;const r=remain();const el=document.getElementById('cmTm');if(el)el.textContent=mmss(r);if(r<=0&&!CM.locked){CM.locked=true;cmSave();askPin('무입력 20분 · 화면을 잠갔어요 (상담은 끝나지 않아요)').then(ok=>{CM.locked=false;if(ok)CM.last=Date.now();cmSave();});}},1000);
+ e.summary=mSummary(e);L.unshift(e);lsSet(MLK,L.slice(0,20));CM.stage=5;CM.logId=e.id;cmSave();cmodeSync();view='mode';localStorage.setItem('sen-teacher-view',view);renderAll();if(reason==='auto')showToast('무입력 20분 · 상담모드를 자동 종료했어요 · 요약 초안을 확인하세요');}
+setInterval(()=>{if(!cmActive())return;const r=remain();const el=document.getElementById('cmTm');if(el)el.textContent=mmss(r);if(r<=0&&!CM.locked){CM.locked=true;cmSave();askPin('무입력 20분 · 화면을 잠갔어요 (상담은 끝나지 않아요)').then(ok=>{if(ok){CM.locked=false;CM.last=Date.now();cmSave();renderAll();return;}/* 취소 : 잠금 유지, 1분 뒤 다시 묻는다 (10-31 : 매 초 다시 뜨던 것 수정) */CM.last=Date.now()-(IDLE-60)*1000;CM.locked=false;cmSave();showToast('화면 잠금 유지 · 1분 뒤 다시 PIN을 물어요');});}},1000);
 ['click','keydown','input'].forEach(ev=>document.addEventListener(ev,e=>{if(cmActive()&&e.target.closest&&e.target.closest('#main')){CM.last=Date.now();cmSave();}},true));
 function m0Html(){const L=lsGet(MLK,[]);const mine=state==='counselor';
  const hist=L.length?`<h3 style="margin:20px 0 8px;font-size:15px">최근 상담 세션</h3><div class="xscroll"><table class="btable"><tr><th>세션</th><th>학생</th><th>유형</th><th>시각</th><th>상태</th></tr>${L.slice(0,5).map(e=>`<tr><td>${e.id}</td><td><b>${e.stu}</b></td><td>${e.type}</td><td>${e.at} · ${e.min}분</td><td>${e.confirmed?'<span class="badge badge--ok">상담 원장 기록</span>':'<span class="badge badge--wait">요약 초안 · 미확정</span>'}</td></tr>`).join('')}</table></div>`:'';

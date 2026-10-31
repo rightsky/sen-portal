@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <script src="privacy-store.js?v=1"></script>
-<script src="sen-ledger.js?v=20261030"></script><script src="sen-marks.js?v=20261030d" defer></script>
+<script src="sen-ledger.js?v=20261031e"></script><script src="sen-marks.js?v=20261031e" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>AI PoC · 서울 진로진학 통합플랫폼</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap">
@@ -211,7 +211,7 @@ th{color:var(--ink-3);font-weight:600;font-size:13px}
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="logo"><a href="main-everland-style.html" style="color:inherit;text-decoration:none">← 서울 진로진학 통합플랫폼</a><small>AI PoC · md 변환기 · 지식저장소 · RAG 어시스턴트 · 학생부 AI 활용</small></div>
+    <div class="logo"><a href="index.html" style="color:inherit;text-decoration:none">← 서울 진로진학 통합플랫폼</a><small>AI PoC · md 변환기 · 지식저장소 · RAG 어시스턴트 · 학생부 AI 활용</small></div>
     <div class="row"><span class="badge" id="aiState">AI 연결 확인 중</span></div>
   </header>
 
@@ -851,7 +851,7 @@ function finishAnswer(d,text,hits,q){const ans=d.querySelector('.ans');let body=
     box.querySelector('[data-rptgo]').addEventListener('click',()=>{const rr=box.querySelector('input[type=radio]:checked');if(!rr){toast('신고 사유를 골라 주세요');return;}let memo=box.querySelector('.rptmemo').value.trim();memo=deidentify(memo).out;
       let role='비로그인';try{const a=JSON.parse(localStorage.getItem('sen-auth-v2')||'null');const r0=a&&a.roles&&a.roles[a.cur||0];role=r0?({student:'학생',student2:'학생',parent:'학부모',teacher:'교사',counselor:'상담교사',schooladmin:'교사',office:'정보원'}[r0.k]||'기타'):'비로그인';}catch(e){}
       const L=(()=>{try{return JSON.parse(localStorage.getItem('sen-ai-reports')||'[]');}catch(e){return [];}})();const now=new Date();const t=now.toISOString().slice(0,10)+' '+now.toTimeString().slice(0,5);
-      L.push({id:'u'+Date.now(),t,q:deidentify(q).out.slice(0,120),a:(body||'').replace(/\s+/g,' ').slice(0,150),reason:rr.value,memo,role});try{localStorage.setItem('sen-ai-reports',JSON.stringify(L.slice(-50)));}catch(e){}
+      L.push({id:'u'+Date.now(),t,q:deidentifyQ(q).out.slice(0,120),a:(body||'').replace(/\s+/g,' ').slice(0,150),reason:rr.value,memo,role});try{localStorage.setItem('sen-ai-reports',JSON.stringify(L.slice(-50)));}catch(e){}
       box.innerHTML='<b style="font-size:13.5px">신고를 보냈어요</b><p style="margin:4px 0 0;font-size:13px">센터 담당자가 확인하면 알림 센터로 알려 드려요. 고마워요.</p>';});
   }));
   const tp=hits.length?topicOf(hits[0].c.doc):Object.keys(SAMPLES)[0];const fu=SAMPLES[tp].filter(x=>x!==q&&!ragSeen.has(x)).slice(0,3);
@@ -868,7 +868,7 @@ function autoGrow(t){t.style.height='auto';t.style.height=Math.min(160,t.scrollH
 async function askRag(preset){
   const inp=$('#ragInput');let q=(preset!=null?preset:inp.value).trim();if(!q||ragCtl)return;inp.value='';autoGrow(inp);
   /* 10-30 §9 행 52 (R01) : 질문에도 학생부와 같은 개인정보 가리기 규칙을 적용 (전화·이메일·학번·학교명·이름 라벨) */
-  { const d=deidentify(q);if(d.out!==q){q=d.out;toast('질문 속 개인정보를 가리고 보냈어요 : '+Object.keys(d.rep).filter(k=>!/^⚠/.test(k)).join(' · '));} }
+  { const d=deidentifyQ(q);if(d.out!==q){q=d.out;toast('질문 속 개인정보를 가리고 보냈어요 : '+Object.keys(d.rep).join(' · '));} }
   if(DEFAULT_STATE==='loading'){toast('기본 지식저장소를 불러오는 중이에요. 잠시만요');await DEFAULT_READY;}
   if(!KB.chunks.length){toast('지식저장소가 비어 있어요. ① md 변환기에서 문서를 변환해 저장한 뒤 질문해 주세요');showTab('kb');inp.value=q;return;}
   addUser(q);ragSeen.add(q);renderChips();ragKbBadge();
@@ -916,8 +916,11 @@ const RULES=[
   {k:'학년·반',re:/\d\s*학년\s*\d{1,2}\s*반/g,t:'[학년·반]'},
   {k:'담임성명(표)',re:/(\|[^\n]*담임\s*성명[^\n]*\|\n\|[^\n]*\|\n)((?:\|[^\n]*\|\n?)+)/g,t:(m,h,rows)=>h+rows.replace(/\|\s*[가-힣]{2,4}\s*\|(?=\s*$)/gm,'| [이름] |')},
   {k:'이름(라벨)',re:/(성\s?명|이름|학생명|담임|보호자|교사|신청인|담\s?당\s?자)\s*[:：]?\s*(?!성명|이름|학생명|선생님|교사)[가-힣]{2,4}(?=\s|$|[,.)|])/g,t:'$1: [이름]'},
-  {k:'이름(호칭)',re:/[가-힣]{2,4}(?=\s*(학생|군|양)\b)/g,t:'[이름]'}
+  {k:'이름(호칭)',re:/[가-힣]{2,4}(?=\s*(학생|군|양)(?![가-힣]))/g,t:(m)=>/^(전체|우리|해당|모든|일반|신입|재학|졸업|고등|중학|담당|지원|참가|신청|대상|전교|학급|다른|많은|여러|각반|남학|여학|중3|고1|고2|고3|추천|동의|확인|상담|예비|성인|미성년)/.test(m)?m:'[이름]'}
 ];
+/* 질문(채팅 입력)용 : 학생부 문서 규칙을 그대로 쓰면 「교사 추천」 「담임 추천」 「과학고등학교」 「입학처 주소」가 가려지므로(10-31 점검), 번호·연락처·이메일·「이름 : ○○○」만 가린다 */
+const Q_RULES=RULES.filter(r=>['주민등록번호','연락처','전화번호','이메일','생년월일','학번'].includes(r.k)).concat([{k:'이름(라벨)',re:/(성\s?명|이름|학생명)\s*[:：]\s*[가-힣]{2,4}(?=\s|$|[,.)|?])/g,t:'$1: [이름]'}]);
+function deidentifyQ(src){let out=src;const rep={};Q_RULES.forEach(r=>{let n=0;out=out.replace(r.re,(...a)=>{n++;return typeof r.t==='function'?r.t(...a):r.t.replace('$1',a[1]||'');});if(n)rep[r.k]=n;});return{out,rep};}
 let deidText='',deidNames=[];
 function deidentify(src){
   let out=src;const rep={};

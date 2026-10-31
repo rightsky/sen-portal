@@ -54,7 +54,7 @@ function renderAdm(){
   const idx=m=>MONTHS.indexOf(m);
   $('gantt').innerHTML=`<div class="gt__head"><span></span>${MONTHS.map(m=>`<span>${m}월</span>`).join('')}</div>`+rows.map(s=>{const a=idx(s.m[0]),b=idx(s.m[1]);return `<div class="gt__row" data-sched="${s.name}"><span class="gt__name"><em class="gt__r gt__r--${s.round==='전기'?'a':'b'}">${s.round}</em>${s.name}</span><div class="gt__track"><i style="left:${a/MONTHS.length*100}%;width:${(b-a+1)/MONTHS.length*100}%" class="gt__bar gt__bar--${s.round==='전기'?'a':'b'}"></i></div></div>`;}).join('');
   $('stepper').innerHTML=STEPS.map((s,i)=>`<button class="stp${i===step?' is-on':''}${i<step?' is-past':''}" data-step="${i}"><b>${s[0]}</b><span>${s[1]}</span></button>`).join('');
-  $('stepDesc').innerHTML=`<b>${STEPS[step][0]} · ${STEPS[step][1]}</b><p>${STEPS[step][2]}</p>${A.logged()?`<p class="hint" style="margin-top:8px">김서울 님 거주지(종로구) 기준 학교군: <b>중부학교군</b> (예시)</p>`:''}`;
+  $('stepDesc').innerHTML=`<b>${STEPS[step][0]} · ${STEPS[step][1]}</b><p>${STEPS[step][2]}</p>${A.logged()?`<p class="hint" style="margin-top:8px">${A.name||'학생'} 님 거주지(종로구) 기준 학교군: <b>중부학교군</b> (예시)</p>`:''}`;
   const now=new Date(),dl=new Date(now.getFullYear(),11,10);if(dl<now)dl.setFullYear(dl.getFullYear()+1);
   $('dday').textContent='D-'+Math.ceil((dl-now)/864e5);
 }
@@ -74,7 +74,7 @@ function renderVoc(){const card=(ic,t,b,li)=>`<div class="panel-c" style="border
  <div class="band" style="margin-top:20px;padding:18px 22px"><div><b>전형 요건은 대학·학년도마다 달라요</b><p style="margin:4px 0 0">지원 전에 대학 모집요강을 꼭 확인하고, 학교 취업지원부·진로 선생님과 함께 정하세요</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn btn--ghost btn--pill" href="univ.html">대학·전형 찾기</a><a class="btn btn--primary btn--pill" href="counsel.html#guide">상담 안내</a></div></div>`;}
 /* ── 탭 ── */
 let tab='types';const L3={types:'고교 유형 알아보기',schools:'학교 찾기·비교',admission:'고입 전형·일정',voc:'특성화고·마이스터고 경로'};
-function rerender(){({types:renderTypes,schools:renderSchools,admission:renderAdm,voc:renderVoc})[tab]();$('loginNote').innerHTML=A.logged()?'✅ '+(A.name||'김서울')+' 님 · 거주지 <b>종로구</b> 기준으로 통학 시간과 학교군을 보여드려요':'로그인하면 관심 고교를 저장하고, 우리 집 기준 통학 시간과 학교군을 볼 수 있어요 <a class="link" href="#" data-loginopen>로그인 ›</a>';}
+function rerender(){({types:renderTypes,schools:renderSchools,admission:renderAdm,voc:renderVoc})[tab]();$('loginNote').innerHTML=A.logged()?'✅ '+(A.name||'학생')+' 님 · 거주지 <b>종로구</b> 기준으로 통학 시간과 학교군을 보여드려요':'로그인하면 관심 고교를 저장하고, 우리 집 기준 통학 시간과 학교군을 볼 수 있어요 <a class="link" href="#" data-loginopen>로그인 ›</a>';}
 function setTab(){tab=(location.hash||'#types').slice(1);if(!L3[tab])tab='types';
   document.querySelectorAll('.ptab').forEach(t=>t.classList.toggle('is-on',t.dataset.tab===tab));
   document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('is-on',p.id==='pane-'+tab));

@@ -109,16 +109,18 @@
   var REASONS = ['학생 활동·학생부를 더 반영', '수능 최저 충족 가능성 조정', '학생·학부모 지원 의사 반영', '자료 누락·오류', '기타(직접 입력)'];
   var STU = function () { var m = {}; HITL.forEach(function (h) { (m[h.stu] = m[h.stu] || []).push(h); }); return m; };
   window.pendingHitl = pendingHitl = function () { var m = STU(); return Object.keys(m).filter(function (k) { return !H3[k] && !m[k][0].mine; }).length; };
+  window.hitlTodo = function () { var m = STU(); return Object.keys(m).filter(function (k) { return !H3[k] && !m[k][0].mine; }).map(function (k) { return { stu: k, list: m[k] }; }); };
   var sig = function (h) { return /교과/.test(h.uni) && h.draft !== '보류' ? '<span class="badge" title="판정 기준 : 3개년 합격자 내신 분포 대비 · 안정(중앙보다 0.3 이상 우위) · 적정(±0.3) · 소신(0.3~0.8 열위) · 상향(0.8 이상 열위)" style="background:color-mix(in srgb,' + JC[h.draft] + ' 14%,transparent);color:' + JC[h.draft] + '">교과 신호등 · ' + h.draft + '</span>' : ''; };
   window.hitlHtml = hitlHtml = function () {
     var m = STU();
     var card = function (stu) {
       var list = m[stu], st = H3[stu], mine = list[0].mine;
       var rows = list.map(function (h) {
-        var e = (st && st.edit && st.edit[h.id]) || {};
+        var e = (st && st.edit && st.edit[h.id]) || ((H3['_d'] || {})[stu] || {})[h.id] || {};
         return '<div style="padding:12px 0;border-top:1px solid var(--line)"><b>' + h.uni + '</b> ' + sig(h)
-          + '<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">' + h.ev.map(function (x) { return '<span class="badge badge--gray">근거 · ' + x + '</span>'; }).join('') + '<span class="badge ' + (/통과/.test(h.gate) ? 'badge--ok' : 'badge--warn') + '">지원 자격 · ' + h.gate.replace('자격 게이트 ', '') + '</span></div>'
-          + (st && st.done ? '' : '<div style="display:grid;grid-template-columns:minmax(0,220px) 1fr;gap:8px;margin-top:8px"><select class="xsel" data-h3r="' + stu + '|' + h.id + '" aria-label="수정 사유"><option value="">그대로 (수정 없음)</option>' + REASONS.map(function (r) { return '<option' + (e.r === r ? ' selected' : '') + '>' + r + '</option>'; }).join('') + '</select><input class="xsel" data-h3t="' + stu + '|' + h.id + '" placeholder="선생님 의견 (학생에게 갈 문장 · 확률 숫자·합불 단정 금지)" value="' + (e.t ? esc(e.t) : '') + '"></div>')
+          + '<div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">' + h.ev.map(function (x) { return '<span class="badge badge--gray">근거 · ' + x + '</span>'; }).join('') + '<span class="badge ' + (/통과/.test(h.gate) ? 'badge--ok' : 'badge--warn') + '">지원 자격 · ' + h.gate.replace('자격 게이트 ', '') + '</span>'
+          + (typeof HS !== 'undefined' && Array.isArray(HS[h.id + '_ev']) ? HS[h.id + '_ev'].map(function (x) { return '<span class="badge badge--teach">비교·분석 · ' + String(x).replace(/</g, '&lt;') + '</span>'; }).join('') : '') + '</div>'
+          + (st && st.done ? ((e.r || e.t) ? '<div style="margin-top:8px;font-size:13px;color:var(--ink-2)">' + (e.r ? '<span class="badge badge--gray">수정 사유 · ' + e.r + '</span> ' : '') + (e.t ? '<span>[선생님 의견] ' + String(e.t).replace(/</g, '&lt;') + '</span>' : '') + '</div>' : '<div style="margin-top:8px;font-size:13px;color:var(--ink-3)">그대로 확정 (수정 없음)</div>') : '<div style="display:grid;grid-template-columns:minmax(0,220px) 1fr;gap:8px;margin-top:8px"><select class="xsel" data-h3r="' + stu + '|' + h.id + '" aria-label="수정 사유"><option value="">그대로 (수정 없음)</option>' + REASONS.map(function (r) { return '<option' + (e.r === r ? ' selected' : '') + '>' + r + '</option>'; }).join('') + '</select><input class="xsel" data-h3t="' + stu + '|' + h.id + '" placeholder="선생님 의견 (학생에게 갈 문장 · 확률 숫자·합불 단정 금지)" value="' + (e.t ? String(e.t).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;') : '') + '"></div>')
           + '</div>';
       }).join('');
       return '<div class="card" style="padding:18px 20px"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center"><b style="font-size:16px">' + stu + ' <small style="color:var(--ink-3);font-weight:700">3-2 · 지원 후보 ' + list.length + '곳</small></b>'
@@ -142,20 +144,29 @@
     var b = e.target.closest && e.target.closest('[data-h3done]'); if (!b) return;
     var stu = b.dataset.h3done;
     hitlConfirm().then(function () {
-      H3[stu] = { done: true, at: '2027.09.05', edit: (H3['_d'] || {})[stu] || {} }; h3save();
+      H3[stu] = { done: true, at: (window.SEN_LEDGER ? SEN_LEDGER.fmt.today() : '2027.09.01'), edit: (H3['_d'] || {})[stu] || {} }; if (H3['_d']) delete H3['_d'][stu]; h3save();
       renderAll(); showToast(stu + ' 학생 판정을 확정했어요 · 학생 화면에 [선생님 의견]으로 전달돼요');
     });
   });
 
   /* ── 상담 이력 (§9 행 32 · 감사로그는 여기 아래로) ── */
   function historyHtml() {
-    return '<section class="section"><h2 class="t" data-mk="school up1030">상담 이력</h2><p class="s">확정한 상담 기록과 열람 기록이 모여요 · 학교 업무망 전용</p><div class="card"><table class="btable"><tr><th>날짜</th><th>학생</th><th>유형</th><th>상태</th></tr><tr><td>2027.09.03</td><td><b>강지우</b></td><td>수시 지원 전략</td><td><span class="badge badge--ok">확정</span></td></tr><tr><td>2027.08.28</td><td><b>김서연</b></td><td>학업 설계</td><td><span class="badge badge--ok">확정</span></td></tr></table></div>'
+    return '<section class="section"><h2 class="t" data-mk="school up1030">상담 이력</h2><p class="s">확정한 상담 기록과 열람 기록이 모여요 · 학교 업무망 전용</p><div class="card"><table class="btable"><tr><th>날짜</th><th>학생</th><th>유형</th><th>상태</th></tr><tr><td>2027.08.30</td><td><b>강지우</b></td><td>수시 지원 전략</td><td><span class="badge badge--ok">확정</span></td></tr><tr><td>2027.08.28</td><td><b>김서연</b></td><td>학업 설계</td><td><span class="badge badge--ok">확정</span></td></tr></table></div>'
       + '<h3 style="margin:20px 0 8px;font-size:15px">열람 기록</h3><p class="caption">담당 학생 열람은 「상담 준비」 사유가 자동으로 기록되고, 학생 알림은 하루에 한 번 묶어서 가요 (원칙 7-4 · 결정 21 제안값)</p></section>';
   }
 
   /* ── 화면 라우팅 덮어쓰기 ── */
+  /* 탭 강조·배지 : teacher.html renderMain이 data-view 단위로 is-on을 바꾸므로, 그룹 탭(진학지도 등)·하위 탭·대기 수 배지를 다시 맞춘다 */
+  function navSync() {
+    var cur = groupOf(view);
+    document.querySelectorAll('#tgnb [data-grp]').forEach(function (a) { a.classList.toggle('is-on', a.dataset.grp === cur); });
+    document.querySelectorAll('#tgnb .tsub [data-view]').forEach(function (a) { var on = a.dataset.view === view; a.classList.toggle('is-on', on); a.setAttribute('aria-selected', on); });
+    var hn = document.getElementById('hitlN'); if (hn) { var n = (state === 'subject' || state === 'counselor') ? 0 : pendingHitl(); hn.textContent = n; hn.style.display = n ? 'inline-grid' : 'none'; }
+    var an = document.getElementById('asgN'); if (an) { var n2 = state === 'counselor' && window.pendingAsg ? pendingAsg() : 0; an.textContent = n2; an.style.display = n2 ? 'inline-grid' : 'none'; }
+  }
   var _main = renderMain;
-  window.renderMain = renderMain = function () {
+  window.renderMain = renderMain = function () { renderMain1(); navSync(); };
+  function renderMain1() {
     var m = document.getElementById('main');
     if (state !== 'guest' && state !== 'expired') {
       if (net() === 'home' && NETOF[view] === 'school') { m.innerHTML = homeGate(view); bindExtra(); return; }
@@ -165,7 +176,7 @@
     }
     _main();
     if (net() === 'home' && state !== 'guest') homeMask(view);
-  };
+  }
   /* 집 모드에서 홈·배정 답변·비교 : 학생 이름을 가리고 건수·시간만 (§6-2 · 결정 17) */
   function homeMask(v) {
     var m = document.getElementById('main'); if (!m) return;

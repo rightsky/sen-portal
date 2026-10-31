@@ -7,14 +7,14 @@
 (function(){
 const KEY='sen-auth-v2',LEGACY='sen-trait-state';
 const ROLE_LABEL={student:'학생',student2:'학생(비재학)',parent:'학부모',teacher:'교사',counselor:'상담교사',schooladmin:'학교관리자',office:'교육청·정보원',guest:'일반 사용자'};
-const ROLE_HOME={student:'my.html#stage',student2:'my.html#stage',parent:'parent.html',teacher:'teacher.html',counselor:'teacher.html',schooladmin:'teacher.html',office:'ops-admin.html',guest:'index.html'};
+const ROLE_HOME={student:'my.html#pf',student2:'my.html#pf',parent:'parent.html',teacher:'teacher.html',counselor:'teacher.html',schooladmin:'teacher.html',office:'ops-admin.html',guest:'index.html'};
 const IDP={eduonepass:{name:'교육디지털원패스',level:3,desc:'나이스 학적·교원 정보로 역할이 자동으로 붙어요',who:'학생 · 선생님 · 정보원 담당자'},onepass:{name:'디지털원패스',level:2,desc:'본인확인. 자녀 연결·상담 신청·동의에 필요해요',who:'학부모 · 비재학생'},naver:{name:'네이버',level:1,desc:'간편 로그인. 열람·알림·관심 저장만',who:'일반 사용자'},kakao:{name:'카카오',level:1,desc:'간편 로그인. 열람·알림·관심 저장만',who:'일반 사용자'}};
 /* 역할별 주 로그인 수단 (로그인 모달 상단 안내) */
 const MAIN_WAY=[
  ['학생','eduonepass','교육디지털원패스','나이스 재학 정보로 학교·학년·반이 자동으로 붙어요 (비재학생은 디지털원패스 본인확인)'],
  ['학부모','onepass','디지털원패스','본인확인 뒤 자녀 초대코드로 연결 · 네이버·카카오는 열람만'],
  ['선생님','eduonepass','교육디지털원패스 (교원)','교육디지털원패스만 · 교원 확인 뒤 학교관리자 승인으로 담임·과목 권한 · 2단계 인증은 네이버·카카오 등 간편인증'],
- ['정보원 담당자','eduonepass','교육디지털원패스 + 2단계 인증','업무시스템(상담·AI·플랫폼관리) 진입 때 휴대폰 6자리 · 통합관리자는 GPKI 추가']];
+ ['정보원 담당자','eduonepass','교육디지털원패스 + 2단계 인증','업무시스템(상담·AI·플랫폼관리) 진입 때 간편인증 또는 휴대폰 6자리 · 전자서명(수능 전송·정산 승인)만 GPKI']];
 /* 인증 수단별 데모 신원 (실제 서비스에서는 IdP가 돌려주는 속성으로 결정됨) */
 const DEMO={
  eduonepass:[
@@ -22,14 +22,14 @@ const DEMO={
   {id:'mid',t:'박하늘 · 서울한빛중 3학년',sub:'중3 경로 시연용 · 고교 선택·과목 미리보기',person:{name:'박하늘',grade:'중3',school:'서울한빛중'},roles:[{k:'student',status:'active',scope:'본인',term:'재학 중'}]},
   {id:'stu',t:'김서울 · 서울한빛고 2학년',sub:'고2 경로 시연용 · 나이스 재학 정보 → 학생(재학) 자동 부여',person:{name:'김서울',grade:'고2',school:'서울한빛고'},roles:[{k:'student',status:'active',scope:'본인',term:'재학 중'}]},
   {id:'tch',t:'김민정 · 서울한빛고 3학년 2반 담임',sub:'교원 속성 → 학교관리자가 담임으로 승인함 (3-2)',person:{name:'김민정',school:'서울한빛고'},roles:[{k:'teacher',status:'active',scope:'3학년 2반 담임',term:'2027학년도'},{k:'parent',status:'active',scope:'자녀 1명 연결',term:'자녀 졸업까지'}]},
-  {id:'pend',t:'이정민 · 서울한빛고 교원 (승인 대기)',sub:'교원 속성은 확인됐지만 학교관리자 승인 전 → 권한 0',person:{name:'이정민',school:'서울한빛고'},roles:[{k:'teacher',status:'pending',scope:'담임 신청(자기 선언)',term:'승인 전'}]},
+  {id:'pend',t:'한지민 · 서울한빛고 교원 (승인 대기)',sub:'교원 속성은 확인됐지만 학교관리자 승인 전 → 권한 0',person:{name:'한지민',school:'서울한빛고'},roles:[{k:'teacher',status:'pending',scope:'담임 신청(자기 선언)',term:'승인 전'}]},
   {id:'cns',t:'박선영 · 정보원 위촉 상담교사',sub:'교원 + 정보원 위촉 승인 → 교사·상담교사 역할 2개',person:{name:'박선영',school:'서울남고'},roles:[{k:'teacher',status:'active',scope:'2학년 과목교사',term:'2027학년도'},{k:'counselor',status:'active',scope:'배정 건',term:'2027.4.1~2028.3.31'}]},
   {id:'adm',t:'이재원 · 서울한빛고 진학부장 (학교관리자)',sub:'교육청 승인으로 학교관리자 승격',person:{name:'이재원',school:'서울한빛고'},roles:[{k:'teacher',status:'active',scope:'진학부장',term:'2027학년도'},{k:'schooladmin',status:'active',scope:'서울한빛고',term:'담당 교체 시 회수'}]},
   {id:'off',grp:'정보원 담당자 (업무시스템)',t:'한지원 · 정보원 상담운영 담당',sub:'내부 RBAC Role 상담운영 → 상담시스템 (위촉·배정 예외·만족도·수당 조서) · 10-30 : 정산 Role을 여기에 합침 (결정 20 제안값, R09)',person:{name:'한지원',school:'교육연구정보원'},roles:[{k:'office',status:'active',scope:'상담운영 Role',term:'인사 발령',opsRole:'상담운영',ops:['counsel']}]},
   {id:'off3',grp:'정보원 담당자 (업무시스템)',t:'서다은 · SEN 데이터·AI 관리자',sub:'AI 서비스 관리 (관제·모델 원장·학습데이터·GPU) · 가명 L3·전체 계보',person:{name:'서다은',school:'교육연구정보원'},roles:[{k:'office',status:'active',scope:'데이터·AI Role',term:'인사 발령',opsRole:'데이터·AI',ops:['ai']}]},
   {id:'off4',grp:'정보원 담당자 (업무시스템)',t:'오경수 · 정보원 콘텐츠 담당',sub:'플랫폼관리 중 CMS·자료실·공지·대학 마스터',person:{name:'오경수',school:'교육연구정보원'},roles:[{k:'office',status:'active',scope:'콘텐츠 Role',term:'인사 발령',opsRole:'콘텐츠',ops:['admin']}]},
   {id:'off5',grp:'정보원 담당자 (업무시스템)',t:'강수연 · 정보원 통계 담당',sub:'상담시스템·플랫폼관리의 통계·운영실적 읽기 전용',person:{name:'강수연',school:'교육연구정보원'},roles:[{k:'office',status:'active',scope:'통계 Role (읽기)',term:'인사 발령',opsRole:'통계',ops:['counsel','admin']}]},
-  {id:'off6',grp:'정보원 담당자 (업무시스템)',t:'윤태희 · 정보원 시스템관리자 (통합관리자)',sub:'세 업무시스템 모두 · 계정·권한 승인·보안 정책·감사로그 · 2FA + GPKI',person:{name:'윤태희',school:'교육연구정보원'},roles:[{k:'office',status:'active',scope:'시스템 Role (통합관리자)',term:'인사 발령',opsRole:'시스템',ops:['counsel','ai','admin']}]}],
+  {id:'off6',grp:'정보원 담당자 (업무시스템)',t:'윤태희 · 정보원 시스템관리자 (통합관리자)',sub:'세 업무시스템 모두 · 계정·권한 승인·보안 정책·감사로그 · 2단계 인증 (전자서명이 필요한 기능은 GPKI 전자서명 추가)',person:{name:'윤태희',school:'교육연구정보원'},roles:[{k:'office',status:'active',scope:'시스템 Role (통합관리자)',term:'인사 발령',opsRole:'시스템',ops:['counsel','ai','admin']}]}],
  onepass:[
   {id:'par',t:'강보호 · 학부모 (자녀 연결됨)',sub:'본인확인 L2 + 자녀 강지우(고3) 연결(초대코드 승인)',person:{name:'강보호'},roles:[{k:'parent',status:'active',scope:'자녀 강지우 · 기본 동의',term:'자녀 졸업까지'}]},
   {id:'par0',t:'새 학부모 (자녀 연결 전)',sub:'본인확인은 됐지만 자녀 연결 전 → 열람 항목 없음',person:{name:'새 학부모'},roles:[{k:'parent',status:'pending',scope:'자녀 연결 전',term:'—'}]},
@@ -150,7 +150,7 @@ function openJoinResult(idp,d){const roles=d.roles;const v=IDP[idp];const minor=
   <button class="btn btn--primary btn--pill" style="padding:13px" data-joindone="${d.id}" data-idp="${idp}">가입하고 시작하기</button>
   <p class="lm-note">가입 뒤 세션 30분(업무시스템도 30분, 만료 5분 전 연장 안내) · 1년 미접속 시 휴면 · 역할마다 임기가 있어 만료되면 삭제가 아니라 상태가 바뀌어요</p></div>`;}
 function openStep(level,why){const need=level>=3?'교육디지털원패스':'디지털원패스';m.innerHTML=`<div class="lmodal__p"><button type="button" class="lmodal__x" data-lmclose aria-label="닫기">✕</button><h2>본인확인이 더 필요해요</h2><p class="lm-note">${esc((window.JOSA||((w,p)=>w+'('+p[0]+')'+p[1]))(why||'이 기능','은는'))} 보증 수준 L${level}(${need})이 필요해요. 지금 계정은 L${A.level}이에요. 계정은 그대로 두고 ${need}를 연결하면 돼요.</p><div class="idp"><button data-idp="${level>=3?'eduonepass':'onepass'}" data-mode="login"><span><b>${need} 연결</b><small>연결하면 계정 보증 수준이 L${level}로 올라가요</small></span><span class="lv lv--${level}">L${level}</span></button></div></div>`;m.classList.add('is-on');}
-function open2fa(why,res){m.innerHTML=`<div class="lmodal__p"><button type="button" class="lmodal__x" data-lmclose aria-label="닫기">✕</button><h2 data-mk="decide" data-mk-note="[의사결정] D6 2단계 인증 시점 : 식별 정보 화면 진입 때(R01 R02 R07) ↔ 하루 1회(R03 R06 R08) · 지금은 식별 정보 화면 진입 때">추가 확인 (2단계 인증)</h2><p class="lm-note">${esc((window.JOSA||((w,p)=>w+'('+p[0]+')'+p[1]))(why||'이 작업','은는'))} 승인권이 걸린 기능이라 한 번 더 확인해요. 간편인증을 고르거나 휴대폰으로 받은 6자리 숫자를 입력하세요.</p><div class="idp" style="margin:0 0 10px"><button type="button" data-tfa-easy="네이버">네이버 인증서</button><button type="button" data-tfa-easy="카카오">카카오 인증서</button><button type="button" data-tfa-easy="PASS">PASS 등 통신사</button></div><form id="tfaForm" novalidate style="display:grid;gap:10px"><label class="fld">인증번호<input name="code" inputmode="numeric" maxlength="6" placeholder="목업: 아무 6자리"></label><p class="lm-err">6자리 숫자를 입력해 주세요</p><button class="btn btn--primary btn--pill" type="submit" style="padding:13px">확인</button><p class="lm-note">휴대폰을 쓸 수 없으면 학교 담당자(관리자)에게 임시 코드를 요청하거나 GPKI 인증서로 대신할 수 있어요 (비교용 A안)</p></form></div>`;m.classList.add('is-on');
+function open2fa(why,res){m.innerHTML=`<div class="lmodal__p"><button type="button" class="lmodal__x" data-lmclose aria-label="닫기">✕</button><h2 data-mk="decide" data-mk-note="[의사결정] D6 2단계 인증 시점 : 식별 정보 화면 진입 때(R01 R02 R07) ↔ 하루 1회(R03 R06 R08) · 지금은 식별 정보 화면 진입 때">추가 확인 (2단계 인증)</h2><p class="lm-note">${esc((window.JOSA||((w,p)=>w+'('+p[0]+')'+p[1]))(why||'이 작업','은는'))} 승인권이 걸린 기능이라 한 번 더 확인해요. 간편인증을 고르거나 휴대폰으로 받은 6자리 숫자를 입력하세요.</p><div class="idp" style="margin:0 0 10px"><button type="button" data-tfa-easy="네이버">네이버 인증서</button><button type="button" data-tfa-easy="카카오">카카오 인증서</button><button type="button" data-tfa-easy="PASS">PASS 등 통신사</button></div><form id="tfaForm" novalidate style="display:grid;gap:10px"><label class="fld">인증번호<input name="code" inputmode="numeric" maxlength="6" placeholder="목업: 아무 6자리"></label><p class="lm-err">6자리 숫자를 입력해 주세요</p><button class="btn btn--primary btn--pill" type="submit" style="padding:13px">확인</button><p class="lm-note">휴대폰을 쓸 수 없으면 네이버·카카오 같은 간편인증을 쓰거나, 학교 담당자(관리자)에게 1회용 임시 코드를 요청하세요</p></form></div>`;m.classList.add('is-on');
   m.querySelectorAll('[data-tfa-easy]').forEach(b=>b.addEventListener('click',()=>{close();window.showToast&&showToast(b.dataset.tfaEasy+' 간편인증 완료 (목업)');res(true);}));
   m.querySelector('#tfaForm').addEventListener('submit',e=>{e.preventDefault();const v=e.target.code.value.trim();if(!/^\d{6}$/.test(v)){m.querySelector('.lm-err').classList.add('is-on');return;}close();res(true);});}
 A.open=openLogin;A.openJoin=openJoin;
@@ -160,7 +160,7 @@ m.addEventListener('click',e=>{if(e.target===m||e.target.closest('[data-lmclose]
   const d=e.target.closest('[data-demo]');if(d){e.preventDefault();const demo=DEMO[d.dataset.idp].find(x=>x.id===d.dataset.demo);if(d.dataset.mode==='join'){openJoinResult(d.dataset.idp,demo);}else{A.signIn(d.dataset.idp,demo);close();window.showToast&&showToast(`${demo.person.name} 님, ${A.roleObj?ROLE_LABEL[A.role]+'(으)로':'일반 사용자로'} 로그인했어요`);}return;}
   if(e.target.closest('[data-joinopen]')){e.preventDefault();openJoin();return;}
   if(e.target.closest('[data-loginopen]')){e.preventDefault();openLogin();return;}});
-m.addEventListener('submit',e=>{if(e.target.id!=='lmForm')return;e.preventDefault();const f=e.target;if(!f.id.value.trim()||!f.pw.value.trim()){f.querySelector('.lm-err').classList.add('is-on');return;}f.pw.value='';A.signIn('eduonepass',DEMO.eduonepass[0]);close();window.showToast&&showToast('김서울 님, 환영합니다');});
+m.addEventListener('submit',e=>{if(e.target.id!=='lmForm')return;e.preventDefault();const f=e.target;if(!f.id.value.trim()||!f.pw.value.trim()){f.querySelector('.lm-err').classList.add('is-on');return;}f.pw.value='';A.signIn('eduonepass',DEMO.eduonepass[0]);close();window.showToast&&showToast((DEMO.eduonepass[0].person.name)+' 님, 환영합니다');});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
 /* ── 헤더 ── */
 const util=document.querySelector('.brandbar__util');let who=document.getElementById('who');

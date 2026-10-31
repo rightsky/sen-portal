@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <script src="privacy-store.js?v=1"></script>
-<script src="sen-ledger.js?v=20261030"></script><script src="sen-marks.js?v=20261030d" defer></script>
+<script src="sen-ledger.js?v=20261031e"></script><script src="sen-marks.js?v=20261031e" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>학부모 서비스 | 서울 진로진학 통합플랫폼</title>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
@@ -133,7 +133,7 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 <div class="brandbar">
   <div class="container">
     <nav class="brandbar__sites" aria-label="패밀리 사이트">
-      <a class="is-active" href="main-everland-style.html">서울 진로진학 통합플랫폼</a>
+      <a class="is-active" href="index.html">서울 진로진학 통합플랫폼</a>
       <a href="https://www.sen.go.kr" target="_blank" rel="noopener" title="새 창">서울특별시교육청</a><a href="https://www.serii.re.kr" target="_blank" rel="noopener" title="새 창">서울특별시교육청교육연구정보원</a>
     </nav>
     <div class="brandbar__util"><a href="#" data-toast="통합계정 로그아웃">로그아웃</a></div>
@@ -142,11 +142,11 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 
 <header class="header">
   <div class="container">
-    <a class="logo" href="main-everland-style.html"><span class="logo__mark"></span>서울 진로진학 통합플랫폼</a>
+    <a class="logo" href="index.html"><span class="logo__mark"></span>서울 진로진학 통합플랫폼</a>
     <div class="fontctl" role="group" aria-label="글자 크기">
       <button data-fs="17">가</button><button data-fs="20">가+</button><button data-fs="24">가++</button>
     </div>
-    <a class="btn btn--ghost btn--pill" href="main-everland-style.html">← 메인으로</a>
+    <a class="btn btn--ghost btn--pill" href="index.html">← 메인으로</a>
   </div>
 </header>
 
@@ -163,7 +163,7 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 
 <div class="toast" id="toast" role="status"></div>
 
-<script src="auth.js?v=20261031"></script>
+<script src="auth.js?v=20261031e"></script>
 <script>
 const toast=document.getElementById('toast');let toastT;
 function showToast(m){toast.textContent=m;toast.classList.add('is-on');clearTimeout(toastT);toastT=setTimeout(()=>toast.classList.remove('is-on'),2600);}
@@ -191,12 +191,12 @@ let kid=0;
 /* ===== 데이터 (합성) ===== */
 const KIDS=[
  {name:'강지우',grade:'고3',cls:'서울한빛고 3-2',stage:'지원 전략',next:'수시 원서접수 2027.9.20(월) 시작',gen2028:true},
- {name:'김규민',grade:'고1',cls:'서울○○고 1-5',stage:'기초 설계',next:'2학기 선택과목 수요조사 10.15(금) 마감',gen2028:true}
+ {name:'강규민',grade:'고1',cls:'서울○○고 1-5',stage:'기초 설계',next:'2학기 선택과목 수요조사 10.15(금) 마감',gen2028:true}
 ];
 /* 잠금 3종: stage(단계 잠금·오픈 시점) / consent(동의 잠금·요청 버튼) / policy(정책 잠금·버튼 없음) */
 const ITEMS=[
- {c:'S1',t:'진로검사 결과',base:true,body:'직업가치관검사 상위: 사회봉사 · 자율성 (2027.8) — 해석 가이드 먼저 읽기'},
- {c:'S3',t:'진로 경로',base:true,body:'희망 계열: 사회과학 · 심리학과/사회학과 비교 중'},
+ {c:'S1',t:'진로검사 결과',base:true,body:'직업흥미검사 탐구형 + 예술형 (IA) · 직업가치관검사 상위: 지식추구 · 자율성 · 사회공헌 (2027.8) · 해석 가이드 먼저 읽기'},
+ {c:'S3',t:'진로 경로',base:true,body:'희망 계열: 상경 · 경영학과/통계학과 비교 중'},
  {c:'S2',t:'과목 설계',lock:'consent',body:'자녀가 동의하면 선택과목·권장과목 충족을 볼 수 있어요'},
  {c:'S5',t:'이전 상담 이력',lock:'consent',body:'자녀가 동의하면 상담 요약(원문 제외)을 볼 수 있어요'},
  {c:'S4',t:'성적 추이',lock:'stage',when:'2차 오픈',body:'2차 오픈 뒤 기본으로 보여요(자녀가 끌 수 있어요) · 10-30 결정 12 제안값 · 지원 가능성 판단은 보여 주지 않아요'},
@@ -348,7 +348,7 @@ function gateForm(){
    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><span class="badge ${lv>=3?'badge--ok':'badge--wait'}">${lv>=3?'교육디지털원패스 ✓ L3':'현재 보증 수준 L'+lv+' · L3 필요'}</span><button class="btn btn--primary" id="btnNeis">${lv>=3?'나이스 보호자 정보로 자녀 찾기':'교육디지털원패스로 본인확인'}</button></div>
    <p class="alt">대조 항목: 보호자 성명·생년월일·자녀 학적(학교·학년) · 대조 결과는 저장하지 않고 연결 여부만 남겨요</p>`,
   school:`<p class="alt" style="margin:0 0 10px">초대코드도, 나이스 보호자 등록도 어려울 때(재혼·위탁·조부모 양육 등). 학교에 <b>보호자 확인 요청</b>을 보내면 담임이 확인하고 학교관리자가 연결을 승인해요.</p>
-   <div style="display:grid;gap:8px;max-width:520px"><label class="fld">자녀 학교<input id="scSchool" placeholder="서울한빛고등학교"></label><label class="fld">자녀 이름 · 학년/반<input id="scKid" placeholder="김서울 · 2학년 3반"></label><label class="fld">보호자 관계<select id="scRel" style="font:inherit;font-size:15px;padding:12px 14px;border-radius:var(--radius-md);border:1.5px solid var(--line);background:var(--bg);color:var(--ink)"><option>부</option><option>모</option><option>조부모</option><option>법정대리인(위탁·후견)</option></select></label><label class="cbx2"><input type="checkbox" id="scAgree"><span>학교가 가족관계 증빙을 요청할 수 있음을 확인했어요</span></label><div><button class="btn btn--primary" id="btnSchool">학교에 확인 요청</button></div></div>
+   <div style="display:grid;gap:8px;max-width:520px"><label class="fld">자녀 학교<input id="scSchool" placeholder="서울한빛고등학교"></label><label class="fld">자녀 이름 · 학년/반<input id="scKid" placeholder="강지우 · 3학년 2반"></label><label class="fld">보호자 관계<select id="scRel" style="font:inherit;font-size:15px;padding:12px 14px;border-radius:var(--radius-md);border:1.5px solid var(--line);background:var(--bg);color:var(--ink)"><option>부</option><option>모</option><option>조부모</option><option>법정대리인(위탁·후견)</option></select></label><label class="cbx2"><input type="checkbox" id="scAgree"><span>학교가 가족관계 증빙을 요청할 수 있음을 확인했어요</span></label><div><button class="btn btn--primary" id="btnSchool">학교에 확인 요청</button></div></div>
    <p class="alt">처리 1~3일 · 승인·반려 결과는 알림 · 연결 후 열람 범위는 역시 자녀 동의로 정해요</p>`}[linkPath];
  return`<div class="kidchips" style="margin-bottom:12px">${LP.map(([k,n,d])=>`<button class="${k===linkPath?'is-on':''}" data-lp="${k}" title="${d}">${n}</button>`).join('')}</div>${body}
  <p class="alt" style="margin-top:12px">세 경로 모두 결과는 같아요 — 연결은 1건, 열람 범위는 자녀가 정하고, 모든 열람은 자녀에게 알림</p>`;
@@ -405,6 +405,6 @@ function pNotiHtml(){if(!window.SEN_AUTH||!SEN_AUTH.noti)return '';const L=SEN_A
  return `<section class="section card" id="notice" data-mk="up1030" data-mk-note="R01 ⑤ : 알림 센터 · 열람 알림은 하루 묶음"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><h2 style="margin:0;font-size:1.05rem">🔔 알림 <span style="color:var(--brand)">${un}</span></h2><span style="flex:1"></span><button class="btn btn--line" style="padding:6px 12px;font-size:.8rem" data-pnall${un?'':' disabled'}>모두 읽음</button></div>${L.map(n=>`<a href="${n.href}" data-pnread="${n.id}" style="display:flex;gap:10px;padding:10px 4px;border-top:1px solid var(--line);text-decoration:none;color:inherit;${rd[n.id]?'':'background:#f4f7ff'}"><span class="badge badge--gray" style="flex:none">${n.cat}</span><span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px"><b style="font-size:.9rem">${n.title}</b><span style="font-size:.8rem;color:var(--ink-3)">${n.body}</span></span><small style="color:var(--ink-3);max-width:72px;text-align:right;flex:none">${n.t}</small></a>`).join('')}</section>`;}
 document.addEventListener('click',e=>{const a=e.target.closest('[data-pnread]'),all=e.target.closest('[data-pnall]');if(!a&&!all)return;const rd=SEN_AUTH.notiRead();if(all){SEN_AUTH.noti('parent').forEach(n=>rd[n.id]=true);}else rd[a.dataset.pnread]=true;localStorage.setItem('sen-noti-read',JSON.stringify(rd));SEN_AUTH.refreshWho();if(all){const sec=document.getElementById('notice');if(sec)sec.outerHTML=pNotiHtml();}});
 </script>
-<script src="footer-sys.js"></script>
+<script src="footer-sys.js?v=20261031e"></script>
 </body>
 </html>

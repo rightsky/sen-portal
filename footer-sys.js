@@ -19,7 +19,9 @@ const box=document.createElement('div');box.className='fsys';
 /* 10-30(§9 행 5, R01 R02 R07) : 정보원 역할로 로그인했을 때만 보인다. 위촉 상담 선생님이 상담교사 역할로 바꾸면 상담시스템만.
    담임·학생·학부모·비로그인에게는 숨긴다. */
 const draw=()=>{const A=window.SEN_AUTH,r=A&&A.roleObj,k=r?r.k:'guest';
-  const links=k==='office'?[['ops-counsel.html','상담시스템'],['ops-ai.html','AI 서비스 관리'],['ops-admin.html','플랫폼관리']]:k==='counselor'?[['ops-counsel.html','상담시스템']]:[];
+  const ALL={counsel:['ops-counsel.html','상담시스템'],ai:['ops-ai.html','AI 서비스 관리'],admin:['ops-admin.html','플랫폼관리']};
+  /* 10-31 : 담당 업무시스템(r.ops)만 보인다 · 통합관리자는 셋 다 */
+  const links=k==='office'?(Array.isArray(r.ops)&&r.ops.length?r.ops:['counsel','ai','admin']).map(x=>ALL[x]).filter(Boolean):k==='counselor'?[ALL.counsel]:[];
   if(!links.length){box.hidden=true;box.innerHTML='';return;}
   box.hidden=false;
   box.innerHTML='<b class="fsys__h" data-mk="up1030" data-mk-note="§9 행 5 · 정보원·상담교사 역할에만 노출 (R01 R02 R07)">업무시스템 바로가기</b>'

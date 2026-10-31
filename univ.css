@@ -18,7 +18,8 @@
 .elem b{display:block;font-size:22px;font-weight:900;color:var(--brand)}.elem span{font-size:12.5px;color:var(--ink-2);font-weight:700}
 .elem--s{background:var(--surface)}.elem--s b{color:var(--ink);font-size:16px;padding-top:4px}
 :root[data-theme="dark"] .elem{background:#1d2a4d}
-@media (max-width:1024px){.ud{grid-template-columns:1fr}}
+@media (max-width:1024px){.ud{grid-template-columns:minmax(0,1fr)}}
+.ud>*{min-width:0}
 @media (max-width:700px){.arow{grid-template-columns:auto minmax(0,1fr) 24px}.arow__min{display:none}}
 
 /* 상세 필터 (어디가 방식) */
@@ -63,7 +64,7 @@
 .mjit:hover,.mjit.is-on{border-color:var(--brand)}
 .mjit b{font-size:15px}.mjit span{font-size:12.5px;color:var(--ink-3)}
 .seg a.segl,.seg button{white-space:nowrap}
-@media (max-width:1024px){.mjwrap{grid-template-columns:1fr}.mjside{position:static;max-height:none}.mjlist{max-height:260px}.kv3{grid-template-columns:1fr 1fr}}
+@media (max-width:1024px){.mjwrap{grid-template-columns:minmax(0,1fr)}.mjwrap>*{min-width:0}.mjside{position:static;max-height:none}.mjlist{max-height:260px}.kv3{grid-template-columns:1fr 1fr}}
 
 #aCnt,#uCnt{white-space:nowrap}
 .utbl td{white-space:nowrap}

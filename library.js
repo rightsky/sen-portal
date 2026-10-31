@@ -10,7 +10,7 @@ const needLogin=msg=>{if(A.logged())return false;showToast(msg);A.open();return 
 const f={type:'',season:'',q:'',sort:'new'};
 function renderRes(g){
   const pick=NOW_PICK[g].map(id=>RES.find(r=>r.id===id));
-  $('resHead').innerHTML=`<div class="rbar" style="margin-top:0"><div><h2 class="section__title" style="font-size:24px">${GRADES[g]} 자료</h2><p class="section__sub">${A.logged()&&g==='hs12'?'✅ 김서울 님(고2) 학년에 맞춘 자료입니다':'학년과 시기에 맞춘 진로·진학 자료입니다'}</p></div></div>`;
+  $('resHead').innerHTML=`<div class="rbar" style="margin-top:0"><div><h2 class="section__title" style="font-size:24px">${GRADES[g]} 자료</h2><p class="section__sub">${A.logged()&&g==='hs12'?'✅ '+(A.name||'학생')+' 님 학년에 맞춘 자료입니다':'학년과 시기에 맞춘 진로·진학 자료입니다'}</p></div></div>`;
   $('resNow').innerHTML=`<h3 class="lib__h">📌 10월, 지금 보면 좋은 자료</h3><div class="now">${pick.map((r,i)=>`<button class="now__c${i?'':' is-1'}" data-res="${r.id}"><span>${ICON[r.type]} ${r.type}</span><b>${r.title}</b><small>${r.src==='센터'?'서울진로진학정보센터':'쎈(SEN)진학 나침판'} · ${r.d}</small></button>`).join('')}</div>`;
   const types=[...new Set(RES.map(r=>r.type))],seasons=['학년초','1학기','여름','2학기','겨울'];
   $('resF').innerHTML=`<div class="fchips">${['',...types].map(t=>`<button class="fchip${f.type===t?' is-on':''}" data-ft="${t}">${t||'전체 유형'}</button>`).join('')}</div><div class="fchips">${['',...seasons].map(t=>`<button class="fchip${f.season===t?' is-on':''}" data-fs="${t}">${t||'전체 시기'}</button>`).join('')}</div>`;

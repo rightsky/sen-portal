@@ -55,7 +55,7 @@ function gate(){
   return `<main class="ops-main" id="opsMain" style="max-width:none"><div class="ops-gate"><h1>${esc(cfg.title)} · 관리자 전용</h1>${why}
   <ol><li>교육디지털원패스 로그인 (교원·공무원 L3)</li><li>정보원 내부 RBAC로 부여된 Role 확인 (콘텐츠 · 상담운영 · 정산 · 통계 · 시스템 · 데이터·AI)${cfg.extraRoles?' · 위촉 상담 선생님은 상담교사 역할로':''}</li><li>2단계 인증 (세션 ${SESSION_MIN}분, 5회 실패 시 잠금)</li></ol>
   <div class="acts">${acts}<a class="btn btn--line" href="index.html">포털로 돌아가기</a></div>
-  <p class="hint" style="font-size:12.5px;color:var(--ink-3);margin:0">목업 : 로그인 창에서 교육디지털원패스 → 「정보원 담당자」 그룹의 데모 신원을 고르세요. 전자서명이 필요한 기능(수능 전송·정산 승인)은 GPKI 인증서를 추가로 요구합니다(인증 방식 비교 스위치는 교사공간과 같은 sen-authmode).</p></div></main>`;
+  <p class="hint" style="font-size:12.5px;color:var(--ink-3);margin:0">목업 : 로그인 창에서 교육디지털원패스 → 「정보원 담당자」 그룹의 데모 신원을 고르세요. 전자서명이 필요한 기능(수능 전송·정산 승인)만 GPKI 전자서명을 추가로 요구합니다. 로그인은 교육디지털원패스 + 2단계 인증(간편인증 또는 휴대폰)입니다.</p></div></main>`;
 }
 function render(){
   const root=document.getElementById('ops');if(!root)return;

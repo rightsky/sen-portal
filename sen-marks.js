@@ -133,9 +133,9 @@
       if (v !== o) t.nodeValue = v;
     });
     /* 버튼·링크의 title·aria-label도 함께 */
-    var attrs = root.querySelectorAll ? root.querySelectorAll('[title],[aria-label],[placeholder]') : [];
+    var attrs = root.querySelectorAll ? root.querySelectorAll('[title],[aria-label],[placeholder],[data-toast]') : [];
     for (var a = 0; a < attrs.length; a++) {
-      ['title', 'aria-label', 'placeholder'].forEach(function (an) {
+      ['title', 'aria-label', 'placeholder', 'data-toast'].forEach(function (an) {
         var el = attrs[a], v = el.getAttribute(an); if (!v || el.hasAttribute('data-mk-chip')) return;
         var o = v; for (var i = 0; i < TERMS.length; i++) if (v.indexOf(TERMS[i][0]) > -1) v = v.split(TERMS[i][0]).join(TERMS[i][1]);
         if (v !== o) el.setAttribute(an, v);
