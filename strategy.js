@@ -7,8 +7,8 @@ const GROUPS=['국어','수학','영어','사회','과학'];const SEMS=['1-1','1
 const AREAS=['국어','수학','영어','탐구1','탐구2'];const MOCKS=['2026-03','2026-06','2026-09','2026-11'];const ML={'2026-03':'3월 학평','2026-06':'6월 모평','2026-09':'9월 모평','2026-11':'11월 수능'};
 /* 예시 성적 (처음 로그인 시 채움) */
 if(!P.seeded){P.grades={'1-1':{국어:2,수학:3,영어:2,사회:2,과학:3},'1-2':{국어:2,수학:2,영어:2,사회:3,과학:2},'2-1':{국어:1,수학:2,영어:2,사회:2,과학:2}};P.mock={'2026-06':{국어:2,수학:3,영어:2,탐구1:2,탐구2:3},'2026-09':{국어:2,수학:2,영어:1,탐구1:2,탐구2:2}};P.rec={club:true,explore:true,volunteer:false,reading:true,award:false,career:true};P.seeded=true;save();}
-const GROUP={grades:'r',record:'r',analysis:'r',convert:'c',result:'c',possible:'c',cmp:'p',plan:'p',check:'p',interview:'i',aiint:'i',exam:'i'};
-const L3={grades:'내신·모의고사',record:'학생부 관련 정보',analysis:'성적·기록 분석',convert:'대학별 성적 환산',result:'입시결과 비교',/* possible 삭제 : 10-30 결정 4 ★(나) 학생 화면은 입시결과까지 (R02 R11) */cmp:'관심 전형 비교',plan:'나의 지원계획',check:'지원전략 점검',interview:'면접 준비',aiint:'AI 면접 연습',exam:'대학별고사 자료'};
+const GROUP={grades:'r',record:'r',analysis:'r',convert:'c',result:'c',possible:'c',cmp:'p',plan:'p',mockap:'p',check:'p',interview:'i',aiint:'i',exam:'i'};
+const L3={grades:'내신·모의고사',record:'학생부 관련 정보',analysis:'성적·기록 분석',convert:'대학별 성적 환산',result:'입시결과 비교',/* possible 삭제 : 10-30 결정 4 ★(나) 학생 화면은 입시결과까지 (R02 R11) */cmp:'관심 전형 비교',plan:'나의 지원계획',mockap:'모의지원',check:'지원전략 점검',interview:'면접 준비',aiint:'AI 면접 연습',exam:'대학별고사 자료'};
 const L2={r:'나의 성적·기록',c:'대학별 분석',p:'지원계획',i:'면접·대학별고사'};
 const OPEN=new Set(['interview','exam']);
 const avg=o=>{const v=Object.values(o).filter(x=>x);return v.length?+(v.reduce((a,b)=>a+b,0)/v.length).toFixed(2):null;};
@@ -25,6 +25,28 @@ function stdBox(){const S=P.std||{},R=stdCalc();
   <div class="ctable-w"><table class="ctable utbl"><thead><tr><th>영역</th><th>표준점수 (영어는 원점수)</th><th>백분위</th><th>등급</th></tr></thead><tbody>${[...STD_AREAS.map(x=>x[0]).slice(0,2),'영어',...STD_AREAS.map(x=>x[0]).slice(2)].map(a=>{const r=R[a];return `<tr><th>${a}</th><td><input class="gsel" style="width:84px" inputmode="numeric" data-std="${a}" value="${S[a]||''}" placeholder="${a==='영어'?'0~100':a.startsWith('탐구')?'예 62':'예 131'}" aria-label="${a} ${a==='영어'?'원점수':'표준점수'}"></td><td>${r&&r.pc!=null?r.pc:'–'}</td><td><b>${r?r.g:'–'}</b></td></tr>`;}).join('')}</tbody></table></div>
   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><button class="btn btn--primary btn--pill" data-stdapply>9월 모평 등급에 반영</button></div>
   <p class="hint" style="margin:8px 0 0">시연용 근사 계산이에요. 실제 서비스에서는 시험마다 발표되는 표준점수·백분위 대조표를 써요. 영어·한국사는 절대평가라 원점수로 등급만 정해요.</p></div>`;}
+/* ── 10-31 (R03 R05 · R04 · R10) 모의지원 : 가상으로 원서를 써 보고 규칙만 점검 · 확률·위치 없음 ── */
+const SPECIAL=['한국과학기술원(KAIST)','광주과학기술원(GIST)','대구경북과학기술원(DGIST)','울산과학기술원(UNIST)','경찰대학','육군사관학교','해군사관학교','공군사관학교','국군간호사관학교','한국에너지공과대학(KENTECH)'];
+const hh=t=>[...String(t)].reduce((x,c)=>x+c.charCodeAt(0),0);
+function renderMockap(){const M=P.mockap||{},S6=P.plan.susi.slice(0,6),J=P.plan.jeongsi,sp=M.sp||[];const L=window.SEN_LEDGER;
+  const ivDay=a=>{if(!a.docs.includes('면접'))return null;const d=['11.6(토)','11.13(토)','11.20(토)','11.27(토)','12.4(토)'][hh(a.id)%5];return d;};
+  const m9=P.mock['2026-09']||{};const mineMin=['국어','수학','영어','탐구1'].map(k=>m9[k]).filter(Boolean).sort((a,b)=>a-b);
+  const minOk=a=>{if(a.minType==='반영안함')return null;const n=/(\d)개 영역 등급합\s*(\d+)/.exec(a.minReq||'');if(!n||mineMin.length<2)return '확인 필요';const k=+n[1],sum=mineMin.slice(0,k).reduce((x,y)=>x+y,0);return (sum<=+n[2]?'최근 모의 기준 충족':'최근 모의 기준 미충족')+` (${a.minReq.replace(/^.*?중 /,'')})`;};
+  const rows=S6.map(id=>{const a=adm(id),u=uni(a.uni);return {id,u:u.name,n:a.name,kind:a.kind,iv:ivDay(a),min:minOk(a)};});
+  const chk=[];
+  chk.push(S6.length<=6?['ok',`수시 일반 대학 ${S6.length}장 (6회 이내)`]:['bad','수시 일반 대학이 6장을 넘었어요']);
+  if(sp.length)chk.push(['ok',`6회 제한 밖 대학 ${sp.length}곳 따로 (${sp.join(', ')})`]);
+  const dup=S6.filter((id,i)=>S6.findIndex(x=>adm(x).uni===adm(id).uni&&adm(x).name===adm(id).name)!==i);chk.push(dup.length?['bad','같은 대학·같은 전형이 두 번 들어갔어요']:['ok','같은 대학·같은 전형 중복 없음']);
+  const ivs=rows.filter(r=>r.iv).map(r=>r.iv);const clash=ivs.filter((d,i)=>ivs.indexOf(d)!==i);chk.push(clash.length?['warn',`면접일이 겹쳐요 : ${[...new Set(clash)].join(', ')} (실제 날짜는 요강 확인)`]:['ok','면접일 겹침 없음 (가상 날짜)']);
+  const withMin=rows.filter(r=>r.min&&r.min!=='확인 필요'),okMin=withMin.filter(r=>r.min.includes('충족')&&!r.min.includes('미충족')).length;chk.push(['info',`수능 최저가 있는 카드 ${rows.filter(r=>r.min).length}장 중 최근 모의고사 기준 ${okMin}장 충족 (R10)`]);
+  const jn=['가','나','다'].filter(k=>J[k]).length;chk.push(['info',`정시 ${jn}/3개 군 · 군마다 1곳만 · 수시에 합격하면 등록 여부와 상관없이 정시 지원 불가`]);
+  chk.push(['info',`수시 원서접수 ${L?L.schedule.susiApply.from+' ~ '+L.schedule.susiApply.to:''} · 정시 원서접수 ${L?L.schedule.jeongsiApply.from+' ~ '+L.schedule.jeongsiApply.to:''}`]);
+  const ic={ok:'✅',bad:'⛔',warn:'⚠️',info:'ℹ️'};
+  $('maBody').innerHTML=`<div class="panel-c" style="border:1px solid var(--line);box-shadow:none" data-mk="up1030 decide" data-mk-note="R03 R05 : 모의지원 · R04 : 6회 제한 밖 대학 슬롯 · R10 : 최저 충족 회수 · [의사결정] D1 : 모의지원자 중 내 위치·가능성은 표시하지 않음"><div class="panel-c__head"><h3 style="margin:0">모의지원 · 가상으로 원서 써 보기</h3><small>실제 원서 접수가 아니에요</small></div><p class="hint" style="margin:0 0 10px">「나의 지원계획」에 담은 카드로 원서를 써 보고, 규칙에 어긋나는 곳이 없는지 점검해요. 합격 가능성이나 다른 학생 사이의 내 위치는 보여 주지 않아요.</p>
+  ${S6.length?`<div class="ctable-w"><table class="ctable utbl"><thead><tr><th>수시 카드</th><th>전형 유형</th><th>면접일 (가상)</th><th>수능 최저</th></tr></thead><tbody>${rows.map(r=>`<tr><th><b>${r.u}</b><div class="xcard__cat">${r.n}</div></th><td>${r.kind}</td><td>${r.iv||'면접 없음'}</td><td>${r.min||'최저 없음'}</td></tr>`).join('')}</tbody></table></div>`:`<div class="band" style="padding:16px 18px"><div><b>지원계획이 비어 있어요</b><p style="margin:4px 0 0">관심 전형 비교에서 「담기」로 카드를 채우거나 예시로 채워 볼 수 있어요</p></div><button class="btn btn--primary btn--pill" data-mafill>예시 카드로 채우기</button></div>`}
+  <h4 style="margin:16px 0 6px">6회 제한 밖 대학 (선택)</h4><p class="hint" style="margin:0 0 6px">과학기술원·사관학교·경찰대학 등은 수시 6회 제한에 들어가지 않아요 (R04)</p><div class="fchips">${SPECIAL.map(x=>`<button class="fchip${sp.includes(x)?' is-on':''}" data-masp="${x}">${x}</button>`).join('')}</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><button class="btn btn--primary btn--pill" data-mago${S6.length?'':' disabled'}>모의 접수하고 점검하기</button><a class="btn btn--ghost btn--pill" href="#plan">지원계획 고치기</a></div></div>
+  ${M.done?`<div class="panel-c" style="margin-top:16px;border:1px solid var(--line);box-shadow:none"><div class="panel-c__head"><h3 style="margin:0">점검 결과</h3><small>모의 접수 ${M.done}</small></div><ul class="reading" style="margin:0">${chk.map(([k,t])=>`<li><b>${ic[k]}</b> ${t}</li>`).join('')}</ul><p class="hint" style="margin:10px 0 0">결과는 상담 사전자료로만 쓰여요 · 판단은 선생님 상담에서</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"><a class="btn btn--ghost btn--pill" href="counsel.html#book">선생님과 같이 보기</a></div></div>`:''}`;}
 /* ── 내신·모의고사 ── */
 let gTab='grades',D=null,dirty=false;
 const snap=()=>JSON.parse(JSON.stringify({grades:P.grades,mock:P.mock}));
@@ -152,7 +174,7 @@ function renderExam(){$('exTabs').innerHTML=['전체','논술','면접','실기'
   $('exList').innerHTML=EXAMS.filter(e=>exK==='전체'||e[0]===exK).map(e=>`<li class="row"><span class="row__ic">${{'논술':'✍️','면접':'🗣️','실기':'🎨','공통':'📄'}[e[0]]}</span><button class="row__main" data-toast="자료를 내려받습니다 · ${e[1]}"><b>${e[1]}</b><span>${e[0]} · ${e[2]} · ${e[3]} · ${e[4]}</span></button><div class="row__files"><button class="file" data-toast="${e[1]}">PDF</button></div></li>`).join('');}
 /* ── 탭 ── */
 let tab='grades';
-const R={grades:renderGrades,record:renderRecord,analysis:renderAnalysis,convert:renderConvert,result:renderResult,possible:renderPossible,cmp:renderCmp,plan:renderPlan,check:renderCheck,interview:renderInterview,aiint:renderAI,exam:renderExam};
+const R={grades:renderGrades,record:renderRecord,analysis:renderAnalysis,convert:renderConvert,result:renderResult,possible:renderPossible,cmp:renderCmp,plan:renderPlan,mockap:renderMockap,check:renderCheck,interview:renderInterview,aiint:renderAI,exam:renderExam};
 function rerender(){const g=GROUP[tab];
   $('ptabs').innerHTML=Object.keys(L3).filter(k=>GROUP[k]===g).map(k=>`<a class="ptab${k===tab?' is-on':''}" href="#${k}">${L3[k]}</a>`).join('');
   $('crumbL2').textContent=L2[g];$('crumbL3').textContent=L3[tab];$('h1').textContent=L2[g];
@@ -172,6 +194,9 @@ document.addEventListener('click',e=>{const c=x=>e.target.closest(x);let b;
   if(b=c('[data-gact]')){if(b.dataset.gact==='save'){P.grades=D.grades;P.mock=D.mock;P.savedAt='2026.10.02 '+new Date().toTimeString().slice(0,5);save();dirty=false;D=null;showToast('성적을 저장했어요 · 분석과 상담 사전자료에 반영됩니다');}else{D=null;dirty=false;showToast('변경을 취소했어요');}renderGrades();return;}
   if(b=c('[data-req]')){P.consult='req';save();showToast('환산 요청과 함께 상담을 신청했어요 · 입력한 성적·관심 전형이 전달됩니다');location.hash='#possible';return;}
   if(b=c('[data-consult]')){P.consult=b.dataset.consult;save();showToast(b.dataset.consult==='req'?'상담을 신청했어요':'(목업) 상담 완료 상태로 바꿨어요');renderPossible();return;}
+  if(b=c('[data-masp]')){P.mockap=P.mockap||{};const sp=P.mockap.sp||[],x=b.dataset.masp;P.mockap.sp=sp.includes(x)?sp.filter(y=>y!==x):sp.concat(x);P.mockap.done=null;save();renderMockap();return;}
+  if(c('[data-mafill]')){const ids=ADMS.filter(a=>a.season==='수시').slice(0,6).map(a=>a.id);P.plan.susi=ids;save();renderMockap();showToast('예시 카드 '+ids.length+'장을 지원계획에 담았어요');return;}
+  if(c('[data-mago]')){P.mockap=P.mockap||{};const d=new Date();P.mockap.done=d.toISOString().slice(0,10)+' '+d.toTimeString().slice(0,5);save();renderMockap();showToast('모의 접수를 마쳤어요 · 점검 결과를 확인하세요');return;}
   if(b=c('[data-addplan]')){e.stopPropagation();addPlan(b.dataset.addplan);return;}
   if(b=c('[data-rmplan]')){e.stopPropagation();const id=b.dataset.rmplan;P.plan.susi=P.plan.susi.filter(x=>x!==id);Object.keys(P.plan.jeongsi).forEach(g=>{if(P.plan.jeongsi[g]===id)P.plan.jeongsi[g]=null;});save();renderPlan();return;}
   if(b=c('[data-slot]')){location.hash='#cmp';return;}

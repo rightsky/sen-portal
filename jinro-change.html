@@ -476,7 +476,7 @@ function renderTL(k){$('tl').innerHTML=TL.filter(x=>k==='all'||x[1]===k).map(x=>
 renderTL('all');
 $('tlFilters').addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(!b)return;$('tlFilters').querySelectorAll('.tab').forEach(x=>x.classList.toggle('is-on',x===b));renderTL(b.dataset.k);});
 </script>
-<script src="gnb.js?v=20261031"></script>
+<script src="gnb.js?v=20261031b"></script>
 <script src="sen-ai.js?v=20261030b"></script>
 <script src="footer-sys.js"></script>
 </body>
