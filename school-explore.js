@@ -60,9 +60,21 @@ function renderAdm(){
 }
 /* ── 10-30 (R01 R02) 로그인 학년에 맞춘 첫 화면 : 고등학생은 주소 없이 들어오면 과목 탐색으로 ── */
 (function(){try{const g=A.logged()&&A.session&&A.session.person&&A.session.person.grade;if(!location.hash&&g&&/^고/.test(g)&&!sessionStorage.getItem('sen-se-stay')){sessionStorage.setItem('sen-se-stay','1');location.replace('subject-explore.html#subjects');}}catch(e){}})();
+/* ── 10-31 (R01) 특성화고·마이스터고 학생 경로 : 전문교과(NCS) → 취업 · 선취업 후진학 · 대학 진학 ── */
+function renderVoc(){const card=(ic,t,b,li)=>`<div class="panel-c" style="border:1px solid var(--line);box-shadow:none"><h3 style="margin:0 0 6px">${ic} ${t}</h3><p style="margin:0 0 8px;color:var(--ink-2)">${b}</p><ul class="reading" style="margin:0">${li.map(x=>`<li>${x}</li>`).join('')}</ul></div>`;
+ $('vocBody').innerHTML=`<div class="rbar" style="margin-top:0" data-mk="6open up1030" data-mk-note="R01 : 특성화고·마이스터고 학생 경로 (NCS 전문교과 · 취업 · 선취업 후진학 · 재직자·특성화고 특별전형)"><div><h2 class="section__title" style="font-size:24px">특성화고·마이스터고 학생의 길</h2><p class="section__sub">전문교과를 배우고, 졸업 뒤에는 바로 취업 · 일하면서 진학 · 대학 진학 세 갈래로 나아가요</p></div></div>
+ <div class="voc3 voc3--2">${card('🏭','학교에서 배우는 것','일반고 과목에 더해 직업 분야의 전문교과를 배워요.',['<b>NCS(국가직무능력표준)</b>에 맞춘 능력단위 · 실무 과목','직업기초능력 (의사소통·문제해결·정보 등)','국가기술자격 등 <b>자격증</b> 준비','현장실습 · 산학 연계 프로젝트'])}
+ ${card('🏫','학교 유형','',['<b>특성화고</b> : 직업 분야별 학과 운영 (예 : 인공지능과·기계과·회계과)','<b>마이스터고</b> : 산업 수요에 맞춘 학과 · 취업 중심 교육과정','<b>일반고 직업계 위탁</b> : 일반고 학생이 직업교육 과정을 위탁으로 이수','학교마다 학과·지원 제도가 달라요 → 「학교 찾기·비교」에서 확인'])}</div>
+ <h3 style="margin:26px 0 10px;font-size:19px">졸업 뒤 세 갈래</h3>
+ <div class="voc3">${card('💼','① 바로 취업','배운 전공으로 일을 시작해요.',['학교 취업지원부 · 현장실습 연계 채용','공공기관·공기업 고졸 채용','기업 채용 공고와 자격증 요건 확인'])}
+ ${card('🔁','② 일하면서 진학 (선취업 후진학)','일을 하면서 대학 공부를 이어가요.',['<b>특성화고 등을 졸업한 재직자 특별전형</b> : 정원 외 · 산업체 재직 경력 요건이 있어요 (기간은 대학마다 확인)','계약학과 · 사내대학 · 일학습병행','야간·주말 수업이 있는 학과도 있어요'])}
+ ${card('🎓','③ 대학 진학','졸업 후 바로 대학에 진학해요.',['<b>특성화고교 출신자 특별전형</b> : 정원 외 · 고교 학과와 같은 계열 모집단위에 지원하는 경우가 많아요','일반 전형(수시·정시)으로도 지원할 수 있어요','동일 계열 기준표는 대학 모집요강에서 확인'])}</div>
+ <div class="voc2"><div class="panel-c" style="border:1px solid var(--line);box-shadow:none"><h3>학년별 준비</h3><ul class="reading" style="margin:0"><li><b>1학년</b> 전공 기초 과목 · 기초 자격증 · 학과가 나와 맞는지 확인</li><li><b>2학년</b> 실무 과목 · 현장 체험 · 취업과 진학 중 방향 정하기</li><li><b>3학년</b> 현장실습 · 취업 준비 또는 특성화고 특별전형 원서 · 재직자 전형을 생각한다면 경력 요건 미리 확인</li></ul></div>
+ <div class="panel-c" style="background:var(--surface);box-shadow:none"><h3>학생부에서 보여 줄 것</h3><ul class="reading" style="margin:0"><li>NCS 능력단위 이수 내역과 성취</li><li>자격증 · 현장실습 기록</li><li>전공과 이어진 프로젝트 · 동아리</li></ul><p class="hint" style="margin:8px 0 0">진로진학 AI 챗봇의 「학생부 읽기」에 NCS 이수 내역을 읽는 관점을 넣을 예정이에요 (R01)</p></div></div>
+ <div class="band" style="margin-top:20px;padding:18px 22px"><div><b>전형 요건은 대학·학년도마다 달라요</b><p style="margin:4px 0 0">지원 전에 대학 모집요강을 꼭 확인하고, 학교 취업지원부·진로 선생님과 함께 정하세요</p></div><div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn btn--ghost btn--pill" href="univ.html">대학·전형 찾기</a><a class="btn btn--primary btn--pill" href="counsel.html#guide">상담 안내</a></div></div>`;}
 /* ── 탭 ── */
-let tab='types';const L3={types:'고교 유형 알아보기',schools:'학교 찾기·비교',admission:'고입 전형·일정'};
-function rerender(){({types:renderTypes,schools:renderSchools,admission:renderAdm})[tab]();$('loginNote').innerHTML=A.logged()?'✅ '+(A.name||'김서울')+' 님 · 거주지 <b>종로구</b> 기준으로 통학 시간과 학교군을 보여드려요':'로그인하면 관심 고교를 저장하고, 우리 집 기준 통학 시간과 학교군을 볼 수 있어요 <a class="link" href="#" data-loginopen>로그인 ›</a>';}
+let tab='types';const L3={types:'고교 유형 알아보기',schools:'학교 찾기·비교',admission:'고입 전형·일정',voc:'특성화고·마이스터고 경로'};
+function rerender(){({types:renderTypes,schools:renderSchools,admission:renderAdm,voc:renderVoc})[tab]();$('loginNote').innerHTML=A.logged()?'✅ '+(A.name||'김서울')+' 님 · 거주지 <b>종로구</b> 기준으로 통학 시간과 학교군을 보여드려요':'로그인하면 관심 고교를 저장하고, 우리 집 기준 통학 시간과 학교군을 볼 수 있어요 <a class="link" href="#" data-loginopen>로그인 ›</a>';}
 function setTab(){tab=(location.hash||'#types').slice(1);if(!L3[tab])tab='types';
   document.querySelectorAll('.ptab').forEach(t=>t.classList.toggle('is-on',t.dataset.tab===tab));
   document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('is-on',p.id==='pane-'+tab));

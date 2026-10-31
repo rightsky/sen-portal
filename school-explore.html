@@ -204,6 +204,7 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 <link rel="stylesheet" href="explore.css">
 <link rel="stylesheet" href="school.css">
 <style>.footer__rel{border-top:1px solid rgba(255,255,255,.12);margin-top:22px;padding-top:18px}.footer__rel b{display:block;font-size:13px;margin-bottom:8px;opacity:.8}.footer__rel nav{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;opacity:.8}.footer__rel a::after{content:" ↗";font-size:11px}</style>
+<style>.voc3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.voc3--2{grid-template-columns:repeat(2,minmax(0,1fr))}.voc2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}@media (max-width:900px){.voc3,.voc3--2,.voc2{grid-template-columns:minmax(0,1fr)}}</style>
 </head>
 <body>
 
@@ -235,7 +236,7 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
     <p class="phero__crumb"><a href="main-everland-style.html">홈</a> › 학교·과목설계 › 고교 탐색 › <strong id="crumbL3">고교 유형 알아보기</strong></p>
     <h1>고교 탐색</h1><p>고등학교 유형을 이해하고, 관심 있는 학교를 찾아 비교하고, 고입 전형 일정을 확인하세요.</p>
   </div></section>
-  <nav id="lnb" data-l1="학교·과목설계" data-current="고교 유형 알아보기"></nav><section class="ptabs"><div class="container"><nav class="ptabs__in" aria-label="고교 탐색 메뉴"><a class="ptab is-on" data-tab="types" href="#types">🏫 고교 유형 알아보기</a><a class="ptab" data-tab="schools" href="#schools">🔍 학교 찾기·비교</a><a class="ptab" data-tab="admission" href="#admission">🗓️ 고입 전형·일정</a></nav></div></section>
+  <nav id="lnb" data-l1="학교·과목설계" data-current="고교 유형 알아보기"></nav><section class="ptabs"><div class="container"><nav class="ptabs__in" aria-label="고교 탐색 메뉴"><a class="ptab is-on" data-tab="types" href="#types">🏫 고교 유형 알아보기</a><a class="ptab" data-tab="schools" href="#schools">🔍 학교 찾기·비교</a><a class="ptab" data-tab="admission" href="#admission">🗓️ 고입 전형·일정</a><a class="ptab" data-tab="voc" href="#voc">🏭 특성화고·마이스터고 경로</a></nav></div></section>
   <section class="section" style="padding-top:0"><div class="container">
     <div class="lnote" id="loginNote"></div>
     <div class="pane is-on" id="pane-types">
@@ -265,6 +266,7 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
         </div>
       </div>
     </div>
+    <div class="pane" id="pane-voc"><div id="vocBody"></div></div>
     <div class="pane" id="pane-admission">
       <div class="rbar"><div><h2 class="section__title" style="font-size:24px">고입 전형 일정</h2><p class="section__sub">중학교 3학년 2학기에 전기 → 후기 순서로 진행됩니다. 막대를 누르면 절차를 볼 수 있어요</p></div><div class="seg" id="roundSeg" style="width:260px;background:var(--surface)"><button data-r="all">전체</button><button data-r="전기">전기</button><button data-r="후기">후기</button></div></div>
       <div class="adm">
@@ -306,8 +308,8 @@ btnTheme.addEventListener('click',()=>{const cur=document.documentElement.datase
 <script src="explore-data.js"></script>
 <script src="auth.js?v=20261031"></script>
 <script src="school-data.js"></script>
-<script src="school-explore.js?v=20261030f"></script>
-<script src="gnb.js?v=20261031b"></script>
+<script src="school-explore.js?v=20261031c"></script>
+<script src="gnb.js?v=20261031c"></script>
 <script src="sen-ai.js?v=20261030b"></script>
 <script src="footer-sys.js"></script>
 </body>
