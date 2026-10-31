@@ -842,7 +842,18 @@ function finishAnswer(d,text,hits,q){const ans=d.querySelector('.ans');let body=
   const needCounsel=/상담|단정|확인하시기|판단/.test(text);
   d.querySelector('.acts').innerHTML=`<button type="button" data-copy>복사</button><button type="button" data-fb="up">👍 도움됐어요</button><button type="button" data-fb="dn">👎 아쉬워요</button>${needCounsel?`<a class="go" href="counsel.html#book">선생님 상담으로 확인 →</a>`:`<a href="counsel.html#book">상담 신청 →</a>`}`;
   d.querySelector('[data-copy]').addEventListener('click',()=>{navigator.clipboard?.writeText(body+'\n\n근거: '+hits.map((h,i)=>`[${i+1}] ${h.c.doc.replace(/\.md$/,'')} › ${h.c.sec||'본문'}`).join(' · ')).then(()=>toast('답변과 근거를 복사했어요'));});
-  d.querySelectorAll('[data-fb]').forEach(b=>b.addEventListener('click',()=>{d.querySelectorAll('[data-fb]').forEach(x=>x.classList.remove('is-on'));b.classList.add('is-on');toast(b.dataset.fb==='up'?'고마워요 — 골든셋 후보로 기록(목업)':'아쉬운 점을 기록했어요 — 자료 보강 큐(목업)');}));
+  d.querySelectorAll('[data-fb]').forEach(b=>b.addEventListener('click',()=>{d.querySelectorAll('[data-fb]').forEach(x=>x.classList.remove('is-on'));b.classList.add('is-on');
+    if(b.dataset.fb==='up'){toast('고마워요 · 좋은 답변으로 기록했어요');return;}
+    /* 10-31 (R01) 👎 → 신고 사유 → AI 서비스 관리 「답변 신고·검수」 */
+    if(d.querySelector('.rptbox'))return;const RS=['사실이 틀려요','근거가 엉뚱해요','질문을 못 알아들었어요','개인정보·부적절한 내용','기타'];
+    d.querySelector('.acts').insertAdjacentHTML('afterend',`<div class="rptbox" style="margin-top:8px;padding:10px 12px;border:1px solid var(--line,#dde3ee);border-radius:10px"><b style="font-size:13.5px">무엇이 아쉬웠나요?</b><div style="display:flex;flex-wrap:wrap;gap:6px;margin:8px 0">${RS.map(r=>`<label style="display:inline-flex;gap:4px;align-items:center;font-size:13px;padding:4px 10px;border:1px solid var(--line,#dde3ee);border-radius:999px"><input type="radio" name="rp${Date.now()}" value="${r}">${r}</label>`).join('')}</div><input class="rptmemo" maxlength="200" placeholder="한 줄 메모 (선택 · 이름·연락처는 쓰지 마세요)" style="width:100%;padding:8px 10px;border:1px solid var(--line,#dde3ee);border-radius:8px;font:inherit"><div style="display:flex;gap:6px;margin-top:8px"><button type="button" data-rptgo style="font-weight:700">신고 보내기</button><button type="button" data-rptx>닫기</button></div></div>`);
+    const box=d.querySelector('.rptbox');box.querySelector('[data-rptx]').addEventListener('click',()=>box.remove());
+    box.querySelector('[data-rptgo]').addEventListener('click',()=>{const rr=box.querySelector('input[type=radio]:checked');if(!rr){toast('신고 사유를 골라 주세요');return;}let memo=box.querySelector('.rptmemo').value.trim();memo=deidentify(memo).out;
+      let role='비로그인';try{const a=JSON.parse(localStorage.getItem('sen-auth-v2')||'null');const r0=a&&a.roles&&a.roles[a.cur||0];role=r0?({student:'학생',student2:'학생',parent:'학부모',teacher:'교사',counselor:'상담교사',schooladmin:'교사',office:'정보원'}[r0.k]||'기타'):'비로그인';}catch(e){}
+      const L=(()=>{try{return JSON.parse(localStorage.getItem('sen-ai-reports')||'[]');}catch(e){return [];}})();const now=new Date();const t=now.toISOString().slice(0,10)+' '+now.toTimeString().slice(0,5);
+      L.push({id:'u'+Date.now(),t,q:deidentify(q).out.slice(0,120),a:(body||'').replace(/\s+/g,' ').slice(0,150),reason:rr.value,memo,role});try{localStorage.setItem('sen-ai-reports',JSON.stringify(L.slice(-50)));}catch(e){}
+      box.innerHTML='<b style="font-size:13.5px">신고를 보냈어요</b><p style="margin:4px 0 0;font-size:13px">센터 담당자가 확인하면 알림 센터로 알려 드려요. 고마워요.</p>';});
+  }));
   const tp=hits.length?topicOf(hits[0].c.doc):Object.keys(SAMPLES)[0];const fu=SAMPLES[tp].filter(x=>x!==q&&!ragSeen.has(x)).slice(0,3);
   d.querySelector('.fu').innerHTML=fu.length?`<span>이어서 물어보기</span>${fu.map(x=>`<button type="button" data-q="${esc(x)}">${esc(x)}</button>`).join('')}`:'';
   d.querySelectorAll('.fu [data-q]').forEach(b=>b.addEventListener('click',()=>askRag(b.dataset.q)));

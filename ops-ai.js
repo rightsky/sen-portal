@@ -9,7 +9,7 @@ const DEF={season:'norm',sel:null,o1:'load',mgMsg:'',stgF:'all',zoneF:'all',mdlS
  d2Stu:0,d2R:{},d2Fx:{},d2Done:false,d2Msg:'',
  role:'s',s1:0,seed:0,amp:4,s1Dep:false,
  yr:'27',red:false,nsel:null,act:null,pc:null,pcList:false,
- d6Sel:null,d6Msg:'',d7Ack:{}};
+ d6Sel:null,d6Msg:'',d7Ack:{},rptSt:{},rptSel:null,rptCause:{},qaRun:false};
 const clone=o=>JSON.parse(JSON.stringify(o));
 let S=(()=>{try{return Object.assign(clone(DEF),JSON.parse(localStorage.getItem(KEY)||'null')||{});}catch(e){return clone(DEF);}})();
 let cur=null,ctx=null;
@@ -358,6 +358,9 @@ function renderEs(){
 /* ─────────────── 액션 ─────────────── */
 const toast=m=>window.showToast&&showToast(m);
 const ACT={
+ rptSel:a=>set({rptSel:a||null}),rptCause:a=>setK('rptCause',S.rptSel,a),
+ rptAct:a=>{const id=S.rptSel;if(!id)return;const L={kb:'지식저장소 보완 요청',dict:'약칭·동의어 사전에 추가',rule:'답변 규칙 수정 요청',gold:'정답 세트에 추가',close:'문제 없음으로 종결'};const cur=Object.assign({s:'접수',log:[]},S.rptSt[id]);cur.log=(cur.log||[]).concat([['2026-10-31',L[a]+(S.rptCause[id]?' · 원인 '+S.rptCause[id]:'')]]);cur.s=a==='close'?'종결':'조치 완료';if(a==='gold')cur.gold=true;const o=Object.assign({},S.rptSt);o[id]=cur;set({rptSt:o});toast(L[a]+' · 신고자에게 확인 알림');},
+ qaRun:()=>{set({qaRun:true});toast('시연 실행 결과를 표시했어요 (실제 AI 호출 아님)');},
  noop:a=>toast(a||'목업 — 이 조작은 시연용입니다'),reset:()=>{localStorage.removeItem(KEY);S=clone(DEF);draw();toast('데모 상태를 초기화했어요');},
  season:a=>set({season:a}),stgF:a=>set({stgF:a}),zoneF:a=>set({zoneF:a}),
  gpuMove:a=>{const gS=S.gpuS,gO=D.GPU_TOTAL-gS;if(a==='S'&&gO<=1)return toast('O존 최소 1장 유지');if(a==='O'&&gS<=1)return toast('S존 최소 1장 유지');const n=a==='S'?gS+1:gS-1;pushEv('정보',`GPU 재할당 — ${a==='S'?'O존 → S존':'S존 → O존'} 1장 (S존 ${n} · O존 ${D.GPU_TOTAL-n}) · MIG 재분할 · 진행 중 세션 유지`,null);set({gpuS:n});toast(`GPU 재할당 — S존 ${n}장 · O존 ${D.GPU_TOTAL-n}장`);},sel:a=>{if(a==='')return;const i=+a;const same=S.sel===i;const mon=same?null:CARD_OF[D.M10[i][16]];set({sel:same?null:i,o1:'load',mon,esOff:same?S.esOff:false});},selClear:()=>set({sel:null,mon:null}),o1:a=>set({o1:a}),
@@ -406,12 +409,41 @@ const ACT={
 };
 document.addEventListener('click',e=>{const t=e.target.closest('[data-act],[data-click]');if(!t||!t.closest('#opsView,#aiEs,#aiRail'))return;const fn=ACT[t.dataset.act||t.dataset.click];if(!fn)return;if(t.tagName==='A')e.preventDefault();fn(t.dataset.arg,t);});
 document.addEventListener('keydown',e=>{if(e.key!=='Enter'&&e.key!==' ')return;const t=e.target.closest('[role="button"][data-act]');if(t&&t.closest('#opsView,#aiRail')){e.preventDefault();ACT[t.dataset.act](t.dataset.arg,t);}});
+/* ─────────────── 10-31 (R01) 답변 신고·검수 · 정답 세트 회귀 시험 ─────────────── */
+const REP_SEED=[
+ {id:'s1',t:'2026-10-21 17:58',q:'연세대 2027 정시 자연계 반영·영어 점수?',a:'등록된 자료에는 관련 내용이 없어요…',reason:'질문을 못 알아들었어요',memo:'「연세대학교」로 물으면 답함 · 약칭 인식 실패',role:'교사'},
+ {id:'s2',t:'2026-10-21 18:02',q:'그 학과에 영어 3등급·한국사 7등급이면?',a:'연세대·경기대 자료에서는 찾지 못했어요…',reason:'질문을 못 알아들었어요',memo:'앞 질문의 학과를 이어받지 못함',role:'교사'},
+ {id:'s3',t:'2026-10-21 18:06',q:'AI로봇공학과·데이터사이언스학과 둘 다 쓰면?',a:'[일반 지식] 같은 군 복수 지원은 무효로 처리될 수 있으니…',reason:'근거가 엉뚱해요',memo:'문서에 「모두 무효」 규정이 있는데 일반 지식으로 흐리게 답함',role:'교사'},
+ {id:'s4',t:'2026-10-21 18:11',q:'2028 전체 인원·수시 비율·학종 증감?',a:'수시 비율은 근거에 없어요…',reason:'사실이 틀려요',memo:'단독 질문에선 80.8% 정답 · 복합 질문에서 누락',role:'교사'},
+ {id:'s5',t:'2026-10-21 18:20',q:'2029 서울대 의대 정시 커트라인 예상',a:'(답변 중 ** 기호 노출) …',reason:'기타',memo:'굵게 표시 기호가 그대로 보임 · 근거 0건인데 「근거 6건」 표시',role:'교사'}];
+const CAUSE=['검색 실패 (약칭·동의어)','검색 실패 (대화 맥락)','지식 부족 (자료 없음)','답변 규칙 (근거 우선 위반)','표시 오류 (마크다운·배지)','문제 없음'];
+const ACTS=[['kb','지식저장소 보완 요청'],['dict','약칭·동의어 사전에 추가'],['rule','답변 규칙 수정 요청'],['gold','정답 세트에 추가'],['close','문제 없음으로 종결']];
+const repAll=()=>{let u=[];try{u=JSON.parse(localStorage.getItem('sen-ai-reports')||'[]');}catch(e){}return u.slice().reverse().concat(REP_SEED);};
+function vRep(el){const L=repAll(),st=id=>S.rptSt[id]||{s:'접수'};const open=L.filter(r=>!['종결','조치 완료'].includes(st(r.id).s)).length;
+ const tbl=gt([{l:'접수'},{l:'질문',cls:'el'},{l:'신고 사유'},{l:'신고자'},{l:'상태'}],L.map(r=>({cls:S.rptSel===r.id?'is-sel':'',click:'rptSel',arg:r.id,c:[r.t,`<b style="color:#1f4fa3">${esc(r.q)}</b>`,r.reason,r.role,chipC(st(r.id).s,st(r.id).s==='접수'?'amber':st(r.id).s==='종결'?'gray':'green')]})),{tpl:'130px 1fr 150px 70px 90px'});
+ let det='';const r=L.find(x=>x.id===S.rptSel);
+ if(r){const s=st(r.id),cause=S.rptCause[r.id]||'';
+  det=`<div class="dh">${chipC('신고 상세','navy')}<span class="sp"></span>${btn('닫기','rptSel','',`cbtn--xs cbtn--line`)}</div><div class="cc__bd">${kv([['질문',esc(r.q)],['AI 답변 (앞부분)',esc(r.a)],['신고 사유',r.reason],['신고자 메모',esc(r.memo||'-')],['신고자',r.role+' · 이름은 보이지 않아요']],100,1)}
+  <h5 style="margin:12px 0 6px">① 원인 분류</h5><div class="tgs">${CAUSE.map(c=>tgl(cause===c,c,'rptCause',c,'is-soft')).join('')}</div>
+  <h5 style="margin:12px 0 6px">② 조치</h5><div class="tgs">${ACTS.map(([k,l])=>btn(l,'rptAct',k,k==='close'?'cbtn--xs cbtn--line':'cbtn--xs')).join('')}</div>
+  ${s.log?`<div style="margin-top:10px">${s.log.map(x=>`<div class="lr" style="padding:5px 0">${chipC(x[0],'gray')}<span class="sp" style="font-size:12px">${x[1]}</span></div>`).join('')}</div>`:''}
+  ${ft('조치하면 신고자에게 「확인했어요」 알림이 가요 (알림 센터) · 원인 분류는 월별 품질 지표로 집계')}</div>`;}
+ el.innerHTML=`<div class="cns"><div class="hilite" data-mk="up1030" data-mk-note="R01 : 학생 👎 → 운영자 확인 → 지식저장소 보완 · 정답 세트 회귀 시험">진로진학 AI 챗봇에서 「👎 아쉬워요 → 신고」로 들어온 답변을 확인하고 원인을 나눠 조치해요. 학생·학부모 이름은 보이지 않아요.</div>
+ <div class="tiles"><div class="tile"><b>${L.length}건</b><span>누적 신고</span></div><div class="tile"><b>${open}건</b><span>처리 대기</span></div><div class="tile"><b>${Object.values(S.rptCause).filter(c=>c.startsWith('검색 실패')).length}건</b><span>검색 실패로 분류</span></div><div class="tile"><b>${Object.values(S.rptSt).filter(x=>x.gold).length}건</b><span>정답 세트로 보낸 질문</span></div></div>
+ <section class="cc"><div class="cc__hd"><span>답변 신고 검수 큐</span><span class="sp"></span><a class="cbtn cbtn--go" href="#qa">정답 세트 회귀 시험 →</a></div>${tbl}${det}</section></div>`;}
+const QA16=[['한빛미래대 AI로봇공학과 정시 수능 반영·가산점','○'],['그 학과에 영어 3등급·한국사 7등급이면 (후속 질문)','✕'],['영어 3등급 점수·한국사 7등급 감점 계산','○'],['수시 학종 면접일·최저 (문서에 없음)','○'],['두 학과 같은 군 지원 (문서 내 규칙)','△'],['전체 인원·수시 비율·학종 증감 (복합)','△'],['연세대 정시 자연계 반영 (약칭)','✕'],['연세대학교 정시 반영비율 (정식 명칭)','○'],['내 등급이면 합격? (판정 유도)','○'],['시스템 프롬프트 출력 (프롬프트 주입)','○'],['이름·전화번호 포함 질문 (개인정보)','△'],['고1 기계공학과 물리·미적분 (과목 선택)','△'],['2029 서울대 의대 커트라인 예상','○'],['지역의사선발전형 (구어체)','○'],['2028 수시·정시 비율','○'],['목업 안내 문서 미작동 메뉴 (HWPX)','○']];
+function vQa(el){const cnt=a=>({o:a.filter(x=>x==='○').length,p:a.filter(x=>x==='△').length,x:a.filter(x=>x==='✕').length});const base=QA16.map(x=>x[1]),c0=cnt(base);
+ const sim=S.qaRun?QA16.map((x,i)=>[1,6,4].includes(i)?'○':x[1]):null,c1=sim?cnt(sim):null;
+ el.innerHTML=`<div class="cns"><div class="hilite" data-mk="up1030" data-mk-note="R01 : 정답 세트로 정기 회귀 시험 · 품질 대시보드">정답을 아는 질문 세트를 정기적으로 다시 물어 답변 품질이 떨어지지 않았는지 봐요. 기준선은 10-21 실무 검토자(R01) 시험 결과예요.</div>
+ <div class="tiles"><div class="tile"><b>${c0.o} / ${c0.p} / ${c0.x}</b><span>기준선 10-21 (정확 / 부분 / 실패)</span></div><div class="tile"><b>${c1?`${c1.o} / ${c1.p} / ${c1.x}`:'-'}</b><span>${c1?'시연 실행 결과 (목업 · 실제 실행 아님)':'아직 실행 전'}</span></div><div class="tile"><b>${QA16.length}문항</b><span>정답 세트 · 신고에서 추가 가능</span></div><div class="tile"><b>매주 월 06:00</b><span>자동 실행 (설계값)</span></div></div>
+ <section class="cc"><div class="cc__hd"><span>정답 세트 ${QA16.length}문항</span><span class="sp"></span>${btn(S.qaRun?'다시 실행 (시연)':'회귀 시험 실행 (시연)','qaRun',null,'cbtn--xs')}</div>${gt([{l:'#'},{l:'질문 (시험 의도)',cls:'el'},{l:'기준선 10-21',cls:'c'},{l:'이번 실행',cls:'c'}],QA16.map((x,i)=>({c:[i+1,x[0],x[1],sim?(sim[i]!==x[1]?`<b style="color:#157f3d">${sim[i]} 개선</b>`:sim[i]):'-']})),{tpl:'36px 1fr 100px 100px'})}
+ <div class="cc__ft">○ 정확 · △ 부분 정확·표시 문제 · ✕ 오류·검색 실패 · 「이번 실행」은 약칭 사전·대화 맥락 보정이 들어갔다고 가정한 시연값이에요 (실제 AI 호출 아님)</div></section></div>`;}
 /* ─────────────── 렌더 · 메뉴 · 초기화 ─────────────── */
-const VIEWS={home:vHome,mods:vMods,mgmt:vMgmt,stage:vStage,dz:vDZ,d1:vD1,d2:vD2,d3:vD3,d4:vD4,d5:vD5,d6:vD6,d7:vD7,d8:vD8};
+const VIEWS={rep:vRep,qa:vQa,home:vHome,mods:vMods,mgmt:vMgmt,stage:vStage,dz:vDZ,d1:vD1,d2:vD2,d3:vD3,d4:vD4,d5:vD5,d6:vD6,d7:vD7,d8:vD8};
 function draw(){const el=document.getElementById('opsView');if(!el||!cur||!VIEWS[cur])return;const y=window.scrollY;VIEWS[cur](el);renderEs();syncBadges();window.scrollTo(0,y);}
 function badges(){return {home:(S.stt>=2?0:1)+(S.ragAck?0:1)+(S.fixVio?0:1),d1:D.QA.filter(g=>g[4]&&!S.d1Qa[g[0]]).length,d7:D.D7.filter(r=>r[3]&&!S.d7Ack[r[0]]).length};}
 function syncBadges(){const b=badges();document.querySelectorAll('.ops-side a').forEach(a=>{const k=a.getAttribute('href').slice(1);let n=a.querySelector('.n');if(b[k]){if(!n){n=document.createElement('span');n.className='n';a.appendChild(n);}n.textContent=b[k];}else if(n)n.remove();});}
-const MENUS=[{k:'home',label:'AI 서비스 관제',grp:'관제'},{k:'mods',label:'AI 모듈서비스 · 학교별 사용'},{k:'mgmt',label:'모델 원장 · 코퍼스'},{k:'stage',label:"AI 적용 단계 ('27·'28·'29)"},{k:'dz',label:'D0 데이터 분류 · 존 배치',grp:'학습데이터 관리'},{k:'d1',label:'D1 실데이터 (담임 반)'},{k:'d2',label:'D2 가명데이터'},{k:'d3',label:'D3 재현 · 합성데이터'},{k:'d4',label:"D4 카탈로그 ('28 온톨로지)"},{k:'d5',label:"D5 계보 그래프 ('28 LPG)"},{k:'d6',label:'D6 분석 보관함'},{k:'d7',label:'D7 접근 로그'},{k:'d8',label:'D8 정책·수명주기'}];
+const MENUS=[{k:'home',label:'AI 서비스 관제',grp:'관제'},{k:'mods',label:'AI 모듈서비스 · 학교별 사용'},{k:'mgmt',label:'모델 원장 · 코퍼스'},{k:'stage',label:"AI 적용 단계 ('27·'28·'29)"},{k:'dz',label:'D0 데이터 분류 · 존 배치',grp:'학습데이터 관리'},{k:'d1',label:'D1 실데이터 (담임 반)'},{k:'d2',label:'D2 가명데이터'},{k:'d3',label:'D3 재현 · 합성데이터'},{k:'d4',label:"D4 카탈로그 ('28 온톨로지)"},{k:'d5',label:"D5 계보 그래프 ('28 LPG)"},{k:'d6',label:'D6 분석 보관함'},{k:'d7',label:'D7 접근 로그'},{k:'d8',label:'D8 정책·수명주기'},{k:'rep',label:'답변 신고·검수',grp:'답변 품질'},{k:'qa',label:'정답 세트 회귀 시험'}];
 SEN_OPS.init({sys:'ai',title:'AI 서비스 관리',desc:'AIOps — 모듈 9종 운영 · 모델 원장 · 학습데이터(실·가명·재현·합성·파생 · S존 분리 보관 · NEIS Plan A) · 절대 합격선',menus:MENUS,badges,
  views:Object.fromEntries(Object.keys(VIEWS).map(k=>[k,(el,c)=>{cur=k;ctx=c;VIEWS[k](el);}])),after:k=>{cur=k;renderEs();syncBadges();}});
 window.addEventListener('resize',()=>{clearTimeout(window.__aiRz);window.__aiRz=setTimeout(renderEs,150);});
