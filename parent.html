@@ -163,7 +163,7 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 
 <div class="toast" id="toast" role="status"></div>
 
-<script src="auth.js?v=20261030d"></script>
+<script src="auth.js?v=20261031"></script>
 <script>
 const toast=document.getElementById('toast');let toastT;
 function showToast(m){toast.textContent=m;toast.classList.add('is-on');clearTimeout(toastT);toastT=setTimeout(()=>toast.classList.remove('is-on'),2600);}
@@ -278,6 +278,7 @@ function renderMain(){
   <div class="stageline"><span class="big">${K.name} · ${K.grade}</span><span class="badge badge--p">${K.stage} 단계</span><span style="font-size:.82rem;color:var(--ink-2)">${K.cls}</span>${K.gen2028?'<span class="badge badge--gray">내신 5등급제 · 통합형 수능 첫 세대</span> <a href="univ.html" style="font-size:.8rem;font-weight:700;color:var(--brand)">무엇이 달라지나 ›</a>':''}</div>
   <div class="nextbox">📅 <div><b>다음 결정 시기</b> — ${K.next}</div></div>
  </section>
+ ${pNotiHtml()}
 
  <section class="section card">
   <h2>자녀 정보 열람 <small style="font-weight:700;color:var(--ink-3);font-size:.76rem">동의 항목만</small></h2>
@@ -400,6 +401,9 @@ renderAll();
 function syncAuth(){const A=window.SEN_AUTH;if(!A||!A.logged())return;const r=A.roleObj;if(!r||r.k!=='parent')return;
  const k=r.status==='pending'?'before':/추가/.test(r.scope)?'extra':'basic';if(k!==state){state=k;localStorage.setItem('sen-parent-state',state);kid=0;renderAll();}}
 document.addEventListener('sen-auth',syncAuth);syncAuth();
+function pNotiHtml(){if(!window.SEN_AUTH||!SEN_AUTH.noti)return '';const L=SEN_AUTH.noti('parent'),rd=SEN_AUTH.notiRead(),un=L.filter(n=>!rd[n.id]).length;
+ return `<section class="section card" id="notice" data-mk="up1030" data-mk-note="R01 ⑤ : 알림 센터 · 열람 알림은 하루 묶음"><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><h2 style="margin:0;font-size:1.05rem">🔔 알림 <span style="color:var(--brand)">${un}</span></h2><span style="flex:1"></span><button class="btn btn--line" style="padding:6px 12px;font-size:.8rem" data-pnall${un?'':' disabled'}>모두 읽음</button></div>${L.map(n=>`<a href="${n.href}" data-pnread="${n.id}" style="display:flex;gap:10px;padding:10px 4px;border-top:1px solid var(--line);text-decoration:none;color:inherit;${rd[n.id]?'':'background:#f4f7ff'}"><span class="badge badge--gray" style="flex:none">${n.cat}</span><span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px"><b style="font-size:.9rem">${n.title}</b><span style="font-size:.8rem;color:var(--ink-3)">${n.body}</span></span><small style="color:var(--ink-3);max-width:72px;text-align:right;flex:none">${n.t}</small></a>`).join('')}</section>`;}
+document.addEventListener('click',e=>{const a=e.target.closest('[data-pnread]'),all=e.target.closest('[data-pnall]');if(!a&&!all)return;const rd=SEN_AUTH.notiRead();if(all){SEN_AUTH.noti('parent').forEach(n=>rd[n.id]=true);}else rd[a.dataset.pnread]=true;localStorage.setItem('sen-noti-read',JSON.stringify(rd));SEN_AUTH.refreshWho();if(all){const sec=document.getElementById('notice');if(sec)sec.outerHTML=pNotiHtml();}});
 </script>
 <script src="footer-sys.js"></script>
 </body>

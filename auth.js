@@ -61,6 +61,25 @@ const A={
  stepUp(why){return new Promise(res=>{open2fa(why,res);});}
 };
 const fire=()=>{renderWho();document.dispatchEvent(new CustomEvent('sen-auth'));};
+/* 10-31 (R01 ⑤) 알림 센터 : 상담 확정·동의 요청·마감·답변 도착·열람(하루 묶음)·AI 신고 확인을 한곳에 */
+const LSj=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d;}catch(e){return d;}};
+A.noti=function(roleK){const r=roleK||A.role,par=r==='parent',out=[];const L=window.SEN_LEDGER;
+ const co=LSj('sen-counsel-v1',{}),b=co&&co.booking;
+ if(b){out.push({id:'c-bk-'+(b.date||'b')+(b.slot||''),cat:'상담',t:'방금',title:b.type==='board'?'게시판 질문을 접수했어요':(b.prov&&!b.accepted?'예비 신청 · 선생님 수락 대기 (48시간 안에 답변)':'상담 예약이 확정됐어요'),body:b.type==='board'?'선생님 배정 후 24시간 안에 답변이 와요':`${b.date||''} ${b.slot||''}${b.tch?' · '+b.tch+' 선생님':''}`,href:'counsel.html#book'});}
+ else out.push({id:'c-seed',cat:'상담',t:'09.01 18:20',title:par?'자녀 상담 일정이 잡혔어요':'상담 예약이 확정됐어요',body:'9.7(화) 15:00 화상 상담 · 하루 전 다시 알려 드려요'+(par?' · 내용은 자녀 동의 영역이에요':''),href:par?'parent.html':'counsel.html#book'});
+ const ol=LSj('sen-ops-counsel-v1',{});if(ol&&ol.olF&&Object.values(ol.olF).some(f=>f&&f.st==='pub'))out.push({id:'c-ol',cat:'상담',t:'오늘',title:'게시판 질문에 답변이 왔어요',body:'센터 확인을 거친 답변이에요 · 읽고 만족도를 남겨 주세요',href:'counsel.html'});
+ if(!par)out.push({id:'g-parent',cat:'동의',t:'08.30 09:10',title:'보호자 동의 요청을 보냈어요',body:'보호자가 응답하면 알려 드려요 · 응답 전에도 학교 선생님 상담은 할 수 있어요',href:'my.html#parent'});
+ else out.push({id:'g-share',cat:'동의',t:'08.31 21:02',title:'자녀가 공유 항목을 바꿨어요',body:'성적 추이 공유가 켜졌어요',href:'parent.html'});
+ const d0=new Date((L&&L.demoToday)||'2027-09-01'),dd=(y,m,d)=>Math.round((new Date(y,m-1,d)-d0)/864e5);
+ out.push({id:'d-susi',cat:'마감',t:'D-'+dd(2027,9,20),title:'수시 원서접수 '+(L?L.schedule.susiApply.from+' ~ '+L.schedule.susiApply.to:''),body:'원서접수 전 마지막 상담 일정을 확인하세요',href:'news.html'});
+ out.push({id:'d-csat',cat:'마감',t:'D-'+dd(2027,11,18),title:'대학수학능력시험 '+(L?L.schedule.csat.date:''),body:'수험표·준비물 안내는 11월에 다시 알려 드려요',href:'news.html'});
+ out.push({id:'v-day',cat:'열람',t:'어제 20:00 묶음',title:par?'자녀가 공유한 정보를 내가 본 기록이 남았어요':'김민정 선생님이 내 정보를 2번 봤어요',body:par?'열람 기록은 자녀에게 하루 한 번 묶어서 알려요':'사유 : 상담 준비 (자동 기록) · 하루 한 번 묶어서 알려요',href:par?'parent.html':'my.html#teacher'});
+ const rp=LSj('sen-ai-reports',[]),ai=LSj('sen-ops-ai-v1',{});const done=(rp||[]).filter(x=>ai&&ai.rptSt&&ai.rptSt[x.id]&&ai.rptSt[x.id].s!=='접수');
+ if(done.length)out.push({id:'a-'+done.map(x=>x.id).join(''),cat:'AI',t:'오늘',title:'신고하신 AI 답변을 센터에서 확인했어요',body:'「'+done[0].q.slice(0,30)+'」 · '+ai.rptSt[done[0].id].log.slice(-1)[0][1],href:'sen-ai-poc.html#rag'});
+ return out;};
+A.notiRead=()=>LSj('sen-noti-read',{});
+A.refreshWho=()=>{try{renderWho();}catch(e){}};
+A.notiUnread=roleK=>{const rd=A.notiRead();return A.noti(roleK).filter(n=>!rd[n.id]).length;};
 window.SEN_AUTH=A;window.SEN_ROLES=ROLE_LABEL;
 /* ── 스타일 ── */
 const css=`.who{display:inline-flex;gap:10px;align-items:center;flex-wrap:wrap}
@@ -151,7 +170,7 @@ function renderWho(){if(!who)return;
   if(!A.logged()){who.innerHTML='<a href="#" data-loginopen>로그인</a>';return;}
   const r=A.roleObj,roles=S.roles;
   const sw=roles.length>1?`<select data-roleswitch aria-label="역할 전환">${roles.map((x,i)=>`<option value="${i}"${i===S.cur?' selected':''}>${ROLE_LABEL[x.k]}${x.status==='pending'?' (승인 대기)':''}</option>`).join('')}</select>`:'';
-  who.innerHTML=`<span style="color:var(--ink)">${esc(A.name)} 님</span><span class="who__role"><b>${r?ROLE_LABEL[r.k]:'일반 사용자'}</b>${r&&r.status==='pending'?'<span style="color:#C43B3B">승인 대기</span>':''}<span class="who__lv">L${A.level}</span></span>${sw}<a href="${A.home()}" style="font-size:13px">내 공간</a><a href="#" data-logout>로그아웃</a>`;}
+  who.innerHTML=`<span style="color:var(--ink)">${esc(A.name)} 님</span><span class="who__role"><b>${r?ROLE_LABEL[r.k]:'일반 사용자'}</b>${r&&r.status==='pending'?'<span style="color:#C43B3B">승인 대기</span>':''}<span class="who__lv">L${A.level}</span></span>${sw}${r&&["student","student2","parent"].includes(r.k)?(()=>{const n=A.notiUnread(r.k);return `<a href="${r.k==="parent"?"parent.html#notice":"my.html#notice"}" class="who__bell" aria-label="알림 ${n}건" style="font-size:13px;white-space:nowrap">🔔${n?`<b style="display:inline-block;min-width:18px;padding:0 5px;margin-left:2px;border-radius:9px;background:#e8544b;color:#fff;font-size:11px;text-align:center">${n}</b>`:""}</a>`;})():""}<a href="${A.home()}" style="font-size:13px">내 공간</a><a href="#" data-logout>로그아웃</a>`;}
 document.addEventListener('click',e=>{if(e.target.closest('[data-loginopen]')){e.preventDefault();openLogin();}if(e.target.closest('[data-joinopen]')){e.preventDefault();openJoin();}if(e.target.closest('[data-logout]')){e.preventDefault();A.logout();window.showToast&&showToast('로그아웃했어요');}});
 document.addEventListener('change',e=>{const s=e.target.closest('[data-roleswitch]');if(!s)return;const i=+s.value,r=S.roles[i];
   if(r&&(r.k==='counselor'||r.k==='schooladmin'||r.k==='office')){A.stepUp(ROLE_LABEL[r.k]+' 역할로 전환').then(()=>{A.switchRole(i);window.showToast&&showToast(ROLE_LABEL[r.k]+' 역할로 전환했어요');});s.value=S.cur;}else{A.switchRole(i);}});
