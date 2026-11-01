@@ -191,7 +191,7 @@ let kid=0;
 /* ===== 데이터 (합성) ===== */
 const KIDS=[
  {name:'강지우',grade:'고3',cls:'서울한빛고 3-2',stage:'지원 전략',next:'수시 원서접수 2027.9.20(월) 시작',gen2028:true},
- {name:'강규민',grade:'고1',cls:'서울○○고 1-5',stage:'기초 설계',next:'2학기 선택과목 수요조사 10.15(금) 마감',gen2028:true}
+ {name:'강규민',grade:'고1',cls:'서울○○고 1-5',stage:'기초 설계',next:'2학기 선택과목 수요조사 10.15(금) 마감',gen2028:false}
 ];
 /* 잠금 3종: stage(단계 잠금·오픈 시점) / consent(동의 잠금·요청 버튼) / policy(정책 잠금·버튼 없음) */
 const ITEMS=[
@@ -206,20 +206,35 @@ const ITEMS=[
 const SYS={grade:[['내신 5등급제','상대평가 석차등급이 1~5등급이에요. 누적 비율로 1등급 10%, 2등급 34%, 3등급 66%, 4등급 90%까지예요. 옛 9등급제 숫자와 바로 비교하면 안 돼요'],['성취평가','모든 과목에 성취도 A~E(5단계)가 함께 기록되고, 원점수·과목 평균·성취도별 분포 비율·수강자 수까지 대학에 제공돼요'],['석차등급이 없는 과목','사회·과학 융합 선택 9과목은 성취도만, 체육·예술은 3단계 성취도만, 교양은 이수 여부(P)만 기록돼요. 공동교육과정·온라인학교로 들은 과목도 석차등급 대신 「ㆍ」로 적혀요'],['졸업 학점','3년간 교과 174학점 + 창의적 체험활동 18학점 = 192학점 이상이에요. 국어·수학·영어 합은 81학점을 넘지 않아요']],
  change:['학교가 가정통신문으로 변경 희망을 조사하고, 학부모 연서(서명)로 신청 내용을 확인해요. 자녀와 진로 변경에 대해 먼저 이야기해 보세요','담임 선생님이 확인하는 것: 변경 사유, 학부모 동의 여부, 바뀐 과목의 성적 처리 방법, 이후 절차와 시기','학급당 인원 초과나 과목 시수 변경 등 학교 운영 사정으로 변경이 안 될 수도 있어요. 소인수 과목은 성적 처리 방식이 달라질 수 있어요','학교에 따라 진로·과목 재탐색 활동이나 교육과정위원회에서 의견을 말할 기회가 있어요. 변경이 확정되면 교과서와 이동수업 반이 바뀌어요'],
  src:'서교연 『고1, 2 교사를 위한 진로·진학·학업 설계의 이론과 실제』 2027 p.34~35·51~52·54'};
+/* 10-31 R11 : 학부모 가이드를 중3·고1·고2·고3 × 분기로 나눔. 분기 = 1(3~5월) 2(6~8월) 3(9~11월) 4(12~2월). 2028 대입 브리핑은 고3 가이드 안에서만 */
+const QL={1:'1분기 · 3~5월',2:'2분기 · 6~8월',3:'3분기 · 9~11월',4:'4분기 · 12~2월'};
+const quarterOf=mo=>mo>=3&&mo<=5?1:mo>=6&&mo<=8?2:mo>=9&&mo<=11?3:4;
 const GUIDE={
- '고3':{stage:'지원 전략',core:['수시 6장은 공식이 아니라 자녀의 근거로 고릅니다.','합격선은 한 숫자가 아니라 3개년 분포로 봅니다.'],
-  q:['여섯 장 중 네가 가장 가고 싶은 곳은 어디고, 왜?','선생님과 확인한 것 중 아직 마음에 걸리는 건?','원서 전까지 한 가지만 바꾼다면 뭘 바꾸고 싶어?'],
-  no:['다른 집 아이의 지원 대학과 비교하지 않기','"안정으로 낮춰" 같은 결론을 먼저 말하지 않기']},
- '고2':{stage:'구체화',core:['계열 선택은 과목 이수 계획과 함께 봐야 합니다.','활동은 개수가 아니라 연결이 중요합니다.','7월 3학년 선택 과목 최종 확정 전에, 희망 대학 권장과목과 수능 응시 과목을 자녀와 함께 확인해요.'],
-  q:['지금 과목 중에 제일 너답다고 느끼는 건?','관심 학과에서 뭘 배우는지 찾아봤어?','이번 학기 활동 중 하나만 깊게 간다면?'],
-  no:['전공을 지금 확정하라고 요구하지 않기','성적 하나로 계열을 바꾸자고 하지 않기']},
- '고1':{stage:'기초 설계',core:['내신 5등급제 · 통합형 수능 세대 : 옛 기준과 비교하지 마세요.','선택과목 설계가 1학년 겨울의 가장 큰 결정입니다.','6~7월 2학년 선택 과목 최종 신청이 1학년의 가장 중요한 시기예요. 학교 설명회(5월)에 참석해 두세요.'],
-  q:['어떤 수업 시간이 제일 빨리 가?','내년에 꼭 들어보고 싶은 과목 있어?','진로검사 결과에서 의외였던 건 뭐야?'],
-  no:['옛 9등급제 기준으로 등급을 해석하지 않기','1학년 성적으로 가능/불가능을 단정하지 않기']}
+ '중3':{stage:'고교 선택',q:{
+  1:{core:['진로검사(흥미·적성)를 한 번 하고 결과를 함께 읽어요','고교 유형(일반 · 특성화 · 특목 · 자율)의 차이를 먼저 알아 둬요'],ask:['요즘 제일 재미있는 과목은?','고등학교에 가면 해 보고 싶은 게 있어?','검사 결과에서 의외였던 건?'],no:['특정 고교를 먼저 정해 놓고 설득하지 않기','중학교 성적만으로 진로를 좁히지 않기']},
+  2:{core:['고교 설명회 · 학교알리미로 개설 과목과 통학 거리를 비교해요','전기고(과학고 · 외고·국제고 · 예고·체고 · 마이스터고)는 8~10월 원서라 여름에 정보를 모아 둬요'],ask:['그 학교에 네가 배우고 싶은 과목이 있어?','집에서 학교까지 얼마나 걸리는지 봤어?','설명회에서 기억에 남은 건?'],no:['학교 이름값으로만 고르지 않기','친구 따라 지원하게 두지 않기']},
+  3:{core:['전기고 원서(8~10월) · 후기고 원서(12월) 일정을 달력에 적어요','자기주도학습 전형은 학교생활기록부와 면접을 함께 준비해요'],ask:['지원할 학교 두 곳의 차이를 한 문장으로 말해 볼래?','면접에서 꼭 하고 싶은 이야기는?','고등학교 공부에서 제일 걱정되는 건?'],no:['원서 직전에 학교를 바꾸라고 하지 않기','면접 답을 외우게 하지 않기']},
+  4:{core:['배정 결과 뒤에는 고1 공통과목(국어 · 수학 · 영어 · 통합사회 · 통합과학) 기초를 다져요','고교학점제 : 1학년 말에 2학년 선택과목 신청이 있다는 것을 미리 알아 둬요'],ask:['고등학교 첫 학기에 꼭 해 보고 싶은 건?','중학교 때 공부 방법 중 바꿀 건?','새 학교에서 들어 보고 싶은 동아리는?'],no:['배정 결과로 자녀를 평가하지 않기','선행에만 매달리게 하지 않기']}}},
+ '고1':{stage:'기초 설계',q:{
+  1:{core:['내신 5등급제 · 성취평가제 : 옛 9등급 기준과 비교하지 마세요','첫 중간고사는 등수보다 공부 방법 점검표로 써요','3월 전국연합학력평가 결과를 함께 읽어요'],ask:['어떤 수업 시간이 제일 빨리 가?','첫 시험 준비에서 뭐가 제일 어려웠어?','진로검사 결과에서 의외였던 건?'],no:['옛 9등급제 기준으로 등급을 해석하지 않기','1학년 성적으로 가능 · 불가능을 단정하지 않기']},
+  2:{core:['6~7월 2학년 선택과목 최종 신청이 1학년의 가장 중요한 시기예요','학교 교육과정 설명회(5~6월)에 꼭 참석해요','선택과목은 점수가 잘 나올 과목이 아니라 희망 계열 권장과목으로'],ask:['내년에 꼭 들어보고 싶은 과목 있어?','관심 가는 계열이 몇 개야?','설명회에서 궁금했던 건?'],no:['점수 따기 쉬운 과목을 권하지 않기','전공을 지금 확정하라고 요구하지 않기']},
+  3:{core:['2학기는 수업 안 탐구와 수행평가가 학생부의 핵심이에요','관심 분야 후보 2~3개를 기록하고 체험 · 독서로 확인해요'],ask:['수업에서 한 질문 중 기억나는 게 있어?','요즘 관심 가는 분야가 몇 개야?','이번 학기 활동 중 하나만 깊게 간다면?'],no:['활동 개수를 늘리라고 하지 않기','다른 집 아이와 비교하지 않기']},
+  4:{core:['1년 성적 · 활동을 돌아보고 2학년 목표를 다시 세워요','겨울방학은 2학년 선택과목 사전 준비(기초 개념)와 진로 심화 독서'],ask:['올해 가장 잘한 선택은?','2학년에 바꾸고 싶은 것 하나는?','방학에 꼭 해 보고 싶은 공부는?'],no:['방학 전체를 학원 일정으로 채우지 않기','겨울에 과목을 바꾸라고 압박하지 않기']}}},
+ '고2':{stage:'구체화',q:{
+  1:{core:['계열 선택은 과목 이수 계획과 함께 봐요','3월 학력평가로 정시 기준점을 처음 확인해요 (한 번의 점수로 단정하지 않기)'],ask:['지금 과목 중에 제일 너답다고 느끼는 건?','관심 학과에서 뭘 배우는지 찾아봤어?','학력평가 보고 느낀 건?'],no:['성적 하나로 계열을 바꾸자고 하지 않기','전공을 지금 확정하라고 요구하지 않기']},
+  2:{core:['7월 3학년 선택과목 최종 확정 전에 희망 대학 권장과목과 수능 응시 과목을 함께 확인해요','6월 학력평가 결과로 수시 · 정시 비중을 가볍게 이야기해요'],ask:['3학년에 꼭 듣고 싶은 과목은?','희망 대학 권장과목을 봤어?','수시와 정시 중 어디에 더 마음이 가?'],no:['수시 · 정시를 지금 하나로 정하게 하지 않기','희망 대학을 성적만으로 낮추라고 하지 않기']},
+  3:{core:['활동은 개수가 아니라 연결이 중요해요 : 1학년부터 이어 온 질문을 깊게','전공 체험 · 대학 설명회(가을)에 함께 가 봐요'],ask:['이번 학기 활동 중 하나만 깊게 간다면?','설명회에서 가장 끌린 학과는?','탐구 주제에서 제일 좁힌 질문은?'],no:['새 활동을 늘리라고 하지 않기','학생부 문구를 대신 써 주지 않기']},
+  4:{core:['2학년 말은 3개년 입시결과를 처음 함께 보는 시기예요 : 한 숫자가 아니라 분포로','겨울방학에 수능 영역별 기초를 점검하고 3학년 일정표(수시 9월 · 수능 11월)를 적어요'],ask:['3학년이 되기 전에 끝내고 싶은 게 있어?','입시결과 표에서 제일 궁금한 건?','방학 공부 계획은 어떻게 짰어?'],no:['지원 대학을 지금 정하라고 하지 않기','겨울방학을 불안으로 채우지 않기']}}},
+ '고3':{stage:'지원 전략',q:{
+  1:{core:['3월 학력평가는 출발점이에요 : 수시 · 정시 비중을 선생님과 처음 이야기해요','수시 6장은 공식이 아니라 자녀의 근거로 고릅니다'],ask:['수시와 정시 중 어디에 더 마음이 가?','선생님과 확인한 것 중 아직 마음에 걸리는 건?','올해 공부 리듬은 어떻게 만들고 있어?'],no:['다른 집 아이의 지원 대학과 비교하지 않기','「안정으로 낮춰」 같은 결론을 먼저 말하지 않기']},
+  2:{core:['6월 모의평가 뒤 수시 지원 후보를 좁혀요 : 합격선은 한 숫자가 아니라 3개년 분포로','자기소개서는 없어졌어요 : 학생부와 면접 준비가 중심이에요'],ask:['여섯 장 중 네가 가장 가고 싶은 곳은 어디고, 왜?','최저 기준은 어디까지 가능하다고 보고 있어?','여름방학에 한 가지만 바꾼다면?'],no:['모의평가 한 번으로 지원선을 단정하지 않기','학원 · 컨설팅 말을 선생님 상담보다 앞세우지 않기']},
+  3:{core:['수시 원서 '+(window.SEN_LEDGER?SEN_LEDGER.fmt.susiApply():'9.20~9.23')+' · 수능 '+(window.SEN_LEDGER?SEN_LEDGER.schedule.csat.date.replace(/^2027\./,''):'11.18')+' : 원서 뒤에도 수능 리듬을 유지해요','아래 2028 대입 학부모 브리핑을 이 시기에 한 번 읽어요'],ask:['원서 전까지 한 가지만 바꾼다면 뭘 바꾸고 싶어?','지원할 곳에서 떨어진다면 이유가 뭘 것 같아?','요즘 컨디션 관리는 어떻게 하고 있어?'],no:['원서 뒤에 「이제 끝났다」고 말하지 않기','수능 전 생활 리듬을 바꾸지 않기']},
+  4:{core:['수능 성적 통지(12.10) 뒤 정시는 군별 1장씩, 추가 모집까지','수시 합격(등록)이면 정시 지원이 안 돼요 · 재도전은 함께 기준을 정해요'],ask:['정시 세 장은 어떤 기준으로 나눌래?','결과가 어떻든 다음 봄에 하고 싶은 건?','지금 가장 듣고 싶은 말은?'],no:['결과를 다른 집과 비교하지 않기','재도전 여부를 부모가 먼저 결정하지 않기']}}}
 };
+let gGrade=null,gQ=null; /* 가이드 학년 · 분기 선택 (기본 : 자녀 학년 · 시연 기준일 분기) */
 const AUDIT=[
- ['9.5 20:11','나','규리 진로검사 결과 열람 — 자녀에게 알림 전송'],
- ['9.3 21:40','나','규리 진로 경로 열람 — 자녀에게 알림 전송'],
+ ['8.30 20:11','나','강지우 진로검사 결과 열람 · 자녀에게 알림 전송'],
+ ['8.28 21:40','나','강지우 진로 경로 열람 · 자녀에게 알림 전송'],
  ['8.30 19:02','나','학부모 가이드(고3) 인쇄']
 ];
 
@@ -232,14 +247,14 @@ function renderMain(){
   const head=state==='waiting'
    ?(linkPath==='school'?`<h2>학교 확인을 기다리고 있어요</h2><p>담임 선생님이 보호자 관계를 확인한 뒤 학교관리자가 연결을 승인합니다 (1~3일).<br>승인되면 자녀에게도 연결 알림이 가요.</p><div class="badge badge--wait" style="margin-bottom:18px">요청 보냄 · 담임 확인 대기 → 학교관리자 승인</div><div><button class="btn btn--line" data-toast="요청을 취소했어요" data-lpreset>요청 취소</button></div>`
    :linkPath==='neis'?`<h2>자녀 동의를 기다리고 있어요</h2><p>나이스 보호자 정보와 일치해 자녀 <b>강지우</b>에게 연결 알림을 보냈습니다.<br>열람 범위는 자녀가 정해요 · 48시간 내 응답이 없으면 다시 요청할 수 있어요.</p><div class="badge badge--wait" style="margin-bottom:18px">나이스 대조 ✓ · 자녀 동의 대기</div><div><button class="btn btn--line" data-toast="자녀에게 알림을 다시 보냈어요">알림 다시 보내기</button></div>`
-   :`<h2>자녀 승인을 기다리고 있어요</h2><p>자녀 화면에 연결 요청 알림을 보냈습니다.<br>24시간 내 승인이 없으면 코드를 재발급해 주세요.</p><div class="badge badge--wait" style="margin-bottom:18px">요청 보냄 9.6 20:30 · 자녀 응답 대기</div><div><button class="btn btn--line" data-toast="초대코드를 재발급했어요 · 유효 24시간">코드 재발급</button></div>`)
+   :`<h2>자녀 승인을 기다리고 있어요</h2><p>자녀 화면에 연결 요청 알림을 보냈습니다.<br>24시간 내 승인이 없으면 코드를 재발급해 주세요.</p><div class="badge badge--wait" style="margin-bottom:18px">요청 보냄 8.31 20:30 · 자녀 응답 대기</div><div><button class="btn btn--line" data-toast="초대코드를 재발급했어요 · 유효 24시간">코드 재발급</button></div>`)
    :state==='unlinked'
    ?`<h2>자녀가 연결을 해제했어요</h2><p>자녀가 직접 연결을 해제했습니다. 다시 보려면 자녀에게 새 초대코드를 받아 연결해 주세요.</p>${gateForm()}`
    :`<h2>자녀와 연결하면 더 많이 볼 수 있어요</h2><p>연결 경로는 셋 중 하나를 고르세요 — 어느 경로든 <b>연결 여부와 열람 범위는 자녀가 결정</b>합니다.</p>${gateForm()}`;
   m.innerHTML=`<div class="gate">${head}
    <div class="openlist">
     <a href="#" onclick="return false" data-toast="학부모 가이드는 아래 상태를 '연결됨'으로 바꾸면 자녀 단계 1장으로 보입니다">학부모 가이드 (학년별)</a>
-    <a href="#g-brief">2028 대입 학부모 브리핑</a>
+    <a href="#g-brief">2028 대입 학부모 브리핑 (고3 학부모 가이드)</a>
     <a href="news.html">학부모 설명회 (진학TV)</a>
     <a href="news.html">FAQ · 입시 용어</a>
    </div>
@@ -270,12 +285,12 @@ function renderMain(){
  }).join('');
  const adultNote=isAdult?`<div style="background:var(--surface);border-radius:var(--radius-md);padding:12px 16px;font-size:.82rem;color:var(--ink-2);margin-bottom:14px">성인 자녀는 모든 항목이 잠금에서 시작합니다 — 자녀 본인의 동의가 우선이에요</div>`:'';
 
- const G=GUIDE[K.grade]||GUIDE['고3'];
+ const gg=gGrade||(GUIDE[K.grade]?K.grade:'고3'),gq=gQ||quarterOf((window.SEN_LEDGER?SEN_LEDGER.todayDate():new Date(2027,8,1)).getMonth()+1);const G=GUIDE[gg],GQ=G.q[gq];
 
  m.innerHTML=`
  <section class="section card">
   ${chips}
-  <div class="stageline"><span class="big">${K.name} · ${K.grade}</span><span class="badge badge--p">${K.stage} 단계</span><span style="font-size:.82rem;color:var(--ink-2)">${K.cls}</span>${K.gen2028?'<span class="badge badge--gray">내신 5등급제 · 통합형 수능 첫 세대</span> <a href="univ.html" style="font-size:.8rem;font-weight:700;color:var(--brand)">무엇이 달라지나 ›</a>':''}</div>
+  <div class="stageline"><span class="big">${K.name} · ${K.grade}</span><span class="badge badge--p">${K.stage} 단계</span><span style="font-size:.82rem;color:var(--ink-2)">${K.cls}</span><span class="badge badge--gray">내신 5등급제 · 통합형 수능${K.gen2028?' 첫 세대':''}</span> <a href="univ.html" style="font-size:.8rem;font-weight:700;color:var(--brand)">무엇이 달라지나 ›</a></div>
   <div class="nextbox">📅 <div><b>다음 결정 시기</b> — ${K.next}</div></div>
  </section>
  ${pNotiHtml()}
@@ -287,21 +302,37 @@ function renderMain(){
   <div class="items">${items}</div>
  </section>
 
- <section class="section card">
-  <h2>학부모 가이드 : 지금 단계에서</h2>
-  <p class="sub">자녀 단계 1장만 — 전체 가이드는 자료·소식 › 학부모 가이드에서</p>
-  <div class="guide">
-   <div class="guide__head"><span>${K.grade} · ${G.stage} — 학년별로 지금 할 일 하나</span><span style="display:flex;gap:8px"><button class="btn btn--line" style="padding:7px 14px;font-size:.76rem" onclick="window.print()">인쇄 · PDF 저장</button></span></div>
-   <div class="guide__body">
-    <div><h4>이 시기 핵심</h4><ul>${G.core.map(c=>`<li>${c}</li>`).join('')}</ul></div>
-    <div><h4>자녀와 나눌 질문 3</h4><ul>${G.q.map(c=>`<li>"${c}"</li>`).join('')}</ul></div>
-    <div><h4>하지 않을 일 2</h4><ul>${G.no.map(c=>`<li>${c}</li>`).join('')}</ul></div>
+ <section class="section cols">
+  <div class="card">
+   <h2 data-mk="up1030" data-mk-note="R11 : 콘텐츠 항목을 자녀 정보 열람 바로 아래로">학부모 콘텐츠</h2><p class="sub">자녀 학년과 상관없이 바로 볼 수 있어요</p>
+   <div class="list3">
+    <a href="univ.html#terms">대입 용어 첫걸음 <span>›</span></a>
+    <a href="news.html">학부모 설명회 (진학TV) <span>›</span></a>
+    <a href="news.html">FAQ · 입시 용어 <span>›</span></a>
+    <a href="library.html#parents">학부모 가이드 전체 (자료실) <span>›</span></a>
    </div>
   </div>
-  <details style="margin-top:14px"><summary style="cursor:pointer;font-weight:800;font-size:.9rem;color:var(--brand)">자녀 성적표, 이렇게 읽어요 (2022 개정 교육과정 · 5등급제)</summary>
-   <div class="guide__body" style="margin-top:10px">${SYS.grade.map(([t,b])=>`<div><h4>${t}</h4><p style="margin:0;font-size:.84rem;color:var(--ink-2);line-height:1.6">${b}</p></div>`).join('')}</div>
-  </details>
-  <details style="margin-top:8px"><summary style="cursor:pointer;font-weight:800;font-size:.9rem;color:var(--brand)">자녀가 선택 과목을 바꾸고 싶어 할 때, 학부모가 확인할 것</summary>
+  <div class="card">
+   <h2>자녀 성적표, 이렇게 읽어요</h2><p class="sub">2022 개정 교육과정 · 5등급제</p>
+   <div style="display:grid;gap:8px">${SYS.grade.map(([t,b])=>`<div><b style="font-size:.86rem">${t}</b><p style="margin:2px 0 0;font-size:.82rem;color:var(--ink-2);line-height:1.6">${b}</p></div>`).join('')}</div>
+  </div>
+ </section>
+
+ <section class="section card" id="g-guide">
+  <h2 data-mk="up1030" data-mk-note="R11 : 중3 · 고1 · 고2 · 고3 × 분기로 구분 · 2028 대입 브리핑은 고3 가이드 안에서만">학부모 가이드 : 학년 · 분기별</h2>
+  <p class="sub">자녀 학년과 지금 분기가 기본으로 열려요 · 다른 학년 · 분기도 미리 볼 수 있어요</p>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin:0 0 8px">${['중3','고1','고2','고3'].map(g=>`<button class="btn ${g===gg?'btn--primary':'btn--line'}" style="padding:7px 14px;font-size:.8rem" data-gg="${g}" aria-pressed="${g===gg}">${g}${g===K.grade?' (자녀)':''}</button>`).join('')}</div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin:0 0 14px">${[1,2,3,4].map(q=>`<button class="btn ${q===gq?'btn--primary':'btn--line'}" style="padding:7px 14px;font-size:.78rem" data-gq="${q}" aria-pressed="${q===gq}">${QL[q]}</button>`).join('')}</div>
+  <div class="guide">
+   <div class="guide__head"><span>${gg} · ${G.stage} · ${QL[gq]}</span><span style="display:flex;gap:8px"><button class="btn btn--line" style="padding:7px 14px;font-size:.76rem" onclick="window.print()">인쇄 · PDF 저장</button></span></div>
+   <div class="guide__body">
+    <div><h4>이 시기 핵심</h4><ul>${GQ.core.map(c=>`<li>${c}</li>`).join('')}</ul></div>
+    <div><h4>자녀와 나눌 질문 3</h4><ul>${GQ.ask.map(c=>`<li>"${c}"</li>`).join('')}</ul></div>
+    <div><h4>하지 않을 일 2</h4><ul>${GQ.no.map(c=>`<li>${c}</li>`).join('')}</ul></div>
+   </div>
+  </div>
+  ${gg==='고3'?`<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--line)" id="g-brief">${briefHtml()}</div>`:`<p style="margin:12px 0 0;font-size:.78rem;color:var(--ink-3)">2028 대입 학부모 브리핑(모집인원 · 수시 비율)은 고3 가이드에서 보여요 · <a href="#" data-gg="고3" style="color:var(--brand);font-weight:700">고3 가이드 보기 ›</a></p>`}
+  <details style="margin-top:14px"><summary style="cursor:pointer;font-weight:800;font-size:.9rem;color:var(--brand)">자녀가 선택 과목을 바꾸고 싶어 할 때, 학부모가 확인할 것</summary>
    <ul style="margin:10px 0 0;padding-left:18px;font-size:.84rem;color:var(--ink-2);line-height:1.6">${SYS.change.map(c=>`<li>${c}</li>`).join('')}</ul>
    <p style="margin:8px 0 0;font-size:.76rem;color:var(--ink-3)">학교마다 절차와 시기가 달라요. 학교 안내문을 먼저 확인하고, 자녀의 <a href="study-plan.html#check" style="color:var(--brand);font-weight:700">학업설계 점검</a>을 함께 보세요 · 출처: ${SYS.src}</p>
   </details>
@@ -315,17 +346,7 @@ function renderMain(){
   <p style="margin:6px 0 0;font-size:.76rem;color:var(--ink-3)">확정되면 알림으로 안내해 드려요 · 상담 결과는 선생님이 확정한 요약본만 표시됩니다</p>
  </section>
 
- <section class="section card">${briefHtml()}</section>
-
  <section class="section cols">
-  <div class="card">
-   <h2>학부모 콘텐츠</h2><p class="sub"></p>
-   <div class="list3">
-    <a href="univ.html">대입 용어 첫걸음 <span>›</span></a>
-    <a href="news.html">학부모 설명회 (진학TV) <span>›</span></a>
-    <a href="news.html">FAQ · 입시 용어 <span>›</span></a>
-   </div>
-  </div>
   <div class="card">
    <h2>내 열람 이력</h2><p class="sub">내 모든 열람은 자녀 「내 정보를 본 기록」에도 남습니다</p>
    <table class="audit">${AUDIT.map(a=>`<tr><td>${a[0]}</td><td><b>${a[1]}</b></td><td>${a[2]}</td></tr>`).join('')}</table>
@@ -333,7 +354,9 @@ function renderMain(){
   </div>
  </section>`;
 
- document.querySelectorAll('[data-kid]').forEach(b=>b.addEventListener('click',()=>{kid=+b.dataset.kid;renderMain();}));
+ document.querySelectorAll('[data-kid]').forEach(b=>b.addEventListener('click',()=>{kid=+b.dataset.kid;gGrade=null;renderMain();}));
+ document.querySelectorAll('[data-gg]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();gGrade=b.dataset.gg;renderMain();const g=document.getElementById('g-guide');if(g&&b.tagName==='A')g.scrollIntoView({behavior:'smooth',block:'start'});}));
+ document.querySelectorAll('[data-gq]').forEach(b=>b.addEventListener('click',()=>{gQ=+b.dataset.gq;renderMain();}));
 }
 
 /* ── 통합 적용 4단계: 자녀 연결 3경로 (① 자녀 초대코드 ② 나이스 보호자 확인 ③ 학교 확인) ── */
