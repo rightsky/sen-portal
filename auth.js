@@ -65,7 +65,7 @@ const fire=()=>{renderWho();document.dispatchEvent(new CustomEvent('sen-auth'));
 const LSj=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||'null')??d;}catch(e){return d;}};
 A.noti=function(roleK){const r=roleK||A.role,par=r==='parent',out=[];const L=window.SEN_LEDGER;
  const co=LSj('sen-counsel-v1',{}),b=co&&co.booking;
- if(b){out.push({id:'c-bk-'+(b.date||'b')+(b.slot||''),cat:'상담',t:'방금',title:b.type==='board'?'게시판 질문을 접수했어요':(b.prov&&!b.accepted?'예비 신청 · 선생님 수락 대기 (48시간 안에 답변)':'상담 예약이 확정됐어요'),body:b.type==='board'?'선생님 배정 후 24시간 안에 답변이 와요':`${b.date||''} ${b.slot||''}${b.tch?' · '+b.tch+' 선생님':''}`,href:'counsel.html#book'});}
+ if(b){out.push({id:'c-bk-'+(b.date||'b')+(b.slot||''),cat:'상담',t:'방금',title:b.type==='board'?'게시판 질문을 접수했어요':(b.prov&&!b.accepted?'예비 신청 · 선생님 수락 대기 (24시간 안에 답변)':'상담 예약이 확정됐어요'),body:b.type==='board'?'선생님 배정 후 24시간 안에 답변이 와요':`${b.date||''} ${b.slot||''}${b.tch?' · '+b.tch+' 선생님':''}`,href:'counsel.html#book'});}
  else out.push({id:'c-seed',cat:'상담',t:'09.01 18:20',title:par?'자녀 상담 일정이 잡혔어요':'상담 예약이 확정됐어요',body:'9.7(화) 15:00 화상 상담 · 하루 전 다시 알려 드려요'+(par?' · 내용은 자녀 동의 영역이에요':''),href:par?'parent.html':'counsel.html#book'});
  const ol=LSj('sen-ops-counsel-v1',{});if(ol&&ol.olF&&Object.values(ol.olF).some(f=>f&&f.st==='pub'))out.push({id:'c-ol',cat:'상담',t:'오늘',title:'게시판 질문에 답변이 왔어요',body:'센터 확인을 거친 답변이에요 · 읽고 만족도를 남겨 주세요',href:'counsel.html'});
  if(!par)out.push({id:'g-parent',cat:'동의',t:'08.30 09:10',title:'보호자 동의 요청을 보냈어요',body:'보호자가 응답하면 알려 드려요 · 응답 전에도 학교 선생님 상담은 할 수 있어요',href:'my.html#parent'});
@@ -136,7 +136,7 @@ function openDemo(idp,mode){const v=IDP[idp];m.innerHTML=`<div class="lmodal__p"
   <div class="demo">${(()=>{let g='';return DEMO[idp].map(d=>{let h='';if((d.grp||'')!==g){g=d.grp||'';if(g)h=`<p class="lm-note" style="margin:8px 0 2px;font-weight:800;color:var(--ink-2)">${esc(g)}</p>`;}return h+`<button data-demo="${d.id}" data-idp="${idp}" data-mode="${mode}"><b>${esc(d.t)}</b><small>${esc(d.sub)}</small></button>`;}).join('');})()}</div>
   <p class="lm-note"><a href="#" class="link" data-loginopen>← 다른 수단으로</a></p></div>`;}
 function openJoin(){m.innerHTML=`<div class="lmodal__p"><button type="button" class="lmodal__x" data-lmclose aria-label="닫기">✕</button><h2>처음 이용 : 교육청 통합인증 연결</h2><div class="lm-steps"><span class="is-on">① 인증 수단</span><span>② 본인 확인</span><span>③ 역할 확인</span><span>④ 동의</span></div>
-  <p class="lm-note" data-mk="sec1102" data-mk-note="보안 검토 11-02 · 2-3 : 회원가입이 아니라 통합인증 연결. 식별 정보 저장 위치는 S존">포털 회원가입이 아니에요. 통합인증을 한 번 연결하면 끝이고, 포털에는 회원 정보가 남지 않아요. 역할을 고르는 단계는 없어요. 재학생은 교육디지털원패스로 학교·학년·반이 자동으로 들어오고, 교사는 교원 확인 뒤 학교 담당자(관리자) 승인을 받아야 권한이 생겨요. 학부모는 디지털원패스 본인확인 뒤 자녀를 연결해요.</p>
+  <p class="lm-note" data-mk="sec1102" data-mk-note="보안 검토 11-02 · 2-3 : 회원가입이 아니라 통합인증 연결. 식별 정보 저장 위치는 S존">포털 회원가입이 아니에요. 통합인증을 한 번 연결하면 끝이고, 포털에는 회원 정보가 남지 않아요. 역할을 고르는 단계는 없어요. 재학생은 교육디지털원패스로 학교·학년·반이 자동으로 들어오고, 교사는 교원 확인 뒤 학교 담당자(관리자) 승인을 받아야 권한이 생겨요. 학부모는 디지털원패스 본인확인 뒤 자녀를 연결해요. 교육디지털원패스 연결은 2027.9(S존 서버 도입)부터이고, 6월 1차 오픈부터 8월까지는 간편인증 · 소셜 로그인으로 쓰는 과도기예요.</p>
   ${idpList('join')}
   <p class="lm-note">이미 계정이 있나요? <a href="#" class="link" data-loginopen>로그인</a></p></div>`;m.classList.add('is-on');}
 function openJoinResult(idp,d){const roles=d.roles;const v=IDP[idp];const minor=d.id==='stu';

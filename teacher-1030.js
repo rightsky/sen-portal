@@ -28,7 +28,7 @@
     { k: 'counsel', t: '배정 답변', views: ['assign'] },
     { k: 'data', t: '자료', href: 'library.html' }
   ];
-  var VNAME = { home: '홈', class: '우리 반', susi: '수시', jeongsi: '정시', conv: '환산점', hitl: '판정 확인', compare: '비교', stats: '통계', mode: '학생상담모드', assign: '배정 답변', history: '상담 이력', prep: '상담 준비' };
+  var VNAME = { home: '홈', class: '우리 반', susi: '수시', jeongsi: '정시', conv: '환산점', hitl: '판정 승인(HITL)', compare: '비교', stats: '통계', mode: '학생상담모드', assign: '배정 답변', history: '상담 이력', prep: '상담 준비' };
   /* 화면별 접속 위치 : school = 학교 업무망 전용 · home = 집에서도 됨 · both = 집에서는 집계·배경만 */
   var NETOF = { home: 'both', class: 'school', susi: 'school', jeongsi: 'school', conv: 'school', hitl: 'school', compare: 'both', stats: 'home', mode: 'school', assign: 'both', history: 'school', prep: 'home' };
   var chips = function (v) {
@@ -73,6 +73,7 @@
       if (e.target.closest('[data-sgx]')) { m.remove(); return; }
       if (!e.target.closest('[data-sgo]')) return;
       var path = (m.querySelector('input[name="spath"]:checked') || {}).value || 'lan';
+      if (path === 'ext' && window.SEN_EXT && !SEN_EXT.ok()) { SEN_EXT.logDeny(); m.querySelector('.sgate__p').innerHTML = '<button type="button" class="sgate__x" data-sgx aria-label="닫기">✕</button>' + SEN_EXT.denyHtml(); return; }   /* RFP v0.76 SER-001 화면 ③ */
       m.style.display = 'none'; /* 2단계 인증 창이 위에 보이게 */
       var ok = window.SEN_AUTH ? SEN_AUTH.stepUp('교육청 업무망 화면 진입 (' + (path === 'lan' ? '업무망 PC' : '외부 단말 · RBI') + ')') : Promise.resolve(true);
       ok.then(function (r) { if (!r) { m.style.display = ''; return; } m.remove(); sGrant(path);
@@ -214,7 +215,7 @@
       + k('오늘 열람', AU.length + '건', '이번 주 12건 · 사유 변경 1건 · 기록은 업무망 화면')
       + k('판정 확인 대기', (isSubj || isCoun ? 0 : pendingHitl()) + '명', '상담 마칠 때 한 번 확정 · 업무망 화면') + '</div>';
     var enter = '<div class="card is-navy" style="padding:18px 20px" data-mk="sec1102" data-mk-note="보안 검토 11-02 · 3절 : 포털에는 링크와 건수만, 학생 단위 화면은 S존 호스팅"><div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;justify-content:space-between"><div style="min-width:0;flex:1 1 320px"><h2 style="margin:0 0 6px">교육청 업무망(S존) 화면 <small style="font-weight:700;opacity:.8">학생 한 명을 가리키는 화면은 여기서</small></h2><p class="sub" style="margin:0;opacity:.9">우리 반 명단 · 수시/정시 학생별 지도 · 학생별 환산점 · 판정 확인 · 비교·분석(우리 반) · 학생상담모드 · 상담 이력 · 공유 자료 · 열람 기록 · 학교 관리 · SEN 진학프로그램 · 학생부 읽기 도우미</p><p style="margin:8px 0 0;font-size:13px;opacity:.85">들어가는 길 : ① 학교 · 정보원 업무망 PC ② 외부 단말은 VPN/ZTNA + MFA + 단말 검증 + RBI(재택 접속 신청자) · 2단계 인증 · 세션 30분</p></div><button class="btn btn--primary" data-senter="home" style="flex:none">업무망 화면 열기 ›</button></div></div>';
-    var agg = '<section class="section"><h2 class="t" data-mk="home sec1102 rep" data-mk-note="보안 검토 11-02 · 3-4 : S존 화면마다 O존용 집계판 · 반 단위는 건수 · 5명 미만 억제, 이름 없음">우리 반 집계판 <small style="color:var(--ink-3);font-weight:700">이름 없음 · 숫자만</small></h2><p class="s">학생 한 명을 가리키는 행은 없어요 · 5명이 안 되는 묶음은 숫자도 가려요 · 학생별로 보려면 업무망 화면</p>'
+    var agg = '<section class="section"><h2 class="t" data-mk="home sec1102 rep" data-mk-note="보안 검토 11-02 · 3-4 : S존 화면마다 O존용 집계판 · 반 단위는 건수 · 5명 미만 억제, 이름 없음">우리 반 집계판 <small style="color:var(--ink-3);font-weight:700">이름 없음 · 숫자만</small></h2><p class="s">학생 한 명을 가리키는 행은 없어요 · 5명이 안 되는 묶음은 숫자도 가려요 · 학생별로 보려면 업무망 화면</p>' + (window.SEN_1102 ? SEN_1102.supRules : '')
       + '<div class="kpis" style="grid-template-columns:repeat(4,1fr)">'
       + k('반 관리', '25명', 'NEIS 반영 완료 22 · 누락·오류 3 · 공유 동의 ' + S.length)
       + k('내신 분포', bands.map(function (b) { return b[0].replace('등급대', '') + ' ' + SUP(b[1]); }).join(' · '), '등급대별 · 5명 미만 억제')
@@ -233,7 +234,8 @@
       + k('수시 원서접수', LGR ? LGR.fmt.susiApply() : '9.20~9.23', '수능 ' + (LGR ? LGR.schedule.csat.date : '11.18') + ' · 정시 ' + (LGR ? LGR.fmt.jeongsiApply() : '1.3~1.6')) + '</div></section>';
     var rules = '<section class="section"><div class="card"><h2>권한 원칙</h2><ul class="rules"><li>담당 학년·반 학생만 · 전체보기는 관리자 설정 + 사유 기록</li><li>화면·저장소·연계 세 곳 모두에서 담당 학생만 볼 수 있게 막아요 · 학년도 전환 시 일괄 재승인</li><li>위촉 만료 시 권한 자동 회수</li><li>학생 성적 원문·판정 결과·반영 파일은 포털에 표시하지 않음 · 포털(O존)에는 저장·캐시하지 않음</li></ul><p class="caption" data-mk="sec1102" data-mk-note="보안 검토 11-02 · 2-1 ⑨ : 접근통제_ABAC_RLS_설계_v1 과 번호로 연결 (절 번호는 사용자 문서 기준으로 채움)">설계 근거 : 접근통제_ABAC_RLS_설계_v1 §(번호 확인 중) · 열람 사유는 기본값 「상담 준비」가 자동으로 들어가고 바꿀 수 있어요</p></div></section>';
     var adm = isAdm ? '<section class="section"><div class="card"><h2>학교 관리 <small style="font-weight:700;color:var(--ink-3)">승인함 · 교사 등록 · 담당 매핑</small></h2><p class="sub">승인 대기 ' + (typeof REQS !== 'undefined' ? REQS.length : 3) + '건 · 교원 이름과 편성표 대조는 업무망 화면에서</p><button class="btn btn--line" data-senter="home" data-senter-why="학교 관리(승인함 · 교사 등록 · 담당 매핑)">업무망 화면에서 처리 ›</button></div></section>' : '';
-    return counts + enter + adm + agg + sys + res + brief + rules;
+    var ext = window.SEN_EXT && !isCoun ? '<section class="section" style="margin-top:12px">' + SEN_EXT.cardHtml() + '</section>' : '';
+    return counts + enter + ext + adm + agg + sys + res + brief + rules;
   }
 
   /* ── S존 진입 게이트 (teacher-school.html) ── */
@@ -249,6 +251,7 @@
   document.addEventListener('click', function (e) {
     var b = e.target.closest && e.target.closest('[data-sgate-go]'); if (!b) return;
     var path = (document.querySelector('input[name="spath2"]:checked') || {}).value || 'lan';
+    if (path === 'ext' && window.SEN_EXT && !SEN_EXT.ok()) { SEN_EXT.logDeny(); var gp = b.closest('.gate'); if (gp) gp.innerHTML = SEN_EXT.denyHtml().replace(/data-sgx/g, 'onclick="location.reload()"'); return; }
     (window.SEN_AUTH ? SEN_AUTH.stepUp('교육청 업무망 화면 진입 (' + (path === 'lan' ? '업무망 PC' : '외부 단말 · RBI') + ')') : Promise.resolve(true)).then(function (r) { if (!r) return; sGrant(path); renderAll(); });
   });
   function sBand() {
@@ -268,7 +271,9 @@
       var g2 = document.getElementById('tgnb'); if (g2) g2.style.display = '';
       if (view === 'history') { m.innerHTML = historyHtml(); return; }
       if (view === 'prep' || view === 'stats') { view = 'home'; }
-      _main(); return;
+      _main();
+      if (state === 'schooladmin' && view === 'home' && window.SEN_1102) m.insertAdjacentHTML('beforeend', SEN_1102.schoolHtml());
+      return;
     }
     /* O존 */
     if (S_ONLY[view]) { view = 'home'; localStorage.setItem('sen-teacher-view', 'home'); }

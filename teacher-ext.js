@@ -233,7 +233,7 @@ window.statsHtml=function(){
  <div class="card" style="padding:16px 18px"><label class="xlab" style="margin-top:0">기간<select class="xsel" data-speriod>${Object.entries(PERIODS).map(([k,v])=>`<option value="${k}"${ST.period===k?' selected':''}>${v}</option>`).join('')}</select></label><label class="xlab">수신자<select class="xsel" data-sto>${Object.entries(TOS).map(([k,v])=>`<option value="${k}"${ST.to===k?' selected':''}>${v}</option>`).join('')}</select></label>
  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><button class="btn btn--line xb" data-spreview>미리보기</button><button class="btn btn--primary xb" data-spdf>PDF 내보내기(워터마크)</button></div><p class="caption">수신자·발송일시가 워터마크로 들어가고, 5명 미만 칸은 보고서에도 비공개예요</p></div></div>
  ${ST.preview?`<h4 style="margin:16px 0 8px;font-size:14px">미리보기 · ${PERIODS[ST.period]} · ${TOS[ST.to]} · ${sc.t}</h4>${ST.blocks.length?`<div class="xgrid--3 xgrid">${ST.blocks.map(blockTbl).join('')}</div>`:'<p class="caption">블록을 하나 이상 고르세요</p>'}`:''}`;
- return `<section class="section"><h2 class="t">진학통계 <span class="badge badge--teach">${ro?'과목교사 · 읽기 전용':sc.t}</span></h2><p class="s">반·학년·학교 단위 집계만 보여요 · 원문·개인 판정은 전문시스템 · 5명 미만은 비공개</p>
+ return `<section class="section"><h2 class="t" data-mk="rep" data-mk-note="RFP v0.76 SER-007 · DAR-001 : 학교 · 학년 이상 집계 · 5명 미만 억제 + 2차 억제 · 분포 그림은 익명성 평가를 통과한 재현데이터만">진학통계 <span class="badge badge--teach">${ro?'과목교사 · 읽기 전용':sc.t}</span></h2><p class="s">반·학년·학교 단위 집계만 보여요 · 원문·개인 판정은 전문시스템 · 5명 미만은 비공개</p>
  <div class="share__notice">집계는 비식별 처리된 반·학년 단위 · 내보내기에는 워터마크와 수신자가 찍혀요</div>
  <h3 style="margin:16px 0 8px;font-size:15px">범위</h3>${sw}${grad}${builder}</section>`;};
 function bindStats(){

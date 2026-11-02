@@ -15,7 +15,9 @@
     session: {          /* 분 단위. 업무시스템은 결정 23(15 → 30분, R13) */
       student: 30, parent: 30, teacher: 30, ops: 30, warnBefore: 5
     },
-    counsel: { visitMin: 40, videoMin: 40, boardReplyHours: 24, boardReplyBasis: '교사 배정 후' },
+    counsel: { visitMin: 40, videoMin: 40, boardReplyHours: 24, boardReplyBasis: '교사 배정 후', provAcceptHours: 24 },   /* 예비 슬롯 수락 기한 24시간 (11-02 결정 9) */
+    auth: { onepassAt: '2027.9', onepassWhy: 'S존 서버 도입', interim: '6월 1차 오픈 ~ 8월 : 간편인증 · 소셜 로그인 과도기' },   /* 11-02 결정 7 */
+    cmodeLockMin: 20,   /* 학생상담모드 무입력 20분 화면 잠금 · 자동 종료 없음 (11-02 결정 9) */
     conv: { version: 'v2.1', state: '확정', stateCode: 'CONFIRMED', basis: '2027.8.31 대학 공개 요강 기준' },
     demoToday: '2027-09-01',   /* 시연 기준일 : 화면의 D-day·달력은 이 날을 오늘로 계산 */
     source: '2028학년도 대학입학전형 시행계획(대교협)'
@@ -34,11 +36,11 @@
   /* 화면 문구 용어 사전 : 개발 용어 → 쉬운 우리말(R01 R02 R03 R06 R07 R10 R11).
      긴 표현부터 바꾼다. 업무시스템(ops-*) 화면은 정보원 실무 용어를 그대로 둔다. */
   window.SEN_TERMS = [
-    ['판정·승인 HITL', '판정 확인'],
-    ['판정 · 승인 (HITL)', '판정 확인'],
-    ['판정 승인(HITL)', '판정 확인'],
-    ['판정·승인(HITL)', '판정 확인'],
-    ['HITL', '판정 확인'],
+    /* 11-02 결정 8 : 명칭은 RFP와 같은 「판정 승인(HITL)」으로 되돌림 (10-30 「판정 확인」 폐기) */
+    ['판정·승인 HITL', '판정 승인(HITL)'],
+    ['판정 · 승인 (HITL)', '판정 승인(HITL)'],
+    ['판정·승인(HITL)', '판정 승인(HITL)'],
+    ['판정 확인', '판정 승인(HITL)'],
     ['상담 브리프', '상담 요약'],
     ['브리프', '요약'],
     ['NEIS 일괄 적재', 'NEIS 일괄 반영'],
