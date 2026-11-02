@@ -3,9 +3,10 @@
 <head>
 <meta charset="utf-8">
 <script src="privacy-store.js?v=1"></script>
-<script src="sen-ledger.js?v=20261031e"></script><script src="sen-marks.js?v=20261031e" defer></script>
+<script src="sen-ledger.js?v=20261031e"></script><script src="sen-marks.js?v=20261102b" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>교사공간 | 서울 진로진학 통합플랫폼</title>
+<title>교사공간 (포털) | 서울 진로진학 통합플랫폼</title>
+<meta name="sen-zone" content="O">
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
 :root{
@@ -228,7 +229,7 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 
 <div class="roleband"><div class="container">
   <h1>교사공간 <span class="badge">교사·상담교사</span></h1>
-  <p>학교 업무망에서는 우리 반 상담·진학지도를 모두 하고, 집에서는 학생 개인정보 없이 상담 준비를 해요</p>
+  <p data-mk="sec1102" data-mk-note="보안 검토 11-02 · 2-1 ⑪ : 포털 교사공간은 집 모드 정의와 1:1 · 학생 단위 화면은 S존 별도 접속">포털 교사공간에서는 건수 · 집계 · 상담 준비를 하고, 우리 반 학생을 보는 화면은 교육청 업무망(S존) 화면에서 열어요</p>
 </div></div>
 
 <div class="tband" id="z1" hidden><div class="container" id="z1Body"></div></div>
@@ -259,7 +260,7 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 <div class="toast" id="toast" role="status"></div>
 
 <script src="auth.js?v=20261031e"></script>
-<script src="teacher-ext.js?v=20261031e"></script>
+<script src="teacher-ext.js?v=20261102b"></script>
 <script>
 const toast=document.getElementById('toast');let toastT;
 function showToast(m){toast.textContent=m;toast.classList.add('is-on');clearTimeout(toastT);toastT=setTimeout(()=>toast.classList.remove('is-on'),2400);}
@@ -305,8 +306,8 @@ const SHARES=[
 ];
 const RES=[
  {t:'2028 진학지도 자료집',p:'대교협 주요사항 + 서울 주요대 변동 정리 · 교사 인증 열람분 전문(全文)',a:'내려받기',href:'library.html'},
- {t:'고1, 2 교사를 위한 진로·진학·학업 설계의 이론과 실제 (2026)',p:'서교연 진학지도 자료집 03 · 학년별 로드맵, 과목 선택 지도, 상담 4단계, 교과·계열 사례 38건 (세특 기록 예시 포함, 교사 전용) · 학생 화면에는 사례·워크시트만 공개',a:'내려받기',href:'library.html#cases'},
- {t:'학생부 읽기 도우미 (교사용)',p:'가명처리 요약 · 3역량 관점 읽기 · 반복 경고 점검 — AI 초안, 확정은 교사가',a:'열기 ›',href:'sen-ai-poc.html'},
+ {t:'고1, 2 교사를 위한 진로·진학·학업 설계의 이론과 실제 (2026)',p:'서교연 진학지도 자료집 03 · 학년별 로드맵, 과목 선택 지도, 상담 4단계, 교과·계열 사례 38건 (세특 기록 예시는 가공 예시 · 실제 학생부 아님, 교사 전용) · 학생 화면에는 사례·워크시트만 공개',a:'내려받기',href:'library.html#cases'},
+ {t:'학생부 읽기 도우미 (교사용 · S존 메뉴)',p:'가명처리 요약 · 3역량 관점 읽기 · 반복 경고 점검 · AI 초안, 확정은 교사가 · 학생부 원문과 가명 요약은 S존 RAG에서만 처리',a:'열기 ›',href:'sen-ai-poc.html?zone=S#rec'},
  {t:'원격연수 · 설명회',p:'2028 대입 변화 15차시 · 진학지도 실무 과정 · 수료증 발급',a:'신청하기',href:'#',toast:'원격연수·설명회 신청은 다음 단계에서 설계합니다'},
  {t:'진학지도 Q&A 게시판',p:'교사 간 사례 공유 · 센터 답변 · 같은 학교 담당자와 공동 열람',a:'바로가기',href:'#',toast:'진학지도 Q&A 게시판은 다음 단계에서 설계합니다'}
 ];
@@ -482,13 +483,14 @@ const PRO_SPLIT=false;const PRO_VIEWS=['susi','jeongsi','conv','hitl','compare',
 const PC_ADOPT_KEY='sen-pc-adopt';function pcAdopt(){return localStorage.getItem(PC_ADOPT_KEY)||'adopted';}
 const PC_STATE={adopted:['도입 완료','ok'],applied:['신청 중 · 교육청 승인 대기','wait'],none:['미도입','gray']};
 function liteBand(fn){const shared=SHARES.length;const st=pcAdopt();return `<div class="lite"><b>교사공간</b><span>학생이 공유한 성적·활동으로 ${fn} 기능을 써 봅니다 · 공유 동의 ${shared}명</span><span class="chip">NEIS 없음 · 참고용</span><span class="chip">학교 연계(PC) : 반 전체 · 공식 판정</span>${st==='adopted'?`<button class="btn btn--navy" data-pro="${fn} (학교 연계)">학교 연계 서비스에서 ›</button>`:`<button class="btn btn--line" data-view="home" data-pc-guide="1">학교 연계 안내 ›</button>`}</div>`;}
-let proUntil=0;function proEnter(why){const go=()=>{proUntil=Date.now()+6e5;const w=window.open(PRO_URL,'senpro');showToast('SEN 진학프로그램(전문시스템)을 새 창에서 열었어요 · 열람 사유 기록: '+why);if(!w)location.href=PRO_URL;};if(Date.now()<proUntil){go();return;}(authMode()==='B'&&window.SEN_AUTH?SEN_AUTH.stepUp('전문시스템 진입 — '+why):confirmAdmin('전문시스템 진입')).then(go);}
+let proUntil=0;function proEnter(why){if(window.SEN_ZONE==='O'&&window.enterS){enterS('pro',why||'SEN 진학프로그램');return;}const go=()=>{proUntil=Date.now()+6e5;const w=window.open(PRO_URL,'senpro');showToast('SEN 진학프로그램(전문시스템)을 새 창에서 열었어요 · 열람 사유 기록: '+why);if(!w)location.href=PRO_URL;};if(Date.now()<proUntil){go();return;}(authMode()==='B'&&window.SEN_AUTH?SEN_AUTH.stepUp('전문시스템 진입 — '+why):confirmAdmin('전문시스템 진입')).then(go);}
 let tfaUntil=0;function hitlConfirm(){if(Date.now()<tfaUntil)return Promise.resolve(true);return (authMode()==='B'&&window.SEN_AUTH?SEN_AUTH.stepUp('판정 확인 확정'):confirmAdmin('판정 확인 확정')).then(r=>{tfaUntil=Date.now()+6e5;return r;});}
 
 function bindExtra(){
  document.querySelectorAll('[data-view]').forEach(a=>{if(a.dataset.bound)return;a.dataset.bound='1';a.addEventListener('click',e=>{e.preventDefault();view=a.dataset.view;localStorage.setItem('sen-teacher-view',view);renderAll();window.scrollTo({top:0});});});
  document.querySelectorAll('[data-hitl]').forEach(b=>b.addEventListener('click',()=>{const id=b.dataset.id,k=b.dataset.hitl;if(k==='edit'&&window.hitlEditOpen){hitlEditOpen(id);return;}hitlConfirm().then(()=>{HS[id]=k;hsSave();showToast({ok:'승인했어요 · 확정본 생성 · 전달은 H3에서',edit:'수정 후 승인 · 수정 이력과 함께 확정',no:'반려 · 초안 폐기 · 사유 기록',more:'근거 보강 요청 · AI 재생성 큐로'}[k]);renderAll();});}));
  document.querySelectorAll('[data-pro]').forEach(b=>b.addEventListener('click',()=>proEnter(b.dataset.pro)));
+ document.querySelectorAll('[data-vreason]').forEach(sl=>sl.addEventListener('change',()=>{const v=sl.value.replace(' (기본값 · 자동)','');showToast(v==='기타 (직접 입력)'?'사유를 직접 적어 기록해요 (목업)':'열람 사유를 「'+v+'」로 기록했어요');}));
  document.querySelectorAll('[data-pcadopt]').forEach(b=>b.addEventListener('click',()=>{localStorage.setItem(PC_ADOPT_KEY,b.dataset.pcadopt);renderAll();}));
  const liteBtn=document.getElementById('liteAdd');if(liteBtn&&!liteBtn.dataset.bound){liteBtn.dataset.bound='1';
   const pv=document.getElementById('litePreview');const ta=document.getElementById('liteText');
@@ -632,7 +634,7 @@ function renderMain(){
    <div class="pro__fn">데이터 적재 · 수시·정시 진학지도 · 판정·승인 HITL · 교과환산점 · 정시예측 · 지원 결과분석 · 비교·분석 · 진학통계 : 교사공간과 같은 메뉴, NEIS·반 전체·공식 판정이 더해집니다</div>
    <div class="pro__sw"><span>도입 상태 보기 (설계 검토용)</span>${['adopted','applied','none'].map(k=>`<button type="button" data-pcadopt="${k}" class="${k===ad?'is-on':''}">${PC_STATE[k][0].split(' ·')[0]}</button>`).join('')}</div></article>
   ${sysCard2}
-  <article><div class="ico">💾</div><h3>기존 교사용 쎈진학 <small style="font-weight:700;color:var(--ink-3)">전환 기간</small></h3><p>2027학년도까지 사용한 설치형 프로그램 · 새 창</p><button class="btn btn--line" data-toast="설치형 쎈진학은 학교 PC에서 실행 · 전환 기간 중 데이터는 「선생님 PC 보관」 규격으로 통제">바로가기 ↗</button></article>
+  <article><div class="ico">💾</div><h3>기존 교사용 쎈진학 <small style="font-weight:700;color:var(--ink-3)">전환 기간</small></h3><p>설치형 · ① 병행 ~2027.8 → ② 배포 중단 2027.9(제안) → ③ 폐쇄 2027.12(D14 ★) · 업무망 PC에서만</p><button class="btn btn--line" data-toast="설치형 쎈진학은 학교 PC에서 실행 · 전환 기간 중 데이터는 「선생님 PC 보관」 규격으로 통제">바로가기 ↗</button></article>
  </div>`;
  /* Z4 */
  const headNote=isHead?`<div class="share__notice">진학부장 전체보기 — 담당 반 밖 학생 열람 시 사유 입력이 필수입니다</div>`:'';
@@ -683,8 +685,9 @@ function renderMain(){
     <li>담당 학년·반 학생만 · 전체보기는 관리자 설정 + 사유 기록</li>
     <li>화면·저장소·연계 세 곳 모두에서 담당 학생만 볼 수 있게 막아요 · 학년도 전환 시 일괄 재승인</li>
     <li>위촉 만료 시 권한 자동 회수</li>
-    <li>학생 성적 원문·판정 결과·적재 파일은 교사공간에 표시하지 않음</li>
+    <li>학생 성적 원문·판정 결과·반영 파일은 포털에 표시하지 않음 · 포털(O존)에는 저장·캐시하지 않음</li>
    </ul>
+   <p class="caption" data-mk="sec1102" data-mk-note="보안 검토 11-02 · 2-1 ⑨ ⑩ : 설계 문서와 번호로 연결 · 열람 사유는 자동 기본값 + 변경 가능">설계 근거 : 접근통제_ABAC_RLS_설계_v1 §(번호 확인 중) · 열람 사유는 기본값 「상담 준비」가 자동으로 들어가고 바꿀 수 있어요</p>
    <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--line);font-size:13px;color:var(--ink-2)">아이디·사용 문의 02-3111-362,363 · 프로그램 오류 070-4774-6556<br>운영 10:00~17:00 · <a href="#" style="color:var(--brand)" data-toast="Q&A 게시판은 다음 단계에서 설계합니다">Q&A 게시판</a></div>
   </div>
  </div>`;
@@ -707,7 +710,7 @@ function renderMain(){
  /* Z4 상세 */
  function showShare(i){
   const s=shares[i];const d=document.getElementById('shareDetail');
-  d.innerHTML=`<div class="share__notice">열람이 기록됩니다 — 사유 "상담 준비" 자동 기록 · 학생의 「내 정보를 본 기록」에 표시</div>
+  d.innerHTML=`<div class="share__notice" data-mk="sec1102" data-mk-note="보안 검토 11-02 · 2-1 ⑩ : 자동 기본값 + 선택 변경 (전부 자동이면 사유 기록의 의미가 약함)">열람이 기록돼요 · 사유 <select class="xsel" data-vreason style="display:inline-block;width:auto;min-height:30px;padding:2px 8px;font-size:13px"><option>상담 준비 (기본값 · 자동)</option><option>학급 지도</option><option>판정 근거 확인</option><option>학부모 상담</option><option>기타 (직접 입력)</option></select> · 학생의 「내 정보를 본 기록」에 표시</div>
    <h3>${s.who} <small style="color:var(--ink-3);font-weight:700">${s.cls}</small></h3>
    <div class="meta">${s.what} · ${s.when} · <span class="badge ${s.badge==='학생 승인'?'badge--ok':'badge--wait'}">${s.badge}</span></div>
    <dl class="kv2">${Object.entries(s.detail).map(([k,v])=>`<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
@@ -749,8 +752,8 @@ function syncAuth(){const A=window.SEN_AUTH;const hint=document.getElementById('
 document.addEventListener('sen-auth',syncAuth);syncAuth();
 renderAll();
 </script>
-<script src="teacher-prep.js?v=20261031e"></script>
-<script src="teacher-1030.js?v=20261031e"></script>
+<script src="teacher-prep.js?v=20261102b"></script>
+<script src="teacher-1030.js?v=20261102b"></script>
 <script src="footer-sys.js?v=20261031e"></script>
 </body>
 </html>

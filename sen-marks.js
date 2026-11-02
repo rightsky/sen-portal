@@ -14,23 +14,26 @@
   var KINDS = {
     '6open':  { t: '6open',  d: '2027.6 1차 개방형 오픈 범위' },
     'up1030': { t: 'up1030', d: '10-30 실무 의견 검토로 바뀐 곳' },
-    'school': { t: 'school', d: '학교 업무망에서만 (학생 단위 정보)' },
-    'home':   { t: 'home',   d: '집 인터넷에서도 가능 (학생 개인정보 없음)' },
-    'decide': { t: '의사결정', d: '의견이 갈려 정해야 할 곳 (지금은 ★ 제안값)' }
+    'school': { t: 'school', d: 'S존 화면 (교육청 업무망 · 별도 접속, 학생 단위 정보)' },
+    'home':   { t: 'home',   d: 'O존 포털 (인터넷, 학생 개인정보 없음)' },
+    'decide': { t: '의사결정', d: '의견이 갈려 정해야 할 곳 (지금은 ★ 제안값)' },
+    'sec1102': { t: '보안1102', d: '11-02 보안 아키텍처 검토로 바뀐 곳 (마우스를 올리면 항목)' },
+    'rep':    { t: '재현', d: '재현데이터 : S존에서 원본 분포를 보존해 생성 · 익명성 평가 뒤 O존 · 5명 미만 억제' },
+    'syn':    { t: '합성', d: '합성데이터 : 규칙으로 만든 가짜 · 실제 학생 아님 · 개인 상담 판단 근거로 쓰지 않음' }
   };
   /* 10-30 [의사결정] : 검토 문서 「[의사결정]」 표의 번호 · 화면별로 걸린 항목 */
   var DEC = {
     D1: '학생 화면 합격 가능성 신호등 (R11 보이자 ↔ R02 R08 빼자)', D2: '화상 녹취·STT (녹취 없음 4명 ↔ 상호 동의 3명 · R10 STT)',
-    D3: '반 실데이터 보관 위치 (담임 선택 3 ↔ 교육청 통일 3)', D4: '교사공간 메뉴 구조 (10-19 일원화 ↔ 학교·집 모드)',
+    D3: '반 실데이터 보관 위치 (담임 선택 3 ↔ 교육청 통일 3)', D4: '교사공간 구조 : 종결 (보안 검토 11-02 · O존 포털 + S존 별도 화면)',
     D5: '교사 인증 : 결정됨 (교육디지털원패스만 + 간편인증 2단계)', D6: '2단계 인증 시점 (식별 화면 3 ↔ 하루 1회 3)', D7: '예비 슬롯 수락 기한 : 결정됨 (48시간)',
     D8: '판정 확인 (단순화 유지 ↔ R06 R09 재검토)', D9: '상담 우선점수 (삭제 4 ↔ 손질 3)', D10: '학생상담모드 종료 (20분 3 · 직접 3 · 10분 1)',
-    D11: '학부모 기본 공유 (성적 추이까지 4 ↔ 진로만 3)', D12: '진학부장 담당 외 열람 (기본 허용 4 ↔ 설정+사유 3)', D13: '상담 한정 공유 만료 (30일 4 ↔ 학년도 말 3)',
+    D11: '학부모 성적 추이 : 재검토 (10-30 ★ 기본 공유 ↔ 보안 검토 11-02 opt-in 권고 · 지금은 opt-in)', D12: '진학부장 담당 외 열람 (기본 허용 4 ↔ 설정+사유 3)', D13: '상담 한정 공유 만료 (30일 4 ↔ 학년도 말 3)',
     D14: '설치형 쎈진학 링크 (2027.12까지 5 ↔ 즉시 제거 2)', D15: '1차 미개통 기능 (잠금 카드 5 ↔ 숨김 2)', D16: '교과환산점 탭 (R07 필요 ↔ R06 효용 의문)',
     D17: '비교·분석·진학통계 (유지 ↔ 축소)', D18: '2028 교사 브리핑 (유지 ↔ R07 삭제 고려)'
   };
   var DECP = {
     'index.html': ['D15'], 'strategy.html': ['D1', 'D15'], 'my.html': ['D11', 'D13', 'D15'], 'parent.html': ['D11', 'D15'],
-    'counsel.html': ['D2'], 'teacher.html': ['D1', 'D3', 'D4', 'D6', 'D8', 'D10', 'D12', 'D14', 'D16', 'D17', 'D18'],
+    'counsel.html': ['D2'], 'teacher.html': ['D3', 'D12', 'D14', 'D16', 'D17', 'D18'], 'teacher-school.html': ['D1', 'D3', 'D6', 'D8', 'D10', 'D12', 'D16', 'D17'],
     'cns.html': ['D9', 'D12'], 'ops-counsel.html': ['D2', 'D6'], 'ops-admin.html': ['D6', 'D8'], 'ops-ai.html': ['D6']
   };
   /* 화면 단위 표시 : 6open = 1차 개방형 포함 화면, 그 밖은 2차(S존 개통 후) */
@@ -49,8 +52,9 @@
     'strategy.html':       { m: ['up1030'], n: '2차 화면. 공개 입시결과 조회만 1차 후보' },
     'my.html':             { m: ['up1030'], n: '2차 화면(로그인 필요)' },
     'study-plan.html':     { m: [], n: '2차 화면(학업설계 저장)' },
-    'teacher.html':        { m: ['up1030'], n: '2차 화면. 학교 모드/집 모드로 나뉨' },
-    'cns.html':            { m: ['school', 'up1030'], n: '2차 화면. 학생 단위 정보라 학교 업무망 전용' },
+    'teacher.html':        { m: ['home', 'up1030', 'sec1102'], n: '2차 화면. O존 포털 교사공간(건수 · 상담 준비 · 집계) · 학생 단위 화면은 업무망 화면(teacher-school.html)' },
+    'teacher-school.html': { m: ['school', 'sec1102'], n: 'S존 교사 업무 화면(교육청 업무망 PC 또는 VPN · MFA · 단말 검증 · RBI 경로) · 시연 데이터는 합성' },
+    'cns.html':            { m: ['school', 'up1030'], n: '2차 화면. 학생 단위 정보라 S존(교육청 업무망) 전용' },
     'ops-counsel.html':    { m: ['up1030'], n: '업무시스템(정보원 업무망), 2차' },
     'ops-ai.html':         { m: [], n: '업무시스템(정보원 업무망), 2차' },
     'ops-admin.html':      { m: [], n: '업무시스템(정보원 업무망), 2차' }
@@ -69,6 +73,9 @@
     + '.mk--school{color:#173a7a;background:#e8eefb;border-color:#a9bde8}'
     + '.mk--home{color:#00676b;background:#e1f5f4;border-color:#93d3d0}'
     + '.mk--decide{color:#a0153e;background:#fde8ef;border-color:#f0a3bb}'
+    + '.mk--sec1102{color:#5a2d91;background:#efe7fb;border-color:#c7b3ea}'
+    + '.mk--rep{color:#6b4f00;background:#fbf3d6;border-color:#e4cf7a}'
+    + '.mk--syn{color:#4d4d4d;background:#eeeeee;border-color:#bdbdbd}'
     + '.mkbar__dec{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center;flex-basis:100%}.mkbar__dec .dk{padding:1px 7px;border-radius:999px;background:#fff;border:1px solid #f0c3d1;color:#7a1030;font-weight:600;cursor:help}'
     + 'html.mk-off .mk,html.mk-off .mkbar{display:none!important}'
     + '.mkbar{position:relative;z-index:60;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:6px 16px;background:#fbfaf6;border-bottom:1px dashed #d9d4c4;font:600 12px/1.5 system-ui,-apple-system,"Pretendard","Noto Sans KR",sans-serif;color:#5b5648}'

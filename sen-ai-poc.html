@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <script src="privacy-store.js?v=1"></script>
-<script src="sen-ledger.js?v=20261031e"></script><script src="sen-marks.js?v=20261031e" defer></script>
+<script src="sen-ledger.js?v=20261031e"></script><script src="sen-marks.js?v=20261102b" defer></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>AI PoC · 서울 진로진학 통합플랫폼</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap">
@@ -210,6 +210,9 @@ th{color:var(--ink-3);font-weight:600;font-size:13px}
 </head>
 <body>
 <div class="wrap">
+<script>/* 11-02 보안 검토 2-1 ⑥ : 교사용 학생부 읽기 도우미는 S존 메뉴 · ?zone=S 로 들어오면 S존 띠를 보인다 */
+(function(){if(new URLSearchParams(location.search).get('zone')!=='S')return;document.write('<div class="sband" data-mk="school sec1102" data-mk-note="보안 검토 11-02 · 2-1 ⑥ : 학생부 원문 · 가명 요약은 S존 RAG에서만 처리, 포털에서 직접 열지 않음" style="display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;margin:0 0 14px;padding:10px 14px;border-radius:12px;background:#e8eefb;color:#173a7a;font-size:13px"><b>교육청 업무망(S존) 메뉴 · 학생부 읽기 도우미(교사용)</b><span>학생부 원문과 가명 요약은 S존 RAG에서만 처리돼요</span><span>캡처 · 재배포 금지 · 열람 기록</span><a href="teacher-school.html" style="margin-left:auto;font-weight:800;color:#173a7a">교사 업무 화면 ›</a></div>');})();
+</script>
   <header class="top">
     <div class="logo"><a href="index.html" style="color:inherit;text-decoration:none">← 서울 진로진학 통합플랫폼</a><small>AI PoC · md 변환기 · 지식저장소 · RAG 어시스턴트 · 학생부 AI 활용</small></div>
     <div class="row"><span class="badge" id="aiState">AI 연결 확인 중</span></div>
